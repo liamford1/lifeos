@@ -53,6 +53,11 @@ export default function HomePage() {
         <li><a href="/food" className="text-blue-500 underline">🍽️ Open Food Dashboard</a></li>
       </ul>
 
+      <h2 className="text-xl font-semibold mt-6 mb-2">🏋️ Fitness</h2>
+      <ul className="space-y-2 mb-6">
+        <li><a href="/fitness" className="text-blue-500 underline">🏋️ Open Fitness Dashboard</a></li>
+      </ul>
+
       <h2 className="text-xl font-semibold mt-6 mb-2">💸 Finances</h2>
       <ul className="space-y-2 mb-6">
         <li><a href="/finances" className="text-blue-500 underline">💸 Open Finances Dashboard</a></li>
