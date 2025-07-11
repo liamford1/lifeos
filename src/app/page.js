@@ -7,7 +7,6 @@ export default function HomePage() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    // Check if a user is already logged in
     const getUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       setUser(user);
@@ -18,7 +17,6 @@ export default function HomePage() {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     setUser(null);
-    // Optional: reload or redirect
     window.location.reload();
   };
 
@@ -51,12 +49,17 @@ export default function HomePage() {
       )}
 
       <h2 className="text-xl font-semibold mt-6 mb-2">🍽️ Food / Diet</h2>
-      <ul className="space-y-2">
+      <ul className="space-y-2 mb-6">
         <li><a href="/food/inventory" className="text-blue-500 underline">🧺 View Pantry</a></li>
         <li><a href="/food/addreceipt" className="text-blue-500 underline">➕ Add Pantry Item</a></li>
         <li><a href="/food/meals" className="text-blue-500 underline">📖 View Meals</a></li>
         <li><a href="/food/addmeal" className="text-blue-500 underline">➕ Add a Meal</a></li>
         <li><a href="/food/planner" className="text-blue-500 underline">🗓️ Plan Meals</a></li>
+      </ul>
+
+      <h2 className="text-xl font-semibold mt-6 mb-2">🧠 Thoughts / Scratchpad</h2>
+      <ul className="space-y-2">
+        <li><a href="/scratchpad" className="text-blue-500 underline">💡 Open Scratchpad</a></li>
       </ul>
     </main>
   );
