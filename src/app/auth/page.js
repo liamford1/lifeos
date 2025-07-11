@@ -1,9 +1,11 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
 
 export default function AuthPage() {
+  const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isLogin, setIsLogin] = useState(true)
@@ -13,7 +15,11 @@ export default function AuthPage() {
     setMessage('')
     if (isLogin) {
       const { error } = await supabase.auth.signInWithPassword({ email, password })
-      setMessage(error ? error.message : 'Logged in!')
+      if (error) {
+        setMessage(error.message)
+      } else {
+        router.push('/') // ✅ Redirect to home on successful login
+      }
     } else {
       const { error } = await supabase.auth.signUp({ email, password })
       setMessage(error ? error.message : 'Check your email to confirm signup!')
