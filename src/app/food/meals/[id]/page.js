@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
+import AppBar from '@/components/AppBar';
+import BackButton from '@/components/BackButton';
 
 export default function MealDetailPage() {
   const { id } = useParams();
@@ -49,9 +51,6 @@ export default function MealDetailPage() {
     fetchMeal();
   }, [id]);
 
-  if (loading) return <div className="p-6">Loading...</div>;
-  if (!meal) return <div className="p-6">Meal not found.</div>;
-
   async function handleCookMeal() {
     const user = await supabase.auth.getUser();
     const userId = user?.data?.user?.id;
@@ -89,7 +88,6 @@ export default function MealDetailPage() {
           .from('food_items')
           .delete()
           .eq('id', pantryItem.id);
-      
         if (deleteError) {
           console.error(deleteError);
           success = false;
@@ -99,20 +97,13 @@ export default function MealDetailPage() {
           .from('food_items')
           .update({ quantity: newQty })
           .eq('id', pantryItem.id);
-      
         if (updateError) {
           console.error(updateError);
           success = false;
         }
-      }      
-  
-      if (updateError) {
-        console.error(updateError);
-        success = false;
       }
     }
   
-    // Log cooked meal
     const { error: logError } = await supabase.from('cooked_meals').insert([
       {
         user_id: userId,
@@ -120,7 +111,6 @@ export default function MealDetailPage() {
       },
     ]);
   
-    // ✅ Update last_cooked_at in meals
     await supabase
       .from('meals')
       .update({ last_cooked_at: new Date().toISOString() })
@@ -134,41 +124,62 @@ export default function MealDetailPage() {
     } else {
       alert('Meal cooked, but some pantry items could not be updated.');
     }
-  }     
+  }
+
+  if (loading) return <div className="p-6 text-white">Loading...</div>;
+  if (!meal) return <div className="p-6 text-white">Meal not found.</div>;
 
   return (
-    <div className="max-w-2xl mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-2">{meal.name}</h1>
-      {meal.description && <p className="text-gray-600 mb-4">{meal.description}</p>}
+    <div className="flex flex-col h-screen bg-gray-900 text-white">
+      <AppBar />
 
-      <p className="text-sm text-gray-400 mb-6">
-        Prep: {meal.prep_time || 0} min • Cook: {meal.cook_time || 0} min • Servings: {meal.servings || 1}
-      </p>
+      <main className="flex flex-grow overflow-hidden">
+        {/* Sidebar */}
+        <aside className="w-64 bg-gray-800 p-6 overflow-auto">
+          <nav className="flex flex-col gap-4">
+            <a href="/food" className="block p-4 bg-gray-700 rounded shadow hover:bg-gray-600 text-center font-semibold">🍽️ Food / Diet</a>
+            <a href="/fitness" className="block p-4 bg-gray-700 rounded shadow hover:bg-gray-600 text-center font-semibold">🏋️ Fitness</a>
+            <a href="/finances" className="block p-4 bg-gray-700 rounded shadow hover:bg-gray-600 text-center font-semibold">💸 Finances</a>
+            <a href="/scratchpad" className="block p-4 bg-gray-700 rounded shadow hover:bg-gray-600 text-center font-semibold">🧠 Scratchpad</a>
+          </nav>
+        </aside>
 
-      <h2 className="text-xl font-semibold mb-2">Ingredients</h2>
-      <ul className="list-disc list-inside mb-6">
-        {ingredients.map((item, i) => (
-          <li key={i}>
-            {item.quantity} {item.unit} {item.name}
-          </li>
-        ))}
-      </ul>
+        {/* Content */}
+        <section className="flex-grow p-8 overflow-auto">
+          <BackButton />
+          <h1 className="text-3xl font-bold mb-2">{meal.name}</h1>
+          {meal.description && <p className="text-gray-300 mb-4">{meal.description}</p>}
 
-      <h2 className="text-xl font-semibold mb-2">Instructions</h2>
-      <ol className="list-decimal list-inside space-y-2">
-        {meal.instructions?.map((step, index) => (
-          <li key={index}>{step}</li>
-        ))}
-      </ol>
+          <p className="text-sm text-gray-400 mb-6">
+            Prep: {meal.prep_time || 0} min • Cook: {meal.cook_time || 0} min • Servings: {meal.servings || 1}
+          </p>
 
-      <div className="mt-8">
-        <button
-            onClick={handleCookMeal}
-            className="bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700"
-        >
-            🍽️ Cook This Meal
-        </button>
-        </div>
+          <h2 className="text-xl font-semibold mb-2">🧺 Ingredients</h2>
+          <ul className="list-disc list-inside mb-6 text-gray-200">
+            {ingredients.map((item, i) => (
+              <li key={i}>
+                {item.quantity} {item.unit} {item.name}
+              </li>
+            ))}
+          </ul>
+
+          <h2 className="text-xl font-semibold mb-2">📝 Instructions</h2>
+          <ol className="list-decimal list-inside space-y-2 text-gray-200">
+            {meal.instructions?.map((step, index) => (
+              <li key={index}>{step}</li>
+            ))}
+          </ol>
+
+          <div className="mt-8">
+            <button
+              onClick={handleCookMeal}
+              className="bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700"
+            >
+              🍽️ Cook This Meal
+            </button>
+          </div>
+        </section>
+      </main>
     </div>
   );
 }

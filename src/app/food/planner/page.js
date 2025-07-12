@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
 import { addCalendarEvent } from '@/lib/calendarUtils'
+import AppBar from '@/components/AppBar'
+import BackButton from '@/components/BackButton'
 
 export default function MealPlannerPage() {
   const [meals, setMeals] = useState([])
@@ -12,7 +14,6 @@ export default function MealPlannerPage() {
   const [message, setMessage] = useState('')
   const [plannedMeals, setPlannedMeals] = useState([])
 
-  // Fetch all available meals
   useEffect(() => {
     const fetchMeals = async () => {
       const { data, error } = await supabase
@@ -30,7 +31,6 @@ export default function MealPlannerPage() {
     fetchMeals()
   }, [])
 
-  // Fetch all planned meals
   const fetchPlannedMeals = async () => {
     const { data, error } = await supabase
       .from('planned_meals')
@@ -82,20 +82,20 @@ export default function MealPlannerPage() {
       setMessage(`Error: ${error.message}`)
     } else {
       const meal = meals.find((m) => m.id === selectedMealId)
-      const [year, month, day] = plannedDate.split('-').map(Number);
+      const [year, month, day] = plannedDate.split('-').map(Number)
       const startTime = new Date(year, month - 1, day,
         mealTime === 'breakfast' ? 8 :
         mealTime === 'lunch' ? 12 :
         mealTime === 'dinner' ? 18 : 15
-      );
+      )
 
       await addCalendarEvent({
         userId: user.id,
         title: `${mealTime[0].toUpperCase() + mealTime.slice(1)}: ${meal.name}`,
         startTime: startTime.toISOString(),
         source: 'meal',
-        sourceId: insertData.id, // ✅ correct: planned_meals.id
-      });         
+        sourceId: insertData.id,
+      })
 
       setMessage('Meal planned successfully!')
       setSelectedMealId('')
@@ -128,103 +128,115 @@ export default function MealPlannerPage() {
   plannedMeals.forEach((meal) => {
     const date = meal.planned_date
     const time = meal.meal_time || 'dinner'
-
-    if (!groupedMeals[date]) {
-      groupedMeals[date] = {}
-    }
-    if (!groupedMeals[date][time]) {
-      groupedMeals[date][time] = []
-    }
+    if (!groupedMeals[date]) groupedMeals[date] = {}
+    if (!groupedMeals[date][time]) groupedMeals[date][time] = []
     groupedMeals[date][time].push(meal)
   })
 
   return (
-    <main className="p-4">
-      <h1 className="text-2xl font-bold mb-4">📅 Plan a Meal</h1>
+    <div className="flex flex-col h-screen bg-gray-900 text-white">
+      <AppBar />
 
-      <label className="block mb-2">Select Meal:</label>
-      <select
-        value={selectedMealId}
-        onChange={(e) => setSelectedMealId(e.target.value)}
-        className="border rounded p-2 mb-4 w-full"
-      >
-        <option value="">-- Choose a meal --</option>
-        {meals.map((meal) => (
-          <option key={meal.id} value={meal.id}>
-            {meal.name}
-          </option>
-        ))}
-      </select>
+      <main className="flex flex-grow overflow-hidden">
+        {/* Sidebar */}
+        <aside className="w-64 bg-gray-800 p-6 overflow-auto">
+          <nav className="flex flex-col gap-4">
+            <a href="/food" className="block p-4 bg-gray-700 rounded shadow hover:bg-gray-600 text-center font-semibold">🍽️ Food / Diet</a>
+            <a href="/fitness" className="block p-4 bg-gray-700 rounded shadow hover:bg-gray-600 text-center font-semibold">🏋️ Fitness</a>
+            <a href="/finances" className="block p-4 bg-gray-700 rounded shadow hover:bg-gray-600 text-center font-semibold">💸 Finances</a>
+            <a href="/scratchpad" className="block p-4 bg-gray-700 rounded shadow hover:bg-gray-600 text-center font-semibold">🧠 Scratchpad</a>
+          </nav>
+        </aside>
 
-      <label className="block mb-2">Select Date:</label>
-      <input
-        type="date"
-        value={plannedDate}
-        onChange={(e) => setPlannedDate(e.target.value)}
-        className="border rounded p-2 mb-4 w-full"
-      />
+        {/* Content */}
+        <section className="flex-grow p-8 overflow-auto">
+          <BackButton />
+          <h1 className="text-2xl font-bold mb-6">📅 Plan a Meal</h1>
 
-      <label className="block mb-2">Meal Time:</label>
-      <select
-        value={mealTime}
-        onChange={(e) => setMealTime(e.target.value)}
-        className="border rounded p-2 mb-4 w-full"
-      >
-        <option value="breakfast">Breakfast</option>
-        <option value="lunch">Lunch</option>
-        <option value="dinner">Dinner</option>
-        <option value="snack">Snack</option>
-      </select>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <select
+              value={selectedMealId}
+              onChange={(e) => setSelectedMealId(e.target.value)}
+              className="bg-gray-800 text-white border border-gray-600 rounded px-3 py-2"
+            >
+              <option value="">-- Choose a meal --</option>
+              {meals.map((meal) => (
+                <option key={meal.id} value={meal.id}>
+                  {meal.name}
+                </option>
+              ))}
+            </select>
 
-      <button
-        onClick={handlePlanMeal}
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-      >
-        Plan Meal
-      </button>
+            <input
+              type="date"
+              value={plannedDate}
+              onChange={(e) => setPlannedDate(e.target.value)}
+              className="bg-gray-800 text-white border border-gray-600 rounded px-3 py-2"
+            />
 
-      {message && <p className="mt-4 text-sm text-gray-700">{message}</p>}
+            <select
+              value={mealTime}
+              onChange={(e) => setMealTime(e.target.value)}
+              className="bg-gray-800 text-white border border-gray-600 rounded px-3 py-2"
+            >
+              <option value="breakfast">Breakfast</option>
+              <option value="lunch">Lunch</option>
+              <option value="dinner">Dinner</option>
+              <option value="snack">Snack</option>
+            </select>
+          </div>
 
-      {Object.keys(groupedMeals).length > 0 && (
-        <div className="mt-8">
-          <h2 className="text-xl font-semibold mb-4">🗓️ Upcoming Planned Meals</h2>
+          <button
+            onClick={handlePlanMeal}
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          >
+            Plan Meal
+          </button>
 
-          {Object.entries(groupedMeals).map(([date, times]) => (
-            <div key={date} className="mb-6">
-              <h3 className="text-lg font-bold mb-2">
-                {new Intl.DateTimeFormat('en-US', {
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                  timeZone: 'UTC',
-                }).format(new Date(date))}
-              </h3>
+          {message && <p className="mt-4 text-sm text-green-400">{message}</p>}
 
-              {['breakfast', 'lunch', 'dinner', 'snack'].map((slot) =>
-                times[slot]?.map((item) => (
-                  <div
-                    key={item.id}
-                    className="border p-3 rounded mb-2 flex justify-between items-center"
-                  >
-                    <div>
-                      <div className="font-medium">{item.meals?.name}</div>
-                      <div className="text-sm text-gray-600 capitalize">
-                        {slot}
+          {Object.keys(groupedMeals).length > 0 && (
+            <div className="mt-10">
+              <h2 className="text-xl font-semibold mb-4">🗓️ Upcoming Planned Meals</h2>
+
+              {Object.entries(groupedMeals).map(([date, times]) => (
+                <div key={date} className="mb-6">
+                  <h3 className="text-lg font-bold mb-2 text-gray-300">
+                    {new Intl.DateTimeFormat('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                      timeZone: 'UTC',
+                    }).format(new Date(date))}
+                  </h3>
+
+                  {['breakfast', 'lunch', 'dinner', 'snack'].map((slot) =>
+                    times[slot]?.map((item) => (
+                      <div
+                        key={item.id}
+                        className="bg-gray-800 p-3 rounded mb-2 flex justify-between items-center border border-gray-700"
+                      >
+                        <div>
+                          <div className="font-medium">{item.meals?.name}</div>
+                          <div className="text-sm text-gray-400 capitalize">
+                            {slot}
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => handleDelete(item.id)}
+                          className="text-sm text-red-400 hover:underline"
+                        >
+                          Delete
+                        </button>
                       </div>
-                    </div>
-                    <button
-                      onClick={() => handleDelete(item.id)}
-                      className="text-sm text-red-500 hover:underline"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                )) ?? null
-              )}
+                    )) ?? null
+                  )}
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      )}
-    </main>
+          )}
+        </section>
+      </main>
+    </div>
   )
 }
