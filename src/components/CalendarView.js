@@ -18,23 +18,31 @@ export default function CalendarView() {
     end_time: '',
     description: '',
   });
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
     const fetchUserAndEvents = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      setUser(user);
-      if (!user) return;
+      setIsLoading(true);
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        setUser(user);
+        if (!user) return;
 
-      const { data, error } = await supabase
-        .from('calendar_events')
-        .select('*')
-        .eq('user_id', user.id);
+        const { data, error } = await supabase
+          .from('calendar_events')
+          .select('*')
+          .eq('user_id', user.id);
 
-      if (error) {
-        console.error('Error fetching calendar events:', error);
-      } else {
-        setEvents(data);
+        if (error) {
+          console.error('Error fetching calendar events:', error);
+        } else {
+          setEvents(data || []);
+        }
+      } catch (error) {
+        console.error('Error in fetchUserAndEvents:', error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -71,7 +79,7 @@ export default function CalendarView() {
         .select('*')
         .eq('user_id', user.id);
 
-      setEvents(data);
+      setEvents(data || []);
     }
   };
 
@@ -177,7 +185,9 @@ export default function CalendarView() {
           Events on {dayjs(selectedDate).format('MMMM D, YYYY')}
         </h3>
 
-        {eventsForSelectedDate.length === 0 ? (
+        {isLoading ? (
+          <p className="text-gray-400 mt-2">Loading events...</p>
+        ) : eventsForSelectedDate.length === 0 ? (
           <p className="text-gray-400 mt-2">No events.</p>
         ) : (
           <ul className="mt-2 space-y-2">
@@ -249,12 +259,14 @@ export default function CalendarView() {
             <div className="flex gap-2">
               <input
                 type="time"
+                placeholder="Start Time"
                 value={newEvent.start_time}
                 onChange={(e) => setNewEvent({ ...newEvent, start_time: e.target.value })}
                 className="flex-1 p-2 rounded bg-gray-700"
               />
               <input
                 type="time"
+                placeholder="End Time (optional)"
                 value={newEvent.end_time}
                 onChange={(e) => setNewEvent({ ...newEvent, end_time: e.target.value })}
                 className="flex-1 p-2 rounded bg-gray-700"
@@ -265,21 +277,20 @@ export default function CalendarView() {
               value={newEvent.description}
               onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })}
               className="w-full p-2 rounded bg-gray-700"
+              rows={3}
             />
-            <div className="flex justify-end gap-2">
+            <div className="flex gap-2">
               <button
-                type="button"
-                onClick={() => setShowAddModal(false)}
-                className="px-3 py-1 bg-gray-600 rounded hover:bg-gray-500"
+                onClick={handleAddEvent}
+                className="flex-1 bg-green-600 text-white p-2 rounded hover:bg-green-700"
               >
-                Cancel
+                Add Event
               </button>
               <button
-                type="button"
-                onClick={handleAddEvent}
-                className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700"
+                onClick={() => setShowAddModal(false)}
+                className="flex-1 bg-gray-600 text-white p-2 rounded hover:bg-gray-700"
               >
-                Add
+                Cancel
               </button>
             </div>
           </div>

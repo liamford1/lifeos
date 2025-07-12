@@ -73,7 +73,7 @@ export default function ScratchpadPage() {
   }
 
   return (
-    <main className="p-4">
+    <>
       <BackButton />
 
       <h1 className="text-2xl font-bold mb-4">🧠 Scratchpad</h1>
@@ -124,6 +124,6 @@ export default function ScratchpadPage() {
           ))}
         </ul>
       </div>
-    </main>
+    </>
   )
-}
+} 

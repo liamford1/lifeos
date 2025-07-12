@@ -99,11 +99,11 @@ export default function ProfilePage() {
   if (error) return <div className="p-4 text-red-600">{error}</div>;
 
   return (
-    <div className="p-4 max-w-xl mx-auto">
+    <>
       <BackButton />
       <h1 className="text-2xl font-bold mb-6">Your Profile</h1>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4 max-w-xl">
         <div>
           <label className="block font-semibold mb-1">First Name</label>
           <input
@@ -201,6 +201,6 @@ export default function ProfilePage() {
           {saving ? 'Saving...' : 'Save Profile'}
         </button>
       </form>
-    </div>
+    </>
   );
-}
+} 

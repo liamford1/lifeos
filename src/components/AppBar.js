@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { supabase } from '@/lib/supabaseClient';
 import { FaUserCircle } from 'react-icons/fa';
 
@@ -97,7 +98,7 @@ export default function AppBar() {
             </button>
           </>
         ) : (
-          <a
+          <Link
             href="/auth"
             className="px-3 py-1 rounded hover:bg-blue-700"
             style={{ backgroundColor: '#10a37f', color: 'white' }}
@@ -105,7 +106,7 @@ export default function AppBar() {
             onMouseLeave={e => e.currentTarget.style.backgroundColor = '#10a37f'}
           >
             Log In
-          </a>
+          </Link>
         )}
       </div>
     </nav>

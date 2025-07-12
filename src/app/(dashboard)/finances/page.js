@@ -1,35 +1,36 @@
 'use client';
 
 import BackButton from '@/components/BackButton';
+import Link from 'next/link';
 
 export default function FinancesHome() {
   return (
-    <main className="p-4 max-w-xl mx-auto">
+    <>
       <BackButton />
       <h1 className="text-2xl font-bold mb-4">💸 Finances Dashboard</h1>
 
       <ul className="space-y-3">
         <li>
-          <a href="/finances/expenses" className="text-blue-600 underline">
+          <Link href="/finances/expenses" className="text-blue-600 underline">
             📊 View All Expenses
-          </a>
+          </Link>
         </li>
         <li>
-          <a href="/finances/add" className="text-blue-600 underline">
+          <Link href="/finances/add" className="text-blue-600 underline">
             ➕ Add a New Expense
-          </a>
+          </Link>
         </li>
         <li>
-          <a href="/finances/receipts" className="text-blue-600 underline">
+          <Link href="/finances/receipts" className="text-blue-600 underline">
             🧾 Upload Receipt (Coming Soon)
-          </a>
+          </Link>
         </li>
         <li>
-          <a href="/finances/budget" className="text-blue-600 underline">
+          <Link href="/finances/budget" className="text-blue-600 underline">
             📈 Budget & Goals (Coming Soon)
-          </a>
+          </Link>
         </li>
       </ul>
-    </main>
+    </>
   );
 }
