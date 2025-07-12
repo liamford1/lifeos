@@ -76,33 +76,45 @@ export default function CalendarView() {
   };
 
   const handleDeleteEvent = async (event) => {
-    const confirm = window.confirm('Delete this event?');
+    const confirm = window.confirm('Delete this event? This will also remove the linked workout/cardio/sports entry if one exists.');
     if (!confirm) return;
-
+  
     let calendarError = null;
     let sourceError = null;
-
+  
+    // First, delete the calendar event
     const { error: calErr } = await supabase
       .from('calendar_events')
       .delete()
       .eq('id', event.id);
     calendarError = calErr;
-
-    if (event.source === 'meal' && event.source_id) {
-      const { error: srcErr } = await supabase
-        .from('planned_meals')
-        .delete()
-        .eq('id', event.source_id);
-      sourceError = srcErr;
+  
+    // Then, delete the linked source entry (if present)
+    if (event.source && event.source_id) {
+      let sourceTable = null;
+  
+      // Map 'source' string to actual table names
+      if (event.source === 'meal') sourceTable = 'planned_meals';
+      if (event.source === 'fitness_workouts') sourceTable = 'fitness_workouts';
+      if (event.source === 'fitness_cardio') sourceTable = 'fitness_cardio';
+      if (event.source === 'fitness_sports') sourceTable = 'fitness_sports';
+  
+      if (sourceTable) {
+        const { error: srcErr } = await supabase
+          .from(sourceTable)
+          .delete()
+          .eq('id', event.source_id);
+        sourceError = srcErr;
+      }
     }
-
+  
     if (calendarError || sourceError) {
-      console.error('Failed to delete event:', calendarError || sourceError);
-      alert('Could not delete event.');
+      console.error('❌ Failed to delete:', calendarError || sourceError);
+      alert('Could not fully delete event.');
     } else {
       setEvents((prev) => prev.filter((ev) => ev.id !== event.id));
     }
-  };
+  };  
 
   const getEventColor = (type) => {
     switch (type) {

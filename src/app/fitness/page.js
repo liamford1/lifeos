@@ -34,6 +34,11 @@ export default function FitnessHome() {
             📱 Daily Activity (Steps, Mood, etc.)
           </a>
         </li>
+        <li>
+          <a href="/fitness/planner" className="text-blue-600 underline">
+            📱 Plan Workouts
+          </a>
+        </li>
       </ul>
     </main>
   );
