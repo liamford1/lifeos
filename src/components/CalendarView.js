@@ -46,12 +46,7 @@ export default function CalendarView() {
   );
 
   const handleAddEvent = async () => {
-    console.log('🟢 Add button clicked');
-
-    if (!user || !newEvent.title || !newEvent.start_time) {
-      console.log('⛔ Missing title or start_time', newEvent);
-      return;
-    }
+    if (!user || !newEvent.title || !newEvent.start_time) return;
 
     const dateStr = dayjs(selectedDate).format('YYYY-MM-DD');
     const payload = {
@@ -62,21 +57,14 @@ export default function CalendarView() {
       end_time: newEvent.end_time ? `${dateStr}T${newEvent.end_time}` : null,
     };
 
-    console.log('📦 Attempting to insert event:', payload);
-
     const { error } = await supabase.from('calendar_events').insert([payload]);
 
     if (error) {
-      console.error('❌ Error adding event:', error);
       alert('Failed to add event.');
+      console.error('Error:', error);
     } else {
       setShowAddModal(false);
-      setNewEvent({
-        title: '',
-        start_time: '',
-        end_time: '',
-        description: '',
-      });
+      setNewEvent({ title: '', start_time: '', end_time: '', description: '' });
 
       const { data } = await supabase
         .from('calendar_events')
@@ -87,11 +75,29 @@ export default function CalendarView() {
     }
   };
 
+  const getEventColor = (type) => {
+    switch (type) {
+      case 'meal': return 'bg-orange-500';
+      case 'workout': return 'bg-blue-500';
+      case 'finance': return 'bg-green-500';
+      default: return 'bg-gray-500';
+    }
+  };
+
+  const getEventIcon = (type) => {
+    switch (type) {
+      case 'meal': return '🍽️ ';
+      case 'workout': return '💪 ';
+      case 'finance': return '💰 ';
+      default: return '';
+    }
+  };
+
   return (
     <div className="relative w-full p-6 bg-gray-800 text-white rounded shadow">
       <h2 className="text-xl font-semibold mb-4">📅 Calendar</h2>
       <div className="w-full flex justify-center my-6">
-        <div className="w-[80rem]"> {/* adjust width here */}
+        <div className="w-[80rem]">
           <Calendar
             onChange={setSelectedDate}
             value={selectedDate}
@@ -108,7 +114,7 @@ export default function CalendarView() {
                   {eventsOnThisDay.slice(0, 2).map((event) => (
                     <div
                       key={event.id}
-                      className="text-xs truncate bg-blue-600 text-white rounded px-1"
+                      className={`text-xs truncate text-white rounded px-1 ${getEventColor(event.source)}`}
                     >
                       {event.title}
                     </div>
@@ -137,32 +143,45 @@ export default function CalendarView() {
             {eventsForSelectedDate.map((event) => (
               <li
                 key={event.id}
-                className="p-3 bg-gray-700 rounded hover:bg-gray-600"
+                className="p-3 bg-gray-700 rounded hover:bg-gray-600 cursor-pointer"
+                onClick={() => {
+                  if (!event.source || !event.source_id) return;
+                  if (event.source === 'meal') {
+                    router.push('/food/planner');
+                  } else if (event.source === 'workout') {
+                    router.push(`/fitness/workouts/${event.source_id}`);
+                  }
+                  // Add more cases as needed
+                }}
               >
                 <div className="flex justify-between items-center">
-                  <div className="font-semibold">{event.title}</div>
-                  <button
-                    onClick={async (e) => {
-                      e.stopPropagation();
-                      const confirm = window.confirm('Delete this event?');
-                      if (!confirm) return;
-                      
-                      const { error } = await supabase
-                        .from('calendar_events')
-                        .delete()
-                        .eq('id', event.id);
+                  <div className="font-semibold">
+                    {getEventIcon(event.source)}{event.title}
+                  </div>
+                  {!event.source && (
+                    <button
+                      onClick={async (e) => {
+                        e.stopPropagation();
+                        const confirm = window.confirm('Delete this event?');
+                        if (!confirm) return;
 
-                      if (error) {
-                        console.error('❌ Failed to delete event:', error);
-                        alert('Could not delete event.');
-                      } else {
-                        setEvents((prev) => prev.filter((ev) => ev.id !== event.id));
-                      }
-                    }}
-                    className="text-sm text-red-400 hover:text-red-300 ml-4"
-                  >
-                    ✖
-                  </button>
+                        const { error } = await supabase
+                          .from('calendar_events')
+                          .delete()
+                          .eq('id', event.id);
+
+                        if (error) {
+                          console.error('Failed to delete event:', error);
+                          alert('Could not delete event.');
+                        } else {
+                          setEvents((prev) => prev.filter((ev) => ev.id !== event.id));
+                        }
+                      }}
+                      className="text-sm text-red-400 hover:text-red-300 ml-4"
+                    >
+                      ✖
+                    </button>
+                  )}
                 </div>
 
                 {event.start_time && (
@@ -183,10 +202,7 @@ export default function CalendarView() {
       {/* ➕ Floating Add Button */}
       <button
         type="button"
-        onClick={() => {
-          console.log('🟢 Modal opened');
-          setShowAddModal(true);
-        }}
+        onClick={() => setShowAddModal(true)}
         className="fixed bottom-6 right-6 bg-green-600 text-white rounded-full w-12 h-12 text-2xl shadow-lg hover:bg-green-700"
       >
         +

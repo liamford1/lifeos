@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
+import { addCalendarEvent } from '@/lib/calendarUtils'
 
 export default function MealPlannerPage() {
   const [meals, setMeals] = useState([])
@@ -64,18 +65,38 @@ export default function MealPlannerPage() {
       return
     }
 
-    const { error } = await supabase.from('planned_meals').insert([
-      {
-        user_id: user.id,
-        meal_id: selectedMealId,
-        planned_date: plannedDate,
-        meal_time: mealTime,
-      },
-    ])
+    const { data: insertData, error } = await supabase
+      .from('planned_meals')
+      .insert([
+        {
+          user_id: user.id,
+          meal_id: selectedMealId,
+          planned_date: plannedDate,
+          meal_time: mealTime,
+        },
+      ])
+      .select()
+      .single()
 
     if (error) {
       setMessage(`Error: ${error.message}`)
     } else {
+      const meal = meals.find((m) => m.id === selectedMealId)
+      const [year, month, day] = plannedDate.split('-').map(Number);
+      const startTime = new Date(year, month - 1, day,
+        mealTime === 'breakfast' ? 8 :
+        mealTime === 'lunch' ? 12 :
+        mealTime === 'dinner' ? 18 : 15
+      );
+
+      await addCalendarEvent({
+        userId: user.id,
+        title: `${mealTime[0].toUpperCase() + mealTime.slice(1)}: ${meal.name}`,
+        startTime: startTime.toISOString(),
+        source: 'meal',
+        sourceId: insertData.id,
+      })
+
       setMessage('Meal planned successfully!')
       setSelectedMealId('')
       setPlannedDate('')
@@ -85,32 +106,37 @@ export default function MealPlannerPage() {
   }
 
   const handleDelete = async (id) => {
-    const { error } = await supabase
+    const { error: mealError } = await supabase
       .from('planned_meals')
       .delete()
       .eq('id', id)
 
-    if (error) {
-      console.error('Error deleting planned meal:', error.message)
+    const { error: eventError } = await supabase
+      .from('calendar_events')
+      .delete()
+      .eq('source', 'meal')
+      .eq('source_id', id)
+
+    if (mealError || eventError) {
+      console.error('Error deleting planned meal or calendar event:', mealError?.message || eventError?.message)
     } else {
       fetchPlannedMeals()
     }
   }
 
   const groupedMeals = {}
-
-    plannedMeals.forEach((meal) => {
+  plannedMeals.forEach((meal) => {
     const date = meal.planned_date
     const time = meal.meal_time || 'dinner'
 
     if (!groupedMeals[date]) {
-        groupedMeals[date] = {}
+      groupedMeals[date] = {}
     }
     if (!groupedMeals[date][time]) {
-        groupedMeals[date][time] = []
+      groupedMeals[date][time] = []
     }
     groupedMeals[date][time].push(meal)
-    })
+  })
 
   return (
     <main className="p-4">
@@ -161,44 +187,44 @@ export default function MealPlannerPage() {
 
       {Object.keys(groupedMeals).length > 0 && (
         <div className="mt-8">
-            <h2 className="text-xl font-semibold mb-4">🗓️ Upcoming Planned Meals</h2>
+          <h2 className="text-xl font-semibold mb-4">🗓️ Upcoming Planned Meals</h2>
 
-            {Object.entries(groupedMeals).map(([date, times]) => (
+          {Object.entries(groupedMeals).map(([date, times]) => (
             <div key={date} className="mb-6">
-                <h3 className="text-lg font-bold mb-2">
+              <h3 className="text-lg font-bold mb-2">
                 {new Intl.DateTimeFormat('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                    timeZone: 'UTC',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                  timeZone: 'UTC',
                 }).format(new Date(date))}
-                </h3>
+              </h3>
 
-                {['breakfast', 'lunch', 'dinner', 'snack'].map((slot) =>
+              {['breakfast', 'lunch', 'dinner', 'snack'].map((slot) =>
                 times[slot]?.map((item) => (
-                    <div
+                  <div
                     key={item.id}
                     className="border p-3 rounded mb-2 flex justify-between items-center"
-                    >
+                  >
                     <div>
-                        <div className="font-medium">{item.meals?.name}</div>
-                        <div className="text-sm text-gray-600 capitalize">
+                      <div className="font-medium">{item.meals?.name}</div>
+                      <div className="text-sm text-gray-600 capitalize">
                         {slot}
-                        </div>
+                      </div>
                     </div>
                     <button
-                        onClick={() => handleDelete(item.id)}
-                        className="text-sm text-red-500 hover:underline"
+                      onClick={() => handleDelete(item.id)}
+                      className="text-sm text-red-500 hover:underline"
                     >
-                        Delete
+                      Delete
                     </button>
-                    </div>
+                  </div>
                 )) ?? null
-                )}
+              )}
             </div>
-            ))}
+          ))}
         </div>
-        )}
+      )}
     </main>
   )
 }
