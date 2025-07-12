@@ -75,6 +75,35 @@ export default function CalendarView() {
     }
   };
 
+  const handleDeleteEvent = async (event) => {
+    const confirm = window.confirm('Delete this event?');
+    if (!confirm) return;
+
+    let calendarError = null;
+    let sourceError = null;
+
+    const { error: calErr } = await supabase
+      .from('calendar_events')
+      .delete()
+      .eq('id', event.id);
+    calendarError = calErr;
+
+    if (event.source === 'meal' && event.source_id) {
+      const { error: srcErr } = await supabase
+        .from('planned_meals')
+        .delete()
+        .eq('id', event.source_id);
+      sourceError = srcErr;
+    }
+
+    if (calendarError || sourceError) {
+      console.error('Failed to delete event:', calendarError || sourceError);
+      alert('Could not delete event.');
+    } else {
+      setEvents((prev) => prev.filter((ev) => ev.id !== event.id));
+    }
+  };
+
   const getEventColor = (type) => {
     switch (type) {
       case 'meal': return 'bg-orange-500';
@@ -145,43 +174,30 @@ export default function CalendarView() {
                 key={event.id}
                 className="p-3 bg-gray-700 rounded hover:bg-gray-600 cursor-pointer"
                 onClick={() => {
+                  console.log('📦 Clicked event:', event);
+
                   if (!event.source || !event.source_id) return;
+
                   if (event.source === 'meal') {
-                    router.push('/food/planner');
+                    router.push(`/food/meals/${event.source_id}`);
                   } else if (event.source === 'workout') {
                     router.push(`/fitness/workouts/${event.source_id}`);
                   }
-                  // Add more cases as needed
                 }}
               >
                 <div className="flex justify-between items-center">
                   <div className="font-semibold">
                     {getEventIcon(event.source)}{event.title}
                   </div>
-                  {!event.source && (
-                    <button
-                      onClick={async (e) => {
-                        e.stopPropagation();
-                        const confirm = window.confirm('Delete this event?');
-                        if (!confirm) return;
-
-                        const { error } = await supabase
-                          .from('calendar_events')
-                          .delete()
-                          .eq('id', event.id);
-
-                        if (error) {
-                          console.error('Failed to delete event:', error);
-                          alert('Could not delete event.');
-                        } else {
-                          setEvents((prev) => prev.filter((ev) => ev.id !== event.id));
-                        }
-                      }}
-                      className="text-sm text-red-400 hover:text-red-300 ml-4"
-                    >
-                      ✖
-                    </button>
-                  )}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteEvent(event);
+                    }}
+                    className="text-sm text-red-400 hover:text-red-300 ml-4"
+                  >
+                    ✖
+                  </button>
                 </div>
 
                 {event.start_time && (
@@ -199,7 +215,6 @@ export default function CalendarView() {
         )}
       </div>
 
-      {/* ➕ Floating Add Button */}
       <button
         type="button"
         onClick={() => setShowAddModal(true)}
@@ -208,7 +223,6 @@ export default function CalendarView() {
         +
       </button>
 
-      {/* ➕ Add Event Modal */}
       {showAddModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-gray-800 text-white p-6 rounded shadow-md w-full max-w-md space-y-4">

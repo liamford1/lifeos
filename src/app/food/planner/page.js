@@ -94,8 +94,8 @@ export default function MealPlannerPage() {
         title: `${mealTime[0].toUpperCase() + mealTime.slice(1)}: ${meal.name}`,
         startTime: startTime.toISOString(),
         source: 'meal',
-        sourceId: insertData.id,
-      })
+        sourceId: insertData.id, // ✅ correct: planned_meals.id
+      });         
 
       setMessage('Meal planned successfully!')
       setSelectedMealId('')
