@@ -1,6 +1,7 @@
 'use client';
 
 import AppBar from '@/components/AppBar';
+import CalendarView from '@/components/CalendarView';
 
 export default function HomePage() {
   return (
@@ -44,7 +45,7 @@ export default function HomePage() {
 
         {/* Right Content Area */}
         <section className="flex-grow bg-gray-900 p-8 overflow-auto">
-          {/* Blank for now */}
+            <CalendarView />
         </section>
       </main>
     </div>
