@@ -75,17 +75,17 @@ export default function MealDetailPage() {
         .from('food_items')
         .select('*')
         .eq('user_id', userId)
-        .ilike('name', ing.name);
+        .ilike('name', ing.food_item_name);
   
       if (pantryError || !pantryItems || pantryItems.length === 0) {
-        console.warn(`No pantry match for: ${ing.name}`);
+        console.warn(`No pantry match for: ${ing.food_item_name}`);
         continue;
       }
   
       const pantryItem = pantryItems[0];
   
       if (parseFloat(pantryItem.quantity) < parseFloat(ing.quantity)) {
-        console.warn(`Not enough of ${ing.name} to cook`);
+        console.warn(`Not enough of ${ing.food_item_name} to cook`);
         continue;
       }
   
@@ -147,16 +147,24 @@ export default function MealDetailPage() {
     }
 
     let mealError = null;
+    let ingredientsError = null;
     let calendarError = null;
 
-    // First, delete the meal
+    // First, delete the meal ingredients
+    const { error: ingredientsDeleteError } = await supabase
+      .from('meal_ingredients')
+      .delete()
+      .eq('meal_id', meal.id);
+    ingredientsError = ingredientsDeleteError;
+
+    // Then, delete the meal
     const { error: mealDeleteError } = await supabase
       .from('meals')
       .delete()
       .eq('id', meal.id);
     mealError = mealDeleteError;
 
-    // Then, delete any linked calendar events
+    // Finally, delete any linked calendar events
     const { error: calendarDeleteError } = await supabase
       .from('calendar_events')
       .delete()
@@ -164,8 +172,8 @@ export default function MealDetailPage() {
       .eq('source_id', meal.id);
     calendarError = calendarDeleteError;
 
-    if (mealError || calendarError) {
-      console.error('❌ Failed to delete:', mealError || calendarError);
+    if (mealError || ingredientsError || calendarError) {
+      console.error('❌ Failed to delete:', mealError || ingredientsError || calendarError);
       alert('Could not fully delete meal.');
     } else {
       alert('Meal deleted successfully.');
@@ -183,6 +191,13 @@ export default function MealDetailPage() {
       <h1 className="text-3xl font-bold mb-2">{meal.name}</h1>
       {meal.description && <p className="text-gray-300 mb-4">{meal.description}</p>}
 
+      <button
+        onClick={() => router.push(`/food/meals/edit/${meal.id}`)}
+        className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+      >
+        Edit
+      </button>
+
       <p className="text-sm text-gray-400 mb-6">
         Prep: {meal.prep_time || 0} min • Cook: {meal.cook_time || 0} min • Servings: {meal.servings || 1}
       </p>
@@ -191,7 +206,7 @@ export default function MealDetailPage() {
       <ul className="list-disc list-inside mb-6 text-gray-200">
         {ingredients.map((item, i) => (
           <li key={i}>
-            {item.quantity} {item.unit} {item.name}
+            {item.quantity} {item.unit} {item.food_item_name}
           </li>
         ))}
       </ul>
