@@ -246,9 +246,15 @@ export default function CalendarView() {
       </button>
 
       {showAddModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-gray-800 text-white p-6 rounded shadow-md w-full max-w-md space-y-4">
-            <h2 className="text-xl font-semibold">Add Event</h2>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-gray-800 text-white p-6 rounded-lg shadow-xl w-full max-w-md space-y-4 relative">
+            <button
+              onClick={() => setShowAddModal(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-white text-xl font-bold"
+            >
+              ×
+            </button>
+            <h2 className="text-xl font-semibold pr-8">Add Event</h2>
             <input
               type="text"
               placeholder="Title"
