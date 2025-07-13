@@ -27,7 +27,15 @@ export default function MealForm({
     setServings(initialValues.servings?.toString() || '');
     setIngredients(initialValues.ingredients || []);
     setInstructions(initialValues.instructions || []);
-  }, [initialValues]);
+  }, [
+    initialValues.name,
+    initialValues.description,
+    initialValues.prep_time,
+    initialValues.cook_time,
+    initialValues.servings,
+    JSON.stringify(initialValues.ingredients),
+    JSON.stringify(initialValues.instructions)
+  ]);
 
   function addIngredient() {
     setIngredients([...ingredients, { name: '', quantity: '', unit: '' }]);
