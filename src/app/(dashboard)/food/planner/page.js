@@ -97,6 +97,9 @@ export default function MealPlannerPage() {
     if (error) {
       setMessage(`Error: ${error.message}`)
     } else {
+      // Log the planned meal ID when inserting the calendar event
+      console.log('Planned meal ID:', insertData.id)
+      
       const meal = meals.find((m) => m.id === selectedMealId)
       const [year, month, day] = plannedDate.split('-').map(Number)
       const startTime = new Date(year, month - 1, day,
@@ -109,7 +112,7 @@ export default function MealPlannerPage() {
         userId: user.id,
         title: `${mealTime[0].toUpperCase() + mealTime.slice(1)}: ${meal.name}`,
         startTime: startTime.toISOString(),
-        source: 'meal',
+        source: 'planned_meal',
         sourceId: insertData.id,
       })
 

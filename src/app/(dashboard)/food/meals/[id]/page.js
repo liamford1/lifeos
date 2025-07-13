@@ -1,12 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import BackButton from '@/components/BackButton';
 
 export default function MealDetailPage() {
   const { id } = useParams();
+  const router = useRouter();
   const [meal, setMeal] = useState(null);
   const [ingredients, setIngredients] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -18,12 +19,20 @@ export default function MealDetailPage() {
 
       if (!userId || !id) return;
 
+      // Log mealId and userId before querying Supabase
+      console.log('mealId (from URL param):', id);
+      console.log('userId (from Supabase session):', userId);
+
       const { data: mealData, error: mealError } = await supabase
         .from('meals')
         .select('*')
         .eq('id', id)
         .eq('user_id', userId)
         .single();
+
+      // Log the Supabase query result
+      console.log('mealData:', mealData);
+      console.log('mealError:', mealError);
 
       if (mealError) {
         console.error(mealError);
@@ -125,6 +134,46 @@ export default function MealDetailPage() {
     }
   }
 
+  async function handleDeleteMeal() {
+    const confirm = window.confirm('Delete this meal? This will also remove any linked calendar events.');
+    if (!confirm) return;
+
+    const user = await supabase.auth.getUser();
+    const userId = user?.data?.user?.id;
+
+    if (!userId || !meal) {
+      alert('Missing user or meal.');
+      return;
+    }
+
+    let mealError = null;
+    let calendarError = null;
+
+    // First, delete the meal
+    const { error: mealDeleteError } = await supabase
+      .from('meals')
+      .delete()
+      .eq('id', meal.id);
+    mealError = mealDeleteError;
+
+    // Then, delete any linked calendar events
+    const { error: calendarDeleteError } = await supabase
+      .from('calendar_events')
+      .delete()
+      .eq('source', 'meal')
+      .eq('source_id', meal.id);
+    calendarError = calendarDeleteError;
+
+    if (mealError || calendarError) {
+      console.error('❌ Failed to delete:', mealError || calendarError);
+      alert('Could not fully delete meal.');
+    } else {
+      alert('Meal deleted successfully.');
+      // Redirect back to meals list
+      window.location.href = '/food/meals';
+    }
+  }
+
   if (loading) return <div className="p-6 text-white">Loading...</div>;
   if (!meal) return <div className="p-6 text-white">Meal not found.</div>;
 
@@ -154,12 +203,27 @@ export default function MealDetailPage() {
         ))}
       </ol>
 
-      <div className="mt-8">
+      <div className="mt-8 flex gap-4 mb-4">
+        <button
+          onClick={() => router.push('/')}
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        >
+          📅 Back to Calendar
+        </button>
+      </div>
+
+      <div className="flex gap-4">
         <button
           onClick={handleCookMeal}
           className="bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700"
         >
           🍽️ Cook This Meal
+        </button>
+        <button
+          onClick={handleDeleteMeal}
+          className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+        >
+          🗑️ Delete Meal
         </button>
       </div>
     </>

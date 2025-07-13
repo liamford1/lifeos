@@ -1,12 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import BackButton from '@/components/BackButton';
 
 export default function WorkoutDetailPage() {
   const { id } = useParams();
+  const router = useRouter();
   const [workout, setWorkout] = useState(null);
   const [exercises, setExercises] = useState([]);
 
@@ -45,6 +46,15 @@ export default function WorkoutDetailPage() {
               ))}
             </ul>
           )}
+
+          <div className="mt-6">
+            <button
+              onClick={() => router.push('/')}
+              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+            >
+              📅 Back to Calendar
+            </button>
+          </div>
         </>
       )}
     </div>

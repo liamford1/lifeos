@@ -126,18 +126,27 @@ export default function CalendarView() {
 
   const getEventColor = (type) => {
     switch (type) {
-      case 'meal': return 'bg-orange-500';
-      case 'workout': return 'bg-blue-500';
-      case 'finance': return 'bg-green-500';
-      default: return 'bg-gray-500';
+      case 'planned_meal':
+        return 'bg-blue-500 text-white';
+      case 'meal':
+        return 'bg-orange-500 text-white';
+      case 'workout':
+        return 'bg-red-500 text-white';
+      case 'cardio':
+        return 'bg-green-500 text-white';
+      case 'expense':
+        return 'bg-purple-500 text-white';
+      default:
+        return 'bg-gray-500 text-white';
     }
   };
 
   const getEventIcon = (type) => {
     switch (type) {
       case 'meal': return '🍽️ ';
-      case 'workout': return '💪 ';
-      case 'finance': return '💰 ';
+      case 'workout': return '🏋️ ';
+      case 'cardio': return '🏃 ';
+      case 'expense': return '💸 ';
       default: return '';
     }
   };
@@ -163,9 +172,27 @@ export default function CalendarView() {
                   {eventsOnThisDay.slice(0, 2).map((event) => (
                     <div
                       key={event.id}
-                      className={`text-xs truncate text-white rounded px-1 ${getEventColor(event.source)}`}
+                      className={`text-xs truncate rounded px-1 cursor-pointer hover:opacity-80 ${getEventColor(event.source)}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        console.log('📦 Clicked calendar tile event:', event);
+
+                        if (!event.source || !event.source_id) return;
+
+                        if (event.source === 'meal') {
+                          router.push(`/food/meals/${event.source_id}`);
+                        } else if (event.source === 'planned_meal') {
+                          router.push(`/food/planner/${event.source_id}`);
+                        } else if (event.source === 'workout') {
+                          router.push(`/fitness/workouts/${event.source_id}`);
+                        } else if (event.source === 'cardio') {
+                          router.push(`/fitness/cardio/${event.source_id}`);
+                        } else if (event.source === 'expense') {
+                          router.push(`/finances/expenses/${event.source_id}`);
+                        }
+                      }}
                     >
-                      {event.title}
+                      {getEventIcon(event.source)}{event.title}
                     </div>
                   ))}
                   {eventsOnThisDay.length > 2 && (
@@ -194,7 +221,7 @@ export default function CalendarView() {
             {eventsForSelectedDate.map((event) => (
               <li
                 key={event.id}
-                className="p-3 bg-gray-700 rounded hover:bg-gray-600 cursor-pointer"
+                className={`p-3 rounded cursor-pointer hover:opacity-80 ${getEventColor(event.source)}`}
                 onClick={() => {
                   console.log('📦 Clicked event:', event);
 
@@ -202,8 +229,14 @@ export default function CalendarView() {
 
                   if (event.source === 'meal') {
                     router.push(`/food/meals/${event.source_id}`);
+                  } else if (event.source === 'planned_meal') {
+                    router.push(`/food/planner/${event.source_id}`);
                   } else if (event.source === 'workout') {
                     router.push(`/fitness/workouts/${event.source_id}`);
+                  } else if (event.source === 'cardio') {
+                    router.push(`/fitness/cardio/${event.source_id}`);
+                  } else if (event.source === 'expense') {
+                    router.push(`/finances/expenses/${event.source_id}`);
                   }
                 }}
               >
