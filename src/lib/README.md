@@ -74,3 +74,19 @@ const handleDelete = async (id) => {
   }
 };
 ``` 
+
+# Meal Creation Utility
+
+## createMeal.js
+
+A utility function for handling meal creation API logic, including Supabase user authentication and meal insertion. Used by the API route handler for POST requests.
+
+### Usage
+
+```javascript
+import handleCreateMeal from '@/lib/api/meal/createMeal';
+
+export async function POST(req) {
+  return handleCreateMeal(req);
+}
+``` 
