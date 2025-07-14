@@ -13,8 +13,6 @@ export default function PlannedMealDetailPage() {
 
   useEffect(() => {
     async function fetchPlannedMeal() {
-      // Log the planned meal ID
-      console.log('Planned meal ID:', id);
 
       const { data, error } = await supabase
         .from('planned_meals')

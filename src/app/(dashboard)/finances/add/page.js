@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import BackButton from '@/components/BackButton';
+import { CALENDAR_SOURCES } from '@/lib/calendarUtils';
 
 export default function AddExpensePage() {
   const [formData, setFormData] = useState({
@@ -30,28 +31,44 @@ export default function AddExpensePage() {
       return;
     }
 
-    const { error } = await supabase.from('expenses').insert([
+    const { data, error } = await supabase.from('expenses').insert([
       {
         ...formData,
         amount: parseFloat(formData.amount),
         user_id,
       },
-    ]);
+    ]).select().single();
 
     if (error) {
       console.error(error);
       alert('Error adding expense.');
-    } else {
-      alert('Expense added!');
-      setFormData({
-        name: '',
-        amount: '',
-        category: '',
-        store: '',
-        payment_method: '',
-        date: '',
-      });
+      return;
     }
+
+    // Create calendar event for the expense
+    const startTime = new Date(formData.date);
+    const { error: calendarError } = await supabase.from('calendar_events').insert({
+      user_id: user_id,
+      title: `Expense: ${formData.name} - $${formData.amount}`,
+      source: CALENDAR_SOURCES.EXPENSE,
+      source_id: data.id,
+      start_time: startTime.toISOString(),
+      end_time: null,
+    });
+
+    if (calendarError) {
+      console.error('Calendar event creation failed:', calendarError);
+    }
+
+    alert('Expense added!');
+    setFormData({
+      name: '',
+      amount: '',
+      category: '',
+      store: '',
+      payment_method: '',
+      date: '',
+    });
   };
 
   return (

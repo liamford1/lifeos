@@ -7,6 +7,7 @@ import { supabase } from '@/lib/supabaseClient';
 import { deleteEntityWithCalendarEvent } from '@/lib/deleteUtils';
 import { useRouter } from 'next/navigation';
 import dayjs from 'dayjs';
+import { CALENDAR_SOURCES, getCalendarEventRoute } from '@/lib/calendarUtils';
 
 export default function CalendarView() {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -104,14 +105,14 @@ export default function CalendarView() {
       return;
     }
   
-    // Map source to table names (handle both old table names and new activity types)
+    // Map source to table names
     let sourceTable = null;
-    if (event.source === 'meal') sourceTable = 'meals';
-    if (event.source === 'planned_meal') sourceTable = 'planned_meals';
-    if (event.source === 'workout' || event.source === 'fitness_workouts') sourceTable = 'fitness_workouts';
-    if (event.source === 'cardio' || event.source === 'fitness_cardio') sourceTable = 'fitness_cardio';
-    if (event.source === 'sports' || event.source === 'fitness_sports') sourceTable = 'fitness_sports';
-    if (event.source === 'expense') sourceTable = 'expenses';
+    if (event.source === CALENDAR_SOURCES.MEAL) sourceTable = 'meals';
+    if (event.source === CALENDAR_SOURCES.PLANNED_MEAL) sourceTable = 'planned_meals';
+    if (event.source === CALENDAR_SOURCES.WORKOUT) sourceTable = 'fitness_workouts';
+    if (event.source === CALENDAR_SOURCES.CARDIO) sourceTable = 'fitness_cardio';
+    if (event.source === CALENDAR_SOURCES.SPORT) sourceTable = 'fitness_sports';
+    if (event.source === CALENDAR_SOURCES.EXPENSE) sourceTable = 'expenses';
   
     if (!sourceTable) {
       console.error('Unknown source type:', event.source);
@@ -144,20 +145,17 @@ export default function CalendarView() {
 
   const getEventColor = (type) => {
     switch (type) {
-      case 'planned_meal':
-        return 'bg-blue-500 text-white';
-      case 'meal':
+      case CALENDAR_SOURCES.MEAL:
         return 'bg-orange-500 text-white';
-      case 'workout':
-      case 'fitness_workouts':
+      case CALENDAR_SOURCES.PLANNED_MEAL:
+        return 'bg-orange-400 text-white';
+      case CALENDAR_SOURCES.WORKOUT:
         return 'bg-red-500 text-white';
-      case 'cardio':
-      case 'fitness_cardio':
+      case CALENDAR_SOURCES.CARDIO:
         return 'bg-green-500 text-white';
-      case 'sports':
-      case 'fitness_sports':
+      case CALENDAR_SOURCES.SPORT:
         return 'bg-green-500 text-white';
-      case 'expense':
+      case CALENDAR_SOURCES.EXPENSE:
         return 'bg-purple-500 text-white';
       default:
         return 'bg-gray-500 text-white';
@@ -166,14 +164,12 @@ export default function CalendarView() {
 
   const getEventIcon = (type) => {
     switch (type) {
-      case 'meal': return '🍽️ ';
-      case 'workout':
-      case 'fitness_workouts': return '🏋️ ';
-      case 'cardio':
-      case 'fitness_cardio': return '🏃 ';
-      case 'sports':
-      case 'fitness_sports': return '🏀 ';
-      case 'expense': return '💸 ';
+      case CALENDAR_SOURCES.MEAL: return '🍽️ ';
+      case CALENDAR_SOURCES.PLANNED_MEAL: return '📅 ';
+      case CALENDAR_SOURCES.WORKOUT: return '🏋️ ';
+      case CALENDAR_SOURCES.CARDIO: return '🏃 ';
+      case CALENDAR_SOURCES.SPORT: return '🏀 ';
+      case CALENDAR_SOURCES.EXPENSE: return '💸 ';
       default: return '';
     }
   };
@@ -202,23 +198,11 @@ export default function CalendarView() {
                       className={`text-xs truncate rounded px-1 cursor-pointer hover:opacity-80 ${getEventColor(event.source)}`}
                       onClick={(e) => {
                         e.stopPropagation();
-                        console.log('📦 Clicked calendar tile event:', event);
 
                         if (!event.source || !event.source_id) return;
 
-                        if (event.source === 'meal') {
-                          router.push(`/food/meals/${event.source_id}`);
-                        } else if (event.source === 'planned_meal') {
-                          router.push(`/food/planner/${event.source_id}`);
-                        } else if (event.source === 'workout' || event.source === 'fitness_workouts') {
-                          router.push(`/fitness/workouts/${event.source_id}`);
-                        } else if (event.source === 'cardio' || event.source === 'fitness_cardio') {
-                          router.push(`/fitness/cardio/${event.source_id}`);
-                        } else if (event.source === 'sports' || event.source === 'fitness_sports') {
-                          router.push(`/fitness/sports/${event.source_id}`);
-                        } else if (event.source === 'expense') {
-                          router.push(`/finances/expenses/${event.source_id}`);
-                        }
+                        const route = getCalendarEventRoute(event.source, event.source_id);
+                        router.push(route);
                       }}
                     >
                       {getEventIcon(event.source)}{event.title}
@@ -252,23 +236,10 @@ export default function CalendarView() {
                 key={event.id}
                 className={`p-3 rounded cursor-pointer hover:opacity-80 ${getEventColor(event.source)}`}
                 onClick={() => {
-                  console.log('📦 Clicked event:', event);
-
                   if (!event.source || !event.source_id) return;
 
-                  if (event.source === 'meal') {
-                    router.push(`/food/meals/${event.source_id}`);
-                  } else if (event.source === 'planned_meal') {
-                    router.push(`/food/planner/${event.source_id}`);
-                  } else if (event.source === 'workout' || event.source === 'fitness_workouts') {
-                    router.push(`/fitness/workouts/${event.source_id}`);
-                  } else if (event.source === 'cardio' || event.source === 'fitness_cardio') {
-                    router.push(`/fitness/cardio/${event.source_id}`);
-                  } else if (event.source === 'sports' || event.source === 'fitness_sports') {
-                    router.push(`/fitness/sports/${event.source_id}`);
-                  } else if (event.source === 'expense') {
-                    router.push(`/finances/expenses/${event.source_id}`);
-                  }
+                  const route = getCalendarEventRoute(event.source, event.source_id);
+                  router.push(route);
                 }}
               >
                 <div className="flex justify-between items-center">

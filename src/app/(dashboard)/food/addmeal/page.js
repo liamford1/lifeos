@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import BackButton from '@/components/BackButton';
 import MealForm from '@/components/MealForm';
+import { CALENDAR_SOURCES } from '@/lib/calendarUtils';
 
 export default function AddMealPage() {
   const router = useRouter();
@@ -84,6 +85,21 @@ export default function AddMealPage() {
         }
       } else {
         console.log("🧪 No ingredients to insert (all were empty)");
+      }
+
+      // Create calendar event for the meal
+      const startTime = new Date();
+      const { error: calendarError } = await supabase.from('calendar_events').insert({
+        user_id: userId,
+        title: `Meal: ${mealData.name}`,
+        source: CALENDAR_SOURCES.MEAL,
+        source_id: mealId,
+        start_time: startTime.toISOString(),
+        end_time: null,
+      });
+
+      if (calendarError) {
+        console.error('Calendar event creation failed:', calendarError);
       }
 
       alert('Meal and ingredients saved!');

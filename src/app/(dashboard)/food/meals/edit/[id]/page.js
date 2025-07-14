@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import BackButton from '@/components/BackButton';
 import MealForm from '@/components/MealForm';
+import { CALENDAR_SOURCES, updateCalendarEvent } from '@/lib/calendarUtils';
 
 export default function EditMealPage() {
   const { id } = useParams();
@@ -203,6 +204,20 @@ export default function EditMealPage() {
       }
 
       console.log('✅ Meal and ingredients updated successfully');
+
+      // Update calendar event for the edited meal
+      const startTime = new Date();
+      const calendarError = await updateCalendarEvent(
+        CALENDAR_SOURCES.MEAL,
+        id,
+        `Meal: ${mealData.name}`,
+        startTime.toISOString(),
+        null
+      );
+
+      if (calendarError) {
+        console.error('Calendar event update failed:', calendarError);
+      }
 
       // Redirect to the meal view page
       router.push(`/food/meals/${id}`);

@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
 import Button from '@/components/Button'
 import dayjs from 'dayjs'
+import { CALENDAR_SOURCES } from '@/lib/calendarUtils'
 
 export default function PlannedWorkoutForm({ onSuccess }) {
   const [type, setType] = useState('workout') // workout | cardio | sports
@@ -74,9 +75,9 @@ export default function PlannedWorkoutForm({ onSuccess }) {
     const calendarTitle = `Planned ${type.charAt(0).toUpperCase() + type.slice(1)}: ${title}`
 
     // Map table to source for calendar events
-    const source = type === 'workout' ? 'workout' 
-                 : type === 'cardio' ? 'cardio' 
-                 : 'sports'
+    const source = type === 'workout' ? CALENDAR_SOURCES.WORKOUT 
+                 : type === 'cardio' ? CALENDAR_SOURCES.CARDIO 
+                 : CALENDAR_SOURCES.SPORT
 
     const { error: calendarError } = await supabase.from('calendar_events').insert({
       user_id: userId,

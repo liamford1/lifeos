@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabaseClient'
 import { deleteEntityWithCalendarEvent } from '@/lib/deleteUtils'
 import BackButton from '@/components/BackButton'
+import { CALENDAR_SOURCES } from '@/lib/calendarUtils'
 
 export default function MealPlannerPage() {
   const [meals, setMeals] = useState([])
@@ -113,7 +114,7 @@ export default function MealPlannerPage() {
         userId: user.id,
         title: `${mealTime[0].toUpperCase() + mealTime.slice(1)}: ${meal.name}`,
         startTime: startTime.toISOString(),
-        source: 'planned_meal',
+        source: CALENDAR_SOURCES.PLANNED_MEAL,
         sourceId: insertData.id,
       })
 
@@ -138,7 +139,7 @@ export default function MealPlannerPage() {
       table: 'planned_meals',
       id: id,
       user_id: user_id,
-      source: 'planned_meal',
+      source: CALENDAR_SOURCES.PLANNED_MEAL,
     });
 
     if (error) {

@@ -5,6 +5,7 @@ import { useEffect, useState, use } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import BackButton from '@/components/BackButton';
 import SportForm from '@/components/SportForm';
+import { CALENDAR_SOURCES, updateCalendarEvent } from '@/lib/calendarUtils';
 
 export default function ViewOrEditSportSession({ params }) {
   const { id } = use(params); // Next.js 15 App Router param access
@@ -38,9 +39,26 @@ export default function ViewOrEditSportSession({ params }) {
     if (error) {
       console.error(error);
       alert('Failed to update session.');
-    } else {
-      alert('Session updated!');
+      return;
     }
+
+    // Update calendar event for the edited sports session
+    const startTime = new Date(formData.date);
+    const endTime = new Date(startTime.getTime() + (formData.duration_minutes * 60000));
+    
+    const calendarError = await updateCalendarEvent(
+      CALENDAR_SOURCES.SPORT,
+      id,
+      `Sport: ${formData.activity_type}`,
+      startTime.toISOString(),
+      endTime.toISOString()
+    );
+
+    if (calendarError) {
+      console.error('Calendar event update failed:', calendarError);
+    }
+
+    alert('Session updated!');
   };
 
   if (loading) return <div className="p-4">Loading...</div>;

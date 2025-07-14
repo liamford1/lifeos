@@ -5,6 +5,7 @@ import { useEffect, useState, use } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import BackButton from '@/components/BackButton';
 import CardioForm from '@/components/CardioForm';
+import { CALENDAR_SOURCES, updateCalendarEvent } from '@/lib/calendarUtils';
 
 export default function ViewOrEditCardioSession({ params }) {
   const { id } = use(params); // ✅ unwrap `params` safely for Next.js 15+
@@ -38,9 +39,26 @@ export default function ViewOrEditCardioSession({ params }) {
     if (error) {
       console.error(error);
       alert('Failed to update cardio session.');
-    } else {
-      alert('Session updated!');
+      return;
     }
+
+    // Update calendar event for the edited cardio session
+    const startTime = new Date(formData.date);
+    const endTime = new Date(startTime.getTime() + (formData.duration_minutes * 60000));
+    
+    const calendarError = await updateCalendarEvent(
+      CALENDAR_SOURCES.CARDIO,
+      id,
+      `Cardio: ${formData.activity_type}`,
+      startTime.toISOString(),
+      endTime.toISOString()
+    );
+
+    if (calendarError) {
+      console.error('Calendar event update failed:', calendarError);
+    }
+
+    alert('Session updated!');
   };
 
   if (loading) return <div className="p-4">Loading...</div>;

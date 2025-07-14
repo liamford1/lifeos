@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import CardioForm from '@/components/CardioForm';
 import BackButton from '@/components/BackButton';
+import { CALENDAR_SOURCES } from '@/lib/calendarUtils';
 
 export default function AddCardioSessionPage() {
   const router = useRouter();
@@ -17,18 +18,35 @@ export default function AddCardioSessionPage() {
       return;
     }
 
-    const { error } = await supabase.from('fitness_cardio').insert([
+    const { data, error } = await supabase.from('fitness_cardio').insert([
       {
         ...formData,
         user_id,
         calories_burned: null, // placeholder for AI estimate later
       },
-    ]);
+    ]).select().single();
 
     if (error) {
       console.error(error);
       alert('Failed to save cardio session.');
       return;
+    }
+
+    // Create calendar event for the cardio session
+    const startTime = new Date(formData.date);
+    const endTime = new Date(startTime.getTime() + (formData.duration_minutes * 60000));
+
+    const { error: calendarError } = await supabase.from('calendar_events').insert({
+      user_id: user_id,
+      title: `Cardio: ${formData.activity_type}`,
+      source: CALENDAR_SOURCES.CARDIO,
+      source_id: data.id,
+      start_time: startTime.toISOString(),
+      end_time: endTime.toISOString(),
+    });
+
+    if (calendarError) {
+      console.error('Calendar event creation failed:', calendarError);
     }
 
     router.push('/fitness/cardio');

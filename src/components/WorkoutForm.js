@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import BackButton from '@/components/BackButton';
+import { CALENDAR_SOURCES, updateCalendarEvent } from '@/lib/calendarUtils';
 
 export default function WorkoutForm({ initialWorkout = null, initialExercises = [], isEdit = false }) {
   const router = useRouter();
@@ -56,6 +57,20 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
         return;
       }
 
+      // Update calendar event for the edited workout
+      const startTime = new Date(date);
+      const calendarError = await updateCalendarEvent(
+        CALENDAR_SOURCES.WORKOUT,
+        workoutId,
+        `Workout: ${title}`,
+        startTime.toISOString(),
+        null
+      );
+
+      if (calendarError) {
+        console.error('Calendar event update failed:', calendarError);
+      }
+
       // Delete old exercises
       await supabase.from('fitness_exercises').delete().eq('workout_id', workoutId);
     } else {
@@ -71,6 +86,21 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
         return;
       }
       workoutId = workout.id;
+
+      // Create calendar event for the new workout
+      const startTime = new Date(date);
+      const { error: calendarError } = await supabase.from('calendar_events').insert({
+        user_id: user_id,
+        title: `Workout: ${title}`,
+        source: CALENDAR_SOURCES.WORKOUT,
+        source_id: workoutId,
+        start_time: startTime.toISOString(),
+        end_time: null,
+      });
+
+      if (calendarError) {
+        console.error('Calendar event creation failed:', calendarError);
+      }
     }
 
     if (exercises.length > 0) {
