@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
+import { deleteEntityWithCalendarEvent } from '@/lib/deleteUtils'
 import BackButton from '@/components/BackButton'
 
 export default function ScratchpadPage() {
@@ -60,15 +61,25 @@ export default function ScratchpadPage() {
   }
 
   const handleDelete = async (id) => {
-    const { error } = await supabase
-      .from('scratchpad_entries')
-      .delete()
-      .eq('id', id)
+    const user = await supabase.auth.getUser();
+    const user_id = user?.data?.user?.id;
+    
+    if (!user_id) {
+      alert('You must be logged in.');
+      return;
+    }
+
+    const error = await deleteEntityWithCalendarEvent({
+      table: 'scratchpad_entries',
+      id: id,
+      user_id: user_id,
+      source: 'scratchpad',
+    });
 
     if (error) {
-      console.error('Error deleting entry:', error.message)
+      console.error('Error deleting entry:', error.message);
     } else {
-      fetchEntries()
+      fetchEntries();
     }
   }
 

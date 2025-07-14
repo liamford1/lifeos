@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabaseClient';
+import { deleteEntityWithCalendarEvent } from '@/lib/deleteUtils';
 import BackButton from '@/components/BackButton';
 
 export default function CardioDashboard() {
@@ -24,7 +25,21 @@ export default function CardioDashboard() {
     const confirm = window.confirm('Delete this session?');
     if (!confirm) return;
 
-    const { error } = await supabase.from('fitness_cardio').delete().eq('id', id);
+    const user = await supabase.auth.getUser();
+    const user_id = user?.data?.user?.id;
+    
+    if (!user_id) {
+      alert('You must be logged in.');
+      return;
+    }
+
+    const error = await deleteEntityWithCalendarEvent({
+      table: 'fitness_cardio',
+      id: id,
+      user_id: user_id,
+      source: 'cardio',
+    });
+
     if (error) {
       console.error(error);
       alert('Failed to delete session.');

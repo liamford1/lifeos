@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabaseClient'
+import { deleteEntityWithCalendarEvent } from '@/lib/deleteUtils'
 import BackButton from '@/components/BackButton'
 
 export default function MealPlannerPage() {
@@ -125,21 +126,25 @@ export default function MealPlannerPage() {
   }
 
   const handleDelete = async (id) => {
-    const { error: mealError } = await supabase
-      .from('planned_meals')
-      .delete()
-      .eq('id', id)
+    const user = await supabase.auth.getUser();
+    const user_id = user?.data?.user?.id;
+    
+    if (!user_id) {
+      alert('You must be logged in.');
+      return;
+    }
 
-    const { error: eventError } = await supabase
-      .from('calendar_events')
-      .delete()
-      .eq('source', 'meal')
-      .eq('source_id', id)
+    const error = await deleteEntityWithCalendarEvent({
+      table: 'planned_meals',
+      id: id,
+      user_id: user_id,
+      source: 'planned_meal',
+    });
 
-    if (mealError || eventError) {
-      console.error('Error deleting planned meal or calendar event:', mealError?.message || eventError?.message)
+    if (error) {
+      console.error('Error deleting planned meal:', error);
     } else {
-      fetchPlannedMeals()
+      fetchPlannedMeals();
     }
   }
 

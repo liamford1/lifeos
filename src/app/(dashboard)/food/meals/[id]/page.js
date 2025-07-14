@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
+import { deleteEntityWithCalendarEvent } from '@/lib/deleteUtils';
 import BackButton from '@/components/BackButton';
 
 export default function MealDetailPage() {
@@ -146,34 +147,28 @@ export default function MealDetailPage() {
       return;
     }
 
-    let mealError = null;
-    let ingredientsError = null;
-    let calendarError = null;
-
     // First, delete the meal ingredients
-    const { error: ingredientsDeleteError } = await supabase
+    const { error: ingredientsError } = await supabase
       .from('meal_ingredients')
       .delete()
       .eq('meal_id', meal.id);
-    ingredientsError = ingredientsDeleteError;
 
-    // Then, delete the meal
-    const { error: mealDeleteError } = await supabase
-      .from('meals')
-      .delete()
-      .eq('id', meal.id);
-    mealError = mealDeleteError;
+    if (ingredientsError) {
+      console.error('Error deleting meal ingredients:', ingredientsError);
+      alert('Could not delete meal ingredients.');
+      return;
+    }
 
-    // Finally, delete any linked calendar events
-    const { error: calendarDeleteError } = await supabase
-      .from('calendar_events')
-      .delete()
-      .eq('source', 'meal')
-      .eq('source_id', meal.id);
-    calendarError = calendarDeleteError;
+    // Then, delete the meal and its calendar events
+    const error = await deleteEntityWithCalendarEvent({
+      table: 'meals',
+      id: meal.id,
+      user_id: userId,
+      source: 'meal',
+    });
 
-    if (mealError || ingredientsError || calendarError) {
-      console.error('❌ Failed to delete:', mealError || ingredientsError || calendarError);
+    if (error) {
+      console.error('❌ Failed to delete meal:', error);
       alert('Could not fully delete meal.');
     } else {
       alert('Meal deleted successfully.');

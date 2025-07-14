@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { supabase } from '@/lib/supabaseClient';
+import { deleteEntityWithCalendarEvent } from '@/lib/deleteUtils';
 import { useRouter } from 'next/navigation';
 import dayjs from 'dayjs';
 
@@ -87,37 +88,54 @@ export default function CalendarView() {
     const confirm = window.confirm('Delete this event? This will also remove the linked workout/cardio/sports entry if one exists.');
     if (!confirm) return;
   
-    let calendarError = null;
-    let sourceError = null;
-  
-    // First, delete the calendar event
-    const { error: calErr } = await supabase
-      .from('calendar_events')
-      .delete()
-      .eq('id', event.id);
-    calendarError = calErr;
-  
-    // Then, delete the linked source entry (if present)
-    if (event.source && event.source_id) {
-      let sourceTable = null;
-  
-      // Map 'source' string to actual table names
-      if (event.source === 'meal') sourceTable = 'planned_meals';
-      if (event.source === 'fitness_workouts') sourceTable = 'fitness_workouts';
-      if (event.source === 'fitness_cardio') sourceTable = 'fitness_cardio';
-      if (event.source === 'fitness_sports') sourceTable = 'fitness_sports';
-  
-      if (sourceTable) {
-        const { error: srcErr } = await supabase
-          .from(sourceTable)
-          .delete()
-          .eq('id', event.source_id);
-        sourceError = srcErr;
+    if (!event.source || !event.source_id) {
+      // If no source entity, just delete the calendar event
+      const { error } = await supabase
+        .from('calendar_events')
+        .delete()
+        .eq('id', event.id);
+      
+      if (error) {
+        console.error('❌ Failed to delete calendar event:', error);
+        alert('Could not delete event.');
+      } else {
+        setEvents((prev) => prev.filter((ev) => ev.id !== event.id));
       }
+      return;
     }
   
-    if (calendarError || sourceError) {
-      console.error('❌ Failed to delete:', calendarError || sourceError);
+    // Map source to table names (handle both old table names and new activity types)
+    let sourceTable = null;
+    if (event.source === 'meal') sourceTable = 'meals';
+    if (event.source === 'planned_meal') sourceTable = 'planned_meals';
+    if (event.source === 'workout' || event.source === 'fitness_workouts') sourceTable = 'fitness_workouts';
+    if (event.source === 'cardio' || event.source === 'fitness_cardio') sourceTable = 'fitness_cardio';
+    if (event.source === 'sports' || event.source === 'fitness_sports') sourceTable = 'fitness_sports';
+    if (event.source === 'expense') sourceTable = 'expenses';
+  
+    if (!sourceTable) {
+      console.error('Unknown source type:', event.source);
+      alert('Unknown event type.');
+      return;
+    }
+  
+    const user = await supabase.auth.getUser();
+    const user_id = user?.data?.user?.id;
+    
+    if (!user_id) {
+      alert('You must be logged in.');
+      return;
+    }
+  
+    const error = await deleteEntityWithCalendarEvent({
+      table: sourceTable,
+      id: event.source_id,
+      user_id: user_id,
+      source: event.source,
+    });
+  
+    if (error) {
+      console.error('❌ Failed to delete:', error);
       alert('Could not fully delete event.');
     } else {
       setEvents((prev) => prev.filter((ev) => ev.id !== event.id));
@@ -131,8 +149,13 @@ export default function CalendarView() {
       case 'meal':
         return 'bg-orange-500 text-white';
       case 'workout':
+      case 'fitness_workouts':
         return 'bg-red-500 text-white';
       case 'cardio':
+      case 'fitness_cardio':
+        return 'bg-green-500 text-white';
+      case 'sports':
+      case 'fitness_sports':
         return 'bg-green-500 text-white';
       case 'expense':
         return 'bg-purple-500 text-white';
@@ -144,8 +167,12 @@ export default function CalendarView() {
   const getEventIcon = (type) => {
     switch (type) {
       case 'meal': return '🍽️ ';
-      case 'workout': return '🏋️ ';
-      case 'cardio': return '🏃 ';
+      case 'workout':
+      case 'fitness_workouts': return '🏋️ ';
+      case 'cardio':
+      case 'fitness_cardio': return '🏃 ';
+      case 'sports':
+      case 'fitness_sports': return '🏀 ';
       case 'expense': return '💸 ';
       default: return '';
     }
@@ -183,10 +210,12 @@ export default function CalendarView() {
                           router.push(`/food/meals/${event.source_id}`);
                         } else if (event.source === 'planned_meal') {
                           router.push(`/food/planner/${event.source_id}`);
-                        } else if (event.source === 'workout') {
+                        } else if (event.source === 'workout' || event.source === 'fitness_workouts') {
                           router.push(`/fitness/workouts/${event.source_id}`);
-                        } else if (event.source === 'cardio') {
+                        } else if (event.source === 'cardio' || event.source === 'fitness_cardio') {
                           router.push(`/fitness/cardio/${event.source_id}`);
+                        } else if (event.source === 'sports' || event.source === 'fitness_sports') {
+                          router.push(`/fitness/sports/${event.source_id}`);
                         } else if (event.source === 'expense') {
                           router.push(`/finances/expenses/${event.source_id}`);
                         }
@@ -231,10 +260,12 @@ export default function CalendarView() {
                     router.push(`/food/meals/${event.source_id}`);
                   } else if (event.source === 'planned_meal') {
                     router.push(`/food/planner/${event.source_id}`);
-                  } else if (event.source === 'workout') {
+                  } else if (event.source === 'workout' || event.source === 'fitness_workouts') {
                     router.push(`/fitness/workouts/${event.source_id}`);
-                  } else if (event.source === 'cardio') {
+                  } else if (event.source === 'cardio' || event.source === 'fitness_cardio') {
                     router.push(`/fitness/cardio/${event.source_id}`);
+                  } else if (event.source === 'sports' || event.source === 'fitness_sports') {
+                    router.push(`/fitness/sports/${event.source_id}`);
                   } else if (event.source === 'expense') {
                     router.push(`/finances/expenses/${event.source_id}`);
                   }

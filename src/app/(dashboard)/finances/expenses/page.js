@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabaseClient';
+import { deleteEntityWithCalendarEvent } from '@/lib/deleteUtils';
 import BackButton from '@/components/BackButton';
 
 export default function FinancesOverview() {
@@ -22,10 +23,20 @@ export default function FinancesOverview() {
   }, []);
 
   const handleDelete = async (id) => {
-    const { error } = await supabase
-      .from('expenses')
-      .delete()
-      .eq('id', id);
+    const user = await supabase.auth.getUser();
+    const user_id = user?.data?.user?.id;
+    
+    if (!user_id) {
+      alert('You must be logged in.');
+      return;
+    }
+
+    const error = await deleteEntityWithCalendarEvent({
+      table: 'expenses',
+      id: id,
+      user_id: user_id,
+      source: 'expense',
+    });
 
     if (!error) {
       setExpenses((prev) => prev.filter((exp) => exp.id !== id));

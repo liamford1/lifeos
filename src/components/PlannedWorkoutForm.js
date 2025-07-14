@@ -17,6 +17,13 @@ export default function PlannedWorkoutForm({ onSuccess }) {
     e.preventDefault()
     setLoading(true)
 
+    // Validate required fields
+    if (!title.trim() || !startTime) {
+      alert('Please fill in all required fields.')
+      setLoading(false)
+      return
+    }
+
     const { data: userData, error: authError } = await supabase.auth.getUser()
     const userId = userData?.user?.id
 
@@ -33,19 +40,16 @@ export default function PlannedWorkoutForm({ onSuccess }) {
 
     const insertData = {
         user_id: userId,
-        status: 'planned',
-        start_time: startTime,
-        end_time: endTime,
         notes,
         ...(type === 'workout' && {
             title,
-            date: startTime ? startTime.split('T')[0] : null // ⬅️ This fixes the error
+            date: startTime ? startTime.split('T')[0] : null
         }),
         ...(type !== 'workout' && {
             activity_type: title,
             date: startTime ? startTime.split('T')[0] : null
         }),
-        }         
+    }         
 
     console.log('📋 Attempting to insert into:', table)
     console.log('📦 Insert data:', insertData)
@@ -58,6 +62,8 @@ export default function PlannedWorkoutForm({ onSuccess }) {
 
     if (error) {
       console.error('🔥 Supabase insert error:', error)
+      console.error('📋 Table:', table)
+      console.error('📦 Insert data:', insertData)
       alert(`Failed to save planned workout.\n\n${error.message}`)
       setLoading(false)
       return
@@ -67,17 +73,30 @@ export default function PlannedWorkoutForm({ onSuccess }) {
 
     const calendarTitle = `Planned ${type.charAt(0).toUpperCase() + type.slice(1)}: ${title}`
 
+    // Map table to source for calendar events
+    const source = type === 'workout' ? 'workout' 
+                 : type === 'cardio' ? 'cardio' 
+                 : 'sports'
+
     const { error: calendarError } = await supabase.from('calendar_events').insert({
       user_id: userId,
       title: calendarTitle,
-      source: table,
+      source: source,
       source_id: data.id,
       start_time: startTime,
-      end_time: endTime,
+      end_time: endTime || null,
     })
 
     if (calendarError) {
       console.error('⚠️ Calendar event creation failed:', calendarError)
+      console.error('📅 Calendar event data:', {
+        user_id: userId,
+        title: calendarTitle,
+        source: source,
+        source_id: data.id,
+        start_time: startTime,
+        end_time: endTime || null,
+      })
     } else {
       console.log('📅 Calendar event created.')
     }
