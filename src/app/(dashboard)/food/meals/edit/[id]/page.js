@@ -15,7 +15,7 @@ export default function EditMealPage() {
   const { id } = useParams();
   const [meal, setMeal] = useState(null);
   const [ingredients, setIngredients] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [mealLoading, setMealLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
@@ -29,7 +29,7 @@ export default function EditMealPage() {
 
         if (!user || !id) {
           setError('User not authenticated or meal ID missing');
-          setLoading(false);
+          setMealLoading(false);
           return;
         }
 
@@ -44,13 +44,13 @@ export default function EditMealPage() {
         if (mealError) {
           console.error('Error fetching meal:', mealError);
           setError('Failed to load meal');
-          setLoading(false);
+          setMealLoading(false);
           return;
         }
 
         if (!mealData) {
           setError('Meal not found');
-          setLoading(false);
+          setMealLoading(false);
           return;
         }
 
@@ -66,11 +66,11 @@ export default function EditMealPage() {
 
         setMeal(mealData);
         setIngredients(ingredientsData || []);
-        setLoading(false);
+        setMealLoading(false);
       } catch (err) {
         console.error('Error in fetchMeal:', err);
         setError('An unexpected error occurred');
-        setLoading(false);
+        setMealLoading(false);
       }
     }
 
@@ -83,7 +83,7 @@ export default function EditMealPage() {
     }
   }, [loading, user]);
 
-  if (loading) return <LoadingSpinner />;
+  if (mealLoading) return <LoadingSpinner />;
   if (!user) return null;
 
   async function handleUpdateMeal(mealData) {
@@ -246,7 +246,7 @@ export default function EditMealPage() {
     router.push(`/food/meals/${id}`);
   }
 
-  if (loading) {
+  if (mealLoading) {
     return (
       <div className="p-4">
         <BackButton />

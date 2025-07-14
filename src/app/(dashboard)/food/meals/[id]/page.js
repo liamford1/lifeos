@@ -15,14 +15,14 @@ export default function MealDetailPage() {
   const { id } = useParams();
   const [meal, setMeal] = useState(null);
   const [ingredients, setIngredients] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [mealLoading, setMealLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (!loading && !user) {
+    if (!mealLoading && !user) {
       router.push('/auth');
     }
-  }, [loading, user]);
+  }, [mealLoading, user]);
 
   useEffect(() => {
     async function fetchMeal() {
@@ -36,14 +36,14 @@ export default function MealDetailPage() {
         if (!userId) {
           console.error('No user found');
           setError('You must be logged in to view this meal.');
-          setLoading(false);
+          setMealLoading(false);
           return;
         }
 
         if (!id) {
           console.error('No meal ID provided');
           setError('No meal ID provided.');
-          setLoading(false);
+          setMealLoading(false);
           return;
         }
 
@@ -65,14 +65,14 @@ export default function MealDetailPage() {
         if (mealCheckError) {
           console.error('Error checking meal existence:', mealCheckError);
           setError('Error checking meal existence.');
-          setLoading(false);
+          setMealLoading(false);
           return;
         }
 
         if (!mealCheck || mealCheck.length === 0) {
           console.error('Meal not found in database');
           setError('Meal not found in database.');
-          setLoading(false);
+          setMealLoading(false);
           return;
         }
 
@@ -84,7 +84,7 @@ export default function MealDetailPage() {
           console.error('Meal user_id:', mealCheck[0].user_id);
           console.error('Current user_id:', userId);
           setError('You do not have permission to view this meal.');
-          setLoading(false);
+          setMealLoading(false);
           return;
         }
 
@@ -119,14 +119,14 @@ export default function MealDetailPage() {
             setError('Error loading meal data.');
           }
           
-          setLoading(false);
+          setMealLoading(false);
           return;
         }
 
         if (!mealData) {
           console.error('No meal data returned');
           setError('No meal data returned.');
-          setLoading(false);
+          setMealLoading(false);
           return;
         }
 
@@ -143,13 +143,13 @@ export default function MealDetailPage() {
           setIngredients(ingredientsData || []);
         }
 
-        setLoading(false);
+        setMealLoading(false);
         console.log('=== fetchMeal completed successfully ===');
       } catch (error) {
         console.error('Unexpected error in fetchMeal:', error);
         console.error('Error stack:', error.stack);
         setError('An unexpected error occurred while loading the meal.');
-        setLoading(false);
+        setMealLoading(false);
       }
     }
 
@@ -307,7 +307,7 @@ export default function MealDetailPage() {
     }
   }
 
-  if (loading) return <LoadingSpinner />;
+  if (mealLoading) return <LoadingSpinner />;
   if (!user) return null;
   if (error) return (
     <div className="p-6 text-white">

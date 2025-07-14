@@ -22,7 +22,7 @@ export default function InventoryPage() {
   if (!user) return null;
 
   const [items, setItems] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [inventoryLoading, setInventoryLoading] = useState(true)
   const [subtractAmounts, setSubtractAmounts] = useState({})
 
   const fetchInventory = async () => {
@@ -59,7 +59,7 @@ export default function InventoryPage() {
       setItems(data)
     }
 
-    setLoading(false)
+    setInventoryLoading(false)
   }
 
   useEffect(() => {
@@ -109,7 +109,7 @@ export default function InventoryPage() {
       <BackButton />
       <h1 className="text-2xl font-bold mb-6">🥫 Your Pantry</h1>
 
-      {loading ? (
+      {inventoryLoading ? (
         <p>Loading inventory...</p>
       ) : items.length === 0 ? (
         <p className="text-gray-400">No food items found.</p>
