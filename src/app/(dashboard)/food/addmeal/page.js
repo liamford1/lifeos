@@ -1,16 +1,29 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useUser } from '@/context/UserContext';
+import LoadingSpinner from '@/components/LoadingSpinner';
+import { useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import BackButton from '@/components/BackButton';
 import MealForm from '@/components/MealForm';
 import { CALENDAR_SOURCES } from '@/lib/calendarUtils';
 
-export default function AddMealPage() {
+export default function AddMealPage(props) {
+  const { user, loading } = useUser();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/auth');
+    }
+  }, [loading, user]);
+
+  if (loading) return <LoadingSpinner />;
+  if (!user) return null;
 
   async function handleSaveMeal(mealData) {
     setLoading(true);

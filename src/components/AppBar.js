@@ -5,44 +5,39 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabaseClient';
 import { FaUserCircle } from 'react-icons/fa';
+import { useUser } from '@/context/UserContext';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 export default function AppBar() {
-  const [user, setUser] = useState(null);
+  const { user, loading } = useUser();
   const [profile, setProfile] = useState(null);
   const router = useRouter();
 
   useEffect(() => {
-    const getUserAndProfile = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      setUser(user);
-
-      if (user) {
-        const { data, error } = await supabase
-          .from('profiles')
-          .select('first_name, last_name')
-          .eq('user_id', user.id)
-          .single();
-
-        if (!error && data) {
-          setProfile(data);
-        }
+    const getProfile = async () => {
+      if (!user) return;
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('first_name, last_name')
+        .eq('user_id', user.id)
+        .single();
+      if (!error && data) {
+        setProfile(data);
       }
     };
-
-    getUserAndProfile();
-  }, []);
+    getProfile();
+  }, [user]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    setUser(null);
-    setProfile(null);
     router.refresh();
   };
 
-  // Compose display name or fallback
   const displayName = profile?.first_name && profile?.last_name
     ? `${profile.first_name} ${profile.last_name}`
     : null;
+
+  if (loading) return <LoadingSpinner />;
 
   return (
     <nav

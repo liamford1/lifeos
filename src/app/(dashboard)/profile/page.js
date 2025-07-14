@@ -1,14 +1,25 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useUser } from '@/context/UserContext';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import { supabase } from '@/lib/supabaseClient';
 import BackButton from '@/components/BackButton';
 
 export default function ProfilePage() {
+  const { user, loading } = useUser();
+  const router = useRouter();
   const [profile, setProfile] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
+
+  // Auth protection
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/auth');
+    }
+  }, [loading, user]);
 
   // Form state
   const [firstName, setFirstName] = useState('');
@@ -22,20 +33,14 @@ export default function ProfilePage() {
 
   useEffect(() => {
     async function fetchProfile() {
-      setLoading(true);
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        setError('Not authenticated');
-        setLoading(false);
-        return;
-      }
+      if (!user) return;
+      setError(null);
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('user_id', user.id)
         .single();
-
-      if (error && error.code !== 'PGRST116') { // PGRST116 = no rows found
+      if (error && error.code !== 'PGRST116') {
         setError('Failed to load profile');
       } else if (data) {
         setProfile(data);
@@ -48,24 +53,19 @@ export default function ProfilePage() {
         setHeight(data.height_cm?.toString() || '');
         setWeight(data.weight_kg?.toString() || '');
       }
-      setLoading(false);
     }
-
-    fetchProfile();
-  }, []);
+    if (user) fetchProfile();
+  }, [user]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
     setError(null);
-
-    const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
       setError('Not authenticated');
       setSaving(false);
       return;
     }
-
     const profileData = {
       user_id: user.id,
       first_name: firstName,
@@ -78,12 +78,10 @@ export default function ProfilePage() {
       weight_kg: weight ? parseFloat(weight) : null,
       updated_at: new Date().toISOString(),
     };
-
     try {
       const { error } = await supabase.from('profiles').upsert(profileData, {
         onConflict: 'user_id',
       });
-
       if (error) {
         setError('Failed to save profile');
       } else {
@@ -95,14 +93,14 @@ export default function ProfilePage() {
     setSaving(false);
   };
 
-  if (loading) return <div className="p-4">Loading...</div>;
+  if (loading) return <LoadingSpinner />;
+  if (!user) return null;
   if (error) return <div className="p-4 text-red-600">{error}</div>;
 
   return (
     <>
       <BackButton />
       <h1 className="text-2xl font-bold mb-6">Your Profile</h1>
-
       <form onSubmit={handleSubmit} className="space-y-4 max-w-xl">
         <div>
           <label className="block font-semibold mb-1">First Name</label>
@@ -114,7 +112,6 @@ export default function ProfilePage() {
             required
           />
         </div>
-
         <div>
           <label className="block font-semibold mb-1">Last Name</label>
           <input
@@ -125,7 +122,6 @@ export default function ProfilePage() {
             required
           />
         </div>
-
         <div>
           <label className="block font-semibold mb-1">Birthday</label>
           <input
@@ -135,7 +131,6 @@ export default function ProfilePage() {
             className="w-full p-2 border rounded"
           />
         </div>
-
         <div>
           <label className="block font-semibold mb-1">Gender</label>
           <select
@@ -150,7 +145,6 @@ export default function ProfilePage() {
             <option value="Prefer not to say">Prefer not to say</option>
           </select>
         </div>
-
         <div>
           <label className="block font-semibold mb-1">Location</label>
           <input
@@ -160,7 +154,6 @@ export default function ProfilePage() {
             className="w-full p-2 border rounded"
           />
         </div>
-
         <div>
           <label className="block font-semibold mb-1">Bio</label>
           <textarea
@@ -170,7 +163,6 @@ export default function ProfilePage() {
             className="w-full p-2 border rounded"
           />
         </div>
-
         <div>
           <label className="block font-semibold mb-1">Height (cm)</label>
           <input
@@ -181,7 +173,6 @@ export default function ProfilePage() {
             className="w-full p-2 border rounded"
           />
         </div>
-
         <div>
           <label className="block font-semibold mb-1">Weight (kg)</label>
           <input
@@ -192,7 +183,6 @@ export default function ProfilePage() {
             className="w-full p-2 border rounded"
           />
         </div>
-
         <button
           type="submit"
           disabled={saving}

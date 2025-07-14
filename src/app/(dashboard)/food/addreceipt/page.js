@@ -1,10 +1,26 @@
 'use client'
 
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useUser } from '@/context/UserContext';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import { useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
 import BackButton from '@/components/BackButton'
 
-export default function AddReceiptPage() {
+export default function AddReceiptPage(props) {
+  const { user, loading } = useUser();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/auth');
+    }
+  }, [loading, user]);
+
+  if (loading) return <LoadingSpinner />;
+  if (!user) return null;
+
   const [storeName, setStoreName] = useState('')
   const [items, setItems] = useState([])
   const [currentItem, setCurrentItem] = useState({ name: '', quantity: '', unit: '', price: '' })

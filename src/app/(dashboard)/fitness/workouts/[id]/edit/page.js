@@ -4,12 +4,23 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import WorkoutForm from '@/components/WorkoutForm';
+import { useRouter } from 'next/navigation';
+import { useUser } from '@/context/UserContext';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 export default function EditWorkoutPage() {
   const params = useParams();
   const [workout, setWorkout] = useState(null);
   const [exercises, setExercises] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { user, loading: userLoading } = useUser();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!userLoading && !user) {
+      router.push('/auth');
+    }
+  }, [userLoading, user]);
 
   useEffect(() => {
     const fetchWorkout = async () => {
@@ -32,7 +43,8 @@ export default function EditWorkoutPage() {
     fetchWorkout();
   }, [params.id]);
 
-  if (loading) return <div className="p-4">Loading...</div>;
+  if (loading) return <LoadingSpinner />;
+  if (!user) return null;
   if (!workout) return <div className="p-4">Workout not found.</div>;
 
   return <WorkoutForm initialWorkout={workout} initialExercises={exercises} isEdit />;

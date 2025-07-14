@@ -1,11 +1,16 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useUser } from '@/context/UserContext';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import { supabase } from '@/lib/supabaseClient';
 import BackButton from '@/components/BackButton';
 import { CALENDAR_SOURCES } from '@/lib/calendarUtils';
 
 export default function AddExpensePage() {
+  const { user, loading } = useUser();
+  const router = useRouter();
   const [formData, setFormData] = useState({
     name: '',
     amount: '',
@@ -15,6 +20,12 @@ export default function AddExpensePage() {
     date: '',
   });
 
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/auth');
+    }
+  }, [loading, user]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -22,15 +33,8 @@ export default function AddExpensePage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const user = await supabase.auth.getUser();
-    const user_id = user?.data?.user?.id;
-
-    if (!user_id) {
-      alert('You must be logged in.');
-      return;
-    }
-
+    if (!user) return;
+    const user_id = user.id;
     const { data, error } = await supabase.from('expenses').insert([
       {
         ...formData,
@@ -38,13 +42,11 @@ export default function AddExpensePage() {
         user_id,
       },
     ]).select().single();
-
     if (error) {
       console.error(error);
       alert('Error adding expense.');
       return;
     }
-
     // Create calendar event for the expense
     const startTime = new Date(formData.date);
     const { error: calendarError } = await supabase.from('calendar_events').insert({
@@ -55,11 +57,9 @@ export default function AddExpensePage() {
       start_time: startTime.toISOString(),
       end_time: null,
     });
-
     if (calendarError) {
       console.error('Calendar event creation failed:', calendarError);
     }
-
     alert('Expense added!');
     setFormData({
       name: '',
@@ -71,11 +71,13 @@ export default function AddExpensePage() {
     });
   };
 
+  if (loading) return <LoadingSpinner />;
+  if (!user) return null;
+
   return (
     <div className="p-4 max-w-xl mx-auto">
       <BackButton />
       <h1 className="text-2xl font-bold mb-4">Add Expense</h1>
-
       <form onSubmit={handleSubmit} className="space-y-2">
         <input name="name" value={formData.name} onChange={handleChange} placeholder="Name" className="w-full p-2 border rounded" required />
         <input name="amount" type="number" step="0.01" value={formData.amount} onChange={handleChange} placeholder="Amount" className="w-full p-2 border rounded" required />

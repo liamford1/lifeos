@@ -1,43 +1,46 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useUser } from '@/context/UserContext';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabaseClient';
 import { deleteEntityWithCalendarEvent } from '@/lib/deleteUtils';
 import BackButton from '@/components/BackButton';
 
 export default function FinancesOverview() {
+  const { user, loading } = useUser();
+  const router = useRouter();
   const [expenses, setExpenses] = useState([]);
 
-  const fetchExpenses = async () => {
-    const { data, error } = await supabase
-      .from('expenses')
-      .select('*')
-      .order('date', { ascending: false });
-
-    if (!error) setExpenses(data);
-  };
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/auth');
+    }
+  }, [loading, user]);
 
   useEffect(() => {
+    if (!user) return;
+    const fetchExpenses = async () => {
+      const { data, error } = await supabase
+        .from('expenses')
+        .select('*')
+        .order('date', { ascending: false });
+      if (!error) setExpenses(data);
+    };
     fetchExpenses();
-  }, []);
+  }, [user]);
 
   const handleDelete = async (id) => {
-    const user = await supabase.auth.getUser();
-    const user_id = user?.data?.user?.id;
-    
-    if (!user_id) {
-      alert('You must be logged in.');
-      return;
-    }
-
+    if (!user) return;
+    const user_id = user.id;
     const error = await deleteEntityWithCalendarEvent({
       table: 'expenses',
       id: id,
       user_id: user_id,
       source: 'expense',
     });
-
     if (!error) {
       setExpenses((prev) => prev.filter((exp) => exp.id !== id));
     } else {
@@ -46,15 +49,16 @@ export default function FinancesOverview() {
     }
   };
 
+  if (loading) return <LoadingSpinner />;
+  if (!user) return null;
+
   return (
     <div className="p-4 max-w-2xl mx-auto">
       <BackButton />
       <h1 className="text-2xl font-bold mb-4">Finances Overview</h1>
-
       <Link href="/finances/add" className="text-blue-600 underline mb-4 inline-block">
         ➕ Add New Expense
       </Link>
-
       {expenses.length === 0 ? (
         <p>No expenses yet.</p>
       ) : (

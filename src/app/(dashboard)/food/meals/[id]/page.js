@@ -6,14 +6,23 @@ import { supabase } from '@/lib/supabaseClient';
 import { deleteEntityWithCalendarEvent } from '@/lib/deleteUtils';
 import BackButton from '@/components/BackButton';
 import { CALENDAR_SOURCES } from '@/lib/calendarUtils';
+import { useUser } from '@/context/UserContext';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 export default function MealDetailPage() {
-  const { id } = useParams();
+  const { user, loading } = useUser();
   const router = useRouter();
+  const { id } = useParams();
   const [meal, setMeal] = useState(null);
   const [ingredients, setIngredients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/auth');
+    }
+  }, [loading, user]);
 
   useEffect(() => {
     async function fetchMeal() {
@@ -298,7 +307,8 @@ export default function MealDetailPage() {
     }
   }
 
-  if (loading) return <div className="p-6 text-white">Loading...</div>;
+  if (loading) return <LoadingSpinner />;
+  if (!user) return null;
   if (error) return (
     <div className="p-6 text-white">
       <BackButton />

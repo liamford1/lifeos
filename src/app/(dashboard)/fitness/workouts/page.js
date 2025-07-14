@@ -6,10 +6,23 @@ import { supabase } from '@/lib/supabaseClient';
 import { deleteEntityWithCalendarEvent } from '@/lib/deleteUtils';
 import BackButton from '@/components/BackButton';
 import { useRouter } from 'next/navigation';
+import { useUser } from '@/context/UserContext';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 export default function WorkoutsDashboard() {
-  const [workouts, setWorkouts] = useState([]);
+  const { user, loading } = useUser();
   const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/auth');
+    }
+  }, [loading, user]);
+
+  if (loading) return <LoadingSpinner />;
+  if (!user) return null;
+
+  const [workouts, setWorkouts] = useState([]);
 
   const fetchWorkouts = async () => {
     const { data, error } = await supabase

@@ -4,12 +4,21 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import BackButton from '@/components/BackButton';
+import { useUser } from '@/context/UserContext';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 export default function WorkoutDetailPage() {
-  const { id } = useParams();
+  const { user, loading } = useUser();
   const router = useRouter();
+  const { id } = useParams();
   const [workout, setWorkout] = useState(null);
   const [exercises, setExercises] = useState([]);
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/auth');
+    }
+  }, [loading, user]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -21,6 +30,9 @@ export default function WorkoutDetailPage() {
 
     fetchData();
   }, [id]);
+
+  if (loading) return <LoadingSpinner />;
+  if (!user) return null;
 
   return (
     <div className="p-4 max-w-xl mx-auto">

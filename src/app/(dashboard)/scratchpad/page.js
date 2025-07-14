@@ -4,8 +4,23 @@ import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
 import { deleteEntityWithCalendarEvent } from '@/lib/deleteUtils'
 import BackButton from '@/components/BackButton'
+import { useRouter } from 'next/navigation';
+import { useUser } from '@/context/UserContext';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 export default function ScratchpadPage() {
+  const { user, loading } = useUser();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/auth');
+    }
+  }, [loading, user]);
+
+  if (loading) return <LoadingSpinner />;
+  if (!user) return null;
+
   const [content, setContent] = useState('')
   const [category, setCategory] = useState('')
   const [entries, setEntries] = useState([])

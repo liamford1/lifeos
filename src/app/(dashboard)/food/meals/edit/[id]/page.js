@@ -6,10 +6,13 @@ import { supabase } from '@/lib/supabaseClient';
 import BackButton from '@/components/BackButton';
 import MealForm from '@/components/MealForm';
 import { CALENDAR_SOURCES, updateCalendarEvent } from '@/lib/calendarUtils';
+import { useUser } from '@/context/UserContext';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 export default function EditMealPage() {
-  const { id } = useParams();
+  const { user, loading } = useUser();
   const router = useRouter();
+  const { id } = useParams();
   const [meal, setMeal] = useState(null);
   const [ingredients, setIngredients] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -19,10 +22,12 @@ export default function EditMealPage() {
   useEffect(() => {
     async function fetchMeal() {
       try {
-        const user = await supabase.auth.getUser();
-        const userId = user?.data?.user?.id;
+        if (!loading && !user) {
+          router.push('/auth');
+          return;
+        }
 
-        if (!userId || !id) {
+        if (!user || !id) {
           setError('User not authenticated or meal ID missing');
           setLoading(false);
           return;
@@ -33,7 +38,7 @@ export default function EditMealPage() {
           .from('meals')
           .select('*')
           .eq('id', id)
-          .eq('user_id', userId)
+          .eq('user_id', user.id)
           .single();
 
         if (mealError) {
@@ -70,7 +75,16 @@ export default function EditMealPage() {
     }
 
     fetchMeal();
-  }, [id]);
+  }, [id, loading, user]);
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/auth');
+    }
+  }, [loading, user]);
+
+  if (loading) return <LoadingSpinner />;
+  if (!user) return null;
 
   async function handleUpdateMeal(mealData) {
     setSaving(true);
