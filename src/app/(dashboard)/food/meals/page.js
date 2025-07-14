@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/context/UserContext';
 import LoadingSpinner from '@/components/LoadingSpinner';
@@ -22,7 +22,7 @@ export default function MealsPage() {
   if (!user) return null;
 
   const [meals, setMeals] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [mealsLoading, setMealsLoading] = useState(true);
 
   useEffect(() => {
     async function fetchMeals() {
@@ -43,7 +43,7 @@ export default function MealsPage() {
         setMeals(data);
       }
 
-      setLoading(false);
+      setMealsLoading(false);
     }
 
     fetchMeals();
@@ -54,7 +54,7 @@ export default function MealsPage() {
       <BackButton />
       <h1 className="text-2xl font-bold mb-6">📖 Your Saved Meals</h1>
 
-      {loading ? (
+      {mealsLoading ? (
         <p>Loading...</p>
       ) : meals.length === 0 ? (
         <p className="text-gray-400">

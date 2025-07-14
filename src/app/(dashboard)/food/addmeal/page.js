@@ -13,7 +13,7 @@ import { CALENDAR_SOURCES } from '@/lib/calendarUtils';
 export default function AddMealPage(props) {
   const { user, loading } = useUser();
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -26,7 +26,7 @@ export default function AddMealPage(props) {
   if (!user) return null;
 
   async function handleSaveMeal(mealData) {
-    setLoading(true);
+    setIsSaving(true);
     setError('');
 
     try {
@@ -35,37 +35,48 @@ export default function AddMealPage(props) {
 
       if (!userId) {
         setError('User not logged in.');
-        setLoading(false);
+        setIsSaving(false);
         return;
       }
 
       console.log("🧪 Final ingredient state being saved:", mealData.ingredients);
       console.log("🧪 Raw ingredients count:", mealData.ingredients.length);
 
-      const { data: savedMeal, error: mealError } = await supabase
-        .from('meals')
-        .insert([
-          {
-            user_id: userId,
-            name: mealData.name,
-            description: mealData.description,
-            prep_time: mealData.prep_time,
-            cook_time: mealData.cook_time,
-            servings: mealData.servings,
-            instructions: mealData.instructions,
-          },
-        ])
-        .select()
-        .single();
+      // Call the new API route to create the meal
+      const response = await fetch('/api/meal/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: mealData.name,
+          description: mealData.description,
+          prep_time: mealData.prep_time,
+          cook_time: mealData.cook_time,
+          servings: mealData.servings,
+          instructions: mealData.instructions,
+          notes: mealData.notes,
+          calories: mealData.calories,
+          date: mealData.date,
+        }),
+      });
 
-      if (mealError || !savedMeal) {
-        console.error(mealError);
+      const result = await response.json();
+      if (!response.ok && result.error) {
+        console.error(result.error);
         setError('Failed to save meal.');
-        setLoading(false);
+        setIsSaving(false);
         return;
       }
 
-      const mealId = savedMeal.id;
+      // Use mealId from the new API response
+      const mealId = result.mealId;
+      if (!mealId) {
+        // Log or silently return if needed
+        console.warn('No mealId returned from API. Skipping ingredient/calendar insert.');
+        setIsSaving(false);
+        return;
+      }
 
       // Insert the current state of ingredients
       const cleanedIngredients = mealData.ingredients
@@ -93,7 +104,7 @@ export default function AddMealPage(props) {
           console.error('Error inserting ingredients:', insertError);
           console.error('Attempted to insert:', cleanedIngredients);
           setError('Meal saved, but failed to save ingredients.');
-          setLoading(false);
+          setIsSaving(false);
           return;
         }
       } else {
@@ -120,7 +131,7 @@ export default function AddMealPage(props) {
     } catch (err) {
       console.error('Error saving meal:', err);
       setError('An unexpected error occurred.');
-      setLoading(false);
+      setIsSaving(false);
     }
   }
 
@@ -131,7 +142,7 @@ export default function AddMealPage(props) {
 
       <MealForm
         onSubmit={handleSaveMeal}
-        loading={loading}
+        loading={isSaving}
         error={error}
       />
     </div>
