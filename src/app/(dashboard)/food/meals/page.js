@@ -11,18 +11,14 @@ import BackButton from '@/components/BackButton';
 export default function MealsPage() {
   const { user, loading } = useUser();
   const router = useRouter();
+  const [meals, setMeals] = useState([]);
+  const [mealsLoading, setMealsLoading] = useState(true);
 
   useEffect(() => {
     if (!loading && !user) {
       router.push('/auth');
     }
   }, [loading, user]);
-
-  if (loading) return <LoadingSpinner />;
-  if (!user) return null;
-
-  const [meals, setMeals] = useState([]);
-  const [mealsLoading, setMealsLoading] = useState(true);
 
   useEffect(() => {
     async function fetchMeals() {
@@ -48,6 +44,9 @@ export default function MealsPage() {
 
     fetchMeals();
   }, []);
+
+  if (loading) return <LoadingSpinner />;
+  if (!user) return null;
 
   return (
     <>

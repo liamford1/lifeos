@@ -8,6 +8,7 @@ import BackButton from '@/components/BackButton';
 import { CALENDAR_SOURCES } from '@/lib/calendarUtils';
 import { useUser } from '@/context/UserContext';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import Link from 'next/link';
 
 export default function MealDetailPage() {
   const { user, loading } = useUser();
@@ -156,105 +157,6 @@ export default function MealDetailPage() {
     fetchMeal();
   }, [id]);
 
-  async function handleCookMeal() {
-    try {
-      const user = await supabase.auth.getUser();
-      const userId = user?.data?.user?.id;
-    
-      if (!userId) {
-        alert('You must be logged in.');
-        return;
-      }
-
-      if (!meal) {
-        alert('No meal data available.');
-        return;
-      }
-
-      if (ingredients.length === 0) {
-        alert('No ingredients found for this meal.');
-        return;
-      }
-    
-      let success = true;
-    
-      for (const ing of ingredients) {
-        const { data: pantryItems, error: pantryError } = await supabase
-          .from('food_items')
-          .select('*')
-          .eq('user_id', userId)
-          .ilike('name', ing.food_item_name);
-    
-        if (pantryError) {
-          console.error('Error fetching pantry items:', pantryError);
-          continue;
-        }
-
-        if (!pantryItems || pantryItems.length === 0) {
-          console.warn(`No pantry match for: ${ing.food_item_name}`);
-          continue;
-        }
-    
-        const pantryItem = pantryItems[0];
-    
-        if (parseFloat(pantryItem.quantity) < parseFloat(ing.quantity)) {
-          console.warn(`Not enough of ${ing.food_item_name} to cook`);
-          continue;
-        }
-    
-        const newQty = parseFloat(pantryItem.quantity) - parseFloat(ing.quantity);
-    
-        if (newQty <= 0) {
-          const { error: deleteError } = await supabase
-            .from('food_items')
-            .delete()
-            .eq('id', pantryItem.id);
-          if (deleteError) {
-            console.error('Error deleting pantry item:', deleteError);
-            success = false;
-          }
-        } else {
-          const { error: updateError } = await supabase
-            .from('food_items')
-            .update({ quantity: newQty })
-            .eq('id', pantryItem.id);
-          if (updateError) {
-            console.error('Error updating pantry item:', updateError);
-            success = false;
-          }
-        }
-      }
-    
-      const { error: logError } = await supabase.from('cooked_meals').insert([
-        {
-          user_id: userId,
-          meal_id: meal.id,
-        },
-      ]);
-    
-      const { error: updateMealError } = await supabase
-        .from('meals')
-        .update({ last_cooked_at: new Date().toISOString() })
-        .eq('id', meal.id);
-
-      if (updateMealError) {
-        console.error('Error updating meal last_cooked_at:', updateMealError);
-      }
-    
-      if (logError) {
-        console.error('Error logging cooked meal:', logError);
-        alert('Meal cooked, but logging failed.');
-      } else if (success) {
-        alert('Meal cooked successfully and logged.');
-      } else {
-        alert('Meal cooked, but some pantry items could not be updated.');
-      }
-    } catch (error) {
-      console.error('Unexpected error in handleCookMeal:', error);
-      alert('An unexpected error occurred while cooking the meal.');
-    }
-  }
-
   async function handleDeleteMeal() {
     try {
       const confirm = window.confirm('Delete this meal? This will also remove any linked calendar events.');
@@ -346,6 +248,14 @@ export default function MealDetailPage() {
       <h1 className="text-3xl font-bold mb-2">{meal.name}</h1>
       {meal.description && <p className="text-gray-300 mb-4">{meal.description}</p>}
 
+      {/* Place the Cook Meal button here, right below description/instructions */}
+      <Link
+        href={`/food/meals/${id}/cook`}
+        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mb-4 inline-block"
+      >
+        Cook Meal
+      </Link>
+
       <button
         onClick={() => router.push(`/food/meals/edit/${meal.id}`)}
         className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
@@ -383,12 +293,6 @@ export default function MealDetailPage() {
       </div>
 
       <div className="flex gap-4">
-        <button
-          onClick={handleCookMeal}
-          className="bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-700"
-        >
-          🍽️ Cook This Meal
-        </button>
         <button
           onClick={handleDeleteMeal}
           className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"

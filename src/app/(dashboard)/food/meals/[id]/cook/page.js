@@ -1,0 +1,133 @@
+// src/app/(dashboard)/food/meals/[id]/cook/page.js
+'use client';
+import { useEffect, useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import { supabase } from '@/lib/supabaseClient';
+
+export default function CookMealPage() {
+  const router = useRouter();
+  const { id } = useParams();
+  const [meal, setMeal] = useState(null);
+
+  useEffect(() => {
+    async function fetchMeal() {
+      const { data, error } = await supabase.from('meals').select('*').eq('id', id).single();
+      if (!error) setMeal(data);
+    }
+    fetchMeal();
+  }, [id]);
+
+  if (!meal) return <div>Loading...</div>;
+
+  async function handleDoneCooking() {
+    try {
+      const { data: userData, error: userError } = await supabase.auth.getUser();
+      const user = userData?.user;
+      if (!user) {
+        alert('You must be logged in to record a cooked meal.');
+        return;
+      }
+      
+      console.log('Attempting to record cooked meal for:', {
+        user_id: user.id,
+        meal_id: meal.id,
+      });
+      
+      // First, check if a record already exists
+      const { data: existingRecord, error: checkError } = await supabase
+        .from('cooked_meals')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('meal_id', meal.id)
+        .single();
+      
+      console.log('Existing record check:', { existingRecord, checkError });
+      
+      if (checkError && checkError.code !== 'PGRST116') {
+        // PGRST116 is "not found" error, which is expected if no record exists
+        console.error('Error checking existing record:', checkError);
+        alert(`Failed to check existing record: ${checkError.message}`);
+        return;
+      }
+      
+      let result;
+      
+      if (existingRecord) {
+        // Update existing record
+        console.log('Updating existing record with cook_count:', existingRecord.cook_count + 1);
+        result = await supabase
+          .from('cooked_meals')
+          .update({
+            last_cooked_at: new Date().toISOString(),
+            cook_count: existingRecord.cook_count + 1
+          })
+          .eq('user_id', user.id)
+          .eq('meal_id', meal.id)
+          .select();
+      } else {
+        // Insert new record
+        console.log('Inserting new record');
+        result = await supabase
+          .from('cooked_meals')
+          .insert({
+            user_id: user.id,
+            meal_id: meal.id,
+            last_cooked_at: new Date().toISOString(),
+            cook_count: 1
+          })
+          .select();
+      }
+      
+      if (result.error) {
+        console.error('Database operation error:', result.error);
+        console.error('Error details:', {
+          code: result.error.code,
+          message: result.error.message,
+          details: result.error.details,
+          hint: result.error.hint
+        });
+        alert(`Failed to record cooked meal: ${result.error.message}`);
+        return;
+      }
+      
+      console.log('Successfully recorded cooked meal:', result.data);
+      alert('Meal recorded as cooked!');
+      router.push('/food/meals');
+    } catch (error) {
+      console.error('Unexpected error:', error);
+      alert('An unexpected error occurred while recording the cooked meal.');
+    }
+  }
+
+  return (
+    <div className="p-6 space-y-4">
+      <h1 className="text-3xl font-bold">{meal.name}</h1>
+      <p className="text-gray-600">{meal.description}</p>
+      <div className="bg-white p-4 rounded-lg shadow">
+        <h2 className="text-xl font-semibold mb-2">Instructions</h2>
+        {typeof meal.instructions === 'string' && meal.instructions.trim() ? (
+          <ol className="list-decimal list-inside space-y-2">
+            {meal.instructions.split('\n').map((step, idx) => (
+              <li key={idx}>{step}</li>
+            ))}
+          </ol>
+        ) : (
+          <div className="text-gray-500 italic">No instructions provided.</div>
+        )}
+      </div>
+      <button
+        onClick={handleDoneCooking}
+        className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+      >
+        Done Cooking
+      </button>
+      <button
+        type="button"
+        onClick={() => router.back()}
+        className="block text-sm text-gray-500 mt-2 hover:underline"
+      >
+        Cancel
+      </button>
+    </div>
+  );
+} 
