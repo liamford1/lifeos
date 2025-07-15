@@ -100,7 +100,7 @@ export default function InventoryPage() {
     <div className="max-w-6xl mx-auto p-4 space-y-4">
       <BackButton />
       <h1 className="text-2xl font-bold">🥫 Your Pantry</h1>
-      <p className="text-gray-400">Track your food inventory and pantry items.</p>
+      <p className="text-base">Track your food inventory and pantry items.</p>
 
       {inventoryLoading ? (
         <LoadingSpinner />
@@ -109,20 +109,20 @@ export default function InventoryPage() {
       ) : (
         <ul className="space-y-4">
           {items.map((item) => (
-            <li key={item.id} className="bg-gray-800 rounded p-4 shadow">
+            <li key={item.id} className="bg-surface rounded p-4 shadow">
               <div className="flex justify-between items-start">
                 <div>
                   <div className="text-lg font-semibold">{item.name}</div>
-                  <div className="text-sm text-gray-300">
+                  <div className="text-sm text-base">
                     {item.quantity} {item.unit}
                   </div>
-                  <div className="text-sm text-gray-400 mt-1">
+                  <div className="text-sm text-base mt-1">
                     Added from: {item.added_from}
                     {item.receipts?.store_name && (
                       <> (Receipt: {item.receipts.store_name})</>
                     )}
                   </div>
-                  <div className="text-xs text-gray-500 mt-1">
+                  <div className="text-xs text-base mt-1">
                     Added on: {new Date(item.added_at).toLocaleDateString()}
                   </div>
                 </div>
@@ -140,7 +140,7 @@ export default function InventoryPage() {
 
               <div className="mt-4 flex gap-2 items-center">
                 <input
-                  className="bg-gray-700 text-white px-2 py-1 rounded w-24"
+                  className="bg-surface text-white px-2 py-1 rounded w-24"
                   type="number"
                   step="any"
                   min="0"
@@ -153,7 +153,7 @@ export default function InventoryPage() {
                     }))
                   }
                 />
-                <span className="text-sm text-gray-300">{item.unit}</span>
+                <span className="text-sm text-base">{item.unit}</span>
                 <Button
                   onClick={() => handleSubtract(item.id)}
                   variant="secondary"

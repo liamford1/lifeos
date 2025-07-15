@@ -105,7 +105,7 @@ export default function ProfilePage() {
     <div className="max-w-6xl mx-auto p-4 space-y-4">
       <BackButton />
       <h1 className="text-2xl font-bold">Your Profile</h1>
-      <p className="text-gray-400">Manage your personal information and preferences.</p>
+      <p className="text-base">Manage your personal information and preferences.</p>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label htmlFor="profile-first-name" className="block font-semibold mb-1">First Name</label>

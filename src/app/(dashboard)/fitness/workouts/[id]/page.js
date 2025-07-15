@@ -45,9 +45,9 @@ export default function WorkoutDetailPage() {
       ) : (
         <>
           <h1 className="text-2xl font-bold">{workout.title}</h1>
-          <p className="text-gray-400">View your workout details and exercises.</p>
-          <p className="text-sm text-gray-600 mb-3">{workout.date}</p>
-          {workout.notes && <p className="mb-4 italic text-gray-700">{workout.notes}</p>}
+          <p className="text-base">View your workout details and exercises.</p>
+          <p className="text-sm text-base mb-3">{workout.date}</p>
+          {workout.notes && <p className="mb-4 italic text-base">{workout.notes}</p>}
 
           <h2 className="text-xl font-semibold mb-2">💪 Exercises</h2>
           {exercisesLoading ? (
@@ -61,7 +61,7 @@ export default function WorkoutDetailPage() {
               {exercises.map((ex) => (
                 <li key={ex.id} className="border p-2 rounded">
                   <strong>{ex.name}</strong> — {ex.sets}×{ex.reps} @ {ex.weight} lbs
-                  {ex.notes && <p className="text-sm text-gray-600">{ex.notes}</p>}
+                  {ex.notes && <p className="text-sm text-base">{ex.notes}</p>}
                 </li>
               ))}
             </ul>

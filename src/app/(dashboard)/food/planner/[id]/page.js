@@ -71,35 +71,35 @@ export default function PlannedMealDetailPage() {
     <>
       <BackButton />
       <div className="p-6">
-        <div className="bg-gray-800 rounded-lg p-6 shadow-lg">
+        <div className="bg-surface rounded-lg p-6 shadow-lg">
           <h1 className="text-3xl font-bold mb-4 text-white">{meal.name}</h1>
           
           {meal.description && (
-            <p className="text-gray-300 mb-6">{meal.description}</p>
+            <p className="text-base mb-6">{meal.description}</p>
           )}
 
-          <div className="bg-gray-700 rounded-lg p-4 mb-6">
+          <div className="bg-surface rounded-lg p-4 mb-6">
             <h2 className="text-xl font-semibold mb-3 text-white">📅 Planned Details</h2>
             <div className="space-y-2">
-              <p className="text-gray-300">
+              <p className="text-base">
                 <span className="font-medium">Date:</span> {formattedDate}
               </p>
-              <p className="text-gray-300">
+              <p className="text-base">
                 <span className="font-medium">Meal Time:</span> {plannedMeal.meal_time}
               </p>
             </div>
           </div>
 
-          <div className="bg-gray-700 rounded-lg p-4">
+          <div className="bg-surface rounded-lg p-4">
             <h2 className="text-xl font-semibold mb-3 text-white">🍽️ Meal Information</h2>
             <div className="space-y-2">
-              <p className="text-gray-300">
+              <p className="text-base">
                 <span className="font-medium">Prep Time:</span> {meal.prep_time || 0} minutes
               </p>
-              <p className="text-gray-300">
+              <p className="text-base">
                 <span className="font-medium">Cook Time:</span> {meal.cook_time || 0} minutes
               </p>
-              <p className="text-gray-300">
+              <p className="text-base">
                 <span className="font-medium">Servings:</span> {meal.servings || 1}
               </p>
             </div>

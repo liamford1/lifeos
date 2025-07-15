@@ -67,7 +67,7 @@ export default function SportsDashboard() {
     <div className="max-w-6xl mx-auto p-4 space-y-4">
       <BackButton />
       <h1 className="text-2xl font-bold">⚽ Sports</h1>
-      <p className="text-gray-400">Track your sports activities and games.</p>
+      <p className="text-base">Track your sports activities and games.</p>
 
       <Link href="/fitness/sports/add" className="text-blue-600 underline mb-6 inline-block">
         ➕ Add Sports Session
@@ -83,17 +83,17 @@ export default function SportsDashboard() {
             <li
               key={s.id}
               onClick={() => router.push(`/fitness/sports/${s.id}`)}
-              className="border p-3 rounded shadow-sm cursor-pointer hover:bg-gray-50 transition"
+              className="border p-3 rounded shadow-sm cursor-pointer hover:bg-[#2e2e2e] transition"
             >
               <div className="font-semibold text-lg">{s.activity_type || 'Sports'}</div>
-              <div className="text-sm text-gray-600">{s.date}</div>
-              <div className="text-sm text-gray-500">
+              <div className="text-sm text-base">{s.date}</div>
+              <div className="text-sm text-base">
                 ⏱️ {s.duration_minutes ?? '-'} min
                 {s.distance_miles && ` — 📏 ${s.distance_miles} mi`}
               </div>
-              {s.location && <div className="text-sm text-gray-500">📍 {s.location}</div>}
+              {s.location && <div className="text-sm text-base">📍 {s.location}</div>}
               {s.notes && (
-                <div className="text-sm text-gray-700 mt-1">
+                <div className="text-sm text-base mt-1">
                   {s.notes}
                 </div>
               )}

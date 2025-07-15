@@ -74,7 +74,7 @@ export default function SportForm({ initialData = {}, onSubmit }) {
           <select
             value={intensity}
             onChange={(e) => setIntensity(e.target.value)}
-            className="w-full p-2 bg-gray-700 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full p-2 bg-surface rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             required
           >
             <option value="">Select intensity</option>

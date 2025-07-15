@@ -52,7 +52,7 @@ export default function AddSportSession() {
     <div className="max-w-6xl mx-auto p-4 space-y-4">
       <BackButton />
       <h1 className="text-2xl font-bold">➕ Add Sport Session</h1>
-      <p className="text-gray-400">Record a new sports activity or game session.</p>
+      <p className="text-base">Record a new sports activity or game session.</p>
       <SportForm onSubmit={handleAdd} />
     </div>
   );

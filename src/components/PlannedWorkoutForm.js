@@ -113,10 +113,10 @@ export default function PlannedWorkoutForm({ onSuccess }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mt-4 space-y-4 p-4 bg-gray-800 rounded shadow">
+    <form onSubmit={handleSubmit} className="mt-4 space-y-4 p-4 bg-surface rounded shadow">
       <div>
         <FormLabel>Type</FormLabel>
-        <select value={type} onChange={e => setType(e.target.value)} className="w-full p-2 bg-gray-700 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+        <select value={type} onChange={e => setType(e.target.value)} className="w-full p-2 bg-surface rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
           <option value="workout">Workout</option>
           <option value="cardio">Cardio</option>
           <option value="sports">Sports</option>

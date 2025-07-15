@@ -135,7 +135,7 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
     <div className="max-w-6xl mx-auto p-4 space-y-4">
       <BackButton />
       <h1 className="text-2xl font-bold">{isEdit ? '✏️ Edit Workout' : '➕ Add Workout'}</h1>
-      <p className="text-gray-400">Create a new workout session with exercises and details.</p>
+      <p className="text-base">Create a new workout session with exercises and details.</p>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <FormLabel>Workout Title</FormLabel>
@@ -222,7 +222,7 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
                 <li key={i} className="border p-2 rounded flex justify-between items-start">
                   <div>
                     <strong>{ex.name}</strong> — {ex.sets}×{ex.reps} @ {ex.weight || 0} lbs
-                    {ex.notes && <p className="text-sm text-gray-600">{ex.notes}</p>}
+                    {ex.notes && <p className="text-sm text-base">{ex.notes}</p>}
                   </div>
                   <Button 
                     onClick={() => handleDeleteExercise(i)} 

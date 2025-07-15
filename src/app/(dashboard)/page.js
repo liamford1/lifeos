@@ -22,6 +22,9 @@ export default function Home() {
   return (
     <div className="max-w-6xl mx-auto p-4 space-y-4">
       <h1 className="text-2xl font-bold">📅 Your Life Planner</h1>
+      <div className='bg-surface text-base border border-default p-4 rounded-lg'>
+        <p>This should be dark gray background, light text, and a subtle border. If it looks off, theme classes are still broken.</p>
+      </div>
       <CalendarView />
     </div>
   );

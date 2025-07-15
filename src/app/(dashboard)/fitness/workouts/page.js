@@ -75,7 +75,7 @@ export default function WorkoutsDashboard() {
     <div className="max-w-6xl mx-auto p-4 space-y-4">
       <BackButton />
       <h1 className="text-2xl font-bold">🏋️ Workouts</h1>
-      <p className="text-gray-400">Track your weightlifting and strength training sessions.</p>
+      <p className="text-base">Track your weightlifting and strength training sessions.</p>
 
       <Link href="/fitness/workouts/add" className="text-blue-600 underline mb-6 inline-block">
         ➕ Add New Workout
@@ -96,8 +96,8 @@ export default function WorkoutsDashboard() {
                 className="cursor-pointer hover:underline"
               >
                 <div className="font-semibold text-lg">{w.title}</div>
-                <div className="text-sm text-gray-600">{w.date}</div>
-                {w.notes && <div className="text-sm text-gray-700 mt-1">{w.notes}</div>}
+                <div className="text-sm text-base">{w.date}</div>
+                {w.notes && <div className="text-sm text-base mt-1">{w.notes}</div>}
               </div>
 
               <div className="flex gap-4 mt-2 text-sm">

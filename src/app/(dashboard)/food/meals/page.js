@@ -52,7 +52,7 @@ export default function MealsPage() {
     <div className="max-w-6xl mx-auto p-4 space-y-4">
       <BackButton />
       <h1 className="text-2xl font-bold">📖 Your Saved Meals</h1>
-      <p className="text-gray-400">Browse and manage your saved meal recipes.</p>
+      <p className="text-base">Browse and manage your saved meal recipes.</p>
 
       {mealsLoading ? (
         <LoadingSpinner />
@@ -63,12 +63,12 @@ export default function MealsPage() {
           {meals.map((meal) => (
             <li key={meal.id}>
               <Link href={`/food/meals/${meal.id}`}>
-                <div className="bg-gray-800 hover:bg-gray-700 transition p-4 rounded shadow cursor-pointer">
+                <div className="bg-surface hover:bg-[#2e2e2e] transition p-4 rounded shadow cursor-pointer">
                   <h2 className="text-xl font-semibold text-white">{meal.name}</h2>
                   {meal.description && (
-                    <p className="text-gray-300 mt-1">{meal.description}</p>
+                    <p className="text-base mt-1">{meal.description}</p>
                   )}
-                  <p className="text-sm text-gray-400 mt-2">
+                  <p className="text-sm text-base mt-2">
                     Prep: {meal.prep_time || 0} min • Cook: {meal.cook_time || 0} min • Servings: {meal.servings || 1}
                   </p>
                 </div>

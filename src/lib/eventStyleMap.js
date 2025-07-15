@@ -32,7 +32,7 @@ export const eventStyleMap = {
     Icon: MdEventNote,
   },
   default: {
-    colorClass: 'bg-gray-500 text-white',
+    colorClass: 'bg-card text-base',
     Icon: MdEventNote,
   },
 };

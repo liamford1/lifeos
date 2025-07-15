@@ -107,10 +107,10 @@ export default function AddReceiptPage(props) {
     <div className="max-w-6xl mx-auto p-4 space-y-4">
       <BackButton />
       <h1 className="text-2xl font-bold">🧾 Add a Receipt</h1>
-      <p className="text-gray-400">Add items from a receipt to your pantry inventory.</p>
+      <p className="text-base">Add items from a receipt to your pantry inventory.</p>
 
       <input
-        className="bg-gray-700 p-2 rounded w-full mb-6"
+        className="bg-surface p-2 rounded w-full mb-6"
         placeholder="Store name (e.g. Safeway)"
         value={storeName}
         onChange={(e) => setStoreName(e.target.value)}
@@ -118,25 +118,25 @@ export default function AddReceiptPage(props) {
 
       <div className="grid grid-cols-4 gap-3 mb-4">
         <input
-          className="bg-gray-700 p-2 rounded"
+          className="bg-surface p-2 rounded"
           placeholder="Item name"
           value={currentItem.name}
           onChange={(e) => setCurrentItem({ ...currentItem, name: e.target.value })}
         />
         <input
-          className="bg-gray-700 p-2 rounded"
+          className="bg-surface p-2 rounded"
           placeholder="Qty"
           value={currentItem.quantity}
           onChange={(e) => setCurrentItem({ ...currentItem, quantity: e.target.value })}
         />
         <input
-          className="bg-gray-700 p-2 rounded"
+          className="bg-surface p-2 rounded"
           placeholder="Unit"
           value={currentItem.unit}
           onChange={(e) => setCurrentItem({ ...currentItem, unit: e.target.value })}
         />
         <input
-          className="bg-gray-700 p-2 rounded"
+          className="bg-surface p-2 rounded"
           placeholder="Price"
           value={currentItem.price}
           onChange={(e) => setCurrentItem({ ...currentItem, price: e.target.value })}
@@ -154,9 +154,9 @@ export default function AddReceiptPage(props) {
       {items.length > 0 && (
         <ul className="mb-6 space-y-2">
           {items.map((item, index) => (
-            <li key={index} className="bg-gray-700 p-3 rounded shadow">
+            <li key={index} className="bg-surface p-3 rounded shadow">
               <span className="font-semibold">{item.name}</span> — {item.quantity} {item.unit}
-              {item.price && <span className="text-gray-300"> (${item.price})</span>}
+              {item.price && <span className="text-base"> (${item.price})</span>}
             </li>
           ))}
         </ul>

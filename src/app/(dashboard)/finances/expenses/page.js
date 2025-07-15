@@ -63,7 +63,7 @@ export default function FinancesOverview() {
     <div className="max-w-6xl mx-auto p-4 space-y-4">
       <BackButton />
       <h1 className="text-2xl font-bold">Expenses Overview</h1>
-      <p className="text-gray-400">Track and manage your expense records.</p>
+      <p className="text-base">Track and manage your expense records.</p>
       <Link href="/finances/add" className="text-blue-600 underline mb-4 inline-block">
         ➕ Add New Expense
       </Link>
@@ -76,8 +76,8 @@ export default function FinancesOverview() {
           {expenses.map((exp) => (
             <li key={exp.id} className="border p-3 rounded">
               <div className="font-semibold">{exp.name} — ${exp.amount.toFixed(2)}</div>
-              <div className="text-sm text-gray-600">{exp.category} — {exp.store} — {exp.payment_method}</div>
-              <div className="text-xs text-gray-500">{exp.date}</div>
+              <div className="text-sm text-base">{exp.category} — {exp.store} — {exp.payment_method}</div>
+              <div className="text-xs text-base">{exp.date}</div>
               <div className="flex gap-2 mt-2">
                 <Link href={`/finances/expenses/${exp.id}`} passHref legacyBehavior>
                   <Button as="a" variant="secondary" size="sm">View</Button>

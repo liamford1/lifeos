@@ -176,13 +176,13 @@ export default function MealPlannerPage() {
     <div className="max-w-6xl mx-auto p-4 space-y-4">
       <BackButton />
       <h1 className="text-2xl font-bold">📅 Plan a Meal</h1>
-      <p className="text-gray-400">Schedule meals for the week ahead.</p>
+      <p className="text-base">Schedule meals for the week ahead.</p>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <select
           value={selectedMealId}
           onChange={(e) => setSelectedMealId(e.target.value)}
-          className="bg-gray-800 text-white border border-gray-600 rounded px-3 py-2"
+          className="bg-surface text-white border border-[#232323] rounded px-3 py-2"
         >
           <option value="">-- Choose a meal --</option>
           {mealsLoading ? (
@@ -200,13 +200,13 @@ export default function MealPlannerPage() {
           type="date"
           value={plannedDate}
           onChange={(e) => setPlannedDate(e.target.value)}
-          className="bg-gray-800 text-white border border-gray-600 rounded px-3 py-2"
+          className="bg-surface text-white border border-[#232323] rounded px-3 py-2"
         />
 
         <select
           value={mealTime}
           onChange={(e) => setMealTime(e.target.value)}
-          className="bg-gray-800 text-white border border-gray-600 rounded px-3 py-2"
+          className="bg-surface text-white border border-[#232323] rounded px-3 py-2"
         >
           <option value="breakfast">Breakfast</option>
           <option value="lunch">Lunch</option>
@@ -235,7 +235,7 @@ export default function MealPlannerPage() {
 
           {Object.entries(groupedMeals).map(([date, times]) => (
             <div key={date} className="mb-6">
-              <h3 className="text-lg font-bold mb-2 text-gray-300">
+              <h3 className="text-lg font-bold mb-2 text-base">
                 {new Intl.DateTimeFormat('en-US', {
                   year: 'numeric',
                   month: 'long',
@@ -248,11 +248,11 @@ export default function MealPlannerPage() {
                 times[slot]?.map((item) => (
                   <div
                     key={item.id}
-                    className="bg-gray-800 p-3 rounded mb-2 flex justify-between items-center border border-gray-700"
+                    className="bg-surface p-3 rounded mb-2 flex justify-between items-center border border-[#232323]"
                   >
                     <div>
                       <div className="font-medium">{item.meals?.name}</div>
-                      <div className="text-sm text-gray-400 capitalize">
+                      <div className="text-sm text-base capitalize">
                         {slot}
                       </div>
                     </div>

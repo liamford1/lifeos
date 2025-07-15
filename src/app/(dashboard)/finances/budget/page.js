@@ -21,8 +21,8 @@ export default function BudgetPage() {
   return (
     <div className="max-w-6xl mx-auto p-4 space-y-4">
       <h1 className="text-2xl font-bold">📈 Budget & Goals</h1>
-      <p className="text-gray-400">Set budgets and track financial goals.</p>
-      <p className="text-gray-400">Budget & Goals coming soon.</p>
+      <p className="text-base">Set budgets and track financial goals.</p>
+      <p className="text-base">Budget & Goals coming soon.</p>
     </div>
   );
 }

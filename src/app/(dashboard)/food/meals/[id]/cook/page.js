@@ -110,8 +110,8 @@ export default function CookMealPage() {
   return (
     <div className="p-6 space-y-4">
       <h1 className="text-3xl font-bold">{meal.name}</h1>
-      <p className="text-gray-600">{meal.description}</p>
-      <div className="bg-white p-4 rounded-lg shadow">
+      <p className="text-base">{meal.description}</p>
+      <div className="bg-surface p-4 rounded-lg shadow">
         <h2 className="text-xl font-semibold mb-2">Instructions</h2>
         {typeof meal.instructions === 'string' && meal.instructions.trim() ? (
           <ol className="list-decimal list-inside space-y-2">

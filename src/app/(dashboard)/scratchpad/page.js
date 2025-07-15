@@ -130,11 +130,11 @@ export default function ScratchpadPage() {
               <li key={entry.id} className="border p-3 rounded">
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
                   <div>
-                    <p className="text-gray-800">{entry.content}</p>
+                    <p className="text-base">{entry.content}</p>
                     {entry.category && (
                       <p className="text-sm text-blue-600 mt-1 capitalize">#{entry.category}</p>
                     )}
-                    <p className="text-sm text-gray-500 mt-1">
+                    <p className="text-sm text-base mt-1">
                       {new Date(entry.created_at).toLocaleString()}
                     </p>
                   </div>

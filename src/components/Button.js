@@ -15,11 +15,11 @@ export default function Button({
   
   const variants = {
     primary: 'bg-blue-600 hover:bg-blue-700 text-white focus:ring-blue-500',
-    secondary: 'bg-gray-600 hover:bg-gray-700 text-white focus:ring-gray-500',
+    secondary: 'bg-card hover:bg-[#2e2e2e] text-base focus:ring-gray-500',
     danger: 'bg-red-600 hover:bg-red-700 text-white focus:ring-red-500',
     success: 'bg-green-600 hover:bg-green-700 text-white focus:ring-green-500',
-    outline: 'border border-gray-300 bg-transparent hover:bg-gray-50 text-gray-700 focus:ring-gray-500',
-    ghost: 'bg-transparent hover:bg-gray-100 text-gray-700 focus:ring-gray-500',
+    outline: 'border border-gray-300 bg-transparent hover:bg-[#2e2e2e] text-base focus:ring-gray-500',
+    ghost: 'bg-transparent hover:bg-[#2a2a2a] text-base focus:ring-gray-500',
     link: 'bg-transparent text-blue-600 hover:text-blue-700 underline focus:ring-blue-500'
   };
   

@@ -45,10 +45,10 @@ export default function AppBar() {
 
   return (
     // Main navigation bar with dark theme and shadow
-    <nav className="flex items-center justify-between p-4 shadow bg-gray-800">
+    <nav className="flex items-center justify-between p-4 shadow bg-surface">
       {/* App title - clickable to navigate home */}
       <h1
-        className="text-xl font-bold cursor-pointer text-gray-100"
+        className="text-xl font-bold cursor-pointer text-base"
         onClick={() => router.push('/')}
       >
         Your Life Planner
@@ -62,7 +62,7 @@ export default function AppBar() {
             onClick={() => router.push('/profile')}
             variant="ghost"
             size="sm"
-            className="text-gray-100 hover:text-gray-300 p-0"
+            className="text-base hover:text-base p-0"
             aria-label="Profile"
           >
             <FaUserCircle size={24} />
@@ -74,11 +74,11 @@ export default function AppBar() {
           <>
             {/* Display user name or email - hidden on mobile for space */}
             {displayName ? (
-              <p className="text-sm hidden md:block text-gray-100">
+              <p className="text-sm hidden md:block text-base">
                 {displayName}
               </p>
             ) : (
-              <p className="text-sm hidden md:block text-gray-100">
+              <p className="text-sm hidden md:block text-base">
                 Signed in as <strong>{user.email}</strong>
               </p>
             )}

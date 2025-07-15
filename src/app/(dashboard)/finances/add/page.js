@@ -81,7 +81,7 @@ export default function AddExpensePage() {
     <div className="max-w-6xl mx-auto p-4 space-y-4">
       <BackButton />
       <h1 className="text-2xl font-bold">Add Expense</h1>
-      <p className="text-gray-400">Record a new expense with details.</p>
+      <p className="text-base">Record a new expense with details.</p>
       <form onSubmit={handleSubmit} className="space-y-2">
         <label htmlFor="expense-name" className="sr-only">Name</label>
         <input id="expense-name" name="name" value={formData.name} onChange={handleChange} placeholder="Name" className="w-full p-2 border rounded" required />

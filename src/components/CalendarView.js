@@ -151,14 +151,15 @@ export default function CalendarView() {
   };  
 
   return (
-    <div className="relative w-full p-6 bg-gray-800 text-white rounded shadow">
+    <div className="relative w-full p-6 bg-surface text-white rounded shadow">
       <h2 className="text-xl font-semibold mb-4">📅 Calendar</h2>
       <div className="w-full flex justify-center my-6">
         <div className="w-[80rem]">
-          <Calendar
+          <div className="bg-panel p-2 rounded">
+            <Calendar
             onChange={setSelectedDate}
             value={selectedDate}
-            className="!w-full !bg-gray-700 !text-white rounded-lg shadow"
+            className="!w-full !bg-surface !text-white rounded-lg shadow"
             tileContent={({ date, view }) => {
               if (view !== 'month') return null;
 
@@ -184,7 +185,7 @@ export default function CalendarView() {
                     );
                   })}
                   {eventsOnThisDay.length > 2 && (
-                    <div className="text-[10px] text-gray-300">
+                    <div className="text-[10px] text-base">
                       +{eventsOnThisDay.length - 2} more
                     </div>
                   )}
@@ -192,6 +193,7 @@ export default function CalendarView() {
               );
             }}
           />
+          </div>
         </div>
       </div>
 
@@ -247,7 +249,7 @@ export default function CalendarView() {
 
       {showAddModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-gray-800 p-6 rounded-lg w-96">
+          <div className="bg-surface p-6 rounded-lg w-96">
             <h3 className="text-lg font-semibold mb-4">Add Event</h3>
             <div className="space-y-4">
               <input
@@ -255,25 +257,25 @@ export default function CalendarView() {
                 placeholder="Event title"
                 value={newEvent.title}
                 onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
-                className="w-full p-2 border rounded bg-gray-700 text-white"
+                className="w-full p-2 border rounded bg-surface text-white"
               />
               <input
                 type="time"
                 value={newEvent.start_time}
                 onChange={(e) => setNewEvent({ ...newEvent, start_time: e.target.value })}
-                className="w-full p-2 border rounded bg-gray-700 text-white"
+                className="w-full p-2 border rounded bg-surface text-white"
               />
               <input
                 type="time"
                 value={newEvent.end_time}
                 onChange={(e) => setNewEvent({ ...newEvent, end_time: e.target.value })}
-                className="w-full p-2 border rounded bg-gray-700 text-white"
+                className="w-full p-2 border rounded bg-surface text-white"
               />
               <textarea
                 placeholder="Description (optional)"
                 value={newEvent.description}
                 onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })}
-                className="w-full p-2 border rounded bg-gray-700 text-white"
+                className="w-full p-2 border rounded bg-surface text-white"
                 rows={3}
               />
             </div>

@@ -61,7 +61,7 @@ export default function AuthPage() {
         {isLogin ? 'Need to create an account?' : 'Already have an account?'}
       </Button>
 
-      {message && <p className="mt-4 text-sm text-gray-700">{message}</p>}
+      {message && <p className="mt-4 text-sm text-base">{message}</p>}
     </div>
   )
 }

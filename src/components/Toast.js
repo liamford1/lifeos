@@ -38,7 +38,7 @@ export default function Toast({
       case 'info':
         return 'bg-blue-600 border-blue-500 text-white';
       default:
-        return 'bg-gray-600 border-gray-500 text-white';
+        return 'bg-card border-[#232323] text-base';
     }
   };
 
@@ -85,7 +85,7 @@ export default function Toast({
         <span className="flex-1 text-sm font-medium">{message}</span>
         <button
           onClick={handleClose}
-          className="ml-2 text-white hover:text-gray-200 focus:outline-none"
+          className="ml-2 text-base hover:text-base focus:outline-none"
         >
           ✕
         </button>

@@ -15,8 +15,10 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #1e1e1e;
+    --foreground: #e0e0e0;
+    --card: #2a2a2a;
+    --border: #3a3a3a;
   }
 }
 
@@ -28,46 +30,67 @@ body {
 
 /* Custom dark mode overrides for react-calendar */
 .react-calendar {
-  background-color: #1e293b; /* slate-800 */
-  color: #f1f5f9; /* slate-100 */
-  border: none;
-  border-radius: 0.5rem;
-  padding: 1rem;
+  background-color: var(--panel) !important;
 }
 
 .react-calendar__tile {
   min-height: 6rem;
   background-color: transparent;
-  color: #f1f5f9;
+  color: var(--panel);
   border-radius: 0.375rem;
   padding: 0.75rem 0.5rem;
-
-  /* 🔧 These lines fix vertical alignment */
   display: flex;
   flex-direction: column;
-  justify-content: flex-start; /* align content to the top */
-  align-items: flex-start;     /* align left inside tile */
+  justify-content: flex-start;
+  align-items: flex-start;
 }
 
 .react-calendar__tile--now {
-  background: #334155; /* slate-700 */
+  background: #2a2a2a;
 }
 
 .react-calendar__tile--active {
-  background: #3b82f6 !important; /* blue-500 */
-  color: white !important;
+  background: #3b3b3b !important;
+  color: var(--panel) !important;
+  border: 1px solid #232323 !important; /* subtle gray border */
+}
+
+.react-calendar__tile--active:focus {
+  outline: 1px solid #232323;
+}
+
+.react-calendar__tile--selected {
+  background: #1f1f1f;
+  color: var(--panel);
 }
 
 .react-calendar__tile:hover {
-  background: #475569; /* slate-600 */
+  background: #2e2e2e;
 }
 
 .react-calendar__navigation {
   background: transparent;
-  color: #f1f5f9;
+  color: var(--panel);
 }
 
 .react-calendar__month-view__days__day--weekend {
-  color: #e2e8f0; /* slate-200 */
+  color: var(--panel);
+}
+
+/* Tailwind theme utilities using CSS variables */
+.bg-surface {
+  background-color: var(--background);
+}
+.text-base {
+  color: var(--foreground);
+}
+.bg-card {
+  background-color: var(--card);
+}
+.border-default {
+  border-color: var(--border);
+}
+.bg-panel {
+  background-color: #2a2a2a;
 }
 

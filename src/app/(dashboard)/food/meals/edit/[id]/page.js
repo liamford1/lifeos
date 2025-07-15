@@ -292,7 +292,7 @@ export default function EditMealPage() {
     <div className="max-w-6xl mx-auto p-4 space-y-4">
       <BackButton />
       <h1 className="text-2xl font-bold">Edit Meal</h1>
-      <p className="text-gray-400">Update your meal recipe details.</p>
+      <p className="text-base">Update your meal recipe details.</p>
 
       <MealForm
         initialValues={initialValues}
