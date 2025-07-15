@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
 import { deleteEntityWithCalendarEvent } from '@/lib/deleteUtils'
 import BackButton from '@/components/BackButton'
+import Button from '@/components/Button'
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/context/UserContext';
 import LoadingSpinner from '@/components/LoadingSpinner';
@@ -119,12 +120,12 @@ export default function ScratchpadPage() {
         className="w-full p-2 border rounded mb-4"
       />
 
-      <button
+      <Button
         onClick={handleAddEntry}
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        variant="primary"
       >
         Save Entry
-      </button>
+      </Button>
 
       {message && <p className="mt-2 text-sm text-gray-700">{message}</p>}
 
@@ -140,12 +141,14 @@ export default function ScratchpadPage() {
               <p className="text-sm text-gray-500 mt-1">
                 {new Date(entry.created_at).toLocaleString()}
               </p>
-              <button
+              <Button
                 onClick={() => handleDelete(entry.id)}
-                className="mt-2 text-sm text-red-500 hover:underline"
+                variant="link"
+                size="sm"
+                className="mt-2 text-red-500 hover:text-red-700"
               >
                 Delete
-              </button>
+              </Button>
             </li>
           ))}
         </ul>

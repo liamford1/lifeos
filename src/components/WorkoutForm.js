@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import BackButton from '@/components/BackButton';
+import Button from '@/components/Button';
 import { CALENDAR_SOURCES, updateCalendarEvent } from '@/lib/calendarUtils';
 
 export default function WorkoutForm({ initialWorkout = null, initialExercises = [], isEdit = false }) {
@@ -141,7 +142,14 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
         <input name="reps" type="number" value={exerciseForm.reps} onChange={handleExerciseChange} placeholder="Reps" className="w-full p-2 border rounded" />
         <input name="weight" type="number" step="0.1" value={exerciseForm.weight} onChange={handleExerciseChange} placeholder="Weight (lbs)" className="w-full p-2 border rounded" />
         <textarea name="notes" value={exerciseForm.notes} onChange={handleExerciseChange} placeholder="Notes (optional)" className="w-full p-2 border rounded" rows={2} />
-        <button type="button" onClick={handleAddExercise} className="w-full bg-gray-700 text-white p-2 rounded hover:bg-gray-800">➕ Add Exercise</button>
+        <Button 
+          type="button" 
+          onClick={handleAddExercise} 
+          variant="secondary"
+          className="w-full"
+        >
+          ➕ Add Exercise
+        </Button>
 
         {exercises.length > 0 && (
           <div className="mt-4">
@@ -153,16 +161,27 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
                     <strong>{ex.name}</strong> — {ex.sets}×{ex.reps} @ {ex.weight || 0} lbs
                     {ex.notes && <p className="text-sm text-gray-600">{ex.notes}</p>}
                   </div>
-                  <button onClick={() => handleDeleteExercise(i)} className="text-red-500 text-sm hover:underline">Delete</button>
+                  <Button 
+                    onClick={() => handleDeleteExercise(i)} 
+                    variant="link"
+                    size="sm"
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    Delete
+                  </Button>
                 </li>
               ))}
             </ul>
           </div>
         )}
 
-        <button type="submit" className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 mt-6">
+        <Button 
+          type="submit" 
+          variant="primary"
+          className="w-full mt-6"
+        >
           ✅ {isEdit ? 'Update Workout' : 'Save Workout'}
-        </button>
+        </Button>
       </form>
     </div>
   );

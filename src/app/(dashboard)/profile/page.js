@@ -6,6 +6,7 @@ import { useUser } from '@/context/UserContext';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { supabase } from '@/lib/supabaseClient';
 import BackButton from '@/components/BackButton';
+import Button from '@/components/Button';
 
 export default function ProfilePage() {
   const { user, loading } = useUser();
@@ -183,13 +184,14 @@ export default function ProfilePage() {
             className="w-full p-2 border rounded"
           />
         </div>
-        <button
+        <Button
           type="submit"
+          variant="primary"
           disabled={saving}
-          className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 disabled:opacity-50"
+          className="w-full"
         >
           {saving ? 'Saving...' : 'Save Profile'}
-        </button>
+        </Button>
       </form>
     </>
   );

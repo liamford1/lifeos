@@ -1,9 +1,10 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
 import { deleteEntityWithCalendarEvent } from '@/lib/deleteUtils'
 import BackButton from '@/components/BackButton'
+import Button from '@/components/Button'
 import { CALENDAR_SOURCES } from '@/lib/calendarUtils'
 
 export default function MealPlannerPage() {
@@ -32,7 +33,9 @@ export default function MealPlannerPage() {
       .from('planned_meals')
       .select(`
         *,
-        meals (*)
+        meals (
+          name
+        )
       `)
       .order('planned_date')
 
@@ -196,12 +199,12 @@ export default function MealPlannerPage() {
         </select>
       </div>
 
-      <button
+      <Button
         onClick={handlePlanMeal}
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        variant="primary"
       >
         Plan Meal
-      </button>
+      </Button>
 
       {message && <p className="mt-4 text-sm text-green-400">{message}</p>}
 
@@ -232,12 +235,14 @@ export default function MealPlannerPage() {
                         {slot}
                       </div>
                     </div>
-                    <button
+                    <Button
                       onClick={() => handleDelete(item.id)}
-                      className="text-sm text-red-400 hover:underline"
+                      variant="link"
+                      size="sm"
+                      className="text-red-400 hover:text-red-300"
                     >
                       Delete
-                    </button>
+                    </Button>
                   </div>
                 )) ?? null
               )}

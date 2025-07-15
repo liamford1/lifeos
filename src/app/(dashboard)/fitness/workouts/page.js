@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { supabase } from '@/lib/supabaseClient';
 import { deleteEntityWithCalendarEvent } from '@/lib/deleteUtils';
 import BackButton from '@/components/BackButton';
+import Button from '@/components/Button';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/context/UserContext';
 import LoadingSpinner from '@/components/LoadingSpinner';
@@ -92,18 +93,22 @@ export default function WorkoutsDashboard() {
               </div>
 
               <div className="flex gap-4 mt-2 text-sm">
-                <button
+                <Button
                   onClick={() => router.push(`/fitness/workouts/${w.id}/edit`)}
-                  className="text-blue-500 hover:underline"
+                  variant="link"
+                  size="sm"
+                  className="text-blue-500 hover:text-blue-700"
                 >
                   ✏️ Edit
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={() => handleDelete(w.id)}
-                  className="text-red-500 hover:underline"
+                  variant="link"
+                  size="sm"
+                  className="text-red-500 hover:text-red-700"
                 >
                   🗑️ Delete
-                </button>
+                </Button>
               </div>
             </li>
           ))}

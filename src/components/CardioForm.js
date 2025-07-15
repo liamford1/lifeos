@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Button from '@/components/Button';
 
 export default function CardioForm({ initialData = {}, onSubmit }) {
   const [activityType, setActivityType] = useState(initialData.activity_type || '');
@@ -24,58 +25,79 @@ export default function CardioForm({ initialData = {}, onSubmit }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <input
-        type="text"
-        placeholder="Activity Type (e.g. Run, Hike)"
-        value={activityType}
-        onChange={(e) => setActivityType(e.target.value)}
-        className="w-full p-2 border rounded"
-        required
-      />
-      <input
-        type="date"
-        value={date}
-        onChange={(e) => setDate(e.target.value)}
-        className="w-full p-2 border rounded"
-        required
-      />
-      <input
-        type="number"
-        placeholder="Duration (minutes)"
-        value={duration}
-        onChange={(e) => setDuration(e.target.value)}
-        className="w-full p-2 border rounded"
-        required
-      />
-      <input
-        type="number"
-        step="0.01"
-        placeholder="Distance (miles)"
-        value={distance}
-        onChange={(e) => setDistance(e.target.value)}
-        className="w-full p-2 border rounded"
-      />
-      <input
-        type="text"
-        placeholder="Location (optional)"
-        value={location}
-        onChange={(e) => setLocation(e.target.value)}
-        className="w-full p-2 border rounded"
-      />
-      <textarea
-        placeholder="Notes (optional)"
-        value={notes}
-        onChange={(e) => setNotes(e.target.value)}
-        className="w-full p-2 border rounded"
-        rows={3}
-      />
+      <div>
+        <label className="block text-sm font-medium mb-1">Activity Type</label>
+        <input
+          type="text"
+          value={activityType}
+          onChange={(e) => setActivityType(e.target.value)}
+          className="w-full p-2 border rounded"
+          placeholder="e.g., Running, Cycling, Swimming"
+          required
+        />
+      </div>
 
-      <button
-        type="submit"
-        className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700"
-      >
-        ✅ Save Cardio Session
-      </button>
+      <div>
+        <label className="block text-sm font-medium mb-1">Date</label>
+        <input
+          type="date"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+          className="w-full p-2 border rounded"
+          required
+        />
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium mb-1">Duration (minutes)</label>
+          <input
+            type="number"
+            value={duration}
+            onChange={(e) => setDuration(e.target.value)}
+            className="w-full p-2 border rounded"
+            placeholder="30"
+            required
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-1">Distance (miles)</label>
+          <input
+            type="number"
+            step="0.1"
+            value={distance}
+            onChange={(e) => setDistance(e.target.value)}
+            className="w-full p-2 border rounded"
+            placeholder="3.1"
+          />
+        </div>
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium mb-1">Location</label>
+        <input
+          type="text"
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+          className="w-full p-2 border rounded"
+          placeholder="e.g., Central Park, Gym"
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium mb-1">Notes</label>
+        <textarea
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+          className="w-full p-2 border rounded"
+          rows={3}
+          placeholder="How did it feel? Any observations?"
+        />
+      </div>
+
+      <Button type="submit" variant="primary" className="w-full">
+        Save Cardio Activity
+      </Button>
     </form>
   );
 }

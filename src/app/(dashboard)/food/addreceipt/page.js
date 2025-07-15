@@ -7,6 +7,7 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import { useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
 import BackButton from '@/components/BackButton'
+import Button from '@/components/Button'
 
 export default function AddReceiptPage(props) {
   const { user, loading } = useUser();
@@ -141,12 +142,13 @@ export default function AddReceiptPage(props) {
         />
       </div>
 
-      <button
+      <Button
         onClick={handleAddItem}
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mb-6"
+        variant="primary"
+        className="mb-6"
       >
         + Add Item
-      </button>
+      </Button>
 
       {items.length > 0 && (
         <ul className="mb-6 space-y-2">
@@ -159,12 +161,12 @@ export default function AddReceiptPage(props) {
         </ul>
       )}
 
-      <button
+      <Button
         onClick={handleSubmit}
-        className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+        variant="success"
       >
         Submit Receipt
-      </button>
+      </Button>
 
       {message && (
         <p className="mt-4 text-sm text-green-400">

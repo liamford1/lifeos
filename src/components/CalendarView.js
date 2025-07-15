@@ -8,6 +8,7 @@ import { deleteEntityWithCalendarEvent } from '@/lib/deleteUtils';
 import { useRouter } from 'next/navigation';
 import dayjs from 'dayjs';
 import { CALENDAR_SOURCES, getCalendarEventRoute } from '@/lib/calendarUtils';
+import Button from '@/components/Button';
 
 export default function CalendarView() {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -132,7 +133,6 @@ export default function CalendarView() {
       table: sourceTable,
       id: event.source_id,
       user_id: user_id,
-      source: event.source,
     });
   
     if (error) {
@@ -246,15 +246,17 @@ export default function CalendarView() {
                   <div className="font-semibold">
                     {getEventIcon(event.source)}{event.title}
                   </div>
-                  <button
+                  <Button
                     onClick={(e) => {
                       e.stopPropagation();
                       handleDeleteEvent(event);
                     }}
-                    className="text-sm text-red-400 hover:text-red-300 ml-4"
+                    variant="ghost"
+                    size="sm"
+                    className="text-red-400 hover:text-red-300 ml-4 p-1"
                   >
                     ✖
-                  </button>
+                  </Button>
                 </div>
 
                 {event.start_time && (
@@ -272,23 +274,27 @@ export default function CalendarView() {
         )}
       </div>
 
-      <button
+      <Button
         type="button"
         onClick={() => setShowAddModal(true)}
-        className="fixed bottom-6 right-6 bg-green-600 text-white rounded-full w-12 h-12 text-2xl shadow-lg hover:bg-green-700"
+        variant="success"
+        size="lg"
+        className="fixed bottom-6 right-6 rounded-full w-12 h-12 text-2xl shadow-lg p-0"
       >
         +
-      </button>
+      </Button>
 
       {showAddModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-gray-800 text-white p-6 rounded-lg shadow-xl w-full max-w-md space-y-4 relative">
-            <button
+            <Button
               onClick={() => setShowAddModal(false)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-white text-xl font-bold"
+              variant="ghost"
+              size="sm"
+              className="absolute top-4 right-4 text-gray-400 hover:text-white text-xl font-bold p-0"
             >
               ×
-            </button>
+            </Button>
             <h2 className="text-xl font-semibold pr-8">Add Event</h2>
             <input
               type="text"
@@ -321,18 +327,20 @@ export default function CalendarView() {
               rows={3}
             />
             <div className="flex gap-2">
-              <button
+              <Button
                 onClick={handleAddEvent}
-                className="flex-1 bg-green-600 text-white p-2 rounded hover:bg-green-700"
+                variant="success"
+                className="flex-1"
               >
                 Add Event
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={() => setShowAddModal(false)}
-                className="flex-1 bg-gray-600 text-white p-2 rounded hover:bg-gray-700"
+                variant="secondary"
+                className="flex-1"
               >
                 Cancel
-              </button>
+              </Button>
             </div>
           </div>
         </div>

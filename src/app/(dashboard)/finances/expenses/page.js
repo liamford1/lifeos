@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { supabase } from '@/lib/supabaseClient';
 import { deleteEntityWithCalendarEvent } from '@/lib/deleteUtils';
 import BackButton from '@/components/BackButton';
+import Button from '@/components/Button';
 
 export default function FinancesOverview() {
   const { user, loading } = useUser();
@@ -68,12 +69,14 @@ export default function FinancesOverview() {
               <div className="font-semibold">{exp.name} — ${exp.amount.toFixed(2)}</div>
               <div className="text-sm text-gray-600">{exp.category} — {exp.store} — {exp.payment_method}</div>
               <div className="text-xs text-gray-500">{exp.date}</div>
-              <button
+              <Button
                 onClick={() => handleDelete(exp.id)}
-                className="mt-2 text-red-600 hover:underline text-sm"
+                variant="link"
+                size="sm"
+                className="mt-2 text-red-600 hover:text-red-700"
               >
                 🗑️ Delete
-              </button>
+              </Button>
             </li>
           ))}
         </ul>

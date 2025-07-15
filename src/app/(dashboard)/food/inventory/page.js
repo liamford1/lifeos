@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabaseClient'
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/context/UserContext';
 import LoadingSpinner from '@/components/LoadingSpinner';
-
+import Button from '@/components/Button';
 import BackButton from '@/components/BackButton'
 
 export default function InventoryPage() {
@@ -133,13 +133,15 @@ export default function InventoryPage() {
                     Added on: {new Date(item.added_at).toLocaleDateString()}
                   </div>
                 </div>
-                <button
+                <Button
                   onClick={() => handleDelete(item.id)}
-                  className="text-red-400 hover:text-red-300 text-xl font-bold ml-4"
+                  variant="ghost"
+                  size="sm"
+                  className="text-red-400 hover:text-red-300 text-xl font-bold ml-4 p-0"
                   title="Delete"
                 >
                   ✕
-                </button>
+                </Button>
               </div>
 
               <div className="mt-4 flex gap-2 items-center">
@@ -158,12 +160,14 @@ export default function InventoryPage() {
                   }
                 />
                 <span className="text-sm text-gray-300">{item.unit}</span>
-                <button
+                <Button
                   onClick={() => handleSubtract(item.id)}
-                  className="text-sm bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
+                  variant="secondary"
+                  size="sm"
+                  className="text-sm"
                 >
                   Subtract
-                </button>
+                </Button>
               </div>
             </li>
           ))}

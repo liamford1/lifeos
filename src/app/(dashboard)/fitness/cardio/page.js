@@ -1,38 +1,33 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useUser } from '@/context/UserContext';
-import LoadingSpinner from '@/components/LoadingSpinner';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabaseClient';
 import { deleteEntityWithCalendarEvent } from '@/lib/deleteUtils';
 import BackButton from '@/components/BackButton';
+import Button from '@/components/Button';
 
-export default function CardioPage(props) {
-  const { user, loading } = useUser();
+export default function CardioDashboard() {
+  const [sessions, setSessions] = useState([]);
   const router = useRouter();
 
   useEffect(() => {
-    if (!loading && !user) {
-      router.push('/auth');
-    }
-  }, [loading, user]);
+    const fetchSessions = async () => {
+      const { data, error } = await supabase
+        .from('fitness_cardio')
+        .select('*')
+        .order('date', { ascending: false });
 
-  if (loading) return <LoadingSpinner />;
-  if (!user) return null;
+      if (error) {
+        console.error(error);
+      } else {
+        setSessions(data);
+      }
+    };
 
-  const [sessions, setSessions] = useState([]);
-
-  const fetchSessions = async () => {
-    const { data, error } = await supabase
-      .from('fitness_cardio')
-      .select('*')
-      .order('date', { ascending: false });
-
-    if (error) console.error(error);
-    else setSessions(data);
-  };
+    fetchSessions();
+  }, []);
 
   const handleDelete = async (id) => {
     const confirm = window.confirm('Delete this session?');
@@ -61,21 +56,17 @@ export default function CardioPage(props) {
     }
   };
 
-  useEffect(() => {
-    fetchSessions();
-  }, []);
-
   return (
     <main className="p-4 max-w-xl mx-auto">
       <BackButton />
-      <h1 className="text-2xl font-bold mb-4">🏃‍♂️ Cardio Sessions</h1>
+      <h1 className="text-2xl font-bold mb-4">🏃 Cardio</h1>
 
       <Link href="/fitness/cardio/add" className="text-blue-600 underline mb-6 inline-block">
         ➕ Add Cardio Session
       </Link>
 
       {sessions.length === 0 ? (
-        <p>No cardio sessions yet.</p>
+        <p>No cardio sessions logged yet.</p>
       ) : (
         <ul className="space-y-3">
           {sessions.map((s) => (
@@ -84,34 +75,42 @@ export default function CardioPage(props) {
               onClick={() => router.push(`/fitness/cardio/${s.id}`)}
               className="border p-3 rounded shadow-sm cursor-pointer hover:bg-gray-50 transition"
             >
-              <div>
-                <div className="font-semibold text-lg">{s.activity_type || 'Cardio'}</div>
-                <div className="text-sm text-gray-600">{s.date}</div>
-                <div className="text-sm text-gray-500">
-                  ⏱️ {s.duration_minutes} min — 📏 {s.distance_miles} mi
-                </div>
-                {s.notes && <div className="text-sm text-gray-700 mt-1">{s.notes}</div>}
+              <div className="font-semibold text-lg">{s.activity_type || 'Cardio'}</div>
+              <div className="text-sm text-gray-600">{s.date}</div>
+              <div className="text-sm text-gray-500">
+                ⏱️ {s.duration_minutes ?? '-'} min
+                {s.distance_miles && ` — 📏 ${s.distance_miles} mi`}
               </div>
+              {s.location && <div className="text-sm text-gray-500">📍 {s.location}</div>}
+              {s.notes && (
+                <div className="text-sm text-gray-700 mt-1">
+                  {s.notes}
+                </div>
+              )}
 
               <div className="flex gap-4 mt-2 text-sm">
-                <button
+                <Button
                   onClick={(e) => {
                     e.stopPropagation();
                     router.push(`/fitness/cardio/${s.id}?edit=true`);
                   }}
-                  className="text-blue-500 hover:underline"
+                  variant="link"
+                  size="sm"
+                  className="text-blue-500 hover:text-blue-700"
                 >
                   ✏️ Edit
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={(e) => {
                     e.stopPropagation();
                     handleDelete(s.id);
                   }}
-                  className="text-red-500 hover:underline"
+                  variant="link"
+                  size="sm"
+                  className="text-red-500 hover:text-red-700"
                 >
                   🗑️ Delete
-                </button>
+                </Button>
               </div>
             </li>
           ))}

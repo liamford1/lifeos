@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
+import Button from '@/components/Button'
 
 export default function AuthPage() {
   const router = useRouter()
@@ -43,19 +44,22 @@ export default function AuthPage() {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
-      <button
+      <Button
         onClick={handleAuth}
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        variant="primary"
+        className="w-64"
       >
         {isLogin ? 'Log In' : 'Sign Up'}
-      </button>
+      </Button>
 
-      <button
+      <Button
         onClick={() => setIsLogin(!isLogin)}
-        className="text-sm text-blue-500 mt-4"
+        variant="link"
+        size="sm"
+        className="mt-4"
       >
         {isLogin ? 'Need to create an account?' : 'Already have an account?'}
-      </button>
+      </Button>
 
       {message && <p className="mt-4 text-sm text-gray-700">{message}</p>}
     </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Button from '@/components/Button';
 
 export default function MealForm({ 
   initialValues = {}, 
@@ -12,30 +13,23 @@ export default function MealForm({
 }) {
   const [mealName, setMealName] = useState(initialValues.name || '');
   const [description, setDescription] = useState(initialValues.description || '');
-  const [prepTime, setPrepTime] = useState(initialValues.prep_time?.toString() || '');
-  const [cookTime, setCookTime] = useState(initialValues.cook_time?.toString() || '');
-  const [servings, setServings] = useState(initialValues.servings?.toString() || '');
-  const [ingredients, setIngredients] = useState(initialValues.ingredients || []);
-  const [instructions, setInstructions] = useState(initialValues.instructions || []);
+  const [prepTime, setPrepTime] = useState(initialValues.prep_time || '');
+  const [cookTime, setCookTime] = useState(initialValues.cook_time || '');
+  const [servings, setServings] = useState(initialValues.servings || '');
+  const [ingredients, setIngredients] = useState(initialValues.ingredients || [{ name: '', quantity: '', unit: '' }]);
+  const [instructions, setInstructions] = useState(initialValues.instructions || ['']);
 
-  // Update form values when initialValues change (for editing)
   useEffect(() => {
-    setMealName(initialValues.name || '');
-    setDescription(initialValues.description || '');
-    setPrepTime(initialValues.prep_time?.toString() || '');
-    setCookTime(initialValues.cook_time?.toString() || '');
-    setServings(initialValues.servings?.toString() || '');
-    setIngredients(initialValues.ingredients || []);
-    setInstructions(initialValues.instructions || []);
-  }, [
-    initialValues.name,
-    initialValues.description,
-    initialValues.prep_time,
-    initialValues.cook_time,
-    initialValues.servings,
-    JSON.stringify(initialValues.ingredients),
-    JSON.stringify(initialValues.instructions)
-  ]);
+    if (initialValues.name) {
+      setMealName(initialValues.name);
+      setDescription(initialValues.description || '');
+      setPrepTime(initialValues.prep_time || '');
+      setCookTime(initialValues.cook_time || '');
+      setServings(initialValues.servings || '');
+      setIngredients(initialValues.ingredients || [{ name: '', quantity: '', unit: '' }]);
+      setInstructions(initialValues.instructions || ['']);
+    }
+  }, [initialValues]);
 
   function addIngredient() {
     setIngredients([...ingredients, { name: '', quantity: '', unit: '' }]);
@@ -47,7 +41,7 @@ export default function MealForm({
 
   function handleIngredientChange(index, field, value) {
     const updated = [...ingredients];
-    updated[index][field] = value;
+    updated[index] = { ...updated[index], [field]: value };
     setIngredients(updated);
   }
 
@@ -176,24 +170,27 @@ export default function MealForm({
             placeholder="Unit"
             disabled={loading}
           />
-          <button
+          <Button
             type="button"
             onClick={() => removeIngredient(index)}
-            className="text-red-400 hover:underline"
+            variant="link"
+            size="sm"
+            className="text-red-400 hover:text-red-300"
             disabled={loading}
           >
             ✕
-          </button>
+          </Button>
         </div>
       ))}
-      <button 
+      <Button 
         type="button" 
         onClick={addIngredient} 
-        className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded"
+        variant="success"
+        size="sm"
         disabled={loading}
       >
         + Add Ingredient
-      </button>
+      </Button>
 
       {/* Instructions */}
       <hr className="border-gray-700" />
@@ -208,24 +205,27 @@ export default function MealForm({
             placeholder={`Step ${index + 1}`}
             disabled={loading}
           />
-          <button
+          <Button
             type="button"
             onClick={() => removeInstruction(index)}
-            className="text-red-400 hover:underline"
+            variant="link"
+            size="sm"
+            className="text-red-400 hover:text-red-300"
             disabled={loading}
           >
             ✕
-          </button>
+          </Button>
         </div>
       ))}
-      <button 
+      <Button 
         type="button" 
         onClick={addInstruction} 
-        className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded"
+        variant="success"
+        size="sm"
         disabled={loading}
       >
         + Add Step
-      </button>
+      </Button>
 
       {/* Error Display */}
       {error && (
@@ -234,23 +234,23 @@ export default function MealForm({
 
       {/* Action Buttons */}
       <div className="flex gap-4 pt-4">
-        <button
+        <Button
           type="submit"
+          variant="primary"
           disabled={loading}
-          className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 text-white px-4 py-2 rounded"
         >
           {loading ? 'Saving...' : (isEditing ? 'Update Meal' : 'Save Meal')}
-        </button>
+        </Button>
         
         {onCancel && (
-          <button
+          <Button
             type="button"
             onClick={onCancel}
+            variant="secondary"
             disabled={loading}
-            className="bg-gray-600 hover:bg-gray-700 disabled:bg-gray-500 text-white px-4 py-2 rounded"
           >
             Cancel
-          </button>
+          </Button>
         )}
       </div>
     </form>

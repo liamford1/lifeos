@@ -2,106 +2,45 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabaseClient';
-import { deleteEntityWithCalendarEvent } from '@/lib/deleteUtils';
-import BackButton from '@/components/BackButton';
-import { CALENDAR_SOURCES } from '@/lib/calendarUtils';
 import { useUser } from '@/context/UserContext';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import { supabase } from '@/lib/supabaseClient';
+import BackButton from '@/components/BackButton';
+import Button from '@/components/Button';
 import Link from 'next/link';
+import { deleteEntityWithCalendarEvent } from '@/lib/deleteUtils';
+import { CALENDAR_SOURCES } from '@/lib/calendarUtils';
 
 export default function MealDetailPage() {
+  const { id } = useParams();
   const { user, loading } = useUser();
   const router = useRouter();
-  const { id } = useParams();
   const [meal, setMeal] = useState(null);
   const [ingredients, setIngredients] = useState([]);
   const [mealLoading, setMealLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!mealLoading && !user) {
+    if (!loading && !user) {
       router.push('/auth');
     }
-  }, [mealLoading, user]);
+  }, [loading, user]);
 
   useEffect(() => {
     async function fetchMeal() {
+      if (!user) return;
+
       try {
-        console.log('=== Starting fetchMeal ===');
-        console.log('Raw id from useParams:', id);
-        
-        const user = await supabase.auth.getUser();
-        const userId = user?.data?.user?.id;
+        console.log('=== fetchMeal started ===');
+        console.log('User ID:', user.id);
+        console.log('Meal ID:', id);
 
-        if (!userId) {
-          console.error('No user found');
-          setError('You must be logged in to view this meal.');
-          setMealLoading(false);
-          return;
-        }
-
-        if (!id) {
-          console.error('No meal ID provided');
-          setError('No meal ID provided.');
-          setMealLoading(false);
-          return;
-        }
-
-        // Log mealId and userId before querying Supabase
-        console.log('mealId (from URL param):', id);
-        console.log('mealId type:', typeof id);
-        console.log('userId (from Supabase session):', userId);
-        console.log('userId type:', typeof userId);
-
-        // First, let's check if the meal exists at all (without user filter)
-        const { data: mealCheck, error: mealCheckError } = await supabase
-          .from('meals')
-          .select('id, user_id, name')
-          .eq('id', id);
-
-        console.log('Meal check result:', mealCheck);
-        console.log('Meal check error:', mealCheckError);
-
-        if (mealCheckError) {
-          console.error('Error checking meal existence:', mealCheckError);
-          setError('Error checking meal existence.');
-          setMealLoading(false);
-          return;
-        }
-
-        if (!mealCheck || mealCheck.length === 0) {
-          console.error('Meal not found in database');
-          setError('Meal not found in database.');
-          setMealLoading(false);
-          return;
-        }
-
-        console.log('Found meal:', mealCheck[0]);
-
-        // Check if the meal belongs to the current user
-        if (mealCheck[0].user_id !== userId) {
-          console.error('Meal does not belong to current user');
-          console.error('Meal user_id:', mealCheck[0].user_id);
-          console.error('Current user_id:', userId);
-          setError('You do not have permission to view this meal.');
-          setMealLoading(false);
-          return;
-        }
-
-        // Now try the actual query with user filter
         const { data: mealData, error: mealError } = await supabase
           .from('meals')
           .select('*')
           .eq('id', id)
-          .eq('user_id', userId)
+          .eq('user_id', user.id)
           .single();
-
-        // Log the Supabase query result
-        console.log('mealData:', mealData);
-        console.log('mealError:', mealError);
-        console.log('mealError type:', typeof mealError);
-        console.log('mealError keys:', mealError ? Object.keys(mealError) : 'null');
 
         if (mealError) {
           console.error('Error fetching meal:', mealError);
@@ -217,12 +156,13 @@ export default function MealDetailPage() {
       <div className="text-red-400 text-center py-8">
         <h1 className="text-xl font-bold mb-4">Error Loading Meal</h1>
         <p>{error}</p>
-        <button 
+        <Button 
           onClick={() => router.push('/food/meals')}
-          className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          variant="primary"
+          className="mt-4"
         >
           Back to Meals
-        </button>
+        </Button>
       </div>
     </div>
   );
@@ -232,12 +172,13 @@ export default function MealDetailPage() {
       <div className="text-center py-8">
         <h1 className="text-xl font-bold mb-4">Meal Not Found</h1>
         <p>The meal you're looking for doesn't exist or you don't have permission to view it.</p>
-        <button 
+        <Button 
           onClick={() => router.push('/food/meals')}
-          className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          variant="primary"
+          className="mt-4"
         >
           Back to Meals
-        </button>
+        </Button>
       </div>
     </div>
   );
@@ -249,19 +190,19 @@ export default function MealDetailPage() {
       {meal.description && <p className="text-gray-300 mb-4">{meal.description}</p>}
 
       {/* Place the Cook Meal button here, right below description/instructions */}
-      <Link
-        href={`/food/meals/${id}/cook`}
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mb-4 inline-block"
-      >
-        Cook Meal
+      <Link href={`/food/meals/${id}/cook`}>
+        <Button variant="primary" className="mb-4">
+          Cook Meal
+        </Button>
       </Link>
 
-      <button
+      <Button
         onClick={() => router.push(`/food/meals/edit/${meal.id}`)}
-        className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+        variant="secondary"
+        className="mt-4"
       >
         Edit
-      </button>
+      </Button>
 
       <p className="text-sm text-gray-400 mb-6">
         Prep: {meal.prep_time || 0} min • Cook: {meal.cook_time || 0} min • Servings: {meal.servings || 1}
@@ -284,21 +225,21 @@ export default function MealDetailPage() {
       </ol>
 
       <div className="mt-8 flex gap-4 mb-4">
-        <button
+        <Button
           onClick={() => router.push('/')}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          variant="primary"
         >
           📅 Back to Calendar
-        </button>
+        </Button>
       </div>
 
       <div className="flex gap-4">
-        <button
+        <Button
           onClick={handleDeleteMeal}
-          className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+          variant="danger"
         >
           🗑️ Delete Meal
-        </button>
+        </Button>
       </div>
     </>
   );

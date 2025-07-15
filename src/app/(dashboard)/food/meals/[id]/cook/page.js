@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
+import Button from '@/components/Button';
 
 export default function CookMealPage() {
   const router = useRouter();
@@ -115,19 +116,21 @@ export default function CookMealPage() {
           <div className="text-gray-500 italic">No instructions provided.</div>
         )}
       </div>
-      <button
+      <Button
         onClick={handleDoneCooking}
-        className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+        variant="success"
       >
         Done Cooking
-      </button>
-      <button
+      </Button>
+      <Button
         type="button"
         onClick={() => router.back()}
-        className="block text-sm text-gray-500 mt-2 hover:underline"
+        variant="link"
+        size="sm"
+        className="block mt-2"
       >
         Cancel
-      </button>
+      </Button>
     </div>
   );
 } 

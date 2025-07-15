@@ -7,6 +7,7 @@ import { supabase } from '@/lib/supabaseClient';
 import { FaUserCircle } from 'react-icons/fa';
 import { useUser } from '@/context/UserContext';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import Button from '@/components/Button';
 
 export default function AppBar() {
   const { user, loading } = useUser();
@@ -40,67 +41,51 @@ export default function AppBar() {
   if (loading) return <LoadingSpinner />;
 
   return (
-    <nav
-      className="flex items-center justify-between p-4 shadow"
-      style={{ backgroundColor: '#202123' }}
-    >
+    <nav className="flex items-center justify-between p-4 shadow bg-gray-800">
       <h1
-        className="text-xl font-bold cursor-pointer"
+        className="text-xl font-bold cursor-pointer text-gray-100"
         onClick={() => router.push('/')}
-        style={{ color: '#e6e6e6' }}
       >
         Your Life Planner
       </h1>
 
       <div className="flex items-center space-x-4">
         {user && (
-          <button
+          <Button
             onClick={() => router.push('/profile')}
-            aria-label="Profile"
-            className="hover:text-gray-300"
-            style={{ color: '#e6e6e6' }}
+            variant="ghost"
+            size="sm"
+            className="text-gray-100 hover:text-gray-300 p-0"
           >
             <FaUserCircle size={24} />
-          </button>
+          </Button>
         )}
 
         {user ? (
           <>
             {displayName ? (
-              <p
-                className="text-sm hidden md:block"
-                style={{ color: '#e6e6e6' }}
-              >
+              <p className="text-sm hidden md:block text-gray-100">
                 {displayName}
               </p>
             ) : (
-              <p
-                className="text-sm hidden md:block"
-                style={{ color: '#e6e6e6' }}
-              >
+              <p className="text-sm hidden md:block text-gray-100">
                 Signed in as <strong>{user.email}</strong>
               </p>
             )}
 
-            <button
+            <Button
               onClick={handleLogout}
-              className="px-3 py-1 rounded hover:bg-red-600"
-              style={{ backgroundColor: '#ff4b5c', color: 'white' }}
-              onMouseEnter={e => e.currentTarget.style.backgroundColor = '#ff3140'}
-              onMouseLeave={e => e.currentTarget.style.backgroundColor = '#ff4b5c'}
+              variant="danger"
+              size="sm"
             >
               Log Out
-            </button>
+            </Button>
           </>
         ) : (
-          <Link
-            href="/auth"
-            className="px-3 py-1 rounded hover:bg-blue-700"
-            style={{ backgroundColor: '#10a37f', color: 'white' }}
-            onMouseEnter={e => e.currentTarget.style.backgroundColor = '#0d7a60'}
-            onMouseLeave={e => e.currentTarget.style.backgroundColor = '#10a37f'}
-          >
-            Log In
+          <Link href="/auth">
+            <Button variant="primary" size="sm">
+              Log In
+            </Button>
           </Link>
         )}
       </div>

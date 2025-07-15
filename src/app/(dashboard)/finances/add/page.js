@@ -6,6 +6,7 @@ import { useUser } from '@/context/UserContext';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { supabase } from '@/lib/supabaseClient';
 import BackButton from '@/components/BackButton';
+import Button from '@/components/Button';
 import { CALENDAR_SOURCES } from '@/lib/calendarUtils';
 
 export default function AddExpensePage() {
@@ -85,7 +86,9 @@ export default function AddExpensePage() {
         <input name="store" value={formData.store} onChange={handleChange} placeholder="Store" className="w-full p-2 border rounded" />
         <input name="payment_method" value={formData.payment_method} onChange={handleChange} placeholder="Payment Method" className="w-full p-2 border rounded" />
         <input name="date" type="date" value={formData.date} onChange={handleChange} className="w-full p-2 border rounded" required />
-        <button type="submit" className="bg-blue-600 text-white p-2 rounded w-full">Add Expense</button>
+        <Button type="submit" variant="primary" className="w-full">
+          Add Expense
+        </Button>
       </form>
     </div>
   );
