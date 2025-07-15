@@ -54,14 +54,9 @@ export default function MealsPage() {
       <h1 className="text-2xl font-bold mb-6">📖 Your Saved Meals</h1>
 
       {mealsLoading ? (
-        <p>Loading...</p>
+        <LoadingSpinner />
       ) : meals.length === 0 ? (
-        <p className="text-gray-400">
-          No meals saved yet.{' '}
-          <Link href="/food/addmeal" className="text-blue-400 underline hover:text-blue-300">
-            Add one
-          </Link>
-        </p>
+        <p className="text-muted-foreground text-sm">No entries yet. Add one above ⬆️</p>
       ) : (
         <ul className="space-y-4">
           {meals.map((meal) => (

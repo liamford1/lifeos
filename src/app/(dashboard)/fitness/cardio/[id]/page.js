@@ -5,6 +5,7 @@ import { useEffect, useState, use } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import BackButton from '@/components/BackButton';
 import CardioForm from '@/components/CardioForm';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import { CALENDAR_SOURCES, updateCalendarEvent } from '@/lib/calendarUtils';
 
 export default function ViewOrEditCardioSession({ params }) {
@@ -61,8 +62,8 @@ export default function ViewOrEditCardioSession({ params }) {
     alert('Session updated!');
   };
 
-  if (loading) return <div className="p-4">Loading...</div>;
-  if (!session) return <div className="p-4">Session not found.</div>;
+  if (loading) return <LoadingSpinner />;
+  if (!session) return <div className="p-4"><p className="text-muted-foreground text-sm">Session not found.</p></div>;
 
   return (
     <div className="p-4 max-w-xl mx-auto">

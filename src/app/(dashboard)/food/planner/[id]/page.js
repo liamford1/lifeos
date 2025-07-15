@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import BackButton from '@/components/BackButton';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 export default function PlannedMealDetailPage() {
   const { id } = useParams();
@@ -37,9 +38,9 @@ export default function PlannedMealDetailPage() {
     fetchPlannedMeal();
   }, [id]);
 
-  if (loading) return <div className="p-6 text-white">Loading...</div>;
+  if (loading) return <LoadingSpinner />;
   if (error) return (
-    <div className="p-6">
+    <div className="p-6 text-white">
       <BackButton />
       <div className="bg-red-900 border border-red-700 rounded-lg p-4 text-white">
         <h2 className="text-xl font-semibold mb-2">Error</h2>
@@ -48,11 +49,11 @@ export default function PlannedMealDetailPage() {
     </div>
   );
   if (!plannedMeal) return (
-    <div className="p-6">
+    <div className="p-6 text-white">
       <BackButton />
       <div className="bg-yellow-900 border border-yellow-700 rounded-lg p-4 text-white">
         <h2 className="text-xl font-semibold mb-2">Not Found</h2>
-        <p>Planned meal not found.</p>
+        <p className="text-muted-foreground text-sm">Planned meal not found.</p>
       </div>
     </div>
   );

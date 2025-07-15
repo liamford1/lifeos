@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import dayjs from 'dayjs';
 import { CALENDAR_SOURCES, getCalendarEventRoute } from '@/lib/calendarUtils';
 import Button from '@/components/Button';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 export default function CalendarView() {
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -226,9 +227,9 @@ export default function CalendarView() {
         </h3>
 
         {isLoading ? (
-          <p className="text-gray-400 mt-2">Loading events...</p>
+          <LoadingSpinner />
         ) : eventsForSelectedDate.length === 0 ? (
-          <p className="text-gray-400 mt-2">No events.</p>
+          <p className="text-muted-foreground text-sm mt-2">No entries yet. Add one above ⬆️</p>
         ) : (
           <ul className="mt-2 space-y-2">
             {eventsForSelectedDate.map((event) => (
@@ -251,22 +252,15 @@ export default function CalendarView() {
                       e.stopPropagation();
                       handleDeleteEvent(event);
                     }}
-                    variant="ghost"
+                    variant="link"
                     size="sm"
-                    className="text-red-400 hover:text-red-300 ml-4 p-1"
+                    className="text-white hover:text-red-200"
                   >
-                    ✖
+                    🗑️
                   </Button>
                 </div>
-
-                {event.start_time && (
-                  <div className="text-sm text-gray-300">
-                    ⏰ {dayjs(event.start_time).format('h:mm A')}
-                    {event.end_time && ` – ${dayjs(event.end_time).format('h:mm A')}`}
-                  </div>
-                )}
                 {event.description && (
-                  <div className="text-sm text-gray-400 mt-1">{event.description}</div>
+                  <div className="text-sm opacity-90 mt-1">{event.description}</div>
                 )}
               </li>
             ))}
@@ -274,71 +268,43 @@ export default function CalendarView() {
         )}
       </div>
 
-      <Button
-        type="button"
-        onClick={() => setShowAddModal(true)}
-        variant="success"
-        size="lg"
-        className="fixed bottom-6 right-6 rounded-full w-12 h-12 text-2xl shadow-lg p-0"
-      >
-        +
-      </Button>
-
       {showAddModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-gray-800 text-white p-6 rounded-lg shadow-xl w-full max-w-md space-y-4 relative">
-            <Button
-              onClick={() => setShowAddModal(false)}
-              variant="ghost"
-              size="sm"
-              className="absolute top-4 right-4 text-gray-400 hover:text-white text-xl font-bold p-0"
-            >
-              ×
-            </Button>
-            <h2 className="text-xl font-semibold pr-8">Add Event</h2>
-            <input
-              type="text"
-              placeholder="Title"
-              value={newEvent.title}
-              onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
-              className="w-full p-2 rounded bg-gray-700"
-            />
-            <div className="flex gap-2">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-gray-800 p-6 rounded-lg w-96">
+            <h3 className="text-lg font-semibold mb-4">Add Event</h3>
+            <div className="space-y-4">
+              <input
+                type="text"
+                placeholder="Event title"
+                value={newEvent.title}
+                onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
+                className="w-full p-2 border rounded bg-gray-700 text-white"
+              />
               <input
                 type="time"
-                placeholder="Start Time"
                 value={newEvent.start_time}
                 onChange={(e) => setNewEvent({ ...newEvent, start_time: e.target.value })}
-                className="flex-1 p-2 rounded bg-gray-700"
+                className="w-full p-2 border rounded bg-gray-700 text-white"
               />
               <input
                 type="time"
-                placeholder="End Time (optional)"
                 value={newEvent.end_time}
                 onChange={(e) => setNewEvent({ ...newEvent, end_time: e.target.value })}
-                className="flex-1 p-2 rounded bg-gray-700"
+                className="w-full p-2 border rounded bg-gray-700 text-white"
+              />
+              <textarea
+                placeholder="Description (optional)"
+                value={newEvent.description}
+                onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })}
+                className="w-full p-2 border rounded bg-gray-700 text-white"
+                rows={3}
               />
             </div>
-            <textarea
-              placeholder="Description (optional)"
-              value={newEvent.description}
-              onChange={(e) => setNewEvent({ ...newEvent, description: e.target.value })}
-              className="w-full p-2 rounded bg-gray-700"
-              rows={3}
-            />
-            <div className="flex gap-2">
-              <Button
-                onClick={handleAddEvent}
-                variant="success"
-                className="flex-1"
-              >
+            <div className="flex gap-2 mt-4">
+              <Button onClick={handleAddEvent} variant="primary">
                 Add Event
               </Button>
-              <Button
-                onClick={() => setShowAddModal(false)}
-                variant="secondary"
-                className="flex-1"
-              >
+              <Button onClick={() => setShowAddModal(false)} variant="secondary">
                 Cancel
               </Button>
             </div>

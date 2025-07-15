@@ -7,13 +7,16 @@ import { supabase } from '@/lib/supabaseClient';
 import { deleteEntityWithCalendarEvent } from '@/lib/deleteUtils';
 import BackButton from '@/components/BackButton';
 import Button from '@/components/Button';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 export default function CardioDashboard() {
   const [sessions, setSessions] = useState([]);
+  const [sessionsLoading, setSessionsLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
     const fetchSessions = async () => {
+      setSessionsLoading(true);
       const { data, error } = await supabase
         .from('fitness_cardio')
         .select('*')
@@ -24,6 +27,7 @@ export default function CardioDashboard() {
       } else {
         setSessions(data);
       }
+      setSessionsLoading(false);
     };
 
     fetchSessions();
@@ -65,8 +69,10 @@ export default function CardioDashboard() {
         ➕ Add Cardio Session
       </Link>
 
-      {sessions.length === 0 ? (
-        <p>No cardio sessions logged yet.</p>
+      {sessionsLoading ? (
+        <LoadingSpinner />
+      ) : sessions.length === 0 ? (
+        <p className="text-muted-foreground text-sm">No entries yet. Add one above ⬆️</p>
       ) : (
         <ul className="space-y-3">
           {sessions.map((s) => (

@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabaseClient'
 import { deleteEntityWithCalendarEvent } from '@/lib/deleteUtils'
 import BackButton from '@/components/BackButton'
 import Button from '@/components/Button'
+import LoadingSpinner from '@/components/LoadingSpinner'
 import { CALENDAR_SOURCES } from '@/lib/calendarUtils'
 
 export default function MealPlannerPage() {
@@ -14,8 +15,11 @@ export default function MealPlannerPage() {
   const [plannedDate, setPlannedDate] = useState('')
   const [mealTime, setMealTime] = useState('dinner')
   const [message, setMessage] = useState('')
+  const [mealsLoading, setMealsLoading] = useState(true)
+  const [plannedMealsLoading, setPlannedMealsLoading] = useState(true)
 
   const fetchMeals = async () => {
+    setMealsLoading(true)
     const { data, error } = await supabase
       .from('meals')
       .select('*')
@@ -26,9 +30,11 @@ export default function MealPlannerPage() {
     } else {
       setMeals(data)
     }
+    setMealsLoading(false)
   }
 
   const fetchPlannedMeals = async () => {
+    setPlannedMealsLoading(true)
     const { data, error } = await supabase
       .from('planned_meals')
       .select(`
@@ -44,6 +50,7 @@ export default function MealPlannerPage() {
     } else {
       setPlannedMeals(data)
     }
+    setPlannedMealsLoading(false)
   }
 
   useEffect(() => {
@@ -173,11 +180,15 @@ export default function MealPlannerPage() {
           className="bg-gray-800 text-white border border-gray-600 rounded px-3 py-2"
         >
           <option value="">-- Choose a meal --</option>
-          {meals.map((meal) => (
-            <option key={meal.id} value={meal.id}>
-              {meal.name}
-            </option>
-          ))}
+          {mealsLoading ? (
+            <option disabled>Loading meals...</option>
+          ) : (
+            meals.map((meal) => (
+              <option key={meal.id} value={meal.id}>
+                {meal.name}
+              </option>
+            ))
+          )}
         </select>
 
         <input
@@ -208,7 +219,12 @@ export default function MealPlannerPage() {
 
       {message && <p className="mt-4 text-sm text-green-400">{message}</p>}
 
-      {Object.keys(groupedMeals).length > 0 && (
+      {plannedMealsLoading ? (
+        <div className="mt-10">
+          <h2 className="text-xl font-semibold mb-4">🗓️ Upcoming Planned Meals</h2>
+          <LoadingSpinner />
+        </div>
+      ) : Object.keys(groupedMeals).length > 0 ? (
         <div className="mt-10">
           <h2 className="text-xl font-semibold mb-4">🗓️ Upcoming Planned Meals</h2>
 
@@ -248,6 +264,11 @@ export default function MealPlannerPage() {
               )}
             </div>
           ))}
+        </div>
+      ) : (
+        <div className="mt-10">
+          <h2 className="text-xl font-semibold mb-4">🗓️ Upcoming Planned Meals</h2>
+          <p className="text-muted-foreground text-sm">No entries yet. Add one above ⬆️</p>
         </div>
       )}
     </>

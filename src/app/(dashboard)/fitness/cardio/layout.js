@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabaseClient'
+import LoadingSpinner from '@/components/LoadingSpinner'
 
 export default function CardioLayout({ children }) {
   const [loading, setLoading] = useState(true)
@@ -22,6 +23,6 @@ export default function CardioLayout({ children }) {
     getUser()
   }, [router])
 
-  if (loading) return <div className="p-4">Loading...</div>
+  if (loading) return <LoadingSpinner />
   return <>{children}</>
 }

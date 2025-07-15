@@ -45,7 +45,7 @@ export default function EditWorkoutPage() {
 
   if (loading) return <LoadingSpinner />;
   if (!user) return null;
-  if (!workout) return <div className="p-4">Workout not found.</div>;
+  if (!workout) return <div className="p-4"><p className="text-muted-foreground text-sm">Workout not found.</p></div>;
 
   return <WorkoutForm initialWorkout={workout} initialExercises={exercises} isEdit />;
 }

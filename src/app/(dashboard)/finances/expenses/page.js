@@ -14,6 +14,7 @@ export default function FinancesOverview() {
   const { user, loading } = useUser();
   const router = useRouter();
   const [expenses, setExpenses] = useState([]);
+  const [expensesLoading, setExpensesLoading] = useState(true);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -24,11 +25,13 @@ export default function FinancesOverview() {
   useEffect(() => {
     if (!user) return;
     const fetchExpenses = async () => {
+      setExpensesLoading(true);
       const { data, error } = await supabase
         .from('expenses')
         .select('*')
         .order('date', { ascending: false });
       if (!error) setExpenses(data);
+      setExpensesLoading(false);
     };
     fetchExpenses();
   }, [user]);
@@ -60,8 +63,10 @@ export default function FinancesOverview() {
       <Link href="/finances/add" className="text-blue-600 underline mb-4 inline-block">
         ➕ Add New Expense
       </Link>
-      {expenses.length === 0 ? (
-        <p>No expenses yet.</p>
+      {expensesLoading ? (
+        <LoadingSpinner />
+      ) : expenses.length === 0 ? (
+        <p className="text-muted-foreground text-sm">No entries yet. Add one above ⬆️</p>
       ) : (
         <ul className="space-y-2 mt-4">
           {expenses.map((exp) => (

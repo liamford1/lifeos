@@ -110,9 +110,9 @@ export default function InventoryPage() {
       <h1 className="text-2xl font-bold mb-6">🥫 Your Pantry</h1>
 
       {inventoryLoading ? (
-        <p>Loading inventory...</p>
+        <LoadingSpinner />
       ) : items.length === 0 ? (
-        <p className="text-gray-400">No food items found.</p>
+        <p className="text-muted-foreground text-sm">No entries yet. Add one above ⬆️</p>
       ) : (
         <ul className="space-y-4">
           {items.map((item) => (

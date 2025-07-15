@@ -26,8 +26,10 @@ export default function ScratchpadPage() {
   const [category, setCategory] = useState('')
   const [entries, setEntries] = useState([])
   const [message, setMessage] = useState('')
+  const [entriesLoading, setEntriesLoading] = useState(true)
 
   const fetchEntries = async () => {
+    setEntriesLoading(true)
     const { data, error } = await supabase
       .from('scratchpad_entries')
       .select('*')
@@ -38,6 +40,7 @@ export default function ScratchpadPage() {
     } else {
       setEntries(data)
     }
+    setEntriesLoading(false)
   }
 
   useEffect(() => {
@@ -131,27 +134,33 @@ export default function ScratchpadPage() {
 
       <div className="mt-6">
         <h2 className="text-lg font-semibold mb-2">📝 Your Entries</h2>
-        <ul className="space-y-2">
-          {entries.map((entry) => (
-            <li key={entry.id} className="border p-3 rounded">
-              <p className="text-gray-800">{entry.content}</p>
-              {entry.category && (
-                <p className="text-sm text-blue-600 mt-1 capitalize">#{entry.category}</p>
-              )}
-              <p className="text-sm text-gray-500 mt-1">
-                {new Date(entry.created_at).toLocaleString()}
-              </p>
-              <Button
-                onClick={() => handleDelete(entry.id)}
-                variant="link"
-                size="sm"
-                className="mt-2 text-red-500 hover:text-red-700"
-              >
-                Delete
-              </Button>
-            </li>
-          ))}
-        </ul>
+        {entriesLoading ? (
+          <LoadingSpinner />
+        ) : entries.length === 0 ? (
+          <p className="text-muted-foreground text-sm">No entries yet. Add one above ⬆️</p>
+        ) : (
+          <ul className="space-y-2">
+            {entries.map((entry) => (
+              <li key={entry.id} className="border p-3 rounded">
+                <p className="text-gray-800">{entry.content}</p>
+                {entry.category && (
+                  <p className="text-sm text-blue-600 mt-1 capitalize">#{entry.category}</p>
+                )}
+                <p className="text-sm text-gray-500 mt-1">
+                  {new Date(entry.created_at).toLocaleString()}
+                </p>
+                <Button
+                  onClick={() => handleDelete(entry.id)}
+                  variant="link"
+                  size="sm"
+                  className="mt-2 text-red-500 hover:text-red-700"
+                >
+                  Delete
+                </Button>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </>
   )

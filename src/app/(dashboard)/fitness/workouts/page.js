@@ -13,6 +13,8 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 export default function WorkoutsDashboard() {
   const { user, loading } = useUser();
   const router = useRouter();
+  const [workouts, setWorkouts] = useState([]);
+  const [workoutsLoading, setWorkoutsLoading] = useState(true);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -23,9 +25,8 @@ export default function WorkoutsDashboard() {
   if (loading) return <LoadingSpinner />;
   if (!user) return null;
 
-  const [workouts, setWorkouts] = useState([]);
-
   const fetchWorkouts = async () => {
+    setWorkoutsLoading(true);
     const { data, error } = await supabase
       .from('fitness_workouts')
       .select('*')
@@ -33,6 +34,7 @@ export default function WorkoutsDashboard() {
 
     if (!error) setWorkouts(data);
     else console.error(error);
+    setWorkoutsLoading(false);
   };
 
   const handleDelete = async (id) => {
@@ -77,8 +79,10 @@ export default function WorkoutsDashboard() {
 
       <h2 className="text-xl font-semibold mb-2">📅 Workout History</h2>
 
-      {workouts.length === 0 ? (
-        <p>No workouts yet.</p>
+      {workoutsLoading ? (
+        <LoadingSpinner />
+      ) : workouts.length === 0 ? (
+        <p className="text-muted-foreground text-sm">No entries yet. Add one above ⬆️</p>
       ) : (
         <ul className="space-y-3">
           {workouts.map((w) => (

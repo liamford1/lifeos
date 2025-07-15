@@ -13,6 +13,7 @@ export default function WorkoutDetailPage() {
   const { id } = useParams();
   const [workout, setWorkout] = useState(null);
   const [exercises, setExercises] = useState([]);
+  const [workoutLoading, setWorkoutLoading] = useState(true);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -22,10 +23,12 @@ export default function WorkoutDetailPage() {
 
   useEffect(() => {
     const fetchData = async () => {
+      setWorkoutLoading(true);
       const { data: w } = await supabase.from('fitness_workouts').select('*').eq('id', id).single();
       const { data: e } = await supabase.from('fitness_exercises').select('*').eq('workout_id', id);
       setWorkout(w);
       setExercises(e || []);
+      setWorkoutLoading(false);
     };
 
     fetchData();
@@ -37,8 +40,10 @@ export default function WorkoutDetailPage() {
   return (
     <div className="p-4 max-w-xl mx-auto">
       <BackButton />
-      {!workout ? (
-        <p>Loading workout...</p>
+      {workoutLoading ? (
+        <LoadingSpinner />
+      ) : !workout ? (
+        <p className="text-muted-foreground text-sm">Workout not found.</p>
       ) : (
         <>
           <h1 className="text-2xl font-bold mb-1">{workout.title}</h1>
@@ -47,7 +52,7 @@ export default function WorkoutDetailPage() {
 
           <h2 className="text-xl font-semibold mb-2">💪 Exercises</h2>
           {exercises.length === 0 ? (
-            <p>No exercises logged.</p>
+            <p className="text-muted-foreground text-sm">No entries yet. Add one above ⬆️</p>
           ) : (
             <ul className="space-y-2">
               {exercises.map((ex) => (

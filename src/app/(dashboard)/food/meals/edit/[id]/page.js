@@ -83,7 +83,14 @@ export default function EditMealPage() {
     }
   }, [loading, user]);
 
-  if (mealLoading) return <LoadingSpinner />;
+  if (mealLoading) {
+    return (
+      <div className="p-4">
+        <BackButton />
+        <LoadingSpinner />
+      </div>
+    );
+  }
   if (!user) return null;
 
   async function handleUpdateMeal(mealData) {
@@ -250,7 +257,7 @@ export default function EditMealPage() {
     return (
       <div className="p-4">
         <BackButton />
-        <div className="text-white text-center py-8">Loading...</div>
+        <LoadingSpinner />
       </div>
     );
   }

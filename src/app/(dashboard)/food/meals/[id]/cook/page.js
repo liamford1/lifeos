@@ -4,21 +4,26 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import Button from '@/components/Button';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 export default function CookMealPage() {
   const router = useRouter();
   const { id } = useParams();
   const [meal, setMeal] = useState(null);
+  const [mealLoading, setMealLoading] = useState(true);
 
   useEffect(() => {
     async function fetchMeal() {
+      setMealLoading(true);
       const { data, error } = await supabase.from('meals').select('*').eq('id', id).single();
       if (!error) setMeal(data);
+      setMealLoading(false);
     }
     fetchMeal();
   }, [id]);
 
-  if (!meal) return <div>Loading...</div>;
+  if (mealLoading) return <LoadingSpinner />;
+  if (!meal) return <div className="p-6"><p className="text-muted-foreground text-sm">Meal not found.</p></div>;
 
   async function handleDoneCooking() {
     try {
@@ -113,7 +118,7 @@ export default function CookMealPage() {
             ))}
           </ol>
         ) : (
-          <div className="text-gray-500 italic">No instructions provided.</div>
+          <div className="text-muted-foreground text-sm italic">No entries yet. Add one above ⬆️</div>
         )}
       </div>
       <Button

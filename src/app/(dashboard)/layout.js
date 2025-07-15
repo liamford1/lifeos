@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import AppBar from '@/components/AppBar';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import Link from 'next/link';
 import { FaUtensils, FaDumbbell, FaCalculator, FaStickyNote, FaHome, FaUser } from 'react-icons/fa';
 
@@ -29,7 +30,7 @@ export default function DashboardLayout({ children }) {
     return (
       <main className="p-6 text-center text-lg" style={{ backgroundColor: '#343541', color: '#e6e6e6' }}>
         <h1 className="text-2xl font-bold mb-4">📅 Your Life Planner</h1>
-        <p>Loading...</p>
+        <LoadingSpinner />
       </main>
     );
   }
