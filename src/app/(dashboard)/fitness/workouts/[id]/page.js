@@ -1,19 +1,20 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabaseClient';
+import { useFetchEntity } from '@/lib/useSupabaseCrud';
 import BackButton from '@/components/BackButton';
 import { useUser } from '@/context/UserContext';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import { useEffect } from 'react';
+import { useToast } from '@/components/Toast';
 
 export default function WorkoutDetailPage() {
   const { user, loading } = useUser();
   const router = useRouter();
   const { id } = useParams();
-  const [workout, setWorkout] = useState(null);
-  const [exercises, setExercises] = useState([]);
-  const [workoutLoading, setWorkoutLoading] = useState(true);
+  const { data: workoutArr, loading: workoutLoading, error: workoutError } = useFetchEntity('fitness_workouts', { id });
+  const { data: exercises, loading: exercisesLoading, error: exercisesError } = useFetchEntity('fitness_exercises', { workout_id: id });
+  const { showError } = useToast();
 
   useEffect(() => {
     if (!loading && !user) {
@@ -22,26 +23,23 @@ export default function WorkoutDetailPage() {
   }, [loading, user]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      setWorkoutLoading(true);
-      const { data: w } = await supabase.from('fitness_workouts').select('*').eq('id', id).single();
-      const { data: e } = await supabase.from('fitness_exercises').select('*').eq('workout_id', id);
-      setWorkout(w);
-      setExercises(e || []);
-      setWorkoutLoading(false);
-    };
-
-    fetchData();
-  }, [id]);
+    if (workoutError) showError(workoutError.message || 'Failed to load workout.');
+    if (exercisesError) showError(exercisesError.message || 'Failed to load exercises.');
+  }, [workoutError, exercisesError, showError]);
 
   if (loading) return <LoadingSpinner />;
   if (!user) return null;
 
+  const workout = Array.isArray(workoutArr) ? workoutArr[0] : workoutArr;
+  const isLoading = workoutLoading || exercisesLoading;
+
   return (
     <div className="max-w-6xl mx-auto p-4 space-y-4">
       <BackButton />
-      {workoutLoading ? (
+      {isLoading ? (
         <LoadingSpinner />
+      ) : workoutError ? (
+        <p className="text-red-500 text-sm">Failed to load workout.</p>
       ) : !workout ? (
         <p className="text-muted-foreground text-sm">Workout not found.</p>
       ) : (
@@ -52,7 +50,11 @@ export default function WorkoutDetailPage() {
           {workout.notes && <p className="mb-4 italic text-gray-700">{workout.notes}</p>}
 
           <h2 className="text-xl font-semibold mb-2">💪 Exercises</h2>
-          {exercises.length === 0 ? (
+          {exercisesLoading ? (
+            <LoadingSpinner />
+          ) : exercisesError ? (
+            <p className="text-red-500 text-sm">Failed to load exercises.</p>
+          ) : !exercises || exercises.length === 0 ? (
             <p className="text-muted-foreground text-sm">No entries yet. Add one above ⬆️</p>
           ) : (
             <ul className="space-y-2">

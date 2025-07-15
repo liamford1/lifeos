@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useInsertEntity } from '@/lib/useSupabaseCrud'
 import { supabase } from '@/lib/supabaseClient'
 import { deleteEntityWithCalendarEvent } from '@/lib/deleteUtils'
 import BackButton from '@/components/BackButton'
@@ -15,13 +16,12 @@ export default function ScratchpadPage() {
   const { user, loading } = useUser();
   const router = useRouter();
   const { showSuccess, showError } = useToast();
-
-  // All hooks must be called before any return!
   const [content, setContent] = useState('');
   const [category, setCategory] = useState('');
   const [entries, setEntries] = useState([]);
-  const [message, setMessage] = useState('');
   const [entriesLoading, setEntriesLoading] = useState(true);
+
+  const { insert, loading: insertLoading } = useInsertEntity('scratchpad_entries');
 
   useEffect(() => {
     if (!loading && !user) {
@@ -48,54 +48,38 @@ export default function ScratchpadPage() {
     fetchEntries()
   }, [])
 
-  const handleAddEntry = async () => {
-    setMessage('')
-    if (!content.trim()) return
-
-    const {
-      data: { user },
-      error: userError,
-    } = await supabase.auth.getUser()
-
-    if (userError || !user) {
-      setMessage('Not logged in.')
-      return
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!content.trim()) return;
+    if (!user) {
+      showError('Not logged in.');
+      return;
     }
-
-    const { error } = await supabase.from('scratchpad_entries').insert([
-      {
-        user_id: user.id,
-        content,
-        category: category || null,
-      },
-    ])
-
-    if (error) {
-      setMessage(`Error: ${error.message}`)
-    } else {
-      setContent('')
-      setCategory('')
-      setMessage('Added!')
-      fetchEntries()
+    const { data, error } = await insert({
+      user_id: user.id,
+      content,
+      category: category || null,
+    });
+    if (!error) {
+      setContent('');
+      setCategory('');
+      fetchEntries();
     }
-  }
+    // Toasts are handled by the hook
+  };
 
   const handleDelete = async (id) => {
-    const user = await supabase.auth.getUser();
-    const user_id = user?.data?.user?.id;
-    
+    const user_id = user?.id;
     if (!user_id) {
       showError('You must be logged in.');
       return;
     }
-
     const error = await deleteEntityWithCalendarEvent({
       table: 'scratchpad_entries',
       id: id,
       user_id: user_id,
       source: 'scratchpad',
     });
-
     if (error) {
       console.error('Error deleting entry:', error.message);
       showError('Failed to delete entry.');
@@ -111,34 +95,30 @@ export default function ScratchpadPage() {
   return (
     <div className="max-w-6xl mx-auto p-4 space-y-4">
       <BackButton />
-
       <h1 className="text-2xl font-bold">🧠 Scratchpad</h1>
       <p className="text-gray-400">Quick notes and thoughts for later reference.</p>
-
-      <textarea
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
-        placeholder="What's on your mind?"
-        className="w-full p-2 border rounded mb-2 h-24"
-      />
-
-      <input
-        type="text"
-        value={category}
-        onChange={(e) => setCategory(e.target.value)}
-        placeholder="Category (optional)"
-        className="w-full p-2 border rounded mb-4"
-      />
-
-      <Button
-        onClick={handleAddEntry}
-        variant="primary"
-      >
-        Save Entry
-      </Button>
-
-      {message && <p className="mt-2 text-sm text-gray-700">{message}</p>}
-
+      <form onSubmit={handleSubmit}>
+        <textarea
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          placeholder="What's on your mind?"
+          className="w-full p-2 border rounded mb-2 h-24"
+        />
+        <input
+          type="text"
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          placeholder="Category (optional)"
+          className="w-full p-2 border rounded mb-4"
+        />
+        <Button
+          type="submit"
+          variant="primary"
+          disabled={insertLoading}
+        >
+          {insertLoading ? <LoadingSpinner size={20} /> : 'Save Entry'}
+        </Button>
+      </form>
       <div className="mt-6">
         <h2 className="text-lg font-semibold mb-2">📝 Your Entries</h2>
         {entriesLoading ? (

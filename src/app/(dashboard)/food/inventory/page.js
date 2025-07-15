@@ -1,16 +1,17 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { supabase } from '@/lib/supabaseClient'
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/context/UserContext';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import Button from '@/components/Button';
 import BackButton from '@/components/BackButton'
+import { useDeleteEntity } from '@/lib/useSupabaseCrud';
 
 export default function InventoryPage() {
   const { user, loading } = useUser();
   const router = useRouter();
+  const { deleteByFilters, loading: deleteLoading } = useDeleteEntity('food_items');
 
   useEffect(() => {
     if (!loading && !user) {
@@ -28,16 +29,14 @@ export default function InventoryPage() {
   const fetchInventory = async () => {
     const {
       data: { user },
-    } = await supabase.auth.getUser()
+    } = await import('@/lib/supabaseClient').then(m => m.supabase.auth.getUser())
 
     if (!user) {
       console.log('Not logged in')
       return
     }
 
-    const { data, error } = await supabase
-      .from('food_items')
-      .select(`
+    const { data, error } = await import('@/lib/supabaseClient').then(m => m.supabase.from('food_items').select(`
         id,
         name,
         quantity,
@@ -49,9 +48,7 @@ export default function InventoryPage() {
           store_name,
           scanned_at
         )
-      `)
-      .eq('user_id', user.id)
-      .order('added_at', { ascending: false })
+      `).eq('user_id', user.id).order('added_at', { ascending: false }))
 
     if (error) {
       console.error('Error fetching inventory:', error)
@@ -67,10 +64,8 @@ export default function InventoryPage() {
   }, [])
 
   const handleDelete = async (id) => {
-    const { error } = await supabase.from('food_items').delete().eq('id', id)
-    if (error) {
-      console.error('Delete error:', error)
-    } else {
+    const { error } = await deleteByFilters({ id });
+    if (!error) {
       setItems((prev) => prev.filter((item) => item.id !== id))
     }
   }
@@ -87,10 +82,7 @@ export default function InventoryPage() {
     if (newQty <= 0) {
       await handleDelete(id)
     } else {
-      const { error } = await supabase
-        .from('food_items')
-        .update({ quantity: newQty })
-        .eq('id', id)
+      const { error } = await import('@/lib/supabaseClient').then(m => m.supabase.from('food_items').update({ quantity: newQty }).eq('id', id))
 
       if (error) {
         console.error('Update error:', error)
@@ -140,8 +132,9 @@ export default function InventoryPage() {
                   size="sm"
                   className="text-red-400 hover:text-red-300 text-xl font-bold ml-4 p-0"
                   title="Delete"
+                  disabled={deleteLoading}
                 >
-                  ✕
+                  {deleteLoading ? <LoadingSpinner size={18} /> : '✕'}
                 </Button>
               </div>
 

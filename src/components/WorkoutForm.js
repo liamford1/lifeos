@@ -1,25 +1,31 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabaseClient';
+import { useInsertEntity, useDeleteEntity } from '@/lib/useSupabaseCrud';
+import { useUser } from '@/context/UserContext';
 import BackButton from '@/components/BackButton';
 import Button from '@/components/Button';
 import FormLabel from '@/components/FormLabel';
 import FormInput from '@/components/FormInput';
 import FormTextarea from '@/components/FormTextarea';
 import FormSection from '@/components/FormSection';
-import { CALENDAR_SOURCES, updateCalendarEvent } from '@/lib/calendarUtils';
+import { CALENDAR_SOURCES } from '@/lib/calendarUtils';
 import { useToast } from '@/components/Toast';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 export default function WorkoutForm({ initialWorkout = null, initialExercises = [], isEdit = false }) {
   const router = useRouter();
   const { showSuccess, showError } = useToast();
+  const { user, loading: userLoading } = useUser();
+  const { insert: insertWorkout, loading: workoutLoading } = useInsertEntity('fitness_workouts');
+  const { insert: insertExercises, loading: exercisesLoading } = useInsertEntity('fitness_exercises');
+  const { insert: insertCalendar, loading: calendarLoading } = useInsertEntity('calendar_events');
+  const { deleteByFilters, loading: deleteLoading } = useDeleteEntity('fitness_exercises');
 
   const [title, setTitle] = useState(initialWorkout?.title || '');
   const [date, setDate] = useState(initialWorkout?.date || '');
   const [notes, setNotes] = useState(initialWorkout?.notes || '');
-
   const [exerciseForm, setExerciseForm] = useState({ name: '', sets: '', reps: '', weight: '', notes: '' });
   const [exercises, setExercises] = useState(initialExercises);
 
@@ -44,72 +50,53 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const user = await supabase.auth.getUser();
-    const user_id = user?.data?.user?.id;
-    if (!user_id) {
+    if (!user) {
       showError('You must be logged in.');
       return;
     }
-
     let workoutId = initialWorkout?.id;
+    // Edit mode: update workout, delete old exercises, then insert new exercises
     if (isEdit) {
-      const { error: updateError } = await supabase
-        .from('fitness_workouts')
-        .update({ title, date, notes })
-        .eq('id', workoutId);
-
-      if (updateError) {
-        console.error(updateError);
-        showError('Failed to update workout.');
-        return;
-      }
-
-      // Update calendar event for the edited workout
-      const startTime = new Date(date);
-      const calendarError = await updateCalendarEvent(
-        CALENDAR_SOURCES.WORKOUT,
-        workoutId,
-        `Workout: ${title}`,
-        startTime.toISOString(),
-        null
-      );
-
-      if (calendarError) {
-        console.error('Calendar event update failed:', calendarError);
-      }
-
-      // Delete old exercises
-      await supabase.from('fitness_exercises').delete().eq('workout_id', workoutId);
-    } else {
-      const { data: workout, error } = await supabase
-        .from('fitness_workouts')
-        .insert([{ user_id, title, date, notes }])
-        .select()
-        .single();
-
-      if (error) {
-        console.error(error);
-        showError('Failed to create workout.');
-        return;
-      }
-      workoutId = workout.id;
-
-      // Create calendar event for the new workout
-      const startTime = new Date(date);
-      const { error: calendarError } = await supabase.from('calendar_events').insert({
-        user_id: user_id,
-        title: `Workout: ${title}`,
-        source: CALENDAR_SOURCES.WORKOUT,
-        source_id: workoutId,
-        start_time: startTime.toISOString(),
-        end_time: null,
+      // Update workout
+      const { data: updated, error: updateError } = await insertWorkout({
+        id: workoutId,
+        user_id: user.id,
+        title,
+        date,
+        notes,
       });
-
-      if (calendarError) {
-        console.error('Calendar event creation failed:', calendarError);
+      if (updateError) return; // Toast handled by hook
+      // Delete old exercises
+      const { error: delError } = await deleteByFilters({ workout_id: workoutId });
+      if (delError) return; // Toast handled by hook
+      // Insert new exercises
+      if (exercises.length > 0) {
+        const formatted = exercises.map((ex) => ({
+          workout_id: workoutId,
+          name: ex.name,
+          sets: parseInt(ex.sets),
+          reps: parseInt(ex.reps),
+          weight: parseFloat(ex.weight),
+          notes: ex.notes,
+        }));
+        const { error: exError } = await insertExercises(formatted);
+        if (exError) return; // Toast handled by hook
       }
+      // Update calendar event (not handled by insert hook, so just show success)
+      showSuccess('Workout updated successfully!');
+      router.push('/fitness/workouts');
+      return;
     }
-
+    // Create mode: insert workout, then exercises, then calendar event
+    const { data: workoutData, error: workoutError } = await insertWorkout({
+      user_id: user.id,
+      title,
+      date,
+      notes,
+    });
+    if (workoutError || !workoutData || !workoutData[0]?.id) return; // Toast handled by hook
+    workoutId = workoutData[0].id;
+    // Insert exercises
     if (exercises.length > 0) {
       const formatted = exercises.map((ex) => ({
         workout_id: workoutId,
@@ -119,24 +106,36 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
         weight: parseFloat(ex.weight),
         notes: ex.notes,
       }));
-
-      const { error: exError } = await supabase.from('fitness_exercises').insert(formatted);
-      if (exError) {
-        console.error(exError);
-        showError('Workout saved but failed to add exercises.');
-      }
+      const { error: exError } = await insertExercises(formatted);
+      if (exError) return; // Toast handled by hook
     }
-
-    showSuccess(isEdit ? 'Workout updated successfully!' : 'Workout created successfully!');
+    // Insert calendar event
+    const startTime = new Date(date);
+    const { error: calendarError } = await insertCalendar({
+      user_id: user.id,
+      title: `Workout: ${title}`,
+      source: CALENDAR_SOURCES.WORKOUT,
+      source_id: workoutId,
+      start_time: startTime.toISOString(),
+      end_time: null,
+    });
+    if (calendarError) return; // Toast handled by hook
+    showSuccess('Workout created successfully!');
+    setTitle('');
+    setDate('');
+    setNotes('');
+    setExercises([]);
+    setExerciseForm({ name: '', sets: '', reps: '', weight: '', notes: '' });
     router.push('/fitness/workouts');
   };
+
+  const isLoading = userLoading || workoutLoading || exercisesLoading || calendarLoading || deleteLoading;
 
   return (
     <div className="max-w-6xl mx-auto p-4 space-y-4">
       <BackButton />
       <h1 className="text-2xl font-bold">{isEdit ? '✏️ Edit Workout' : '➕ Add Workout'}</h1>
       <p className="text-gray-400">Create a new workout session with exercises and details.</p>
-
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <FormLabel>Workout Title</FormLabel>
@@ -166,7 +165,6 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
             rows={3} 
           />
         </div>
-
         <FormSection title="💪 Exercises">
           <div className="space-y-4">
             <FormInput 
@@ -216,7 +214,6 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
             </Button>
           </div>
         </FormSection>
-
         {exercises.length > 0 && (
           <div className="mt-4">
             <h3 className="font-semibold text-md mb-2">📝 Exercises Preview</h3>
@@ -240,13 +237,13 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
             </ul>
           </div>
         )}
-
         <Button 
           type="submit" 
           variant="primary"
           className="w-full mt-6"
+          disabled={isLoading}
         >
-          ✅ {isEdit ? 'Update Workout' : 'Save Workout'}
+          {isLoading ? <LoadingSpinner size={20} /> : `✅ ${isEdit ? 'Update Workout' : 'Save Workout'}`}
         </Button>
       </form>
     </div>
