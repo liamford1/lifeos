@@ -2,13 +2,14 @@
 
 import { useState, useCallback } from 'react';
 import { supabase } from '@/lib/supabaseClient';
-import { toast } from '@/components/Toast';
+import { useToast } from '@/components/Toast';
 
 // Fetch hook
 export function useFetchEntity(table, filters = {}) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const { showSuccess, showError } = useToast();
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -21,13 +22,13 @@ export function useFetchEntity(table, filters = {}) {
     if (error) {
       setError(error);
       setData(null);
-      toast.error(error.message || 'Failed to fetch data');
+      showError(error.message || 'Failed to fetch data');
     } else {
       setData(data);
-      toast.success('Fetched successfully');
+      showSuccess('Fetched successfully');
     }
     setLoading(false);
-  }, [table, JSON.stringify(filters)]);
+  }, [table, JSON.stringify(filters), showSuccess, showError]);
 
   // Fetch on mount or filters change
   // (User should call fetchData manually if they want more control)
@@ -39,6 +40,7 @@ export function useFetchEntity(table, filters = {}) {
 export function useInsertEntity(table) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const { showSuccess, showError } = useToast();
 
   const insert = async (insertData) => {
     setLoading(true);
@@ -46,11 +48,11 @@ export function useInsertEntity(table) {
     const { data, error } = await supabase.from(table).insert(insertData).select();
     if (error) {
       setError(error);
-      toast.error(error.message || 'Insert failed');
+      showError(error.message || 'Insert failed');
       setLoading(false);
       return { data: null, error };
     } else {
-      toast.success('Inserted successfully');
+      showSuccess('Inserted successfully');
       setLoading(false);
       return { data, error: null };
     }
@@ -63,6 +65,7 @@ export function useInsertEntity(table) {
 export function useDeleteEntity(table) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const { showSuccess, showError } = useToast();
 
   const deleteByFilters = async (filters) => {
     setLoading(true);
@@ -74,11 +77,11 @@ export function useDeleteEntity(table) {
     const { error } = await query;
     if (error) {
       setError(error);
-      toast.error(error.message || 'Delete failed');
+      showError(error.message || 'Delete failed');
       setLoading(false);
       return { error };
     } else {
-      toast.success('Deleted successfully');
+      showSuccess('Deleted successfully');
       setLoading(false);
       return { error: null };
     }
