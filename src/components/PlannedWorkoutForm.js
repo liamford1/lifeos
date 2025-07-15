@@ -3,6 +3,9 @@
 import { useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
 import Button from '@/components/Button'
+import FormLabel from '@/components/FormLabel'
+import FormInput from '@/components/FormInput'
+import FormTextarea from '@/components/FormTextarea'
 import dayjs from 'dayjs'
 import { CALENDAR_SOURCES } from '@/lib/calendarUtils'
 
@@ -109,8 +112,8 @@ export default function PlannedWorkoutForm({ onSuccess }) {
   return (
     <form onSubmit={handleSubmit} className="mt-4 space-y-4 p-4 bg-gray-800 rounded shadow">
       <div>
-        <label className="block text-sm mb-1 text-white">Type</label>
-        <select value={type} onChange={e => setType(e.target.value)} className="w-full p-2 rounded text-black">
+        <FormLabel>Type</FormLabel>
+        <select value={type} onChange={e => setType(e.target.value)} className="w-full p-2 bg-gray-700 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
           <option value="workout">Workout</option>
           <option value="cardio">Cardio</option>
           <option value="sports">Sports</option>
@@ -118,46 +121,42 @@ export default function PlannedWorkoutForm({ onSuccess }) {
       </div>
 
       <div>
-        <label className="block text-sm mb-1 text-white">
+        <FormLabel>
           {type === 'workout' ? 'Title' : 'Activity Type'}
-        </label>
-        <input
+        </FormLabel>
+        <FormInput
           type="text"
           value={title}
           onChange={e => setTitle(e.target.value)}
           required
-          className="w-full p-2 rounded text-black"
         />
       </div>
 
       <div>
-        <label className="block text-sm mb-1 text-white">Start Time</label>
-        <input
+        <FormLabel>Start Time</FormLabel>
+        <FormInput
           type="datetime-local"
           value={startTime}
           onChange={e => setStartTime(e.target.value)}
           required
-          className="w-full p-2 rounded text-black"
         />
       </div>
 
       <div>
-        <label className="block text-sm mb-1 text-white">End Time</label>
-        <input
+        <FormLabel>End Time</FormLabel>
+        <FormInput
           type="datetime-local"
           value={endTime}
           onChange={e => setEndTime(e.target.value)}
-          className="w-full p-2 rounded text-black"
         />
       </div>
 
       <div>
-        <label className="block text-sm mb-1 text-white">Notes (optional)</label>
-        <textarea
+        <FormLabel>Notes (optional)</FormLabel>
+        <FormTextarea
           value={notes}
           onChange={e => setNotes(e.target.value)}
           rows={3}
-          className="w-full p-2 rounded text-black"
         />
       </div>
 

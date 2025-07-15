@@ -2,6 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import Button from '@/components/Button';
+import FormLabel from '@/components/FormLabel';
+import FormInput from '@/components/FormInput';
+import FormTextarea from '@/components/FormTextarea';
+import FormSection from '@/components/FormSection';
 
 export default function MealForm({ 
   initialValues = {}, 
@@ -84,12 +88,11 @@ export default function MealForm({
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Basic Info */}
       <div>
-        <label className="block font-semibold mb-1 text-white">Meal Name</label>
-        <input
+        <FormLabel>Meal Name</FormLabel>
+        <FormInput
           type="text"
           value={mealName}
           onChange={(e) => setMealName(e.target.value)}
-          className="w-full p-2 bg-gray-700 rounded text-white"
           placeholder="e.g. Chicken Alfredo"
           disabled={loading}
           required
@@ -97,11 +100,10 @@ export default function MealForm({
       </div>
 
       <div>
-        <label className="block font-semibold mb-1 text-white">Description</label>
-        <textarea
+        <FormLabel>Description</FormLabel>
+        <FormTextarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          className="w-full p-2 bg-gray-700 rounded text-white"
           rows={3}
           placeholder="Brief description"
           disabled={loading}
@@ -110,122 +112,119 @@ export default function MealForm({
 
       <div className="flex gap-4">
         <div className="flex-1">
-          <label className="block font-semibold mb-1 text-white">Prep Time (min)</label>
-          <input
+          <FormLabel>Prep Time (min)</FormLabel>
+          <FormInput
             type="number"
             value={prepTime}
             onChange={(e) => setPrepTime(e.target.value)}
-            className="w-full p-2 bg-gray-700 rounded text-white"
             disabled={loading}
           />
         </div>
         <div className="flex-1">
-          <label className="block font-semibold mb-1 text-white">Cook Time (min)</label>
-          <input
+          <FormLabel>Cook Time (min)</FormLabel>
+          <FormInput
             type="number"
             value={cookTime}
             onChange={(e) => setCookTime(e.target.value)}
-            className="w-full p-2 bg-gray-700 rounded text-white"
             disabled={loading}
           />
         </div>
         <div className="flex-1">
-          <label className="block font-semibold mb-1 text-white">Servings</label>
-          <input
+          <FormLabel>Servings</FormLabel>
+          <FormInput
             type="number"
             value={servings}
             onChange={(e) => setServings(e.target.value)}
-            className="w-full p-2 bg-gray-700 rounded text-white"
             disabled={loading}
           />
         </div>
       </div>
 
       {/* Ingredients */}
-      <hr className="border-gray-700" />
-      <h2 className="text-xl font-semibold text-white">Ingredients</h2>
-      {ingredients.map((ingredient, index) => (
-        <div key={index} className="flex gap-2 items-center">
-          <input
-            type="text"
-            value={ingredient.name}
-            onChange={(e) => handleIngredientChange(index, 'name', e.target.value)}
-            className="flex-1 p-2 bg-gray-700 rounded text-white"
-            placeholder="Ingredient"
-            disabled={loading}
-          />
-          <input
-            type="number"
-            value={ingredient.quantity}
-            onChange={(e) => handleIngredientChange(index, 'quantity', e.target.value)}
-            className="w-24 p-2 bg-gray-700 rounded text-white"
-            placeholder="Qty"
-            disabled={loading}
-          />
-          <input
-            type="text"
-            value={ingredient.unit}
-            onChange={(e) => handleIngredientChange(index, 'unit', e.target.value)}
-            className="w-28 p-2 bg-gray-700 rounded text-white"
-            placeholder="Unit"
-            disabled={loading}
-          />
-          <Button
-            type="button"
-            onClick={() => removeIngredient(index)}
-            variant="link"
-            size="sm"
-            className="text-red-400 hover:text-red-300"
-            disabled={loading}
-          >
-            ✕
-          </Button>
-        </div>
-      ))}
-      <Button 
-        type="button" 
-        onClick={addIngredient} 
-        variant="success"
-        size="sm"
-        disabled={loading}
-      >
-        + Add Ingredient
-      </Button>
+      <FormSection title="Ingredients">
+        {ingredients.map((ingredient, index) => (
+          <div key={index} className="flex gap-2 items-center">
+            <FormInput
+              type="text"
+              value={ingredient.name}
+              onChange={(e) => handleIngredientChange(index, 'name', e.target.value)}
+              placeholder="Ingredient"
+              disabled={loading}
+              className="flex-1"
+            />
+            <FormInput
+              type="number"
+              value={ingredient.quantity}
+              onChange={(e) => handleIngredientChange(index, 'quantity', e.target.value)}
+              placeholder="Qty"
+              disabled={loading}
+              className="w-24"
+            />
+            <FormInput
+              type="text"
+              value={ingredient.unit}
+              onChange={(e) => handleIngredientChange(index, 'unit', e.target.value)}
+              placeholder="Unit"
+              disabled={loading}
+              className="w-28"
+            />
+            <Button
+              type="button"
+              onClick={() => removeIngredient(index)}
+              variant="link"
+              size="sm"
+              className="text-red-400 hover:text-red-300"
+              disabled={loading}
+            >
+              ✕
+            </Button>
+          </div>
+        ))}
+        <Button 
+          type="button" 
+          onClick={addIngredient} 
+          variant="success"
+          size="sm"
+          disabled={loading}
+        >
+          + Add Ingredient
+        </Button>
+      </FormSection>
 
       {/* Instructions */}
-      <hr className="border-gray-700" />
-      <h2 className="text-xl font-semibold text-white">Instructions</h2>
-      {instructions.map((step, index) => (
-        <div key={index} className="flex items-start gap-2">
-          <textarea
-            value={step}
-            onChange={(e) => handleInstructionChange(index, e.target.value)}
-            className="flex-1 p-2 bg-gray-700 rounded text-white"
-            rows={2}
-            placeholder={`Step ${index + 1}`}
-            disabled={loading}
-          />
-          <Button
-            type="button"
-            onClick={() => removeInstruction(index)}
-            variant="link"
-            size="sm"
-            className="text-red-400 hover:text-red-300"
-            disabled={loading}
-          >
-            ✕
-          </Button>
-        </div>
-      ))}
-      <Button 
-        type="button" 
-        onClick={addInstruction} 
-        variant="success"
-        size="sm"
-        disabled={loading}
-      >
-        + Add Step
-      </Button>
+      <FormSection title="Instructions">
+        {instructions.map((step, index) => (
+          <div key={index} className="flex items-start gap-2">
+            <FormTextarea
+              value={step}
+              onChange={(e) => handleInstructionChange(index, e.target.value)}
+              rows={2}
+              placeholder={`Step ${index + 1}`}
+              disabled={loading}
+              className="flex-1"
+            />
+            <Button
+              type="button"
+              onClick={() => removeInstruction(index)}
+              variant="link"
+              size="sm"
+              className="text-red-400 hover:text-red-300"
+              disabled={loading}
+            >
+              ✕
+            </Button>
+          </div>
+        ))}
+        <Button 
+          type="button" 
+          onClick={addInstruction} 
+          variant="success"
+          size="sm"
+          disabled={loading}
+        >
+          + Add Step
+        </Button>
+      </FormSection>
 
       {/* Error Display */}
       {error && (

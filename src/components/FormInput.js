@@ -1,0 +1,13 @@
+export default function FormInput({ 
+  className = '', 
+  disabled = false,
+  ...props 
+}) {
+  return (
+    <input
+      className={`w-full p-2 bg-gray-700 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${disabled ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
+      disabled={disabled}
+      {...props}
+    />
+  );
+} 

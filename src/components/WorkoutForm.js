@@ -5,6 +5,10 @@ import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import BackButton from '@/components/BackButton';
 import Button from '@/components/Button';
+import FormLabel from '@/components/FormLabel';
+import FormInput from '@/components/FormInput';
+import FormTextarea from '@/components/FormTextarea';
+import FormSection from '@/components/FormSection';
 import { CALENDAR_SOURCES, updateCalendarEvent } from '@/lib/calendarUtils';
 
 export default function WorkoutForm({ initialWorkout = null, initialExercises = [], isEdit = false }) {
@@ -130,26 +134,84 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
       <h1 className="text-2xl font-bold mb-4">{isEdit ? '✏️ Edit Workout' : '➕ Add Workout'}</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        <input type="text" placeholder="Workout Title" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full p-2 border rounded" required />
-        <input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="w-full p-2 border rounded" required />
-        <textarea placeholder="Notes (optional)" value={notes} onChange={(e) => setNotes(e.target.value)} className="w-full p-2 border rounded" rows={3} />
+        <div>
+          <FormLabel>Workout Title</FormLabel>
+          <FormInput 
+            type="text" 
+            placeholder="Workout Title" 
+            value={title} 
+            onChange={(e) => setTitle(e.target.value)} 
+            required 
+          />
+        </div>
+        <div>
+          <FormLabel>Date</FormLabel>
+          <FormInput 
+            type="date" 
+            value={date} 
+            onChange={(e) => setDate(e.target.value)} 
+            required 
+          />
+        </div>
+        <div>
+          <FormLabel>Notes (optional)</FormLabel>
+          <FormTextarea 
+            placeholder="Notes (optional)" 
+            value={notes} 
+            onChange={(e) => setNotes(e.target.value)} 
+            rows={3} 
+          />
+        </div>
 
-        <hr className="my-4" />
-
-        <h2 className="text-lg font-semibold">💪 Exercises</h2>
-        <input name="name" value={exerciseForm.name} onChange={handleExerciseChange} placeholder="Exercise Name" className="w-full p-2 border rounded" />
-        <input name="sets" type="number" value={exerciseForm.sets} onChange={handleExerciseChange} placeholder="Sets" className="w-full p-2 border rounded" />
-        <input name="reps" type="number" value={exerciseForm.reps} onChange={handleExerciseChange} placeholder="Reps" className="w-full p-2 border rounded" />
-        <input name="weight" type="number" step="0.1" value={exerciseForm.weight} onChange={handleExerciseChange} placeholder="Weight (lbs)" className="w-full p-2 border rounded" />
-        <textarea name="notes" value={exerciseForm.notes} onChange={handleExerciseChange} placeholder="Notes (optional)" className="w-full p-2 border rounded" rows={2} />
-        <Button 
-          type="button" 
-          onClick={handleAddExercise} 
-          variant="secondary"
-          className="w-full"
-        >
-          ➕ Add Exercise
-        </Button>
+        <FormSection title="💪 Exercises">
+          <div className="space-y-4">
+            <FormInput 
+              name="name" 
+              value={exerciseForm.name} 
+              onChange={handleExerciseChange} 
+              placeholder="Exercise Name" 
+            />
+            <div className="grid grid-cols-3 gap-4">
+              <FormInput 
+                name="sets" 
+                type="number" 
+                value={exerciseForm.sets} 
+                onChange={handleExerciseChange} 
+                placeholder="Sets" 
+              />
+              <FormInput 
+                name="reps" 
+                type="number" 
+                value={exerciseForm.reps} 
+                onChange={handleExerciseChange} 
+                placeholder="Reps" 
+              />
+              <FormInput 
+                name="weight" 
+                type="number" 
+                step="0.1" 
+                value={exerciseForm.weight} 
+                onChange={handleExerciseChange} 
+                placeholder="Weight (lbs)" 
+              />
+            </div>
+            <FormTextarea 
+              name="notes" 
+              value={exerciseForm.notes} 
+              onChange={handleExerciseChange} 
+              placeholder="Notes (optional)" 
+              rows={2} 
+            />
+            <Button 
+              type="button" 
+              onClick={handleAddExercise} 
+              variant="secondary"
+              className="w-full"
+            >
+              ➕ Add Exercise
+            </Button>
+          </div>
+        </FormSection>
 
         {exercises.length > 0 && (
           <div className="mt-4">

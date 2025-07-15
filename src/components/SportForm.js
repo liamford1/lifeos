@@ -2,6 +2,9 @@
 
 import { useState } from 'react';
 import Button from '@/components/Button';
+import FormLabel from '@/components/FormLabel';
+import FormInput from '@/components/FormInput';
+import FormTextarea from '@/components/FormTextarea';
 
 export default function SportForm({ initialData = {}, onSubmit }) {
   const [activityType, setActivityType] = useState(initialData.activity_type || '');
@@ -35,46 +38,43 @@ export default function SportForm({ initialData = {}, onSubmit }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="block text-sm font-medium mb-1">Sport/Activity</label>
-        <input
+        <FormLabel>Sport/Activity</FormLabel>
+        <FormInput
           type="text"
           value={activityType}
           onChange={(e) => setActivityType(e.target.value)}
-          className="w-full p-2 border rounded"
           placeholder="e.g., Basketball, Tennis, Soccer"
           required
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1">Date</label>
-        <input
+        <FormLabel>Date</FormLabel>
+        <FormInput
           type="date"
           value={date}
           onChange={(e) => setDate(e.target.value)}
-          className="w-full p-2 border rounded"
           required
         />
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium mb-1">Duration (minutes)</label>
-          <input
+          <FormLabel>Duration (minutes)</FormLabel>
+          <FormInput
             type="number"
             value={duration}
             onChange={(e) => setDuration(e.target.value)}
-            className="w-full p-2 border rounded"
             placeholder="60"
             required
           />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">Intensity Level</label>
+          <FormLabel>Intensity Level</FormLabel>
           <select
             value={intensity}
             onChange={(e) => setIntensity(e.target.value)}
-            className="w-full p-2 border rounded"
+            className="w-full p-2 bg-gray-700 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             required
           >
             <option value="">Select intensity</option>
@@ -87,67 +87,61 @@ export default function SportForm({ initialData = {}, onSubmit }) {
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1">Location</label>
-        <input
+        <FormLabel>Location</FormLabel>
+        <FormInput
           type="text"
           value={location}
           onChange={(e) => setLocation(e.target.value)}
-          className="w-full p-2 border rounded"
           placeholder="e.g., Local Gym, Park"
         />
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium mb-1">Weather</label>
-          <input
+          <FormLabel>Weather</FormLabel>
+          <FormInput
             type="text"
             value={weather}
             onChange={(e) => setWeather(e.target.value)}
-            className="w-full p-2 border rounded"
             placeholder="e.g., Sunny, Rainy"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">Participants</label>
-          <input
+          <FormLabel>Participants</FormLabel>
+          <FormInput
             type="text"
             value={participants}
             onChange={(e) => setParticipants(e.target.value)}
-            className="w-full p-2 border rounded"
             placeholder="e.g., Team, Solo, 2v2"
           />
         </div>
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1">Score/Result</label>
-        <input
+        <FormLabel>Score/Result</FormLabel>
+        <FormInput
           type="text"
           value={score}
           onChange={(e) => setScore(e.target.value)}
-          className="w-full p-2 border rounded"
           placeholder="e.g., Won 21-15, 3 sets"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1">Performance Notes</label>
-        <textarea
+        <FormLabel>Performance Notes</FormLabel>
+        <FormTextarea
           value={performanceNotes}
           onChange={(e) => setPerformanceNotes(e.target.value)}
-          className="w-full p-2 border rounded"
           rows={3}
           placeholder="How did you perform? What went well?"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-1">Injuries/Flags</label>
-        <textarea
+        <FormLabel>Injuries/Flags</FormLabel>
+        <FormTextarea
           value={flags}
           onChange={(e) => setFlags(e.target.value)}
-          className="w-full p-2 border rounded"
           rows={2}
           placeholder="Any injuries, pain, or concerns?"
         />
