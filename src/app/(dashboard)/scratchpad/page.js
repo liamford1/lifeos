@@ -11,6 +11,8 @@ import { useUser } from '@/context/UserContext';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { useToast } from '@/components/Toast';
 import Link from 'next/link';
+import { MdOutlineStickyNote2 } from 'react-icons/md';
+import { NotebookPen } from 'lucide-react';
 
 export default function ScratchpadPage() {
   const { user, loading } = useUser();
@@ -95,7 +97,10 @@ export default function ScratchpadPage() {
   return (
     <div className="max-w-6xl mx-auto p-4 space-y-4">
       <BackButton />
-      <h1 className="text-2xl font-bold">🧠 Scratchpad</h1>
+      <h1 className="text-2xl font-bold flex items-center">
+        <NotebookPen className="w-5 h-5 text-base mr-2 inline-block" />
+        Scratchpad
+      </h1>
       <form onSubmit={handleSubmit}>
         <textarea
           value={content}
@@ -119,7 +124,10 @@ export default function ScratchpadPage() {
         </Button>
       </form>
       <div className="mt-6">
-        <h2 className="text-lg font-semibold mb-2">📝 Your Entries</h2>
+        <h2 className="text-lg font-semibold mb-2">
+          <MdOutlineStickyNote2 className="inline w-5 h-5 text-base align-text-bottom mr-2" />
+          Your Entries
+        </h2>
         {entriesLoading ? (
           <LoadingSpinner />
         ) : entries.length === 0 ? (

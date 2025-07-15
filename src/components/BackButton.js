@@ -1,19 +1,17 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import Button from '@/components/Button';
 
 export default function BackButton() {
   const router = useRouter();
 
   return (
-    <Button
+    <button
+      type="button"
       onClick={() => router.back()}
-      variant="link"
-      size="sm"
-      className="mb-4"
+      className="inline-flex items-center gap-1 px-3 py-1.5 rounded border border-default bg-card text-base hover:border-white transition mb-4"
     >
       ← Back
-    </Button>
+    </button>
   );
 }

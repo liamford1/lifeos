@@ -9,6 +9,7 @@ import BackButton from '@/components/BackButton';
 import Button from '@/components/Button';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { useToast } from '@/components/Toast';
+import { HeartPulse } from 'lucide-react';
 
 export default function CardioDashboard() {
   const { showSuccess, showError } = useToast();
@@ -66,7 +67,10 @@ export default function CardioDashboard() {
   return (
     <div className="max-w-6xl mx-auto p-4 space-y-4">
       <BackButton />
-      <h1 className="text-2xl font-bold">🏃 Cardio</h1>
+      <h1 className="text-2xl font-bold flex items-center">
+        <HeartPulse className="w-5 h-5 text-base mr-2 inline-block" />
+        Cardio
+      </h1>
       <p className="text-base">Track your running, cycling, and other cardio activities.</p>
 
       <Link href="/fitness/cardio/add" className="text-blue-600 underline mb-6 inline-block">

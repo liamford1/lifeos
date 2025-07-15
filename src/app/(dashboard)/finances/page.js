@@ -6,6 +6,7 @@ import { useUser } from '@/context/UserContext';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import BackButton from '@/components/BackButton';
 import Link from 'next/link';
+import { Wallet, BarChart2, PlusCircle, Receipt, PiggyBank } from 'lucide-react';
 
 export default function FinancesHome() {
   const { user, loading } = useUser();
@@ -23,14 +24,18 @@ export default function FinancesHome() {
   return (
     <div className="max-w-6xl mx-auto p-4 space-y-4">
       <BackButton />
-      <h1 className="text-2xl font-bold">💸 Finances Dashboard</h1>
+      <h1 className="text-2xl font-bold flex items-center gap-2">
+        <Wallet className="w-5 h-5 text-base align-text-bottom" />
+        Finances Dashboard
+      </h1>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Link
           href="/finances/expenses"
           className="block p-5 bg-surface rounded shadow hover:bg-[#2e2e2e] transition"
         >
-          📊 <span className="font-semibold">View Expenses</span>
+          <BarChart2 className="w-5 h-5 text-base align-text-bottom mr-2" />
+          <span className="font-semibold">View Expenses</span>
           <div className="text-sm text-base">See all your expense records</div>
         </Link>
 
@@ -38,7 +43,8 @@ export default function FinancesHome() {
           href="/finances/add"
           className="block p-5 bg-surface rounded shadow hover:bg-[#2e2e2e] transition"
         >
-          ➕ <span className="font-semibold">Add Expense</span>
+          <PlusCircle className="w-5 h-5 text-base align-text-bottom mr-2" />
+          <span className="font-semibold">Add Expense</span>
           <div className="text-sm text-base">Record a new expense</div>
         </Link>
 
@@ -46,7 +52,8 @@ export default function FinancesHome() {
           href="/finances/receipts"
           className="block p-5 bg-surface rounded shadow hover:bg-[#2e2e2e] transition"
         >
-          🧾 <span className="font-semibold">Upload Receipt</span>
+          <Receipt className="w-5 h-5 text-base align-text-bottom mr-2" />
+          <span className="font-semibold">Upload Receipt</span>
           <div className="text-sm text-base">Coming Soon</div>
         </Link>
 
@@ -54,7 +61,8 @@ export default function FinancesHome() {
           href="/finances/budget"
           className="block p-5 bg-surface rounded shadow hover:bg-[#2e2e2e] transition"
         >
-          📈 <span className="font-semibold">Budget & Goals</span>
+          <PiggyBank className="w-5 h-5 text-base align-text-bottom mr-2" />
+          <span className="font-semibold">Budget & Goals</span>
           <div className="text-sm text-base">Coming Soon</div>
         </Link>
       </div>

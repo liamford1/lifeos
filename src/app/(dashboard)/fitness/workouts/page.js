@@ -10,6 +10,8 @@ import { useRouter } from 'next/navigation';
 import { useUser } from '@/context/UserContext';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { useToast } from '@/components/Toast';
+import { MdOutlineCalendarToday } from 'react-icons/md';
+import { Dumbbell } from 'lucide-react';
 
 export default function WorkoutsDashboard() {
   const { user, loading } = useUser();
@@ -74,14 +76,20 @@ export default function WorkoutsDashboard() {
   return (
     <div className="max-w-6xl mx-auto p-4 space-y-4">
       <BackButton />
-      <h1 className="text-2xl font-bold">🏋️ Workouts</h1>
+      <h1 className="text-2xl font-bold flex items-center">
+        <Dumbbell className="w-5 h-5 text-base mr-2 inline-block" />
+        Workouts
+      </h1>
       <p className="text-base">Track your weightlifting and strength training sessions.</p>
 
       <Link href="/fitness/workouts/add" className="text-blue-600 underline mb-6 inline-block">
         ➕ Add New Workout
       </Link>
 
-      <h2 className="text-xl font-semibold mb-2">📅 Workout History</h2>
+      <h2 className="text-xl font-semibold mb-2">
+        <MdOutlineCalendarToday className="inline w-5 h-5 text-base align-text-bottom mr-2" />
+        Workout History
+      </h2>
 
       {workoutsLoading ? (
         <LoadingSpinner />

@@ -10,6 +10,7 @@ import BackButton from '@/components/BackButton';
 import MealForm from '@/components/MealForm';
 import { CALENDAR_SOURCES } from '@/lib/calendarUtils';
 import { useToast } from '@/components/Toast';
+import { CirclePlus } from 'lucide-react';
 
 export default function AddMealPage(props) {
   const { user, loading } = useUser();
@@ -140,7 +141,10 @@ export default function AddMealPage(props) {
   return (
     <div className="max-w-6xl mx-auto p-4 space-y-4">
       <BackButton />
-      <h1 className="text-2xl font-bold">➕ Add a New Meal</h1>
+      <h1 className="text-2xl font-bold flex items-center">
+        <CirclePlus className="w-5 h-5 text-base mr-2 inline-block" />
+        Add a New Meal
+      </h1>
       <p className="text-base">Create a new meal recipe with ingredients and instructions.</p>
 
       <MealForm

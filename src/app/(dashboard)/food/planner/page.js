@@ -8,6 +8,8 @@ import Button from '@/components/Button'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import { CALENDAR_SOURCES } from '@/lib/calendarUtils'
 import { useToast } from '@/components/Toast'
+import { MdOutlineCalendarToday } from 'react-icons/md';
+import { CalendarCheck } from 'lucide-react';
 
 export default function MealPlannerPage() {
   const { showSuccess, showError } = useToast();
@@ -175,7 +177,10 @@ export default function MealPlannerPage() {
   return (
     <div className="max-w-6xl mx-auto p-4 space-y-4">
       <BackButton />
-      <h1 className="text-2xl font-bold">📅 Plan a Meal</h1>
+      <h1 className="text-2xl font-bold">
+        <MdOutlineCalendarToday className="inline w-5 h-5 text-base align-text-bottom mr-2" />
+        Plan a Meal
+      </h1>
       <p className="text-base">Schedule meals for the week ahead.</p>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
@@ -226,12 +231,18 @@ export default function MealPlannerPage() {
 
       {plannedMealsLoading ? (
         <div className="mt-10">
-          <h2 className="text-xl font-semibold mb-4">🗓️ Upcoming Planned Meals</h2>
+          <h2 className="text-xl font-semibold mb-4">
+            <CalendarCheck className="w-5 h-5 text-base mr-2 inline-block" />
+            Upcoming Planned Meals
+          </h2>
           <LoadingSpinner />
         </div>
       ) : Object.keys(groupedMeals).length > 0 ? (
         <div className="mt-10">
-          <h2 className="text-xl font-semibold mb-4">🗓️ Upcoming Planned Meals</h2>
+          <h2 className="text-xl font-semibold mb-4">
+            <CalendarCheck className="w-5 h-5 text-base mr-2 inline-block" />
+            Upcoming Planned Meals
+          </h2>
 
           {Object.entries(groupedMeals).map(([date, times]) => (
             <div key={date} className="mb-6">

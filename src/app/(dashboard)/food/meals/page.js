@@ -7,6 +7,7 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import { supabase } from '@/lib/supabaseClient';
 import Link from 'next/link';
 import BackButton from '@/components/BackButton';
+import { UtensilsCrossed } from 'lucide-react';
 
 export default function MealsPage() {
   const { user, loading } = useUser();
@@ -51,7 +52,10 @@ export default function MealsPage() {
   return (
     <div className="max-w-6xl mx-auto p-4 space-y-4">
       <BackButton />
-      <h1 className="text-2xl font-bold">📖 Your Saved Meals</h1>
+      <h1 className="text-2xl font-bold flex items-center">
+        <UtensilsCrossed className="w-5 h-5 text-base mr-2 inline-block" />
+        Meals
+      </h1>
       <p className="text-base">Browse and manage your saved meal recipes.</p>
 
       {mealsLoading ? (

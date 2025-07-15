@@ -11,6 +11,7 @@ import Link from 'next/link';
 import { deleteEntityWithCalendarEvent } from '@/lib/deleteUtils';
 import { CALENDAR_SOURCES } from '@/lib/calendarUtils';
 import { useToast } from '@/components/Toast';
+import { MdOutlineCalendarToday, MdOutlineStickyNote2 } from 'react-icons/md';
 
 export default function MealDetailPage() {
   const { id } = useParams();
@@ -220,7 +221,10 @@ export default function MealDetailPage() {
         ))}
       </ul>
 
-      <h2 className="text-xl font-semibold mb-2">📝 Instructions</h2>
+      <h2 className="text-xl font-semibold mb-2">
+        <MdOutlineStickyNote2 className="inline w-5 h-5 text-base align-text-bottom mr-2" />
+        Instructions
+      </h2>
       <ol className="list-decimal list-inside space-y-2 text-base">
         {meal.instructions?.map((step, index) => (
           <li key={index}>{step}</li>
@@ -232,7 +236,8 @@ export default function MealDetailPage() {
           onClick={() => router.push('/')}
           variant="primary"
         >
-          📅 Back to Calendar
+          <MdOutlineCalendarToday className="inline w-5 h-5 text-base align-text-bottom mr-2" />
+          Back to Calendar
         </Button>
       </div>
 

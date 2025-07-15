@@ -5,6 +5,8 @@ import { useParams } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import BackButton from '@/components/BackButton';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import { MdOutlineCalendarToday } from 'react-icons/md';
+import { FaUtensils } from 'react-icons/fa';
 
 export default function PlannedMealDetailPage() {
   const { id } = useParams();
@@ -79,7 +81,10 @@ export default function PlannedMealDetailPage() {
           )}
 
           <div className="bg-surface rounded-lg p-4 mb-6">
-            <h2 className="text-xl font-semibold mb-3 text-white">📅 Planned Details</h2>
+            <h2 className="text-xl font-semibold mb-3 text-white">
+              <MdOutlineCalendarToday className="inline w-5 h-5 text-base align-text-bottom mr-2" />
+              Planned Details
+            </h2>
             <div className="space-y-2">
               <p className="text-base">
                 <span className="font-medium">Date:</span> {formattedDate}
@@ -91,7 +96,10 @@ export default function PlannedMealDetailPage() {
           </div>
 
           <div className="bg-surface rounded-lg p-4">
-            <h2 className="text-xl font-semibold mb-3 text-white">🍽️ Meal Information</h2>
+            <h2 className="text-xl font-semibold mb-3 text-white">
+              <FaUtensils className="inline w-5 h-5 text-base align-text-bottom mr-2" />
+              Meal Information
+            </h2>
             <div className="space-y-2">
               <p className="text-base">
                 <span className="font-medium">Prep Time:</span> {meal.prep_time || 0} minutes

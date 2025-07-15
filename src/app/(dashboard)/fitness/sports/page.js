@@ -9,6 +9,7 @@ import BackButton from '@/components/BackButton';
 import Button from '@/components/Button';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { useToast } from '@/components/Toast';
+import { Goal } from 'lucide-react';
 
 export default function SportsDashboard() {
   const { showSuccess, showError } = useToast();
@@ -66,7 +67,10 @@ export default function SportsDashboard() {
   return (
     <div className="max-w-6xl mx-auto p-4 space-y-4">
       <BackButton />
-      <h1 className="text-2xl font-bold">⚽ Sports</h1>
+      <h1 className="text-2xl font-bold flex items-center">
+        <Goal className="w-5 h-5 text-base mr-2 inline-block" />
+        Sports
+      </h1>
       <p className="text-base">Track your sports activities and games.</p>
 
       <Link href="/fitness/sports/add" className="text-blue-600 underline mb-6 inline-block">

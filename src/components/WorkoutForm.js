@@ -13,6 +13,7 @@ import FormSection from '@/components/FormSection';
 import { CALENDAR_SOURCES } from '@/lib/calendarUtils';
 import { useToast } from '@/components/Toast';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import { MdOutlineStickyNote2 } from 'react-icons/md';
 
 export default function WorkoutForm({ initialWorkout = null, initialExercises = [], isEdit = false }) {
   const router = useRouter();
@@ -216,7 +217,10 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
         </FormSection>
         {exercises.length > 0 && (
           <div className="mt-4">
-            <h3 className="font-semibold text-md mb-2">📝 Exercises Preview</h3>
+            <h3 className="font-semibold text-md mb-2">
+              <MdOutlineStickyNote2 className="inline w-5 h-5 text-base align-text-bottom mr-2" />
+              Exercises Preview
+            </h3>
             <ul className="space-y-2">
               {exercises.map((ex, i) => (
                 <li key={i} className="border p-2 rounded flex justify-between items-start">

@@ -7,6 +7,7 @@ import { useUser } from '@/context/UserContext';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { useEffect } from 'react';
 import { useToast } from '@/components/Toast';
+import { MdOutlineCalendarToday } from 'react-icons/md';
 
 export default function WorkoutDetailPage() {
   const { user, loading } = useUser();
@@ -72,7 +73,8 @@ export default function WorkoutDetailPage() {
               onClick={() => router.push('/')}
               className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
             >
-              📅 Back to Calendar
+              <MdOutlineCalendarToday className="inline w-5 h-5 text-base align-text-bottom mr-2" />
+              Back to Calendar
             </button>
           </div>
         </>
