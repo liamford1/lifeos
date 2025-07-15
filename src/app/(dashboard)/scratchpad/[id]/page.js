@@ -25,7 +25,7 @@ export default function ScratchpadDetailPage() {
         return;
       }
       const { data, error } = await supabase
-        .from("scratchpad")
+        .from("scratchpad_entries")
         .select("*")
         .eq("id", id)
         .single();
@@ -42,7 +42,7 @@ export default function ScratchpadDetailPage() {
   async function handleDelete() {
     if (!window.confirm("Delete this note?")) return;
     const { error } = await supabase
-      .from("scratchpad")
+      .from("scratchpad_entries")
       .delete()
       .eq("id", id);
     if (error) {

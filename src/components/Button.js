@@ -7,8 +7,9 @@ export default function Button({
   variant = 'primary',
   size = 'md',
   disabled = false,
+  loading = false, // explicitly handle loading
   'aria-label': ariaLabel, // allow aria-label
-  ...rest // forward other props
+  ...rest // forward other props (but not loading)
 }) {
   const baseClasses = 'rounded transition-colors duration-200 font-medium focus:outline-none focus:ring-2 focus:ring-offset-2';
   
@@ -28,18 +29,21 @@ export default function Button({
     lg: 'px-6 py-3 text-lg'
   };
   
-  const disabledClasses = disabled ? 'opacity-50 cursor-not-allowed' : '';
-  
+  const disabledClasses = disabled || loading ? 'opacity-50 cursor-not-allowed' : '';
+
+  // Remove loading from rest so it doesn't get passed to the DOM
+  const { loading: _omitLoading, ...restProps } = rest;
+
   return (
     <button
       type={type}
       onClick={onClick}
-      disabled={disabled}
+      disabled={disabled || loading}
       className={`${baseClasses} ${variants[variant]} ${sizes[size]} ${disabledClasses} ${className}`}
       aria-label={ariaLabel}
-      {...rest}
+      {...restProps}
     >
-      {children}
+      {loading ? 'Loading...' : children}
     </button>
   );
 }

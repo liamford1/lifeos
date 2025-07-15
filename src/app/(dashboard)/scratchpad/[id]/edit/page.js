@@ -27,7 +27,7 @@ export default function EditScratchpadPage() {
         return;
       }
       const { data, error } = await supabase
-        .from("scratchpad")
+        .from("scratchpad_entries")
         .select("*")
         .eq("id", id)
         .single();
@@ -47,11 +47,17 @@ export default function EditScratchpadPage() {
     setError("");
     const form = e.target;
     const updated = {
-      title: form.title.value,
       content: form.content.value,
+      category: form.category.value,
     };
+    if (!updated.category) delete updated.category;
+    if (!updated.content) {
+      setError("Content cannot be empty");
+      setSaving(false);
+      return;
+    }
     const { error } = await supabase
-      .from("scratchpad")
+      .from("scratchpad_entries")
       .update(updated)
       .eq("id", id);
     if (error) {
@@ -66,7 +72,7 @@ export default function EditScratchpadPage() {
   async function handleDelete() {
     if (!window.confirm("Delete this note?")) return;
     const { error } = await supabase
-      .from("scratchpad")
+      .from("scratchpad_entries")
       .delete()
       .eq("id", id);
     if (error) {
@@ -87,8 +93,8 @@ export default function EditScratchpadPage() {
       {note && (
         <form onSubmit={handleUpdate} className="space-y-4">
           <FormSection>
-            <FormInput label="Title" name="title" defaultValue={note.title} required />
             <FormInput label="Content" name="content" defaultValue={note.content} required />
+            <FormInput label="Category" name="category" defaultValue={note.category} />
           </FormSection>
           <div className="flex gap-2">
             <Button type="submit" variant="primary" loading={saving}>Save</Button>
