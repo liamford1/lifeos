@@ -47,12 +47,12 @@ export default function AppBar() {
     // Main navigation bar with dark theme and shadow
     <nav className="flex items-center justify-between p-4 bg-panel border-b border-default">
       {/* App title - clickable to navigate home */}
-      <h1
-        className="text-xl font-bold cursor-pointer text-base"
+      <img
+        src="/threados-logo.png"
+        alt="Thread OS Logo"
+        className="h-10 w-auto cursor-pointer ml-4"
         onClick={() => router.push('/')}
-      >
-        Your Life Planner
-      </h1>
+      />
 
       {/* Right side actions container */}
       <div className="flex items-center space-x-4">

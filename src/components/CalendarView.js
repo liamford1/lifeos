@@ -200,6 +200,15 @@ export default function CalendarView() {
           />
           </div>
         </div>
+        {/* Floating Add Button */}
+        <button
+          onClick={() => setShowAddModal(true)}
+          aria-label="Add calendar event"
+          className="fixed bottom-8 right-8 z-50 w-14 h-14 rounded-full bg-card text-base shadow-lg flex items-center justify-center text-3xl hover:bg-panel transition-colors border border-border focus:outline-none focus:ring-2 focus:ring-primary"
+          type="button"
+        >
+          +
+        </button>
       </div>
 
       <div className="mt-4">
