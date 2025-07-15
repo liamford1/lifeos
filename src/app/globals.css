@@ -31,6 +31,7 @@ body {
 /* Custom dark mode overrides for react-calendar */
 .react-calendar {
   background-color: var(--panel) !important;
+  border: none !important;
 }
 
 .react-calendar__tile {
@@ -46,7 +47,13 @@ body {
 }
 
 .react-calendar__tile--now {
-  background: #2a2a2a;
+  background-color: var(--panel) !important;
+  color: var(--foreground) !important;
+}
+
+.react-calendar__tile--now.react-calendar__tile--active {
+  background-color: var(--panel) !important;
+  color: var(--foreground) !important;
 }
 
 .react-calendar__tile--active {
@@ -65,7 +72,9 @@ body {
 }
 
 .react-calendar__tile:hover {
-  background: #2e2e2e;
+  background: transparent !important;
+  border: 1px solid var(--foreground);
+  border-radius: 0.375rem;
 }
 
 .react-calendar__navigation {
@@ -92,5 +101,28 @@ body {
 }
 .bg-panel {
   background-color: #2a2a2a;
+}
+
+/* Visually mark today's date in the calendar with a filled badge */
+.react-calendar__tile--now abbr {
+  background-color: var(--foreground);
+  color: var(--background);
+  border-radius: 9999px;
+  padding: 2px 6px;
+}
+
+.react-calendar__navigation button:hover {
+  background: transparent !important;
+  border: 1px solid var(--foreground);
+  border-radius: 0.375rem;
+}
+
+.react-calendar__navigation button:focus {
+  outline: none;
+  background: transparent !important;
+}
+
+.react-calendar__navigation button:active {
+  background: transparent !important;
 }
 
