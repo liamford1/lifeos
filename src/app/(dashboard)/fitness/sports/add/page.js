@@ -5,9 +5,11 @@ import { supabase } from '@/lib/supabaseClient';
 import BackButton from '@/components/BackButton';
 import SportForm from '@/components/SportForm';
 import { CALENDAR_SOURCES } from '@/lib/calendarUtils';
+import { useToast } from '@/components/Toast';
 
 export default function AddSportSession() {
   const router = useRouter();
+  const { showSuccess, showError } = useToast();
 
   const handleAdd = async (formData) => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -21,7 +23,7 @@ export default function AddSportSession() {
 
     if (error) {
       console.error(error);
-      alert('Failed to add session.');
+      showError('Failed to add session.');
       return;
     }
 
@@ -42,6 +44,7 @@ export default function AddSportSession() {
       console.error('Calendar event creation failed:', calendarError);
     }
 
+    showSuccess('Sport session added successfully!');
     router.push('/fitness/sports');
   };
 

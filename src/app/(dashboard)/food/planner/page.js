@@ -7,8 +7,10 @@ import BackButton from '@/components/BackButton'
 import Button from '@/components/Button'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import { CALENDAR_SOURCES } from '@/lib/calendarUtils'
+import { useToast } from '@/components/Toast'
 
 export default function MealPlannerPage() {
+  const { showSuccess, showError } = useToast();
   const [meals, setMeals] = useState([])
   const [plannedMeals, setPlannedMeals] = useState([])
   const [selectedMealId, setSelectedMealId] = useState('')
@@ -141,7 +143,7 @@ export default function MealPlannerPage() {
     const user_id = user?.data?.user?.id;
     
     if (!user_id) {
-      alert('You must be logged in.');
+      showError('You must be logged in.');
       return;
     }
 
@@ -154,8 +156,10 @@ export default function MealPlannerPage() {
 
     if (error) {
       console.error('Error deleting planned meal:', error);
+      showError('Failed to delete planned meal.');
     } else {
       fetchPlannedMeals();
+      showSuccess('Planned meal deleted successfully!');
     }
   }
 

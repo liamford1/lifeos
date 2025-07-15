@@ -7,9 +7,11 @@ import BackButton from '@/components/BackButton';
 import CardioForm from '@/components/CardioForm';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { CALENDAR_SOURCES, updateCalendarEvent } from '@/lib/calendarUtils';
+import { useToast } from '@/components/Toast';
 
 export default function ViewOrEditCardioSession({ params }) {
   const { id } = use(params); // ✅ unwrap `params` safely for Next.js 15+
+  const { showSuccess, showError } = useToast();
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
   const searchParams = useSearchParams();
@@ -39,7 +41,7 @@ export default function ViewOrEditCardioSession({ params }) {
 
     if (error) {
       console.error(error);
-      alert('Failed to update cardio session.');
+      showError('Failed to update cardio session.');
       return;
     }
 
@@ -59,7 +61,7 @@ export default function ViewOrEditCardioSession({ params }) {
       console.error('Calendar event update failed:', calendarError);
     }
 
-    alert('Session updated!');
+    showSuccess('Session updated successfully!');
   };
 
   if (loading) return <LoadingSpinner />;

@@ -7,10 +7,12 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import { supabase } from '@/lib/supabaseClient';
 import BackButton from '@/components/BackButton';
 import Button from '@/components/Button';
+import { useToast } from '@/components/Toast';
 
 export default function ProfilePage() {
   const { user, loading } = useUser();
   const router = useRouter();
+  const { showSuccess, showError } = useToast();
   const [profile, setProfile] = useState(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
@@ -85,8 +87,9 @@ export default function ProfilePage() {
       });
       if (error) {
         setError('Failed to save profile');
+        showError('Failed to save profile');
       } else {
-        alert('Profile saved!');
+        showSuccess('Profile saved successfully!');
       }
     } catch {
       setError('Unexpected error');

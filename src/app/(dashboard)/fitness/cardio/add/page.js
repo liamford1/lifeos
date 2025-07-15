@@ -5,16 +5,18 @@ import { supabase } from '@/lib/supabaseClient';
 import CardioForm from '@/components/CardioForm';
 import BackButton from '@/components/BackButton';
 import { CALENDAR_SOURCES } from '@/lib/calendarUtils';
+import { useToast } from '@/components/Toast';
 
 export default function AddCardioSessionPage() {
   const router = useRouter();
+  const { showSuccess, showError } = useToast();
 
   const handleAdd = async (formData) => {
     const { data: userData } = await supabase.auth.getUser();
     const user_id = userData?.user?.id;
 
     if (!user_id) {
-      alert('You must be logged in.');
+      showError('You must be logged in.');
       return;
     }
 
@@ -28,7 +30,7 @@ export default function AddCardioSessionPage() {
 
     if (error) {
       console.error(error);
-      alert('Failed to save cardio session.');
+      showError('Failed to save cardio session.');
       return;
     }
 
@@ -49,6 +51,7 @@ export default function AddCardioSessionPage() {
       console.error('Calendar event creation failed:', calendarError);
     }
 
+    showSuccess('Cardio session added successfully!');
     router.push('/fitness/cardio');
   };
 

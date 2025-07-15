@@ -8,8 +8,10 @@ import { deleteEntityWithCalendarEvent } from '@/lib/deleteUtils';
 import BackButton from '@/components/BackButton';
 import Button from '@/components/Button';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import { useToast } from '@/components/Toast';
 
 export default function SportsDashboard() {
+  const { showSuccess, showError } = useToast();
   const [sessions, setSessions] = useState([]);
   const [sessionsLoading, setSessionsLoading] = useState(true);
   const router = useRouter();
@@ -41,7 +43,7 @@ export default function SportsDashboard() {
     const user_id = user?.data?.user?.id;
     
     if (!user_id) {
-      alert('You must be logged in.');
+      showError('You must be logged in.');
       return;
     }
 
@@ -54,9 +56,10 @@ export default function SportsDashboard() {
 
     if (error) {
       console.error(error);
-      alert('Failed to delete session.');
+      showError('Failed to delete session.');
     } else {
       setSessions((prev) => prev.filter((s) => s.id !== id));
+      showSuccess('Sport session deleted successfully!');
     }
   };
 

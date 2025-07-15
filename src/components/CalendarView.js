@@ -10,8 +10,10 @@ import dayjs from 'dayjs';
 import { CALENDAR_SOURCES, getCalendarEventRoute } from '@/lib/calendarUtils';
 import Button from '@/components/Button';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import { useToast } from '@/components/Toast';
 
 export default function CalendarView() {
+  const { showSuccess, showError } = useToast();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [events, setEvents] = useState([]);
   const [user, setUser] = useState(null);
@@ -72,7 +74,7 @@ export default function CalendarView() {
     const { error } = await supabase.from('calendar_events').insert([payload]);
 
     if (error) {
-      alert('Failed to add event.');
+      showError('Failed to add event.');
       console.error('Error:', error);
     } else {
       setShowAddModal(false);
@@ -84,6 +86,7 @@ export default function CalendarView() {
         .eq('user_id', user.id);
 
       setEvents(data || []);
+      showSuccess('Event added successfully!');
     }
   };
 
@@ -100,7 +103,7 @@ export default function CalendarView() {
       
       if (error) {
         console.error('❌ Failed to delete calendar event:', error);
-        alert('Could not delete event.');
+        showError('Could not delete event.');
       } else {
         setEvents((prev) => prev.filter((ev) => ev.id !== event.id));
       }
@@ -118,7 +121,7 @@ export default function CalendarView() {
   
     if (!sourceTable) {
       console.error('Unknown source type:', event.source);
-      alert('Unknown event type.');
+      showError('Unknown event type.');
       return;
     }
   
@@ -126,7 +129,7 @@ export default function CalendarView() {
     const user_id = user?.data?.user?.id;
     
     if (!user_id) {
-      alert('You must be logged in.');
+      showError('You must be logged in.');
       return;
     }
   
@@ -138,9 +141,10 @@ export default function CalendarView() {
   
     if (error) {
       console.error('❌ Failed to delete:', error);
-      alert('Could not fully delete event.');
+      showError('Could not fully delete event.');
     } else {
       setEvents((prev) => prev.filter((ev) => ev.id !== event.id));
+      showSuccess('Event deleted successfully!');
     }
   };  
 

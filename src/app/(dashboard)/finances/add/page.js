@@ -8,10 +8,12 @@ import { supabase } from '@/lib/supabaseClient';
 import BackButton from '@/components/BackButton';
 import Button from '@/components/Button';
 import { CALENDAR_SOURCES } from '@/lib/calendarUtils';
+import { useToast } from '@/components/Toast';
 
 export default function AddExpensePage() {
   const { user, loading } = useUser();
   const router = useRouter();
+  const { showSuccess, showError } = useToast();
   const [formData, setFormData] = useState({
     name: '',
     amount: '',
@@ -45,7 +47,7 @@ export default function AddExpensePage() {
     ]).select().single();
     if (error) {
       console.error(error);
-      alert('Error adding expense.');
+      showError('Error adding expense.');
       return;
     }
     // Create calendar event for the expense
@@ -61,7 +63,7 @@ export default function AddExpensePage() {
     if (calendarError) {
       console.error('Calendar event creation failed:', calendarError);
     }
-    alert('Expense added!');
+    showSuccess('Expense added successfully!');
     setFormData({
       name: '',
       amount: '',

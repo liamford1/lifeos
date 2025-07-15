@@ -9,10 +9,12 @@ import { supabase } from '@/lib/supabaseClient';
 import { deleteEntityWithCalendarEvent } from '@/lib/deleteUtils';
 import BackButton from '@/components/BackButton';
 import Button from '@/components/Button';
+import { useToast } from '@/components/Toast';
 
 export default function FinancesOverview() {
   const { user, loading } = useUser();
   const router = useRouter();
+  const { showSuccess, showError } = useToast();
   const [expenses, setExpenses] = useState([]);
   const [expensesLoading, setExpensesLoading] = useState(true);
 
@@ -47,9 +49,10 @@ export default function FinancesOverview() {
     });
     if (!error) {
       setExpenses((prev) => prev.filter((exp) => exp.id !== id));
+      showSuccess('Expense deleted successfully!');
     } else {
       console.error(error);
-      alert('Error deleting expense.');
+      showError('Error deleting expense.');
     }
   };
 

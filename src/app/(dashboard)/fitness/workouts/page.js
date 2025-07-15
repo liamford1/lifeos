@@ -9,10 +9,12 @@ import Button from '@/components/Button';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/context/UserContext';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import { useToast } from '@/components/Toast';
 
 export default function WorkoutsDashboard() {
   const { user, loading } = useUser();
   const router = useRouter();
+  const { showSuccess, showError } = useToast();
   const [workouts, setWorkouts] = useState([]);
   const [workoutsLoading, setWorkoutsLoading] = useState(true);
 
@@ -45,7 +47,7 @@ export default function WorkoutsDashboard() {
     const user_id = user?.data?.user?.id;
     
     if (!user_id) {
-      alert('You must be logged in.');
+      showError('You must be logged in.');
       return;
     }
 
@@ -58,9 +60,10 @@ export default function WorkoutsDashboard() {
 
     if (error) {
       console.error(error);
-      alert('Failed to delete workout.');
+      showError('Failed to delete workout.');
     } else {
       setWorkouts((prev) => prev.filter((w) => w.id !== id));
+      showSuccess('Workout deleted successfully!');
     }
   };
 

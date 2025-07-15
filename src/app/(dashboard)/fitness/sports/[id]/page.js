@@ -7,9 +7,11 @@ import BackButton from '@/components/BackButton';
 import SportForm from '@/components/SportForm';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { CALENDAR_SOURCES, updateCalendarEvent } from '@/lib/calendarUtils';
+import { useToast } from '@/components/Toast';
 
 export default function ViewOrEditSportSession({ params }) {
   const { id } = use(params); // Next.js 15 App Router param access
+  const { showSuccess, showError } = useToast();
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
   const searchParams = useSearchParams();
@@ -39,7 +41,7 @@ export default function ViewOrEditSportSession({ params }) {
 
     if (error) {
       console.error(error);
-      alert('Failed to update session.');
+      showError('Failed to update session.');
       return;
     }
 
@@ -59,7 +61,7 @@ export default function ViewOrEditSportSession({ params }) {
       console.error('Calendar event update failed:', calendarError);
     }
 
-    alert('Session updated!');
+    showSuccess('Session updated successfully!');
   };
 
   if (loading) return <LoadingSpinner />;

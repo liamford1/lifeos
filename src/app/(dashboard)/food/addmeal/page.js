@@ -9,10 +9,12 @@ import { supabase } from '@/lib/supabaseClient';
 import BackButton from '@/components/BackButton';
 import MealForm from '@/components/MealForm';
 import { CALENDAR_SOURCES } from '@/lib/calendarUtils';
+import { useToast } from '@/components/Toast';
 
 export default function AddMealPage(props) {
   const { user, loading } = useUser();
   const router = useRouter();
+  const { showSuccess, showError } = useToast();
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState('');
 
@@ -34,7 +36,7 @@ export default function AddMealPage(props) {
       const userId = user?.data?.user?.id;
 
       if (!userId) {
-        setError('User not logged in.');
+        showError('User not logged in.');
         setIsSaving(false);
         return;
       }
@@ -64,7 +66,7 @@ export default function AddMealPage(props) {
       const result = await response.json();
       if (!response.ok && result.error) {
         console.error(result.error);
-        setError('Failed to save meal.');
+        showError('Failed to save meal.');
         setIsSaving(false);
         return;
       }
@@ -103,7 +105,7 @@ export default function AddMealPage(props) {
         if (insertError) {
           console.error('Error inserting ingredients:', insertError);
           console.error('Attempted to insert:', cleanedIngredients);
-          setError('Meal saved, but failed to save ingredients.');
+          showError('Meal saved, but failed to save ingredients.');
           setIsSaving(false);
           return;
         }
@@ -126,11 +128,11 @@ export default function AddMealPage(props) {
         console.error('Calendar event creation failed:', calendarError);
       }
 
-      alert('Meal and ingredients saved!');
+      showSuccess('Meal and ingredients saved successfully!');
       router.push('/food/meals');
     } catch (err) {
       console.error('Error saving meal:', err);
-      setError('An unexpected error occurred.');
+      showError('An unexpected error occurred.');
       setIsSaving(false);
     }
   }

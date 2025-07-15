@@ -10,11 +10,13 @@ import Button from '@/components/Button';
 import Link from 'next/link';
 import { deleteEntityWithCalendarEvent } from '@/lib/deleteUtils';
 import { CALENDAR_SOURCES } from '@/lib/calendarUtils';
+import { useToast } from '@/components/Toast';
 
 export default function MealDetailPage() {
   const { id } = useParams();
   const { user, loading } = useUser();
   const router = useRouter();
+  const { showSuccess, showError } = useToast();
   const [meal, setMeal] = useState(null);
   const [ingredients, setIngredients] = useState([]);
   const [mealLoading, setMealLoading] = useState(true);
@@ -105,12 +107,12 @@ export default function MealDetailPage() {
       const userId = user?.data?.user?.id;
 
       if (!userId) {
-        alert('You must be logged in.');
+        showError('You must be logged in.');
         return;
       }
 
       if (!meal) {
-        alert('No meal data available.');
+        showError('No meal data available.');
         return;
       }
 
@@ -122,7 +124,7 @@ export default function MealDetailPage() {
 
       if (ingredientsError) {
         console.error('Error deleting meal ingredients:', ingredientsError);
-        alert('Could not delete meal ingredients.');
+        showError('Could not delete meal ingredients.');
         return;
       }
 
@@ -136,15 +138,15 @@ export default function MealDetailPage() {
 
       if (error) {
         console.error('❌ Failed to delete meal:', error);
-        alert('Could not fully delete meal.');
+        showError('Could not fully delete meal.');
       } else {
-        alert('Meal deleted successfully.');
+        showSuccess('Meal deleted successfully!');
         // Redirect back to meals list
         window.location.href = '/food/meals';
       }
     } catch (error) {
       console.error('Unexpected error in handleDeleteMeal:', error);
-      alert('An unexpected error occurred while deleting the meal.');
+      showError('An unexpected error occurred while deleting the meal.');
     }
   }
 

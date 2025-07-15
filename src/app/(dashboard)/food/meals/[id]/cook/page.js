@@ -5,10 +5,12 @@ import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import Button from '@/components/Button';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import { useToast } from '@/components/Toast';
 
 export default function CookMealPage() {
   const router = useRouter();
   const { id } = useParams();
+  const { showSuccess, showError } = useToast();
   const [meal, setMeal] = useState(null);
   const [mealLoading, setMealLoading] = useState(true);
 
@@ -30,7 +32,7 @@ export default function CookMealPage() {
       const { data: userData, error: userError } = await supabase.auth.getUser();
       const user = userData?.user;
       if (!user) {
-        alert('You must be logged in to record a cooked meal.');
+        showError('You must be logged in to record a cooked meal.');
         return;
       }
       
@@ -52,7 +54,7 @@ export default function CookMealPage() {
       if (checkError && checkError.code !== 'PGRST116') {
         // PGRST116 is "not found" error, which is expected if no record exists
         console.error('Error checking existing record:', checkError);
-        alert(`Failed to check existing record: ${checkError.message}`);
+        showError(`Failed to check existing record: ${checkError.message}`);
         return;
       }
       
@@ -92,16 +94,16 @@ export default function CookMealPage() {
           details: result.error.details,
           hint: result.error.hint
         });
-        alert(`Failed to record cooked meal: ${result.error.message}`);
+        showError(`Failed to record cooked meal: ${result.error.message}`);
         return;
       }
       
       console.log('Successfully recorded cooked meal:', result.data);
-      alert('Meal recorded as cooked!');
+      showSuccess('Meal recorded as cooked successfully!');
       router.push('/food/meals');
     } catch (error) {
       console.error('Unexpected error:', error);
-      alert('An unexpected error occurred while recording the cooked meal.');
+      showError('An unexpected error occurred while recording the cooked meal.');
     }
   }
 

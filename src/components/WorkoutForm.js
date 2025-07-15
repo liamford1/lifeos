@@ -10,9 +10,11 @@ import FormInput from '@/components/FormInput';
 import FormTextarea from '@/components/FormTextarea';
 import FormSection from '@/components/FormSection';
 import { CALENDAR_SOURCES, updateCalendarEvent } from '@/lib/calendarUtils';
+import { useToast } from '@/components/Toast';
 
 export default function WorkoutForm({ initialWorkout = null, initialExercises = [], isEdit = false }) {
   const router = useRouter();
+  const { showSuccess, showError } = useToast();
 
   const [title, setTitle] = useState(initialWorkout?.title || '');
   const [date, setDate] = useState(initialWorkout?.date || '');
@@ -29,7 +31,7 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
   const handleAddExercise = (e) => {
     e.preventDefault();
     if (!exerciseForm.name || !exerciseForm.sets || !exerciseForm.reps) {
-      alert('Please complete required exercise fields.');
+      showError('Please complete required exercise fields.');
       return;
     }
     setExercises((prev) => [...prev, exerciseForm]);
@@ -45,7 +47,7 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
     const user = await supabase.auth.getUser();
     const user_id = user?.data?.user?.id;
     if (!user_id) {
-      alert('You must be logged in.');
+      showError('You must be logged in.');
       return;
     }
 
@@ -58,7 +60,7 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
 
       if (updateError) {
         console.error(updateError);
-        alert('Failed to update workout.');
+        showError('Failed to update workout.');
         return;
       }
 
@@ -87,7 +89,7 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
 
       if (error) {
         console.error(error);
-        alert('Failed to create workout.');
+        showError('Failed to create workout.');
         return;
       }
       workoutId = workout.id;
@@ -121,10 +123,11 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
       const { error: exError } = await supabase.from('fitness_exercises').insert(formatted);
       if (exError) {
         console.error(exError);
-        alert('Workout saved but failed to add exercises.');
+        showError('Workout saved but failed to add exercises.');
       }
     }
 
+    showSuccess(isEdit ? 'Workout updated successfully!' : 'Workout created successfully!');
     router.push('/fitness/workouts');
   };
 

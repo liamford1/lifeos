@@ -8,8 +8,10 @@ import FormInput from '@/components/FormInput'
 import FormTextarea from '@/components/FormTextarea'
 import dayjs from 'dayjs'
 import { CALENDAR_SOURCES } from '@/lib/calendarUtils'
+import { useToast } from '@/components/Toast'
 
 export default function PlannedWorkoutForm({ onSuccess }) {
+  const { showSuccess, showError } = useToast();
   const [type, setType] = useState('workout') // workout | cardio | sports
   const [title, setTitle] = useState('')
   const [startTime, setStartTime] = useState('')
@@ -23,7 +25,7 @@ export default function PlannedWorkoutForm({ onSuccess }) {
 
     // Validate required fields
     if (!title.trim() || !startTime) {
-      alert('Please fill in all required fields.')
+      showError('Please fill in all required fields.')
       setLoading(false)
       return
     }
@@ -33,7 +35,7 @@ export default function PlannedWorkoutForm({ onSuccess }) {
 
     if (!userId) {
       console.error('❌ Not logged in:', authError)
-      alert('Not logged in.')
+      showError('Not logged in.')
       setLoading(false)
       return
     }
@@ -68,7 +70,7 @@ export default function PlannedWorkoutForm({ onSuccess }) {
       console.error('🔥 Supabase insert error:', error)
       console.error('📋 Table:', table)
       console.error('📦 Insert data:', insertData)
-      alert(`Failed to save planned workout.\n\n${error.message}`)
+      showError(`Failed to save planned workout: ${error.message}`)
       setLoading(false)
       return
     }
@@ -106,6 +108,7 @@ export default function PlannedWorkoutForm({ onSuccess }) {
     }
 
     setLoading(false)
+    showSuccess('Planned workout created successfully!')
     onSuccess?.()
   }
 

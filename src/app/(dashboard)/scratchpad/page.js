@@ -8,10 +8,12 @@ import Button from '@/components/Button'
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/context/UserContext';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import { useToast } from '@/components/Toast';
 
 export default function ScratchpadPage() {
   const { user, loading } = useUser();
   const router = useRouter();
+  const { showSuccess, showError } = useToast();
 
   useEffect(() => {
     if (!loading && !user) {
@@ -84,7 +86,7 @@ export default function ScratchpadPage() {
     const user_id = user?.data?.user?.id;
     
     if (!user_id) {
-      alert('You must be logged in.');
+      showError('You must be logged in.');
       return;
     }
 
@@ -97,8 +99,10 @@ export default function ScratchpadPage() {
 
     if (error) {
       console.error('Error deleting entry:', error.message);
+      showError('Failed to delete entry.');
     } else {
       fetchEntries();
+      showSuccess('Entry deleted successfully!');
     }
   }
 
