@@ -8,6 +8,7 @@ import { deleteEntityWithCalendarEvent } from '@/lib/deleteUtils';
 import { useRouter } from 'next/navigation';
 import dayjs from 'dayjs';
 import { CALENDAR_SOURCES, getCalendarEventRoute } from '@/lib/calendarUtils';
+import { getEventStyle } from '@/lib/eventStyleMap';
 import Button from '@/components/Button';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { useToast } from '@/components/Toast';
@@ -148,37 +149,6 @@ export default function CalendarView() {
     }
   };  
 
-  const getEventColor = (type) => {
-    switch (type) {
-      case CALENDAR_SOURCES.MEAL:
-        return 'bg-orange-500 text-white';
-      case CALENDAR_SOURCES.PLANNED_MEAL:
-        return 'bg-orange-400 text-white';
-      case CALENDAR_SOURCES.WORKOUT:
-        return 'bg-red-500 text-white';
-      case CALENDAR_SOURCES.CARDIO:
-        return 'bg-green-500 text-white';
-      case CALENDAR_SOURCES.SPORT:
-        return 'bg-green-500 text-white';
-      case CALENDAR_SOURCES.EXPENSE:
-        return 'bg-purple-500 text-white';
-      default:
-        return 'bg-gray-500 text-white';
-    }
-  };
-
-  const getEventIcon = (type) => {
-    switch (type) {
-      case CALENDAR_SOURCES.MEAL: return '🍽️ ';
-      case CALENDAR_SOURCES.PLANNED_MEAL: return '📅 ';
-      case CALENDAR_SOURCES.WORKOUT: return '🏋️ ';
-      case CALENDAR_SOURCES.CARDIO: return '🏃 ';
-      case CALENDAR_SOURCES.SPORT: return '🏀 ';
-      case CALENDAR_SOURCES.EXPENSE: return '💸 ';
-      default: return '';
-    }
-  };
-
   return (
     <div className="relative w-full p-6 bg-gray-800 text-white rounded shadow">
       <h2 className="text-xl font-semibold mb-4">📅 Calendar</h2>
@@ -197,22 +167,23 @@ export default function CalendarView() {
 
               return (
                 <div className="mt-1 space-y-0.5">
-                  {eventsOnThisDay.slice(0, 2).map((event) => (
-                    <div
-                      key={event.id}
-                      className={`text-xs truncate rounded px-1 cursor-pointer hover:opacity-80 ${getEventColor(event.source)}`}
-                      onClick={(e) => {
-                        e.stopPropagation();
-
-                        if (!event.source || !event.source_id) return;
-
-                        const route = getCalendarEventRoute(event.source, event.source_id);
-                        router.push(route);
-                      }}
-                    >
-                      {getEventIcon(event.source)}{event.title}
-                    </div>
-                  ))}
+                  {eventsOnThisDay.slice(0, 2).map((event) => {
+                    const { colorClass, Icon } = getEventStyle(event.source);
+                    return (
+                      <div
+                        key={event.id}
+                        className={`text-xs truncate rounded px-1 cursor-pointer hover:opacity-80 ${colorClass}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (!event.source || !event.source_id) return;
+                          const route = getCalendarEventRoute(event.source, event.source_id);
+                          router.push(route);
+                        }}
+                      >
+                        {Icon && <Icon className="inline mr-1 align-text-bottom" size={16} />} {event.title}
+                      </div>
+                    );
+                  })}
                   {eventsOnThisDay.length > 2 && (
                     <div className="text-[10px] text-gray-300">
                       +{eventsOnThisDay.length - 2} more
@@ -236,38 +207,40 @@ export default function CalendarView() {
           <p className="text-muted-foreground text-sm mt-2">No entries yet. Add one above ⬆️</p>
         ) : (
           <ul className="mt-2 space-y-2">
-            {eventsForSelectedDate.map((event) => (
-              <li
-                key={event.id}
-                className={`p-3 rounded cursor-pointer hover:opacity-80 ${getEventColor(event.source)}`}
-                onClick={() => {
-                  if (!event.source || !event.source_id) return;
-
-                  const route = getCalendarEventRoute(event.source, event.source_id);
-                  router.push(route);
-                }}
-              >
-                <div className="flex justify-between items-center">
-                  <div className="font-semibold">
-                    {getEventIcon(event.source)}{event.title}
+            {eventsForSelectedDate.map((event) => {
+              const { colorClass, Icon } = getEventStyle(event.source);
+              return (
+                <li
+                  key={event.id}
+                  className={`p-3 rounded cursor-pointer hover:opacity-80 ${colorClass}`}
+                  onClick={() => {
+                    if (!event.source || !event.source_id) return;
+                    const route = getCalendarEventRoute(event.source, event.source_id);
+                    router.push(route);
+                  }}
+                >
+                  <div className="flex justify-between items-center">
+                    <div className="font-semibold">
+                      {Icon && <Icon className="inline mr-1 align-text-bottom" size={18} />} {event.title}
+                    </div>
+                    <Button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteEvent(event);
+                      }}
+                      variant="link"
+                      size="sm"
+                      className="text-white hover:text-red-200"
+                    >
+                      🗑️
+                    </Button>
                   </div>
-                  <Button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDeleteEvent(event);
-                    }}
-                    variant="link"
-                    size="sm"
-                    className="text-white hover:text-red-200"
-                  >
-                    🗑️
-                  </Button>
-                </div>
-                {event.description && (
-                  <div className="text-sm opacity-90 mt-1">{event.description}</div>
-                )}
-              </li>
-            ))}
+                  {event.description && (
+                    <div className="text-sm opacity-90 mt-1">{event.description}</div>
+                  )}
+                </li>
+              );
+            })}
           </ul>
         )}
       </div>
