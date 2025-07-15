@@ -18,5 +18,11 @@ export default function ReceiptsPage() {
   if (loading) return <LoadingSpinner />;
   if (!user) return null;
 
-  return <div className="p-4">Receipts upload coming soon.</div>;
+  return (
+    <div className="max-w-6xl mx-auto p-4 space-y-4">
+      <h1 className="text-2xl font-bold">🧾 Receipts</h1>
+      <p className="text-gray-400">Upload and manage your receipts.</p>
+      <p className="text-gray-400">Receipts upload coming soon.</p>
+    </div>
+  );
 }

@@ -104,9 +104,10 @@ export default function AddReceiptPage(props) {
   }
 
   return (
-    <>
+    <div className="max-w-6xl mx-auto p-4 space-y-4">
       <BackButton />
-      <h1 className="text-2xl font-bold mb-6">🧾 Add a Receipt</h1>
+      <h1 className="text-2xl font-bold">🧾 Add a Receipt</h1>
+      <p className="text-gray-400">Add items from a receipt to your pantry inventory.</p>
 
       <input
         className="bg-gray-700 p-2 rounded w-full mb-6"
@@ -173,6 +174,6 @@ export default function AddReceiptPage(props) {
           {message}
         </p>
       )}
-    </>
+    </div>
   )
 }

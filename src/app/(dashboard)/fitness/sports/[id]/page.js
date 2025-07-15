@@ -68,16 +68,18 @@ export default function ViewOrEditSportSession({ params }) {
   if (!session) return <div className="p-4"><p className="text-muted-foreground text-sm">Session not found.</p></div>;
 
   return (
-    <div className="p-4 max-w-xl mx-auto">
+    <div className="max-w-6xl mx-auto p-4 space-y-4">
       <BackButton />
       {isEditing ? (
         <>
-          <h1 className="text-2xl font-bold mb-4">✏️ Edit Sport Session</h1>
+          <h1 className="text-2xl font-bold">✏️ Edit Sport Session</h1>
+          <p className="text-gray-400">Update your sports session details.</p>
           <SportForm initialData={session} onSubmit={handleUpdate} />
         </>
       ) : (
         <>
-          <h1 className="text-2xl font-bold mb-4">{session.activity_type}</h1>
+          <h1 className="text-2xl font-bold">{session.activity_type}</h1>
+          <p className="text-gray-400">View your sports session details.</p>
           <p className="text-gray-700 mb-1">📅 {session.date}</p>
           <p className="text-gray-700 mb-1">⏱️ Duration: {session.duration_minutes ?? 'N/A'} min</p>
           <p className="text-gray-700 mb-1">💥 Intensity: {session.intensity_level || 'N/A'}</p>

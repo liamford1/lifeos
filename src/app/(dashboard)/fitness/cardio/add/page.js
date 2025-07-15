@@ -56,9 +56,10 @@ export default function AddCardioSessionPage() {
   };
 
   return (
-    <div className="p-4 max-w-xl mx-auto">
+    <div className="max-w-6xl mx-auto p-4 space-y-4">
       <BackButton />
-      <h1 className="text-2xl font-bold mb-4">➕ Add Cardio Session</h1>
+      <h1 className="text-2xl font-bold">➕ Add Cardio Session</h1>
+      <p className="text-gray-400">Record a new cardio activity like running, cycling, or swimming.</p>
       <CardioForm onSubmit={handleAdd} />
     </div>
   );

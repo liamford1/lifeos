@@ -132,9 +132,10 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
   };
 
   return (
-    <div className="p-4 max-w-xl mx-auto">
+    <div className="max-w-6xl mx-auto p-4 space-y-4">
       <BackButton />
-      <h1 className="text-2xl font-bold mb-4">{isEdit ? '✏️ Edit Workout' : '➕ Add Workout'}</h1>
+      <h1 className="text-2xl font-bold">{isEdit ? '✏️ Edit Workout' : '➕ Add Workout'}</h1>
+      <p className="text-gray-400">Create a new workout session with exercises and details.</p>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>

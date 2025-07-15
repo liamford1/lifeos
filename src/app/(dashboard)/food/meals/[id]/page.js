@@ -153,7 +153,7 @@ export default function MealDetailPage() {
   if (mealLoading) return <LoadingSpinner />;
   if (!user) return null;
   if (error) return (
-    <div className="p-6 text-white">
+    <div className="max-w-6xl mx-auto p-4 space-y-4">
       <BackButton />
       <div className="text-red-400 text-center py-8">
         <h1 className="text-xl font-bold mb-4">Error Loading Meal</h1>
@@ -169,7 +169,7 @@ export default function MealDetailPage() {
     </div>
   );
   if (!meal) return (
-    <div className="p-6 text-white">
+    <div className="max-w-6xl mx-auto p-4 space-y-4">
       <BackButton />
       <div className="text-center py-8">
         <h1 className="text-xl font-bold mb-4">Meal Not Found</h1>
@@ -186,9 +186,10 @@ export default function MealDetailPage() {
   );
 
   return (
-    <>
+    <div className="max-w-6xl mx-auto p-4 space-y-4">
       <BackButton />
-      <h1 className="text-3xl font-bold mb-2">{meal.name}</h1>
+      <h1 className="text-2xl font-bold">{meal.name}</h1>
+      <p className="text-gray-400">View your meal recipe details.</p>
       {meal.description && <p className="text-gray-300 mb-4">{meal.description}</p>}
 
       {/* Place the Cook Meal button here, right below description/instructions */}
@@ -243,6 +244,6 @@ export default function MealDetailPage() {
           🗑️ Delete Meal
         </Button>
       </div>
-    </>
+    </div>
   );
 }

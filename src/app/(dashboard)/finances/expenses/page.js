@@ -60,9 +60,10 @@ export default function FinancesOverview() {
   if (!user) return null;
 
   return (
-    <div className="p-4 max-w-2xl mx-auto">
+    <div className="max-w-6xl mx-auto p-4 space-y-4">
       <BackButton />
-      <h1 className="text-2xl font-bold mb-4">Finances Overview</h1>
+      <h1 className="text-2xl font-bold">Expenses Overview</h1>
+      <p className="text-gray-400">Track and manage your expense records.</p>
       <Link href="/finances/add" className="text-blue-600 underline mb-4 inline-block">
         ➕ Add New Expense
       </Link>

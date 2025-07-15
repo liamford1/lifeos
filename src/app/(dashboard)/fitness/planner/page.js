@@ -11,9 +11,10 @@ export default function FitnessPlannerPage() {
   const [showForm, setShowForm] = useState(false)
 
   return (
-    <div className="p-4">
+    <div className="max-w-6xl mx-auto p-4 space-y-4">
       <BackButton />
-      <h1 className="text-2xl font-bold mb-4">Planned Fitness Activities</h1>
+      <h1 className="text-2xl font-bold">Planned Fitness Activities</h1>
+      <p className="text-gray-400">Schedule and plan your fitness activities.</p>
 
       <CalendarView filter="fitness" /> {/* You can add this filtering in your existing CalendarView */}
 

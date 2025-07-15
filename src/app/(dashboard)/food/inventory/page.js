@@ -105,9 +105,10 @@ export default function InventoryPage() {
   }
 
   return (
-    <div className="h-full">
+    <div className="max-w-6xl mx-auto p-4 space-y-4">
       <BackButton />
-      <h1 className="text-2xl font-bold mb-6">🥫 Your Pantry</h1>
+      <h1 className="text-2xl font-bold">🥫 Your Pantry</h1>
+      <p className="text-gray-400">Track your food inventory and pantry items.</p>
 
       {inventoryLoading ? (
         <LoadingSpinner />

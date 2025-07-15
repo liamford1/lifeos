@@ -78,9 +78,10 @@ export default function AddExpensePage() {
   if (!user) return null;
 
   return (
-    <div className="p-4 max-w-xl mx-auto">
+    <div className="max-w-6xl mx-auto p-4 space-y-4">
       <BackButton />
-      <h1 className="text-2xl font-bold mb-4">Add Expense</h1>
+      <h1 className="text-2xl font-bold">Add Expense</h1>
+      <p className="text-gray-400">Record a new expense with details.</p>
       <form onSubmit={handleSubmit} className="space-y-2">
         <input name="name" value={formData.name} onChange={handleChange} placeholder="Name" className="w-full p-2 border rounded" required />
         <input name="amount" type="number" step="0.01" value={formData.amount} onChange={handleChange} placeholder="Amount" className="w-full p-2 border rounded" required />

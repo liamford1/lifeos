@@ -64,9 +64,10 @@ export default function SportsDashboard() {
   };
 
   return (
-    <main className="p-4 max-w-xl mx-auto">
+    <div className="max-w-6xl mx-auto p-4 space-y-4">
       <BackButton />
-      <h1 className="text-2xl font-bold mb-4">⚽ Sports</h1>
+      <h1 className="text-2xl font-bold">⚽ Sports</h1>
+      <p className="text-gray-400">Track your sports activities and games.</p>
 
       <Link href="/fitness/sports/add" className="text-blue-600 underline mb-6 inline-block">
         ➕ Add Sports Session
@@ -125,6 +126,6 @@ export default function SportsDashboard() {
           ))}
         </ul>
       )}
-    </main>
+    </div>
   );
 }

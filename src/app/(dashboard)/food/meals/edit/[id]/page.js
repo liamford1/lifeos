@@ -85,7 +85,7 @@ export default function EditMealPage() {
 
   if (mealLoading) {
     return (
-      <div className="p-4">
+      <div className="max-w-6xl mx-auto p-4 space-y-4">
         <BackButton />
         <LoadingSpinner />
       </div>
@@ -264,7 +264,7 @@ export default function EditMealPage() {
 
   if (error && !meal) {
     return (
-      <div className="p-4">
+      <div className="max-w-6xl mx-auto p-4 space-y-4">
         <BackButton />
         <div className="text-red-400 text-center py-8">{error}</div>
       </div>
@@ -289,9 +289,10 @@ export default function EditMealPage() {
   console.log('📋 Initial values prepared for MealForm:', initialValues);
 
   return (
-    <div className="p-4">
+    <div className="max-w-6xl mx-auto p-4 space-y-4">
       <BackButton />
-      <h1 className="text-2xl font-bold mb-6 text-white">Edit Meal</h1>
+      <h1 className="text-2xl font-bold">Edit Meal</h1>
+      <p className="text-gray-400">Update your meal recipe details.</p>
 
       <MealForm
         initialValues={initialValues}

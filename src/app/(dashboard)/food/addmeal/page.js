@@ -138,9 +138,10 @@ export default function AddMealPage(props) {
   }
 
   return (
-    <div className="h-full">
+    <div className="max-w-6xl mx-auto p-4 space-y-4">
       <BackButton />
-      <h1 className="text-2xl font-bold mb-6 text-white">➕ Add a New Meal</h1>
+      <h1 className="text-2xl font-bold">➕ Add a New Meal</h1>
+      <p className="text-gray-400">Create a new meal recipe with ingredients and instructions.</p>
 
       <MealForm
         onSubmit={handleSaveMeal}

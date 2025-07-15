@@ -38,7 +38,7 @@ export default function WorkoutDetailPage() {
   if (!user) return null;
 
   return (
-    <div className="p-4 max-w-xl mx-auto">
+    <div className="max-w-6xl mx-auto p-4 space-y-4">
       <BackButton />
       {workoutLoading ? (
         <LoadingSpinner />
@@ -46,7 +46,8 @@ export default function WorkoutDetailPage() {
         <p className="text-muted-foreground text-sm">Workout not found.</p>
       ) : (
         <>
-          <h1 className="text-2xl font-bold mb-1">{workout.title}</h1>
+          <h1 className="text-2xl font-bold">{workout.title}</h1>
+          <p className="text-gray-400">View your workout details and exercises.</p>
           <p className="text-sm text-gray-600 mb-3">{workout.date}</p>
           {workout.notes && <p className="mb-4 italic text-gray-700">{workout.notes}</p>}
 

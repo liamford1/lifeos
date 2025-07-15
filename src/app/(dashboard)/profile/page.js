@@ -102,10 +102,11 @@ export default function ProfilePage() {
   if (error) return <div className="p-4 text-red-600">{error}</div>;
 
   return (
-    <>
+    <div className="max-w-6xl mx-auto p-4 space-y-4">
       <BackButton />
-      <h1 className="text-2xl font-bold mb-6">Your Profile</h1>
-      <form onSubmit={handleSubmit} className="space-y-4 max-w-xl">
+      <h1 className="text-2xl font-bold">Your Profile</h1>
+      <p className="text-gray-400">Manage your personal information and preferences.</p>
+      <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block font-semibold mb-1">First Name</label>
           <input
@@ -196,6 +197,6 @@ export default function ProfilePage() {
           {saving ? 'Saving...' : 'Save Profile'}
         </Button>
       </form>
-    </>
+    </div>
   );
 } 
