@@ -168,13 +168,14 @@ export default function CalendarView() {
               );
 
               return (
-                <div className="mt-1 space-y-0.5">
+                <div className="space-y-1 overflow-hidden w-full h-full max-w-full relative">
                   {eventsOnThisDay.slice(0, 2).map((event) => {
                     const { colorClass, Icon } = getEventStyle(event.source);
                     return (
                       <div
                         key={event.id}
-                        className={`text-xs truncate rounded px-1 cursor-pointer hover:opacity-80 ${colorClass}`}
+                        className={`w-full h-5 text-xs truncate whitespace-nowrap overflow-hidden text-ellipsis rounded px-1 py-0.5 text-left ${colorClass}`}
+                        style={{ boxSizing: 'border-box', display: 'block' }}
                         onClick={(e) => {
                           e.stopPropagation();
                           navigateToSource(event.source, event.source_id, router);
