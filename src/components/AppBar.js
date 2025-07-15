@@ -14,6 +14,7 @@ export default function AppBar() {
   const [profile, setProfile] = useState(null);
   const router = useRouter();
 
+  // Fetch user profile data when user is available
   useEffect(() => {
     const getProfile = async () => {
       if (!user) return;
@@ -29,11 +30,13 @@ export default function AppBar() {
     getProfile();
   }, [user]);
 
+  // Handle user logout and redirect
   const handleLogout = async () => {
     await supabase.auth.signOut();
     router.refresh();
   };
 
+  // Display user's full name if available, otherwise show email
   const displayName = profile?.first_name && profile?.last_name
     ? `${profile.first_name} ${profile.last_name}`
     : null;
@@ -41,7 +44,9 @@ export default function AppBar() {
   if (loading) return <LoadingSpinner />;
 
   return (
+    // Main navigation bar with dark theme and shadow
     <nav className="flex items-center justify-between p-4 shadow bg-gray-800">
+      {/* App title - clickable to navigate home */}
       <h1
         className="text-xl font-bold cursor-pointer text-gray-100"
         onClick={() => router.push('/')}
@@ -49,7 +54,9 @@ export default function AppBar() {
         Your Life Planner
       </h1>
 
+      {/* Right side actions container */}
       <div className="flex items-center space-x-4">
+        {/* Profile icon button - only show when user is logged in */}
         {user && (
           <Button
             onClick={() => router.push('/profile')}
@@ -61,8 +68,10 @@ export default function AppBar() {
           </Button>
         )}
 
+        {/* User authentication section */}
         {user ? (
           <>
+            {/* Display user name or email - hidden on mobile for space */}
             {displayName ? (
               <p className="text-sm hidden md:block text-gray-100">
                 {displayName}
@@ -73,6 +82,7 @@ export default function AppBar() {
               </p>
             )}
 
+            {/* Logout button */}
             <Button
               onClick={handleLogout}
               variant="danger"
@@ -82,6 +92,7 @@ export default function AppBar() {
             </Button>
           </>
         ) : (
+          // Login link for unauthenticated users
           <Link href="/auth">
             <Button variant="primary" size="sm">
               Log In
