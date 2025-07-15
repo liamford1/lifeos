@@ -1,0 +1,134 @@
+import { useState } from 'react';
+import { supabase } from '@/lib/supabaseClient';
+import FormInput from './FormInput';
+import FormLabel from './FormLabel';
+import Button from './Button';
+
+export default function ManualPantryItemModal({ onClose, onAddSuccess }) {
+  const [name, setName] = useState('');
+  const [quantity, setQuantity] = useState('');
+  const [unit, setUnit] = useState('');
+  const [category, setCategory] = useState('');
+  const [expiresAt, setExpiresAt] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    if (!name.trim()) {
+      setError('Name is required.');
+      return;
+    }
+    setLoading(true);
+    try {
+      const { data: userData, error: userError } = await supabase.auth.getUser();
+      const userId = userData?.user?.id;
+      if (!userId) {
+        setError('Not logged in.');
+        setLoading(false);
+        return;
+      }
+      const { error: insertError } = await supabase.from('food_items').insert({
+        user_id: userId,
+        name: name.trim(),
+        quantity: quantity ? parseFloat(quantity) : null,
+        unit: unit || null,
+        category: category || null,
+        expires_at: expiresAt || null,
+        added_from: 'manual',
+        added_at: new Date().toISOString(),
+      });
+      if (insertError) {
+        setError(insertError.message);
+        setLoading(false);
+        return;
+      }
+      if (onAddSuccess) onAddSuccess();
+      onClose();
+    } catch (err) {
+      setError('An unexpected error occurred.');
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+      <div className="bg-surface rounded-lg shadow-lg p-6 w-full max-w-md relative">
+        <button
+          className="absolute top-2 right-2 text-xl text-muted-foreground hover:text-white"
+          onClick={onClose}
+          aria-label="Close"
+        >
+          ×
+        </button>
+        <h2 className="text-xl font-bold mb-4">Add Pantry Item</h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <FormLabel htmlFor="name">Name<span className="text-red-400 ml-1">*</span></FormLabel>
+            <FormInput
+              id="name"
+              value={name}
+              onChange={e => setName(e.target.value)}
+              required
+              disabled={loading}
+              placeholder="e.g. Rice, Beans, Pasta"
+            />
+          </div>
+          <div>
+            <FormLabel htmlFor="quantity">Quantity</FormLabel>
+            <FormInput
+              id="quantity"
+              type="number"
+              min="0"
+              step="any"
+              value={quantity}
+              onChange={e => setQuantity(e.target.value)}
+              disabled={loading}
+              placeholder="e.g. 2"
+            />
+          </div>
+          <div>
+            <FormLabel htmlFor="unit">Unit</FormLabel>
+            <FormInput
+              id="unit"
+              value={unit}
+              onChange={e => setUnit(e.target.value)}
+              disabled={loading}
+              placeholder="e.g. lbs, cans, boxes"
+            />
+          </div>
+          <div>
+            <FormLabel htmlFor="category">Category</FormLabel>
+            <FormInput
+              id="category"
+              value={category}
+              onChange={e => setCategory(e.target.value)}
+              disabled={loading}
+              placeholder="e.g. Grains, Canned, Snacks"
+            />
+          </div>
+          <div>
+            <FormLabel htmlFor="expires_at">Expiration</FormLabel>
+            <FormInput
+              id="expires_at"
+              type="date"
+              value={expiresAt}
+              onChange={e => setExpiresAt(e.target.value)}
+              disabled={loading}
+            />
+          </div>
+          {error && <div className="text-red-400 text-sm">{error}</div>}
+          <div className="flex justify-end gap-2">
+            <Button type="button" variant="ghost" onClick={onClose} disabled={loading}>
+              Cancel
+            </Button>
+            <Button type="submit" variant="primary" disabled={loading}>
+              {loading ? 'Adding...' : 'Add Item'}
+            </Button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+} 

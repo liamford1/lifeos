@@ -8,11 +8,17 @@ import Button from '@/components/Button';
 import BackButton from '@/components/BackButton'
 import { useDeleteEntity } from '@/lib/useSupabaseCrud';
 import { Package } from 'lucide-react';
+import ManualPantryItemModal from '@/components/ManualPantryItemModal';
 
 export default function InventoryPage() {
+  // All hooks at the top!
   const { user, loading } = useUser();
   const router = useRouter();
   const { deleteByFilters, loading: deleteLoading } = useDeleteEntity('food_items');
+  const [items, setItems] = useState([])
+  const [inventoryLoading, setInventoryLoading] = useState(true)
+  const [subtractAmounts, setSubtractAmounts] = useState({})
+  const [showManualAddModal, setShowManualAddModal] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -20,14 +26,12 @@ export default function InventoryPage() {
     }
   }, [loading, user]);
 
-  if (loading) return <LoadingSpinner />;
-  if (!user) return null;
+  useEffect(() => {
+    fetchInventory();
+  }, []);
 
-  const [items, setItems] = useState([])
-  const [inventoryLoading, setInventoryLoading] = useState(true)
-  const [subtractAmounts, setSubtractAmounts] = useState({})
-
-  const fetchInventory = async () => {
+  // fetchInventory must be defined before useEffect, so move it above
+  async function fetchInventory() {
     const {
       data: { user },
     } = await import('@/lib/supabaseClient').then(m => m.supabase.auth.getUser())
@@ -60,9 +64,8 @@ export default function InventoryPage() {
     setInventoryLoading(false)
   }
 
-  useEffect(() => {
-    fetchInventory()
-  }, [])
+  if (loading) return <LoadingSpinner />;
+  if (!user) return null;
 
   const handleDelete = async (id) => {
     const { error } = await deleteByFilters({ id });
@@ -100,11 +103,25 @@ export default function InventoryPage() {
   return (
     <div className="max-w-6xl mx-auto p-4 space-y-4">
       <BackButton />
-      <h1 className="text-2xl font-bold flex items-center">
-        <Package className="w-5 h-5 text-base mr-2 inline-block" />
-        Your Pantry
-      </h1>
+      <div className="flex items-center justify-between mb-2">
+        <h1 className="text-2xl font-bold flex items-center">
+          <Package className="w-5 h-5 text-base mr-2 inline-block" />
+          Your Pantry
+        </h1>
+        <button
+          className="ml-4 px-4 py-2 rounded border border-default bg-card text-base font-medium hover:bg-muted transition-colors"
+          onClick={() => setShowManualAddModal(true)}
+        >
+          + Add Item
+        </button>
+      </div>
       <p className="text-base">Track your food inventory and pantry items.</p>
+      {showManualAddModal && (
+        <ManualPantryItemModal 
+          onClose={() => setShowManualAddModal(false)}
+          onAddSuccess={fetchInventory}
+        />
+      )}
 
       {inventoryLoading ? (
         <LoadingSpinner />
