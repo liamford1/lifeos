@@ -9,47 +9,47 @@ import Button from "@/components/Button";
 import Link from "next/link";
 import { useToast } from "@/components/Toast";
 
-export default function CardioDetailPage() {
+export default function ScratchpadDetailPage() {
   const { id } = useParams();
   const router = useRouter();
   const { showSuccess, showError } = useToast();
-  const [cardio, setCardio] = useState(null);
+  const [note, setNote] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    async function fetchCardio() {
+    async function fetchNote() {
       if (!id) {
-        setError("Missing cardio ID");
+        setError("Missing note ID");
         setLoading(false);
         return;
       }
       const { data, error } = await supabase
-        .from("fitness_cardio")
+        .from("scratchpad")
         .select("*")
         .eq("id", id)
         .single();
       if (error || !data) {
-        setError("Failed to load cardio entry");
+        setError("Failed to load note");
       } else {
-        setCardio(data);
+        setNote(data);
       }
       setLoading(false);
     }
-    fetchCardio();
+    fetchNote();
   }, [id]);
 
   async function handleDelete() {
-    if (!window.confirm("Delete this cardio entry?")) return;
+    if (!window.confirm("Delete this note?")) return;
     const { error } = await supabase
-      .from("fitness_cardio")
+      .from("scratchpad")
       .delete()
       .eq("id", id);
     if (error) {
-      showError("Failed to delete cardio entry");
+      showError("Failed to delete note");
     } else {
-      showSuccess("Cardio entry deleted");
-      router.push("/fitness/cardio");
+      showSuccess("Note deleted");
+      router.push("/scratchpad");
     }
   }
 
@@ -59,19 +59,18 @@ export default function CardioDetailPage() {
   return (
     <div className="max-w-2xl mx-auto p-4">
       <BackButton />
-      <h1 className="text-xl font-bold mb-4">Cardio Entry Details</h1>
-      {cardio && (
+      <h1 className="text-xl font-bold mb-4">Note Details</h1>
+      {note && (
         <div className="mb-4">
-          <div><strong>Type:</strong> {cardio.type}</div>
-          <div><strong>Duration:</strong> {cardio.duration} min</div>
-          <div><strong>Date:</strong> {cardio.date}</div>
-          <div><strong>Notes:</strong> {cardio.notes}</div>
+          <div><strong>Title:</strong> {note.title}</div>
+          <div><strong>Content:</strong> {note.content}</div>
+          <div><strong>Created:</strong> {note.created_at}</div>
         </div>
       )}
-      <Link href={`/fitness/cardio/${id}/edit`} className="mr-2">
+      <Link href={`/scratchpad/${id}/edit`} className="mr-2">
         <Button variant="primary">Edit</Button>
       </Link>
       <Button onClick={handleDelete} variant="danger" className="ml-2">Delete</Button>
     </div>
   );
-}
+} 

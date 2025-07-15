@@ -4,17 +4,18 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import BackButton from "@/components/BackButton";
+import SportForm from "@/components/SportForm";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import Button from "@/components/Button";
-import Link from "next/link";
 import { useToast } from "@/components/Toast";
 
-export default function SportDetailPage() {
+export default function EditSportPage() {
   const { id } = useParams();
   const router = useRouter();
   const { showSuccess, showError } = useToast();
   const [sport, setSport] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -39,6 +40,22 @@ export default function SportDetailPage() {
     fetchSport();
   }, [id]);
 
+  async function handleUpdateSport(sportData) {
+    setSaving(true);
+    setError("");
+    const { error } = await supabase
+      .from("fitness_sports")
+      .update(sportData)
+      .eq("id", id);
+    if (error) {
+      setError("Failed to update sport entry");
+      setSaving(false);
+      return;
+    }
+    showSuccess("Sport entry updated!");
+    router.push(`/fitness/sports/${id}`);
+  }
+
   async function handleDelete() {
     if (!window.confirm("Delete this sport entry?")) return;
     const { error } = await supabase
@@ -59,19 +76,9 @@ export default function SportDetailPage() {
   return (
     <div className="max-w-2xl mx-auto p-4">
       <BackButton />
-      <h1 className="text-xl font-bold mb-4">Sport Entry Details</h1>
-      {sport && (
-        <div className="mb-4">
-          <div><strong>Sport:</strong> {sport.sport}</div>
-          <div><strong>Duration:</strong> {sport.duration} min</div>
-          <div><strong>Date:</strong> {sport.date}</div>
-          <div><strong>Notes:</strong> {sport.notes}</div>
-        </div>
-      )}
-      <Link href={`/fitness/sports/${id}/edit`} className="mr-2">
-        <Button variant="primary">Edit</Button>
-      </Link>
-      <Button onClick={handleDelete} variant="danger" className="ml-2">Delete</Button>
+      <h1 className="text-xl font-bold mb-4">Edit Sport Entry</h1>
+      <SportForm initialValues={sport} onSubmit={handleUpdateSport} loading={saving} />
+      <Button onClick={handleDelete} variant="danger" className="mt-4">Delete</Button>
     </div>
   );
-}
+} 

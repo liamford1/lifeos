@@ -12,6 +12,7 @@ import { getEventStyle } from '@/lib/eventStyleMap';
 import Button from '@/components/Button';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { useToast } from '@/components/Toast';
+import { navigateToSource } from '@/lib/navigateToSource';
 
 export default function CalendarView() {
   const { showSuccess, showError } = useToast();
@@ -175,9 +176,7 @@ export default function CalendarView() {
                         className={`text-xs truncate rounded px-1 cursor-pointer hover:opacity-80 ${colorClass}`}
                         onClick={(e) => {
                           e.stopPropagation();
-                          if (!event.source || !event.source_id) return;
-                          const route = getCalendarEventRoute(event.source, event.source_id);
-                          router.push(route);
+                          navigateToSource(event.source, event.source_id, router);
                         }}
                       >
                         {Icon && <Icon className="inline mr-1 align-text-bottom" size={16} />} {event.title}

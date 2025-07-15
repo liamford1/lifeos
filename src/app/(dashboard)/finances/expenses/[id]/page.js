@@ -9,47 +9,47 @@ import Button from "@/components/Button";
 import Link from "next/link";
 import { useToast } from "@/components/Toast";
 
-export default function CardioDetailPage() {
+export default function ExpenseDetailPage() {
   const { id } = useParams();
   const router = useRouter();
   const { showSuccess, showError } = useToast();
-  const [cardio, setCardio] = useState(null);
+  const [expense, setExpense] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    async function fetchCardio() {
+    async function fetchExpense() {
       if (!id) {
-        setError("Missing cardio ID");
+        setError("Missing expense ID");
         setLoading(false);
         return;
       }
       const { data, error } = await supabase
-        .from("fitness_cardio")
+        .from("expenses")
         .select("*")
         .eq("id", id)
         .single();
       if (error || !data) {
-        setError("Failed to load cardio entry");
+        setError("Failed to load expense entry");
       } else {
-        setCardio(data);
+        setExpense(data);
       }
       setLoading(false);
     }
-    fetchCardio();
+    fetchExpense();
   }, [id]);
 
   async function handleDelete() {
-    if (!window.confirm("Delete this cardio entry?")) return;
+    if (!window.confirm("Delete this expense entry?")) return;
     const { error } = await supabase
-      .from("fitness_cardio")
+      .from("expenses")
       .delete()
       .eq("id", id);
     if (error) {
-      showError("Failed to delete cardio entry");
+      showError("Failed to delete expense entry");
     } else {
-      showSuccess("Cardio entry deleted");
-      router.push("/fitness/cardio");
+      showSuccess("Expense entry deleted");
+      router.push("/finances/expenses");
     }
   }
 
@@ -59,19 +59,22 @@ export default function CardioDetailPage() {
   return (
     <div className="max-w-2xl mx-auto p-4">
       <BackButton />
-      <h1 className="text-xl font-bold mb-4">Cardio Entry Details</h1>
-      {cardio && (
+      <h1 className="text-xl font-bold mb-4">Expense Details</h1>
+      {expense && (
         <div className="mb-4">
-          <div><strong>Type:</strong> {cardio.type}</div>
-          <div><strong>Duration:</strong> {cardio.duration} min</div>
-          <div><strong>Date:</strong> {cardio.date}</div>
-          <div><strong>Notes:</strong> {cardio.notes}</div>
+          <div><strong>Name:</strong> {expense.name}</div>
+          <div><strong>Amount:</strong> ${expense.amount?.toFixed(2)}</div>
+          <div><strong>Category:</strong> {expense.category}</div>
+          <div><strong>Store:</strong> {expense.store}</div>
+          <div><strong>Payment Method:</strong> {expense.payment_method}</div>
+          <div><strong>Date:</strong> {expense.date}</div>
+          <div><strong>Notes:</strong> {expense.notes}</div>
         </div>
       )}
-      <Link href={`/fitness/cardio/${id}/edit`} className="mr-2">
+      <Link href={`/finances/expenses/${id}/edit`} className="mr-2">
         <Button variant="primary">Edit</Button>
       </Link>
       <Button onClick={handleDelete} variant="danger" className="ml-2">Delete</Button>
     </div>
   );
-}
+} 

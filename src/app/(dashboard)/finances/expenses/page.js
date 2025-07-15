@@ -78,14 +78,22 @@ export default function FinancesOverview() {
               <div className="font-semibold">{exp.name} — ${exp.amount.toFixed(2)}</div>
               <div className="text-sm text-gray-600">{exp.category} — {exp.store} — {exp.payment_method}</div>
               <div className="text-xs text-gray-500">{exp.date}</div>
-              <Button
-                onClick={() => handleDelete(exp.id)}
-                variant="link"
-                size="sm"
-                className="mt-2 text-red-600 hover:text-red-700"
-              >
-                🗑️ Delete
-              </Button>
+              <div className="flex gap-2 mt-2">
+                <Link href={`/finances/expenses/${exp.id}`} passHref legacyBehavior>
+                  <Button as="a" variant="secondary" size="sm">View</Button>
+                </Link>
+                <Link href={`/finances/expenses/${exp.id}/edit`} passHref legacyBehavior>
+                  <Button as="a" variant="primary" size="sm">Edit</Button>
+                </Link>
+                <Button
+                  onClick={() => handleDelete(exp.id)}
+                  variant="link"
+                  size="sm"
+                  className="text-red-600 hover:text-red-700"
+                >
+                  🗑️ Delete
+                </Button>
+              </div>
             </li>
           ))}
         </ul>

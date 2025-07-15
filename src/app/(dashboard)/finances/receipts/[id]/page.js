@@ -9,47 +9,47 @@ import Button from "@/components/Button";
 import Link from "next/link";
 import { useToast } from "@/components/Toast";
 
-export default function CardioDetailPage() {
+export default function ReceiptDetailPage() {
   const { id } = useParams();
   const router = useRouter();
   const { showSuccess, showError } = useToast();
-  const [cardio, setCardio] = useState(null);
+  const [receipt, setReceipt] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    async function fetchCardio() {
+    async function fetchReceipt() {
       if (!id) {
-        setError("Missing cardio ID");
+        setError("Missing receipt ID");
         setLoading(false);
         return;
       }
       const { data, error } = await supabase
-        .from("fitness_cardio")
+        .from("receipts")
         .select("*")
         .eq("id", id)
         .single();
       if (error || !data) {
-        setError("Failed to load cardio entry");
+        setError("Failed to load receipt entry");
       } else {
-        setCardio(data);
+        setReceipt(data);
       }
       setLoading(false);
     }
-    fetchCardio();
+    fetchReceipt();
   }, [id]);
 
   async function handleDelete() {
-    if (!window.confirm("Delete this cardio entry?")) return;
+    if (!window.confirm("Delete this receipt entry?")) return;
     const { error } = await supabase
-      .from("fitness_cardio")
+      .from("receipts")
       .delete()
       .eq("id", id);
     if (error) {
-      showError("Failed to delete cardio entry");
+      showError("Failed to delete receipt entry");
     } else {
-      showSuccess("Cardio entry deleted");
-      router.push("/fitness/cardio");
+      showSuccess("Receipt entry deleted");
+      router.push("/finances/receipts");
     }
   }
 
@@ -59,19 +59,20 @@ export default function CardioDetailPage() {
   return (
     <div className="max-w-2xl mx-auto p-4">
       <BackButton />
-      <h1 className="text-xl font-bold mb-4">Cardio Entry Details</h1>
-      {cardio && (
+      <h1 className="text-xl font-bold mb-4">Receipt Details</h1>
+      {receipt && (
         <div className="mb-4">
-          <div><strong>Type:</strong> {cardio.type}</div>
-          <div><strong>Duration:</strong> {cardio.duration} min</div>
-          <div><strong>Date:</strong> {cardio.date}</div>
-          <div><strong>Notes:</strong> {cardio.notes}</div>
+          <div><strong>Store:</strong> {receipt.store}</div>
+          <div><strong>Date:</strong> {receipt.date}</div>
+          <div><strong>Total:</strong> ${receipt.total?.toFixed(2)}</div>
+          <div><strong>Items:</strong> {receipt.items}</div>
+          <div><strong>Notes:</strong> {receipt.notes}</div>
         </div>
       )}
-      <Link href={`/fitness/cardio/${id}/edit`} className="mr-2">
+      <Link href={`/finances/receipts/${id}/edit`} className="mr-2">
         <Button variant="primary">Edit</Button>
       </Link>
       <Button onClick={handleDelete} variant="danger" className="ml-2">Delete</Button>
     </div>
   );
-}
+} 

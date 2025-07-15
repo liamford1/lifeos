@@ -4,17 +4,18 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import BackButton from "@/components/BackButton";
+import CardioForm from "@/components/CardioForm";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import Button from "@/components/Button";
-import Link from "next/link";
 import { useToast } from "@/components/Toast";
 
-export default function CardioDetailPage() {
+export default function EditCardioPage() {
   const { id } = useParams();
   const router = useRouter();
   const { showSuccess, showError } = useToast();
   const [cardio, setCardio] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -39,6 +40,22 @@ export default function CardioDetailPage() {
     fetchCardio();
   }, [id]);
 
+  async function handleUpdateCardio(cardioData) {
+    setSaving(true);
+    setError("");
+    const { error } = await supabase
+      .from("fitness_cardio")
+      .update(cardioData)
+      .eq("id", id);
+    if (error) {
+      setError("Failed to update cardio entry");
+      setSaving(false);
+      return;
+    }
+    showSuccess("Cardio entry updated!");
+    router.push(`/fitness/cardio/${id}`);
+  }
+
   async function handleDelete() {
     if (!window.confirm("Delete this cardio entry?")) return;
     const { error } = await supabase
@@ -59,19 +76,9 @@ export default function CardioDetailPage() {
   return (
     <div className="max-w-2xl mx-auto p-4">
       <BackButton />
-      <h1 className="text-xl font-bold mb-4">Cardio Entry Details</h1>
-      {cardio && (
-        <div className="mb-4">
-          <div><strong>Type:</strong> {cardio.type}</div>
-          <div><strong>Duration:</strong> {cardio.duration} min</div>
-          <div><strong>Date:</strong> {cardio.date}</div>
-          <div><strong>Notes:</strong> {cardio.notes}</div>
-        </div>
-      )}
-      <Link href={`/fitness/cardio/${id}/edit`} className="mr-2">
-        <Button variant="primary">Edit</Button>
-      </Link>
-      <Button onClick={handleDelete} variant="danger" className="ml-2">Delete</Button>
+      <h1 className="text-xl font-bold mb-4">Edit Cardio Entry</h1>
+      <CardioForm initialValues={cardio} onSubmit={handleUpdateCardio} loading={saving} />
+      <Button onClick={handleDelete} variant="danger" className="mt-4">Delete</Button>
     </div>
   );
-}
+} 
