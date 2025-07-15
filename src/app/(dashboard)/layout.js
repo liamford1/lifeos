@@ -29,7 +29,6 @@ export default function DashboardLayout({ children }) {
   if (loading) {
     return (
       <main className="p-6 text-center text-lg" style={{ backgroundColor: '#343541', color: '#e6e6e6' }}>
-        <h1 className="text-2xl font-bold mb-4">📅 Your Life Planner</h1>
         <LoadingSpinner />
       </main>
     );

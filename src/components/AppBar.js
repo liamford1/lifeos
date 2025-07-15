@@ -45,7 +45,7 @@ export default function AppBar() {
 
   return (
     // Main navigation bar with dark theme and shadow
-    <nav className="flex items-center justify-between p-4 shadow bg-surface">
+    <nav className="flex items-center justify-between p-4 bg-panel border-b border-default">
       {/* App title - clickable to navigate home */}
       <h1
         className="text-xl font-bold cursor-pointer text-base"

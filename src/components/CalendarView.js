@@ -13,6 +13,7 @@ import Button from '@/components/Button';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { useToast } from '@/components/Toast';
 import { navigateToSource } from '@/lib/navigateToSource';
+import { MdOutlineCalendarToday } from 'react-icons/md';
 
 export default function CalendarView() {
   const { showSuccess, showError } = useToast();
@@ -152,7 +153,10 @@ export default function CalendarView() {
 
   return (
     <div className="relative w-full p-6 bg-surface text-white rounded shadow">
-      <h2 className="text-xl font-semibold mb-4">📅 Calendar</h2>
+      <h2 className="text-xl font-semibold mb-4">
+        <MdOutlineCalendarToday className="inline w-5 h-5 mr-2 align-text-bottom" />
+        Calendar
+      </h2>
       <div className="w-full flex justify-center my-6">
         <div className="w-[80rem]">
           <div className="bg-panel p-2 rounded">
