@@ -9,26 +9,25 @@ import { useRouter } from 'next/navigation';
 import { useUser } from '@/context/UserContext';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { useToast } from '@/components/Toast';
+import Link from 'next/link';
 
 export default function ScratchpadPage() {
   const { user, loading } = useUser();
   const router = useRouter();
   const { showSuccess, showError } = useToast();
 
+  // All hooks must be called before any return!
+  const [content, setContent] = useState('');
+  const [category, setCategory] = useState('');
+  const [entries, setEntries] = useState([]);
+  const [message, setMessage] = useState('');
+  const [entriesLoading, setEntriesLoading] = useState(true);
+
   useEffect(() => {
     if (!loading && !user) {
       router.push('/auth');
     }
   }, [loading, user]);
-
-  if (loading) return <LoadingSpinner />;
-  if (!user) return null;
-
-  const [content, setContent] = useState('')
-  const [category, setCategory] = useState('')
-  const [entries, setEntries] = useState([])
-  const [message, setMessage] = useState('')
-  const [entriesLoading, setEntriesLoading] = useState(true)
 
   const fetchEntries = async () => {
     setEntriesLoading(true)
@@ -106,6 +105,9 @@ export default function ScratchpadPage() {
     }
   }
 
+  if (loading) return <LoadingSpinner />;
+  if (!user) return null;
+
   return (
     <div className="max-w-6xl mx-auto p-4 space-y-4">
       <BackButton />
@@ -147,21 +149,35 @@ export default function ScratchpadPage() {
           <ul className="space-y-2">
             {entries.map((entry) => (
               <li key={entry.id} className="border p-3 rounded">
-                <p className="text-gray-800">{entry.content}</p>
-                {entry.category && (
-                  <p className="text-sm text-blue-600 mt-1 capitalize">#{entry.category}</p>
-                )}
-                <p className="text-sm text-gray-500 mt-1">
-                  {new Date(entry.created_at).toLocaleString()}
-                </p>
-                <Button
-                  onClick={() => handleDelete(entry.id)}
-                  variant="link"
-                  size="sm"
-                  className="mt-2 text-red-500 hover:text-red-700"
-                >
-                  Delete
-                </Button>
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+                  <div>
+                    <p className="text-gray-800">{entry.content}</p>
+                    {entry.category && (
+                      <p className="text-sm text-blue-600 mt-1 capitalize">#{entry.category}</p>
+                    )}
+                    <p className="text-sm text-gray-500 mt-1">
+                      {new Date(entry.created_at).toLocaleString()}
+                    </p>
+                  </div>
+                  <div className="flex gap-2 mt-2 md:mt-0 md:ml-4">
+                    <Link href={`/scratchpad/${entry.id}`}>
+                      <Button variant="secondary" size="sm">View</Button>
+                    </Link>
+                    <Link href={`/scratchpad/${entry.id}/edit`}>
+                      <Button variant="primary" size="sm">Edit</Button>
+                    </Link>
+                    <Button
+                      onClick={() => {
+                        if (window.confirm('Delete this entry?')) handleDelete(entry.id);
+                      }}
+                      variant="link"
+                      size="sm"
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      Delete
+                    </Button>
+                  </div>
+                </div>
               </li>
             ))}
           </ul>
