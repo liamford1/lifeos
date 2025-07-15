@@ -1,6 +1,7 @@
 export default function FormInput({ 
   className = '', 
   disabled = false,
+  // Pass an id prop for accessibility to associate with FormLabel
   ...props 
 }) {
   return (

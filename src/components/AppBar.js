@@ -63,6 +63,7 @@ export default function AppBar() {
             variant="ghost"
             size="sm"
             className="text-gray-100 hover:text-gray-300 p-0"
+            aria-label="Profile"
           >
             <FaUserCircle size={24} />
           </Button>

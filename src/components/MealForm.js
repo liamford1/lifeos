@@ -175,6 +175,7 @@ export default function MealForm({
               size="sm"
               className="text-red-400 hover:text-red-300"
               disabled={loading}
+              aria-label="Remove ingredient"
             >
               ✕
             </Button>

@@ -2,6 +2,7 @@ export default function FormTextarea({
   className = '', 
   disabled = false,
   rows = 3,
+  // Pass an id prop for accessibility to associate with FormLabel
   ...props 
 }) {
   return (

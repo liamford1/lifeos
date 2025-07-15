@@ -108,8 +108,9 @@ export default function ProfilePage() {
       <p className="text-gray-400">Manage your personal information and preferences.</p>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block font-semibold mb-1">First Name</label>
+          <label htmlFor="profile-first-name" className="block font-semibold mb-1">First Name</label>
           <input
+            id="profile-first-name"
             type="text"
             value={firstName}
             onChange={(e) => setFirstName(e.target.value)}
@@ -118,8 +119,9 @@ export default function ProfilePage() {
           />
         </div>
         <div>
-          <label className="block font-semibold mb-1">Last Name</label>
+          <label htmlFor="profile-last-name" className="block font-semibold mb-1">Last Name</label>
           <input
+            id="profile-last-name"
             type="text"
             value={lastName}
             onChange={(e) => setLastName(e.target.value)}
@@ -128,8 +130,9 @@ export default function ProfilePage() {
           />
         </div>
         <div>
-          <label className="block font-semibold mb-1">Birthday</label>
+          <label htmlFor="profile-birthday" className="block font-semibold mb-1">Birthday</label>
           <input
+            id="profile-birthday"
             type="date"
             value={birthday}
             onChange={(e) => setBirthday(e.target.value)}
@@ -137,8 +140,9 @@ export default function ProfilePage() {
           />
         </div>
         <div>
-          <label className="block font-semibold mb-1">Gender</label>
+          <label htmlFor="profile-gender" className="block font-semibold mb-1">Gender</label>
           <select
+            id="profile-gender"
             value={gender}
             onChange={(e) => setGender(e.target.value)}
             className="w-full p-2 border rounded"
@@ -151,8 +155,9 @@ export default function ProfilePage() {
           </select>
         </div>
         <div>
-          <label className="block font-semibold mb-1">Location</label>
+          <label htmlFor="profile-location" className="block font-semibold mb-1">Location</label>
           <input
+            id="profile-location"
             type="text"
             value={location}
             onChange={(e) => setLocation(e.target.value)}
@@ -160,8 +165,9 @@ export default function ProfilePage() {
           />
         </div>
         <div>
-          <label className="block font-semibold mb-1">Bio</label>
+          <label htmlFor="profile-bio" className="block font-semibold mb-1">Bio</label>
           <textarea
+            id="profile-bio"
             value={bio}
             onChange={(e) => setBio(e.target.value)}
             rows={3}
@@ -169,8 +175,9 @@ export default function ProfilePage() {
           />
         </div>
         <div>
-          <label className="block font-semibold mb-1">Height (cm)</label>
+          <label htmlFor="profile-height" className="block font-semibold mb-1">Height (cm)</label>
           <input
+            id="profile-height"
             type="number"
             step="0.1"
             value={height}
@@ -179,8 +186,9 @@ export default function ProfilePage() {
           />
         </div>
         <div>
-          <label className="block font-semibold mb-1">Weight (kg)</label>
+          <label htmlFor="profile-weight" className="block font-semibold mb-1">Weight (kg)</label>
           <input
+            id="profile-weight"
             type="number"
             step="0.1"
             value={weight}

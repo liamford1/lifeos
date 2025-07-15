@@ -231,6 +231,7 @@ export default function CalendarView() {
                       variant="link"
                       size="sm"
                       className="text-white hover:text-red-200"
+                      aria-label="Delete event"
                     >
                       🗑️
                     </Button>

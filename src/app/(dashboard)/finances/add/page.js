@@ -83,12 +83,18 @@ export default function AddExpensePage() {
       <h1 className="text-2xl font-bold">Add Expense</h1>
       <p className="text-gray-400">Record a new expense with details.</p>
       <form onSubmit={handleSubmit} className="space-y-2">
-        <input name="name" value={formData.name} onChange={handleChange} placeholder="Name" className="w-full p-2 border rounded" required />
-        <input name="amount" type="number" step="0.01" value={formData.amount} onChange={handleChange} placeholder="Amount" className="w-full p-2 border rounded" required />
-        <input name="category" value={formData.category} onChange={handleChange} placeholder="Category" className="w-full p-2 border rounded" />
-        <input name="store" value={formData.store} onChange={handleChange} placeholder="Store" className="w-full p-2 border rounded" />
-        <input name="payment_method" value={formData.payment_method} onChange={handleChange} placeholder="Payment Method" className="w-full p-2 border rounded" />
-        <input name="date" type="date" value={formData.date} onChange={handleChange} className="w-full p-2 border rounded" required />
+        <label htmlFor="expense-name" className="sr-only">Name</label>
+        <input id="expense-name" name="name" value={formData.name} onChange={handleChange} placeholder="Name" className="w-full p-2 border rounded" required />
+        <label htmlFor="expense-amount" className="sr-only">Amount</label>
+        <input id="expense-amount" name="amount" type="number" step="0.01" value={formData.amount} onChange={handleChange} placeholder="Amount" className="w-full p-2 border rounded" required />
+        <label htmlFor="expense-category" className="sr-only">Category</label>
+        <input id="expense-category" name="category" value={formData.category} onChange={handleChange} placeholder="Category" className="w-full p-2 border rounded" />
+        <label htmlFor="expense-store" className="sr-only">Store</label>
+        <input id="expense-store" name="store" value={formData.store} onChange={handleChange} placeholder="Store" className="w-full p-2 border rounded" />
+        <label htmlFor="expense-payment-method" className="sr-only">Payment Method</label>
+        <input id="expense-payment-method" name="payment_method" value={formData.payment_method} onChange={handleChange} placeholder="Payment Method" className="w-full p-2 border rounded" aria-label="Payment Method" />
+        <label htmlFor="expense-date" className="sr-only">Date</label>
+        <input id="expense-date" name="date" type="date" value={formData.date} onChange={handleChange} className="w-full p-2 border rounded" required />
         <Button type="submit" variant="primary" className="w-full">
           Add Expense
         </Button>

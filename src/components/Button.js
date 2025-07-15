@@ -6,7 +6,9 @@ export default function Button({
   className = '',
   variant = 'primary',
   size = 'md',
-  disabled = false
+  disabled = false,
+  'aria-label': ariaLabel, // allow aria-label
+  ...rest // forward other props
 }) {
   const baseClasses = 'rounded transition-colors duration-200 font-medium focus:outline-none focus:ring-2 focus:ring-offset-2';
   
@@ -34,6 +36,8 @@ export default function Button({
       onClick={onClick}
       disabled={disabled}
       className={`${baseClasses} ${variants[variant]} ${sizes[size]} ${disabledClasses} ${className}`}
+      aria-label={ariaLabel}
+      {...rest}
     >
       {children}
     </button>
