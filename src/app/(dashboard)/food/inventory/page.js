@@ -109,7 +109,7 @@ export default function InventoryPage() {
           Your Pantry
         </h1>
         <button
-          className="ml-4 px-4 py-2 rounded border border-default bg-card text-base font-medium hover:bg-muted transition-colors"
+          className="ml-4 bg-card text-base border border-default px-4 py-2 rounded hover:bg-[#4a4a4a] transition-colors duration-200 focus:outline-none focus:ring-0 font-medium"
           onClick={() => setShowManualAddModal(true)}
         >
           + Add Item

@@ -136,3 +136,9 @@ body {
   background: transparent !important;
 }
 
+/* Remove default browser focus outline and box-shadow from all buttons */
+button:focus, button:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+

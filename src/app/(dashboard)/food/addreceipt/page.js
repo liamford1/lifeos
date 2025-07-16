@@ -14,6 +14,12 @@ export default function AddReceiptPage(props) {
   const { user, loading } = useUser();
   const router = useRouter();
 
+  // Move all hooks to the top level
+  const [storeName, setStoreName] = useState('')
+  const [items, setItems] = useState([])
+  const [currentItem, setCurrentItem] = useState({ name: '', quantity: '', unit: '', price: '' })
+  const [message, setMessage] = useState('')
+
   useEffect(() => {
     if (!loading && !user) {
       router.push('/auth');
@@ -22,11 +28,6 @@ export default function AddReceiptPage(props) {
 
   if (loading) return <LoadingSpinner />;
   if (!user) return null;
-
-  const [storeName, setStoreName] = useState('')
-  const [items, setItems] = useState([])
-  const [currentItem, setCurrentItem] = useState({ name: '', quantity: '', unit: '', price: '' })
-  const [message, setMessage] = useState('')
 
   const handleAddItem = () => {
     if (!currentItem.name || !currentItem.quantity || !currentItem.unit) return
@@ -149,8 +150,8 @@ export default function AddReceiptPage(props) {
 
       <Button
         onClick={handleAddItem}
-        variant="primary"
-        className="mb-6"
+        variant="none"
+        className="bg-card text-base border border-default px-4 py-2 rounded hover:bg-[#4a4a4a] transition-colors duration-200 focus:outline-none focus:ring-0 mb-6 font-medium"
       >
         + Add Item
       </Button>
@@ -168,7 +169,8 @@ export default function AddReceiptPage(props) {
 
       <Button
         onClick={handleSubmit}
-        variant="success"
+        variant="none"
+        className="bg-card text-base border border-default px-4 py-2 rounded hover:bg-[#4a4a4a] transition-colors duration-200 focus:outline-none focus:ring-0 font-medium"
       >
         Submit Receipt
       </Button>

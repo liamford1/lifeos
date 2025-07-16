@@ -26,6 +26,9 @@ export default function PlannedMealDetailPage() {
         .eq('id', id)
         .single();
 
+      // Add detailed logging for debugging
+      console.log('Supabase fetch result:', { id, data, error });
+
       if (error) {
         console.error('Error fetching planned meal:', error);
         setError('Failed to load planned meal. Please try again.');

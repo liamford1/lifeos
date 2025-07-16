@@ -175,15 +175,30 @@ export default function CalendarView() {
                 <div className="space-y-1 overflow-hidden w-full h-full max-w-full relative">
                   {eventsOnThisDay.slice(0, 2).map((event) => {
                     const { colorClass, Icon } = getEventStyle(event.source);
+                    // Only make meal events clickable
+                    const isMeal = event.source === CALENDAR_SOURCES.MEAL;
+                    const eventDivProps = isMeal
+                      ? {
+                          role: 'button',
+                          tabIndex: 0,
+                          onClick: (e) => {
+                            e.stopPropagation();
+                            router.push(getCalendarEventRoute(event.source, event.source_id));
+                          },
+                          onKeyDown: (e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.stopPropagation();
+                              router.push(getCalendarEventRoute(event.source, event.source_id));
+                            }
+                          },
+                          style: { boxSizing: 'border-box', display: 'block', cursor: 'pointer' },
+                        }
+                      : { style: { boxSizing: 'border-box', display: 'block' } };
                     return (
                       <div
                         key={event.id}
                         className={`w-full h-5 text-xs truncate whitespace-nowrap overflow-hidden text-ellipsis rounded px-1 py-0.5 text-left ${colorClass}`}
-                        style={{ boxSizing: 'border-box', display: 'block' }}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          navigateToSource(event.source, event.source_id, router);
-                        }}
+                        {...eventDivProps}
                       >
                         {Icon && <Icon className="inline mr-1 align-text-bottom" size={16} />} {event.title}
                       </div>
