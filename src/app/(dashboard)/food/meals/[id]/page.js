@@ -31,18 +31,25 @@ export default function MealDetailPage() {
 
   useEffect(() => {
     async function fetchMeal() {
-      if (!user) return;
+      // Always fetch the authenticated user directly from Supabase
+      const { data: authUserData, error: authUserError } = await supabase.auth.getUser();
+      const authUser = authUserData?.user;
+      console.log('[MealDetailPage] Supabase auth user:', authUser);
+      if (!authUser) {
+        router.push('/auth');
+        return;
+      }
 
       try {
         console.log('=== fetchMeal started ===');
-        console.log('User ID:', user.id);
+        console.log('User ID:', authUser.id);
         console.log('Meal ID:', id);
 
         const { data: mealData, error: mealError } = await supabase
           .from('meals')
           .select('*')
           .eq('id', id)
-          .eq('user_id', user.id)
+          .eq('user_id', authUser.id)
           .single();
 
         if (mealError) {
@@ -53,15 +60,12 @@ export default function MealDetailPage() {
             details: mealError.details,
             hint: mealError.hint
           });
-          
-          // Check if it's a "not found" error
           if (mealError.code === 'PGRST116') {
             console.error('Meal not found for this user - possible ownership issue');
             setError('Meal not found or you do not have permission to view it.');
           } else {
             setError('Error loading meal data.');
           }
-          
           setMealLoading(false);
           return;
         }
@@ -97,7 +101,7 @@ export default function MealDetailPage() {
     }
 
     fetchMeal();
-  }, [id]);
+  }, [id, router]);
 
   async function handleDeleteMeal() {
     try {

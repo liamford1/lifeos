@@ -175,20 +175,50 @@ export default function CalendarView() {
                 <div className="space-y-1 overflow-hidden w-full h-full max-w-full relative">
                   {eventsOnThisDay.slice(0, 2).map((event) => {
                     const { colorClass, Icon } = getEventStyle(event.source);
-                    // Only make meal events clickable
-                    const isMeal = event.source === CALENDAR_SOURCES.MEAL;
-                    const eventDivProps = isMeal
+                    // Make meal, planned_meal, expense, and workout events clickable
+                    const isMealPlannedMealExpenseOrWorkout =
+                      event.source === CALENDAR_SOURCES.MEAL ||
+                      event.source === CALENDAR_SOURCES.PLANNED_MEAL ||
+                      event.source === CALENDAR_SOURCES.EXPENSE ||
+                      event.source === CALENDAR_SOURCES.WORKOUT;
+                    const eventDivProps = isMealPlannedMealExpenseOrWorkout
                       ? {
                           role: 'button',
                           tabIndex: 0,
                           onClick: (e) => {
                             e.stopPropagation();
-                            router.push(getCalendarEventRoute(event.source, event.source_id));
+                            if (event.source === CALENDAR_SOURCES.MEAL) {
+                              router.push(`/food/meals/${event.source_id}`);
+                            } else if (event.source === CALENDAR_SOURCES.PLANNED_MEAL) {
+                              const plannedMeal = events.find(ev => ev.source === CALENDAR_SOURCES.PLANNED_MEAL && ev.id === event.id);
+                              if (plannedMeal && plannedMeal.meal_id) {
+                                router.push(`/food/meals/${plannedMeal.meal_id}`);
+                              } else {
+                                router.push(`/food/planner/${event.source_id}`);
+                              }
+                            } else if (event.source === CALENDAR_SOURCES.EXPENSE) {
+                              router.push(`/finances/expenses/${event.source_id}`);
+                            } else if (event.source === CALENDAR_SOURCES.WORKOUT) {
+                              router.push(`/fitness/workouts/${event.source_id}`);
+                            }
                           },
                           onKeyDown: (e) => {
                             if (e.key === 'Enter' || e.key === ' ') {
                               e.stopPropagation();
-                              router.push(getCalendarEventRoute(event.source, event.source_id));
+                              if (event.source === CALENDAR_SOURCES.MEAL) {
+                                router.push(`/food/meals/${event.source_id}`);
+                              } else if (event.source === CALENDAR_SOURCES.PLANNED_MEAL) {
+                                const plannedMeal = events.find(ev => ev.source === CALENDAR_SOURCES.PLANNED_MEAL && ev.id === event.id);
+                                if (plannedMeal && plannedMeal.meal_id) {
+                                  router.push(`/food/meals/${plannedMeal.meal_id}`);
+                                } else {
+                                  router.push(`/food/planner/${event.source_id}`);
+                                }
+                              } else if (event.source === CALENDAR_SOURCES.EXPENSE) {
+                                router.push(`/finances/expenses/${event.source_id}`);
+                              } else if (event.source === CALENDAR_SOURCES.WORKOUT) {
+                                router.push(`/fitness/workouts/${event.source_id}`);
+                              }
                             }
                           },
                           style: { boxSizing: 'border-box', display: 'block', cursor: 'pointer' },
