@@ -199,7 +199,8 @@ export default function CalendarView() {
                             } else if (event.source === CALENDAR_SOURCES.EXPENSE) {
                               router.push(`/finances/expenses/${event.source_id}`);
                             } else if (event.source === CALENDAR_SOURCES.WORKOUT) {
-                              router.push(`/fitness/workouts/${event.source_id}`);
+                              console.log('CalendarView event.source_id:', String(event.source_id));
+                              router.push(`/fitness/workouts/${String(event.source_id)}`);
                             }
                           },
                           onKeyDown: (e) => {

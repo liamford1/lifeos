@@ -13,9 +13,14 @@ export default function WorkoutDetailPage() {
   const { user, loading } = useUser();
   const router = useRouter();
   const { id } = useParams();
-  const { data: workoutArr, loading: workoutLoading, error: workoutError } = useFetchEntity('fitness_workouts', { id });
-  const { data: exercises, loading: exercisesLoading, error: exercisesError } = useFetchEntity('fitness_exercises', { workout_id: id });
+  const { data: workoutArr, loading: workoutLoading, error: workoutError, refetch } = useFetchEntity('fitness_workouts', { id: String(id) });
+  const { data: exercises, loading: exercisesLoading, error: exercisesError } = useFetchEntity('fitness_exercises', { workout_id: String(id) });
   const { showError } = useToast();
+
+  useEffect(() => {
+    console.log('WorkoutDetailPage id param:', id);
+    refetch();
+  }, [id]); // Only depend on id, not refetch
 
   useEffect(() => {
     if (!loading && !user) {
@@ -28,7 +33,7 @@ export default function WorkoutDetailPage() {
     if (exercisesError) showError(exercisesError.message || 'Failed to load exercises.');
   }, [workoutError, exercisesError, showError]);
 
-  if (loading) return <LoadingSpinner />;
+  if (loading) return <p>Loading workout...</p>;
   if (!user) return null;
 
   const workout = Array.isArray(workoutArr) ? workoutArr[0] : workoutArr;
