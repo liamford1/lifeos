@@ -8,9 +8,11 @@ import { FaUserCircle } from 'react-icons/fa';
 import { useUser } from '@/context/UserContext';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import Button from '@/components/Button';
+import { useWorkoutSession } from '@/context/WorkoutSessionContext';
 
 export default function AppBar() {
   const { user, loading } = useUser();
+  const { activeWorkoutId } = useWorkoutSession();
   const [profile, setProfile] = useState(null);
   const router = useRouter();
 
@@ -56,6 +58,18 @@ export default function AppBar() {
 
       {/* Right side actions container */}
       <div className="flex items-center space-x-4">
+        {/* Workout in progress button */}
+        {activeWorkoutId && (
+          <Button
+            onClick={() => router.push('/fitness/workouts/live')}
+            variant="success"
+            size="sm"
+            className="flex items-center gap-1"
+            aria-label="Workout In Progress"
+          >
+            Workout In Progress
+          </Button>
+        )}
         {/* Profile icon button - only show when user is logged in */}
         {user && (
           <Button

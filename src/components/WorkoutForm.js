@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useInsertEntity, useDeleteEntity } from '@/lib/useSupabaseCrud';
 import { useUser } from '@/context/UserContext';
@@ -16,6 +16,7 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import { MdOutlineStickyNote2 } from 'react-icons/md';
 import { createCalendarEventForEntity } from '@/lib/calendarSync';
 import DeleteButton from '@/components/DeleteButton';
+import { supabase } from '@/lib/supabaseClient';
 
 export default function WorkoutForm({ initialWorkout = null, initialExercises = [], isEdit = false }) {
   const router = useRouter();
@@ -29,8 +30,27 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
   const [title, setTitle] = useState(initialWorkout?.title || '');
   const [date, setDate] = useState(initialWorkout?.date || '');
   const [notes, setNotes] = useState(initialWorkout?.notes || '');
-  const [exerciseForm, setExerciseForm] = useState({ name: '', sets: '', reps: '', weight: '', notes: '' });
+  const [exerciseForm, setExerciseForm] = useState({ name: '', notes: '' });
   const [exercises, setExercises] = useState(initialExercises);
+  const [setsByExercise, setSetsByExercise] = useState({});
+
+  // Fetch sets for each exercise in edit mode on page load
+  useEffect(() => {
+    if (!isEdit || !exercises || exercises.length === 0) return;
+    const fetchSets = async () => {
+      const newSetsByExercise = {};
+      for (const ex of exercises) {
+        const { data } = await supabase
+          .from('fitness_sets')
+          .select('*')
+          .eq('exercise_id', ex.id)
+          .order('created_at', { ascending: true });
+        newSetsByExercise[ex.id] = data || [];
+      }
+      setSetsByExercise(newSetsByExercise);
+    };
+    fetchSets();
+  }, [isEdit, exercises]);
 
   const handleExerciseChange = (e) => {
     const { name, value } = e.target;
@@ -39,12 +59,12 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
 
   const handleAddExercise = (e) => {
     e.preventDefault();
-    if (!exerciseForm.name || !exerciseForm.sets || !exerciseForm.reps) {
-      showError('Please complete required exercise fields.');
+    if (!exerciseForm.name) {
+      showError('Please enter an exercise name.');
       return;
     }
-    setExercises((prev) => [...prev, exerciseForm]);
-    setExerciseForm({ name: '', sets: '', reps: '', weight: '', notes: '' });
+    setExercises((prev) => [...prev, { name: exerciseForm.name, notes: exerciseForm.notes }]);
+    setExerciseForm({ name: '', notes: '' });
   };
 
   const handleDeleteExercise = (index) => {
@@ -77,9 +97,6 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
         const formatted = exercises.map((ex) => ({
           workout_id: workoutId,
           name: ex.name,
-          sets: parseInt(ex.sets),
-          reps: parseInt(ex.reps),
-          weight: parseFloat(ex.weight),
           notes: ex.notes,
         }));
         const { error: exError } = await insertExercises(formatted);
@@ -117,9 +134,6 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
       const formatted = exercises.map((ex) => ({
         workout_id: workoutId,
         name: ex.name,
-        sets: parseInt(ex.sets),
-        reps: parseInt(ex.reps),
-        weight: parseFloat(ex.weight),
         notes: ex.notes,
       }));
       const { error: exError } = await insertExercises(formatted);
@@ -139,7 +153,7 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
     setDate('');
     setNotes('');
     setExercises([]);
-    setExerciseForm({ name: '', sets: '', reps: '', weight: '', notes: '' });
+    setExerciseForm({ name: '', notes: '' });
     router.push('/fitness/workouts');
   };
 
@@ -187,30 +201,6 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
               onChange={handleExerciseChange} 
               placeholder="Exercise Name" 
             />
-            <div className="grid grid-cols-3 gap-4">
-              <FormInput 
-                name="sets" 
-                type="number" 
-                value={exerciseForm.sets} 
-                onChange={handleExerciseChange} 
-                placeholder="Sets" 
-              />
-              <FormInput 
-                name="reps" 
-                type="number" 
-                value={exerciseForm.reps} 
-                onChange={handleExerciseChange} 
-                placeholder="Reps" 
-              />
-              <FormInput 
-                name="weight" 
-                type="number" 
-                step="0.1" 
-                value={exerciseForm.weight} 
-                onChange={handleExerciseChange} 
-                placeholder="Weight (lbs)" 
-              />
-            </div>
             <FormTextarea 
               name="notes" 
               value={exerciseForm.notes} 
@@ -238,7 +228,20 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
               {exercises.map((ex, i) => (
                 <li key={i} className="border p-2 rounded flex justify-between items-start">
                   <div>
-                    <strong>{ex.name}</strong> — {ex.sets}×{ex.reps} @ {ex.weight || 0} lbs
+                    <strong>{ex.name}</strong>
+                    {isEdit ? (
+                      <div className="ml-2">
+                        {setsByExercise[ex.id]?.length ? (
+                          setsByExercise[ex.id].map((set, idx) => (
+                            <div key={set.id}>
+                              Set {idx + 1}: {set.reps} reps{set.weight != null ? ` @ ${set.weight} lbs` : ''}
+                            </div>
+                          ))
+                        ) : (
+                          <div className="text-muted-foreground text-sm">No sets logged yet.</div>
+                        )}
+                      </div>
+                    ) : null}
                     {ex.notes && <p className="text-sm text-base">{ex.notes}</p>}
                   </div>
                   <DeleteButton

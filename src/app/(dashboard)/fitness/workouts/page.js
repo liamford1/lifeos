@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabaseClient';
-import { deleteEntityWithCalendarEvent } from '@/lib/deleteUtils';
+import { deleteEntityWithCalendarEvent, deleteWorkoutCascade } from '@/lib/deleteUtils';
 import BackButton from '@/components/BackButton';
 import Button from '@/components/Button';
 import { useRouter } from 'next/navigation';
@@ -51,12 +51,8 @@ export default function WorkoutsDashboard() {
       return;
     }
 
-    const error = await deleteEntityWithCalendarEvent({
-      table: 'fitness_workouts',
-      id: id,
-      user_id: user_id,
-      source: 'workout',
-    });
+    // Use cascade delete for workouts
+    const error = await deleteWorkoutCascade({ workoutId: id, user_id });
 
     if (error) {
       console.error(error);
@@ -80,9 +76,14 @@ export default function WorkoutsDashboard() {
       </h1>
       <p className="text-base">Track your weightlifting and strength training sessions.</p>
 
-      <Link href="/fitness/workouts/add" className="text-blue-600 underline mb-6 inline-block">
-        ➕ Add New Workout
-      </Link>
+      <div className="flex gap-4 mb-4">
+        <Button variant="primary" onClick={() => router.push('/fitness/workouts/live')}>
+          Start Workout
+        </Button>
+        <Link href="/fitness/workouts/add" className="text-blue-600 underline inline-block">
+          ➕ Add New Workout
+        </Link>
+      </div>
 
       <h2 className="text-xl font-semibold mb-2">
         <MdOutlineCalendarToday className="inline w-5 h-5 text-base align-text-bottom mr-2" />

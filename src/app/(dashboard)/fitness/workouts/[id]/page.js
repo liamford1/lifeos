@@ -5,85 +5,117 @@ import { useFetchEntity } from '@/lib/useSupabaseCrud';
 import BackButton from '@/components/BackButton';
 import { useUser } from '@/context/UserContext';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useToast } from '@/components/Toast';
 import { MdOutlineCalendarToday } from 'react-icons/md';
+import { supabase } from '@/lib/supabaseClient';
 
 export default function WorkoutDetailPage() {
-  const { user, loading } = useUser();
+  const params = useParams();
+  const { user, loading: userLoading } = useUser();
   const router = useRouter();
-  const { id } = useParams();
-  const { data: workoutArr, loading: workoutLoading, error: workoutError, refetch } = useFetchEntity('fitness_workouts', { id: String(id) });
-  const { data: exercises, loading: exercisesLoading, error: exercisesError } = useFetchEntity('fitness_exercises', { workout_id: String(id) });
   const { showError } = useToast();
+  const [workout, setWorkout] = useState(null);
+  const [exercises, setExercises] = useState([]);
+  const [setsByExercise, setSetsByExercise] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    console.log('WorkoutDetailPage id param:', id);
-    refetch();
-  }, [id]); // Only depend on id, not refetch
-
-  useEffect(() => {
-    if (!loading && !user) {
+    if (!userLoading && !user) {
       router.push('/auth');
     }
-  }, [loading, user]);
+  }, [userLoading, user]);
 
   useEffect(() => {
-    if (workoutError) showError(workoutError.message || 'Failed to load workout.');
-    if (exercisesError) showError(exercisesError.message || 'Failed to load exercises.');
-  }, [workoutError, exercisesError, showError]);
+    const fetchAll = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const { data: workoutData, error: workoutErr } = await supabase
+          .from('fitness_workouts')
+          .select('*')
+          .eq('id', params.id)
+          .single();
+        if (workoutErr) throw workoutErr;
+        setWorkout(workoutData);
 
-  if (loading) return <p>Loading workout...</p>;
+        const { data: exerciseData, error: exerciseErr } = await supabase
+          .from('fitness_exercises')
+          .select('*')
+          .eq('workout_id', params.id);
+        if (exerciseErr) throw exerciseErr;
+        setExercises(exerciseData);
+
+        // Fetch sets for each exercise
+        const setsByEx = {};
+        for (const ex of exerciseData) {
+          const { data: setsData, error: setsErr } = await supabase
+            .from('fitness_sets')
+            .select('*')
+            .eq('exercise_id', ex.id)
+            .order('created_at', { ascending: true });
+          if (setsErr) throw setsErr;
+          setsByEx[ex.id] = setsData || [];
+        }
+        setSetsByExercise(setsByEx);
+      } catch (err) {
+        setError(err.message || 'Failed to load workout details.');
+        showError(err.message || 'Failed to load workout details.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    if (user) fetchAll();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params.id, user]);
+
+  if (loading || userLoading) return <LoadingSpinner />;
   if (!user) return null;
-
-  const workout = Array.isArray(workoutArr) ? workoutArr[0] : workoutArr;
-  const isLoading = workoutLoading || exercisesLoading;
+  if (error) return <div className="p-4"><p className="text-red-500 text-sm">{error}</p></div>;
+  if (!workout) return <div className="p-4"><p className="text-muted-foreground text-sm">Workout not found.</p></div>;
 
   return (
     <div className="max-w-6xl mx-auto p-4 space-y-4">
       <BackButton />
-      {isLoading ? (
-        <LoadingSpinner />
-      ) : workoutError ? (
-        <p className="text-red-500 text-sm">Failed to load workout.</p>
-      ) : !workout ? (
-        <p className="text-muted-foreground text-sm">Workout not found.</p>
+      <h1 className="text-2xl font-bold">{workout.title}</h1>
+      <p className="text-base">View your workout details and exercises.</p>
+      <p className="text-sm text-base mb-3">{workout.date}</p>
+      {workout.notes && <p className="mb-4 italic text-base">{workout.notes}</p>}
+
+      <h2 className="text-xl font-semibold mb-2">💪 Exercises</h2>
+      {exercises.length === 0 ? (
+        <p className="text-muted-foreground text-sm">No entries yet. Add one above ⬆️</p>
       ) : (
-        <>
-          <h1 className="text-2xl font-bold">{workout.title}</h1>
-          <p className="text-base">View your workout details and exercises.</p>
-          <p className="text-sm text-base mb-3">{workout.date}</p>
-          {workout.notes && <p className="mb-4 italic text-base">{workout.notes}</p>}
-
-          <h2 className="text-xl font-semibold mb-2">💪 Exercises</h2>
-          {exercisesLoading ? (
-            <LoadingSpinner />
-          ) : exercisesError ? (
-            <p className="text-red-500 text-sm">Failed to load exercises.</p>
-          ) : !exercises || exercises.length === 0 ? (
-            <p className="text-muted-foreground text-sm">No entries yet. Add one above ⬆️</p>
-          ) : (
-            <ul className="space-y-2">
-              {exercises.map((ex) => (
-                <li key={ex.id} className="border p-2 rounded">
-                  <strong>{ex.name}</strong> — {ex.sets}×{ex.reps} @ {ex.weight} lbs
-                  {ex.notes && <p className="text-sm text-base">{ex.notes}</p>}
-                </li>
-              ))}
-            </ul>
-          )}
-
-          <div className="mt-6">
-            <button
-              onClick={() => router.push('/')}
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-            >
-              <MdOutlineCalendarToday className="inline w-5 h-5 text-base align-text-bottom mr-2" />
-              Back to Calendar
-            </button>
-          </div>
-        </>
+        <ul className="space-y-2">
+          {exercises.map((ex) => (
+            <li key={ex.id} className="border p-2 rounded">
+              <strong>{ex.name}</strong>
+              <div className="ml-2">
+                {setsByExercise[ex.id]?.length ? (
+                  setsByExercise[ex.id].map((set, i) => (
+                    <div key={set.id}>
+                      Set {i + 1}: {set.reps} reps{set.weight != null ? ` @ ${set.weight} lbs` : ''}
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-muted-foreground text-sm">No sets logged yet.</div>
+                )}
+              </div>
+            </li>
+          ))}
+        </ul>
       )}
+
+      <div className="mt-6">
+        <button
+          onClick={() => router.push('/')}
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        >
+          <MdOutlineCalendarToday className="inline w-5 h-5 text-base align-text-bottom mr-2" />
+          Back to Calendar
+        </button>
+      </div>
     </div>
   );
 }
