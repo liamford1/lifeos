@@ -8,6 +8,7 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import Button from "@/components/Button";
 import Link from "next/link";
 import { useToast } from "@/components/Toast";
+import DeleteButton from '@/components/DeleteButton';
 
 export default function ScratchpadDetailPage() {
   const { id } = useParams();
@@ -16,6 +17,7 @@ export default function ScratchpadDetailPage() {
   const [note, setNote] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     async function fetchNote() {
@@ -41,6 +43,7 @@ export default function ScratchpadDetailPage() {
 
   async function handleDelete() {
     if (!window.confirm("Delete this note?")) return;
+    setDeleting(true);
     const { error } = await supabase
       .from("scratchpad_entries")
       .delete()
@@ -51,6 +54,7 @@ export default function ScratchpadDetailPage() {
       showSuccess("Note deleted");
       router.push("/scratchpad");
     }
+    setDeleting(false);
   }
 
   if (loading) return <LoadingSpinner />;
@@ -70,7 +74,11 @@ export default function ScratchpadDetailPage() {
       <Link href={`/scratchpad/${id}/edit`} className="mr-2">
         <Button variant="primary">Edit</Button>
       </Link>
-      <Button onClick={handleDelete} variant="danger" className="ml-2">Delete</Button>
+      <DeleteButton
+        onClick={handleDelete}
+        loading={deleting}
+        ariaLabel="Delete entry"
+      />
     </div>
   );
 } 

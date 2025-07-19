@@ -8,6 +8,7 @@ import SportForm from "@/components/SportForm";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import Button from "@/components/Button";
 import { useToast } from "@/components/Toast";
+import DeleteButton from '@/components/DeleteButton';
 
 export default function EditSportPage() {
   const { id } = useParams();
@@ -17,6 +18,7 @@ export default function EditSportPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     async function fetchSport() {
@@ -58,16 +60,18 @@ export default function EditSportPage() {
 
   async function handleDelete() {
     if (!window.confirm("Delete this sport entry?")) return;
+    setDeleting(true);
     const { error } = await supabase
       .from("fitness_sports")
       .delete()
       .eq("id", id);
     if (error) {
       showError("Failed to delete sport entry");
-    } else {
-      showSuccess("Sport entry deleted");
-      router.push("/fitness/sports");
+      setDeleting(false);
+      return;
     }
+    showSuccess("Sport entry deleted");
+    router.push("/fitness/sports");
   }
 
   if (loading) return <LoadingSpinner />;
@@ -78,7 +82,11 @@ export default function EditSportPage() {
       <BackButton />
       <h1 className="text-xl font-bold mb-4">Edit Sport Entry</h1>
       <SportForm initialValues={sport} onSubmit={handleUpdateSport} loading={saving} />
-      <Button onClick={handleDelete} variant="danger" className="mt-4">Delete</Button>
+      <DeleteButton
+        onClick={handleDelete}
+        loading={deleting}
+        ariaLabel="Delete sport entry"
+      />
     </div>
   );
 } 

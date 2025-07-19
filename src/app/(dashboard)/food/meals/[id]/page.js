@@ -11,6 +11,7 @@ import Link from 'next/link';
 import { CALENDAR_SOURCES } from '@/lib/calendarUtils';
 import { useToast } from '@/components/Toast';
 import { MdOutlineCalendarToday, MdOutlineStickyNote2 } from 'react-icons/md';
+import DeleteButton from '@/components/DeleteButton';
 
 export default function MealDetailPage() {
   const { id } = useParams();
@@ -21,6 +22,7 @@ export default function MealDetailPage() {
   const [ingredients, setIngredients] = useState([]);
   const [mealLoading, setMealLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -107,16 +109,19 @@ export default function MealDetailPage() {
       const confirm = window.confirm('Delete this meal? This will also remove any linked calendar events.');
       if (!confirm) return;
 
+      setDeleting(true);
       const user = await supabase.auth.getUser();
       const userId = user?.data?.user?.id;
 
       if (!userId) {
         showError('You must be logged in.');
+        setDeleting(false);
         return;
       }
 
       if (!meal) {
         showError('No meal data available.');
+        setDeleting(false);
         return;
       }
 
@@ -129,6 +134,7 @@ export default function MealDetailPage() {
       if (ingredientsError) {
         console.error('Error deleting meal ingredients:', ingredientsError);
         showError('Could not delete meal ingredients.');
+        setDeleting(false);
         return;
       }
 
@@ -148,6 +154,8 @@ export default function MealDetailPage() {
     } catch (error) {
       console.error('Unexpected error in handleDeleteMeal:', error);
       showError('An unexpected error occurred while deleting the meal.');
+    } finally {
+      setDeleting(false);
     }
   }
 
@@ -241,14 +249,11 @@ export default function MealDetailPage() {
         </Button>
       </div>
 
-      <div className="flex gap-4">
-        <Button
-          onClick={handleDeleteMeal}
-          variant="danger"
-        >
-          🗑️ Delete Meal
-        </Button>
-      </div>
+      <DeleteButton
+        onClick={handleDeleteMeal}
+        loading={deleting}
+        ariaLabel="Delete this meal"
+      />
     </div>
   );
 }

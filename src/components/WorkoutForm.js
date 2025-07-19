@@ -15,6 +15,7 @@ import { useToast } from '@/components/Toast';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { MdOutlineStickyNote2 } from 'react-icons/md';
 import { createCalendarEventForEntity } from '@/lib/calendarSync';
+import DeleteButton from '@/components/DeleteButton';
 
 export default function WorkoutForm({ initialWorkout = null, initialExercises = [], isEdit = false }) {
   const router = useRouter();
@@ -240,14 +241,11 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
                     <strong>{ex.name}</strong> — {ex.sets}×{ex.reps} @ {ex.weight || 0} lbs
                     {ex.notes && <p className="text-sm text-base">{ex.notes}</p>}
                   </div>
-                  <Button 
-                    onClick={() => handleDeleteExercise(i)} 
-                    variant="link"
-                    size="sm"
-                    className="text-red-500 hover:text-red-700"
-                  >
-                    Delete
-                  </Button>
+                  <DeleteButton
+                    onClick={() => handleDeleteExercise(i)}
+                    loading={deleteLoading}
+                    ariaLabel={`Delete exercise ${ex.name || i+1}`}
+                  />
                 </li>
               ))}
             </ul>

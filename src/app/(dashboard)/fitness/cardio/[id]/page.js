@@ -8,6 +8,7 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import Button from "@/components/Button";
 import Link from "next/link";
 import { useToast } from "@/components/Toast";
+import DeleteButton from '@/components/DeleteButton';
 
 export default function CardioDetailPage() {
   const { id } = useParams();
@@ -16,6 +17,7 @@ export default function CardioDetailPage() {
   const [cardio, setCardio] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     async function fetchCardio() {
@@ -41,10 +43,12 @@ export default function CardioDetailPage() {
 
   async function handleDelete() {
     if (!window.confirm("Delete this cardio entry?")) return;
+    setDeleting(true);
     const { error } = await supabase
       .from("fitness_cardio")
       .delete()
       .eq("id", id);
+    setDeleting(false);
     if (error) {
       showError("Failed to delete cardio entry");
     } else {
@@ -71,7 +75,11 @@ export default function CardioDetailPage() {
       <Link href={`/fitness/cardio/${id}/edit`} className="mr-2">
         <Button variant="primary">Edit</Button>
       </Link>
-      <Button onClick={handleDelete} variant="danger" className="ml-2">Delete</Button>
+      <DeleteButton
+        onClick={handleDelete}
+        loading={deleting}
+        ariaLabel="Delete cardio entry"
+      />
     </div>
   );
 }

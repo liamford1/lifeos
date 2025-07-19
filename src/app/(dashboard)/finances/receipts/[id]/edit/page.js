@@ -9,6 +9,7 @@ import Button from "@/components/Button";
 import { useToast } from "@/components/Toast";
 import FormInput from "@/components/FormInput";
 import FormSection from "@/components/FormSection";
+import DeleteButton from '@/components/DeleteButton';
 
 export default function EditReceiptPage() {
   const { id } = useParams();
@@ -18,6 +19,7 @@ export default function EditReceiptPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     async function fetchReceipt() {
@@ -68,16 +70,18 @@ export default function EditReceiptPage() {
 
   async function handleDelete() {
     if (!window.confirm("Delete this receipt entry?")) return;
+    setDeleting(true);
     const { error } = await supabase
       .from("receipts")
       .delete()
       .eq("id", id);
     if (error) {
       showError("Failed to delete receipt entry");
-    } else {
-      showSuccess("Receipt entry deleted");
-      router.push("/finances/receipts");
+      setDeleting(false);
+      return;
     }
+    showSuccess("Receipt entry deleted");
+    router.push("/finances/receipts");
   }
 
   if (loading) return <LoadingSpinner />;
@@ -98,7 +102,11 @@ export default function EditReceiptPage() {
           </FormSection>
           <div className="flex gap-2">
             <Button type="submit" variant="primary" loading={saving}>Save</Button>
-            <Button type="button" variant="danger" onClick={handleDelete}>Delete</Button>
+            <DeleteButton
+              onClick={handleDelete}
+              loading={deleting}
+              ariaLabel="Delete receipt entry"
+            />
           </div>
         </form>
       )}

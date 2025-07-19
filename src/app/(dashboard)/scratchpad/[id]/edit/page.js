@@ -9,6 +9,7 @@ import Button from "@/components/Button";
 import { useToast } from "@/components/Toast";
 import FormInput from "@/components/FormInput";
 import FormSection from "@/components/FormSection";
+import DeleteButton from '@/components/DeleteButton';
 
 export default function EditScratchpadPage() {
   const { id } = useParams();
@@ -18,6 +19,7 @@ export default function EditScratchpadPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     async function fetchNote() {
@@ -71,12 +73,14 @@ export default function EditScratchpadPage() {
 
   async function handleDelete() {
     if (!window.confirm("Delete this note?")) return;
+    setDeleting(true);
     const { error } = await supabase
       .from("scratchpad_entries")
       .delete()
       .eq("id", id);
     if (error) {
       showError("Failed to delete note");
+      setDeleting(false);
     } else {
       showSuccess("Note deleted");
       router.push("/scratchpad");
@@ -98,7 +102,11 @@ export default function EditScratchpadPage() {
           </FormSection>
           <div className="flex gap-2">
             <Button type="submit" variant="primary" loading={saving}>Save</Button>
-            <Button type="button" variant="danger" onClick={handleDelete}>Delete</Button>
+            <DeleteButton
+              onClick={handleDelete}
+              loading={deleting}
+              ariaLabel="Delete entry"
+            />
           </div>
         </form>
       )}

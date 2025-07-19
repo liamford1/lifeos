@@ -8,6 +8,7 @@ import MealForm from '@/components/MealForm';
 import { CALENDAR_SOURCES, updateCalendarEvent } from '@/lib/calendarUtils';
 import { useUser } from '@/context/UserContext';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import DeleteButton from '@/components/DeleteButton';
 
 export default function EditMealPage() {
   const { user, loading } = useUser();
@@ -18,6 +19,7 @@ export default function EditMealPage() {
   const [mealLoading, setMealLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     async function fetchMeal() {
@@ -250,6 +252,83 @@ export default function EditMealPage() {
     }
   }
 
+  async function handleDelete() {
+    setDeleting(true);
+    setError('');
+    try {
+      const user = await supabase.auth.getUser();
+      const userId = user?.data?.user?.id;
+
+      if (!userId || !id) {
+        setError('User not authenticated or meal ID missing');
+        setDeleting(false);
+        return;
+      }
+
+      // Verify the meal belongs to the current user
+      const { data: mealCheck, error: mealCheckError } = await supabase
+        .from('meals')
+        .select('id, user_id')
+        .eq('id', id)
+        .eq('user_id', userId)
+        .single();
+
+      if (mealCheckError || !mealCheck) {
+        console.error('❌ Meal ownership verification failed:', mealCheckError);
+        setError('Meal not found or access denied');
+        setDeleting(false);
+        return;
+      }
+
+      console.log('✅ Meal ownership verified:', mealCheck);
+
+      // Delete the meal
+      const { error: deleteError } = await supabase
+        .from('meals')
+        .delete()
+        .eq('id', id);
+
+      if (deleteError) {
+        console.error('❌ Error deleting meal:', deleteError);
+        setError('Failed to delete meal');
+        setDeleting(false);
+        return;
+      }
+      console.log('✅ Meal deleted successfully');
+
+      // Delete associated ingredients
+      const { error: deleteIngredientsError } = await supabase
+        .from('meal_ingredients')
+        .delete()
+        .eq('meal_id', id);
+
+      if (deleteIngredientsError) {
+        console.error('❌ Error deleting ingredients:', deleteIngredientsError);
+        setError('Failed to delete ingredients');
+        setDeleting(false);
+        return;
+      }
+      console.log('✅ Ingredients deleted successfully');
+
+      // Update calendar event for the deleted meal
+      const calendarError = await updateCalendarEventFromSource(
+        CALENDAR_SOURCES.MEAL,
+        id,
+        null // Set to null to indicate deletion
+      );
+      if (calendarError) {
+        console.error('Calendar event update failed:', calendarError);
+      }
+
+      // Redirect to the meals list page
+      router.push('/food/meals');
+    } catch (err) {
+      console.error('Error in handleDelete:', err);
+      setError('An unexpected error occurred');
+      setDeleting(false);
+    }
+  }
+
   function handleCancel() {
     router.push(`/food/meals/${id}`);
   }
@@ -302,6 +381,11 @@ export default function EditMealPage() {
         isEditing={true}
         loading={saving}
         error={error}
+      />
+      <DeleteButton
+        onClick={handleDelete}
+        loading={deleting}
+        ariaLabel="Delete this meal"
       />
     </div>
   );

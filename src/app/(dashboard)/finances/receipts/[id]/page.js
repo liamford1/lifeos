@@ -8,6 +8,7 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import Button from "@/components/Button";
 import Link from "next/link";
 import { useToast } from "@/components/Toast";
+import DeleteButton from '@/components/DeleteButton';
 
 export default function ReceiptDetailPage() {
   const { id } = useParams();
@@ -16,6 +17,7 @@ export default function ReceiptDetailPage() {
   const [receipt, setReceipt] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     async function fetchReceipt() {
@@ -41,6 +43,7 @@ export default function ReceiptDetailPage() {
 
   async function handleDelete() {
     if (!window.confirm("Delete this receipt entry?")) return;
+    setDeleting(true);
     const { error } = await supabase
       .from("receipts")
       .delete()
@@ -51,6 +54,7 @@ export default function ReceiptDetailPage() {
       showSuccess("Receipt entry deleted");
       router.push("/finances/receipts");
     }
+    setDeleting(false);
   }
 
   if (loading) return <LoadingSpinner />;
@@ -72,7 +76,11 @@ export default function ReceiptDetailPage() {
       <Link href={`/finances/receipts/${id}/edit`} className="mr-2">
         <Button variant="primary">Edit</Button>
       </Link>
-      <Button onClick={handleDelete} variant="danger" className="ml-2">Delete</Button>
+      <DeleteButton
+        onClick={handleDelete}
+        loading={deleting}
+        ariaLabel="Delete receipt entry"
+      />
     </div>
   );
 } 

@@ -8,6 +8,7 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import Button from "@/components/Button";
 import Link from "next/link";
 import { useToast } from "@/components/Toast";
+import DeleteButton from '@/components/DeleteButton';
 
 export default function ExpenseDetailPage() {
   const { id } = useParams();
@@ -16,6 +17,7 @@ export default function ExpenseDetailPage() {
   const [expense, setExpense] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     async function fetchExpense() {
@@ -41,10 +43,12 @@ export default function ExpenseDetailPage() {
 
   async function handleDelete() {
     if (!window.confirm("Delete this expense entry?")) return;
+    setDeleting(true);
     const { error } = await supabase
       .from("expenses")
       .delete()
       .eq("id", id);
+    setDeleting(false);
     if (error) {
       showError("Failed to delete expense entry");
     } else {
@@ -74,7 +78,11 @@ export default function ExpenseDetailPage() {
       <Link href={`/finances/expenses/${id}/edit`} className="mr-2">
         <Button variant="primary">Edit</Button>
       </Link>
-      <Button onClick={handleDelete} variant="danger" className="ml-2">Delete</Button>
+      <DeleteButton
+        onClick={handleDelete}
+        loading={deleting}
+        ariaLabel="Delete expense entry"
+      />
     </div>
   );
 } 

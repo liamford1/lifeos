@@ -8,6 +8,7 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import Button from "@/components/Button";
 import Link from "next/link";
 import { useToast } from "@/components/Toast";
+import DeleteButton from '@/components/DeleteButton';
 
 export default function SportDetailPage() {
   const { id } = useParams();
@@ -16,6 +17,7 @@ export default function SportDetailPage() {
   const [sport, setSport] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     async function fetchSport() {
@@ -41,6 +43,7 @@ export default function SportDetailPage() {
 
   async function handleDelete() {
     if (!window.confirm("Delete this sport entry?")) return;
+    setDeleting(true);
     const { error } = await supabase
       .from("fitness_sports")
       .delete()
@@ -51,6 +54,7 @@ export default function SportDetailPage() {
       showSuccess("Sport entry deleted");
       router.push("/fitness/sports");
     }
+    setDeleting(false);
   }
 
   if (loading) return <LoadingSpinner />;
@@ -71,7 +75,11 @@ export default function SportDetailPage() {
       <Link href={`/fitness/sports/${id}/edit`} className="mr-2">
         <Button variant="primary">Edit</Button>
       </Link>
-      <Button onClick={handleDelete} variant="danger" className="ml-2">Delete</Button>
+      <DeleteButton
+        onClick={handleDelete}
+        loading={deleting}
+        ariaLabel="Delete sport entry"
+      />
     </div>
   );
 }

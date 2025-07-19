@@ -14,6 +14,7 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import { useToast } from '@/components/Toast';
 import { navigateToSource } from '@/lib/navigateToSource';
 import { MdOutlineCalendarToday } from 'react-icons/md';
+import DeleteButton from '@/components/DeleteButton';
 
 export default function CalendarView() {
   const { showSuccess, showError } = useToast();
@@ -94,6 +95,7 @@ export default function CalendarView() {
   };
 
   const handleDeleteEvent = async (event) => {
+    console.log('🗑️ Deleting event:', event);
     const confirm = window.confirm('Delete this event? This will also remove the linked workout/cardio/sports entry if one exists.');
     if (!confirm) return;
   
@@ -108,7 +110,12 @@ export default function CalendarView() {
         console.error('❌ Failed to delete calendar event:', error);
         showError('Could not delete event.');
       } else {
-        setEvents((prev) => prev.filter((ev) => ev.id !== event.id));
+        setEvents((prev) => {
+          const filtered = prev.filter((ev) => ev.id !== event.id);
+          console.log('❌ Deleted ID:', event.id);
+          console.log('✅ Remaining Events:', filtered);
+          return filtered;
+        });
       }
       return;
     }
@@ -136,17 +143,24 @@ export default function CalendarView() {
       return;
     }
   
+    // Call deleteEntityWithCalendarEvent with correct params
     const error = await deleteEntityWithCalendarEvent({
       table: sourceTable,
       id: event.source_id,
       user_id: user_id,
+      source: event.source,
     });
   
     if (error) {
       console.error('❌ Failed to delete:', error);
       showError('Could not fully delete event.');
     } else {
-      setEvents((prev) => prev.filter((ev) => ev.id !== event.id));
+      setEvents((prev) => {
+        const filtered = prev.filter((ev) => ev.id !== event.id);
+        console.log('❌ Deleted ID:', event.id);
+        console.log('✅ Remaining Events:', filtered);
+        return filtered;
+      });
       showSuccess('Event deleted successfully!');
     }
   };  
@@ -273,7 +287,7 @@ export default function CalendarView() {
               return (
                 <li
                   key={event.id}
-                  className={`p-3 rounded cursor-pointer hover:opacity-80 ${colorClass}`}
+                  className={`p-3 rounded hover:opacity-80 ${colorClass}`}
                   onClick={() => {
                     if (!event.source || !event.source_id) return;
                     const route = getCalendarEventRoute(event.source, event.source_id);
@@ -284,18 +298,15 @@ export default function CalendarView() {
                     <div className="font-semibold">
                       {Icon && <Icon className="inline mr-1 align-text-bottom" size={18} />} {event.title}
                     </div>
-                    <Button
+                    <DeleteButton
                       onClick={(e) => {
                         e.stopPropagation();
                         handleDeleteEvent(event);
                       }}
-                      variant="link"
-                      size="sm"
-                      className="text-white hover:text-red-200"
-                      aria-label="Delete event"
-                    >
-                      🗑️
-                    </Button>
+                      loading={false} // This loading state is not directly tied to the event deletion, but the component handles it.
+                      ariaLabel="Delete event"
+                      label="Delete"
+                    />
                   </div>
                   {event.description && (
                     <div className="text-sm opacity-90 mt-1">{event.description}</div>

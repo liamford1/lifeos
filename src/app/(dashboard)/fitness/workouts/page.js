@@ -12,6 +12,7 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import { useToast } from '@/components/Toast';
 import { MdOutlineCalendarToday } from 'react-icons/md';
 import { Dumbbell } from 'lucide-react';
+import DeleteButton from '@/components/DeleteButton';
 
 export default function WorkoutsDashboard() {
   const { user, loading } = useUser();
@@ -119,14 +120,11 @@ export default function WorkoutsDashboard() {
                 >
                   ✏️ Edit
                 </Button>
-                <Button
+                <DeleteButton
                   onClick={() => handleDelete(w.id)}
-                  variant="link"
-                  size="sm"
-                  className="text-red-500 hover:text-red-700"
-                >
-                  🗑️ Delete
-                </Button>
+                  loading={loading}
+                  ariaLabel={`Delete workout for ${w.title || 'this entry'}`}
+                />
               </div>
             </li>
           ))}

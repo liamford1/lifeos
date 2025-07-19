@@ -10,6 +10,7 @@ import { useToast } from "@/components/Toast";
 import FormInput from "@/components/FormInput";
 import FormSection from "@/components/FormSection";
 import { CALENDAR_SOURCES, updateCalendarEventFromSource } from '@/lib/calendarUtils';
+import DeleteButton from '@/components/DeleteButton';
 
 export default function EditExpensePage() {
   const { id } = useParams();
@@ -19,6 +20,7 @@ export default function EditExpensePage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     async function fetchExpense() {
@@ -84,16 +86,31 @@ export default function EditExpensePage() {
 
   async function handleDelete() {
     if (!window.confirm("Delete this expense entry?")) return;
+    setDeleting(true);
     const { error } = await supabase
       .from("expenses")
       .delete()
       .eq("id", id);
     if (error) {
       showError("Failed to delete expense entry");
-    } else {
-      showSuccess("Expense entry deleted");
-      router.push("/finances/expenses");
+      setDeleting(false);
+      return;
     }
+    // Update linked calendar event
+    const calendarError = await updateCalendarEventFromSource(
+      CALENDAR_SOURCES.EXPENSE,
+      id,
+      {
+        title: `Expense: ${expense.name} - $${expense.amount}`,
+        start_time: expense.date ? new Date(expense.date).toISOString() : undefined,
+        description: expense.notes || null,
+      }
+    );
+    if (calendarError) {
+      console.error('Calendar event update failed:', calendarError);
+    }
+    showSuccess("Expense entry deleted");
+    router.push("/finances/expenses");
   }
 
   if (loading) return <LoadingSpinner />;
@@ -116,7 +133,11 @@ export default function EditExpensePage() {
           </FormSection>
           <div className="flex gap-2">
             <Button type="submit" variant="primary" loading={saving}>Save</Button>
-            <Button type="button" variant="danger" onClick={handleDelete}>Delete</Button>
+            <DeleteButton
+              onClick={handleDelete}
+              loading={deleting}
+              ariaLabel="Delete expense entry"
+            />
           </div>
         </form>
       )}

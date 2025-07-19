@@ -9,6 +9,7 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import Button from "@/components/Button";
 import { useToast } from "@/components/Toast";
 import { CALENDAR_SOURCES, updateCalendarEventFromSource } from '@/lib/calendarUtils';
+import DeleteButton from '@/components/DeleteButton';
 
 export default function EditCardioPage() {
   const { id } = useParams();
@@ -18,6 +19,7 @@ export default function EditCardioPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     async function fetchCardio() {
@@ -71,13 +73,18 @@ export default function EditCardioPage() {
   }
 
   async function handleDelete() {
-    if (!window.confirm("Delete this cardio entry?")) return;
+    setDeleting(true);
+    if (!window.confirm("Delete this cardio entry?")) {
+      setDeleting(false);
+      return;
+    }
     const { error } = await supabase
       .from("fitness_cardio")
       .delete()
       .eq("id", id);
     if (error) {
       showError("Failed to delete cardio entry");
+      setDeleting(false);
     } else {
       showSuccess("Cardio entry deleted");
       router.push("/fitness/cardio");
@@ -92,7 +99,11 @@ export default function EditCardioPage() {
       <BackButton />
       <h1 className="text-xl font-bold mb-4">Edit Cardio Entry</h1>
       <CardioForm initialValues={cardio} onSubmit={handleUpdateCardio} loading={saving} />
-      <Button onClick={handleDelete} variant="danger" className="mt-4">Delete</Button>
+      <DeleteButton
+        onClick={handleDelete}
+        loading={deleting}
+        ariaLabel="Delete cardio entry"
+      />
     </div>
   );
 } 

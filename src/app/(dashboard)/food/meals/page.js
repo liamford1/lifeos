@@ -8,12 +8,15 @@ import { supabase } from '@/lib/supabaseClient';
 import Link from 'next/link';
 import BackButton from '@/components/BackButton';
 import { UtensilsCrossed } from 'lucide-react';
+import DeleteButton from '@/components/DeleteButton';
 
 export default function MealsPage() {
   const { user, loading } = useUser();
   const router = useRouter();
   const [meals, setMeals] = useState([]);
   const [mealsLoading, setMealsLoading] = useState(true);
+  const [loadingId, setLoadingId] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -46,6 +49,30 @@ export default function MealsPage() {
     fetchMeals();
   }, []);
 
+  // --- DELETE HANDLER ---
+  const handleDelete = async (mealId) => {
+    console.log('Delete clicked for meal:', mealId);
+    setLoadingId(mealId);
+    setError(null);
+    try {
+      const { error } = await supabase
+        .from('meals')
+        .delete()
+        .eq('id', mealId);
+      if (error) {
+        console.error('Supabase delete error:', error);
+        setError(error.message || 'Failed to delete meal.');
+      } else {
+        console.log('Meal deleted successfully:', mealId);
+        setMeals((prev) => prev.filter((meal) => meal.id !== mealId));
+      }
+    } catch (err) {
+      console.error('Unexpected error during delete:', err);
+      setError('Unexpected error during delete.');
+    }
+    setLoadingId(null);
+  };
+
   if (loading) return <LoadingSpinner />;
   if (!user) return null;
 
@@ -58,6 +85,9 @@ export default function MealsPage() {
       </h1>
       <p className="text-base">Browse and manage your saved meal recipes.</p>
 
+      {error && (
+        <div className="mb-2 text-sm text-red-600 bg-red-50 p-2 rounded">{error}</div>
+      )}
       {mealsLoading ? (
         <LoadingSpinner />
       ) : meals.length === 0 ? (
@@ -65,10 +95,10 @@ export default function MealsPage() {
       ) : (
         <ul className="space-y-4">
           {meals.map((meal) => (
-            <li key={meal.id}>
-              <Link href={`/food/meals/${meal.id}`}>
+            <li key={meal.id} className="flex items-center justify-between">
+              <Link href={`/food/meals/${meal.id}`} className="flex-1 min-w-0">
                 <div className="bg-surface hover:bg-[#2e2e2e] transition p-4 rounded shadow cursor-pointer">
-                  <h2 className="text-xl font-semibold text-white">{meal.name}</h2>
+                  <h2 className="text-xl font-semibold text-white truncate">{meal.name}</h2>
                   {meal.description && (
                     <p className="text-base mt-1">{meal.description}</p>
                   )}
@@ -77,6 +107,11 @@ export default function MealsPage() {
                   </p>
                 </div>
               </Link>
+              <DeleteButton
+                onClick={() => handleDelete(meal.id)}
+                loading={loadingId === meal.id}
+                ariaLabel={`Delete ${meal.name}`}
+              />
             </li>
           ))}
         </ul>
