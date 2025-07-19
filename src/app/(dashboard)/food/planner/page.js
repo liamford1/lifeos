@@ -126,20 +126,18 @@ export default function MealPlannerPage() {
         mealTime === 'dinner' ? 18 : 15
       )
 
-      await addCalendarEvent({
-        // Use the new utility for planned meal
-        const calendarError = await createCalendarEventForEntity(CALENDAR_SOURCES.PLANNED_MEAL, {
-          id: insertData.id,
-          user_id: user.id,
-          meal_time: mealTime,
-          meal_name: meal.name,
-          planned_date: plannedDate,
-          description: meal.description,
-        });
-        if (calendarError) {
-          console.error('Calendar event creation failed:', calendarError);
-        }
-      })
+      // Create calendar event for planned meal
+      const calendarError = await createCalendarEventForEntity(CALENDAR_SOURCES.PLANNED_MEAL, {
+        id: insertData.id,
+        user_id: user.id,
+        meal_time: mealTime,
+        meal_name: meal.name,
+        planned_date: plannedDate,
+        description: meal.description,
+      });
+      if (calendarError) {
+        console.error('Calendar event creation failed:', calendarError);
+      }
 
       setMessage('Meal planned successfully!')
       setSelectedMealId('')

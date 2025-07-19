@@ -8,12 +8,18 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import { MdOutlineCalendarToday } from 'react-icons/md';
 import { FaUtensils } from 'react-icons/fa';
 import { CALENDAR_SOURCES, updateCalendarEventFromSource } from '@/lib/calendarUtils';
+import Button from '@/components/Button';
+import Toast from '@/components/Toast';
 
 export default function PlannedMealDetailPage() {
   const { id } = useParams();
   const [plannedMeal, setPlannedMeal] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [editData, setEditData] = useState(null);
+  const [saving, setSaving] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMsg, setToastMsg] = useState('');
 
   useEffect(() => {
     async function fetchPlannedMeal() {
@@ -38,6 +44,10 @@ export default function PlannedMealDetailPage() {
       }
 
       setPlannedMeal(data);
+      setEditData({
+        meal_time: data.meal_time || '',
+        planned_date: data.planned_date || '',
+      });
       setLoading(false);
     }
 
@@ -73,6 +83,73 @@ export default function PlannedMealDetailPage() {
     day: 'numeric'
   });
 
+  // Edit form handlers
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setEditData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSave = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+    setError(null);
+    try {
+      // Ensure planned_date is in YYYY-MM-DD format
+      let plannedDate = editData.planned_date;
+      if (plannedDate instanceof Date) {
+        plannedDate = plannedDate.toISOString().slice(0, 10);
+      }
+      // Debug log
+      console.log('Updating planned_meals:', {
+        id,
+        meal_time: editData.meal_time,
+        planned_date: plannedDate,
+        user_id: plannedMeal.user_id,
+        meal_id: plannedMeal.meal_id,
+      });
+      // Update planned_meals
+      const { error: updateError } = await supabase
+        .from('planned_meals')
+        .update({
+          meal_time: editData.meal_time,
+          planned_date: plannedDate,
+          user_id: plannedMeal.user_id,
+          meal_id: plannedMeal.meal_id,
+        })
+        .eq('id', id);
+      if (updateError) {
+        console.error('Supabase update error:', updateError);
+        setError(updateError.message || 'Failed to update planned meal.');
+        return;
+      }
+      // Sync calendar event
+      const calendarError = await updateCalendarEventFromSource(
+        CALENDAR_SOURCES.PLANNED_MEAL,
+        id,
+        {
+          meal_time: editData.meal_time,
+          planned_date: plannedDate,
+          user_id: plannedMeal.user_id,
+          meal_id: plannedMeal.meal_id,
+        }
+      );
+      if (calendarError) {
+        setToastMsg('Meal updated, but failed to update calendar event.');
+      } else {
+        setToastMsg('Meal updated successfully!');
+      }
+      setShowToast(true);
+      setTimeout(() => {
+        setShowToast(false);
+        window.location.href = '/food/planner';
+      }, 1500);
+    } catch (err) {
+      setError('Failed to update planned meal.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <>
       <BackButton />
@@ -99,6 +176,41 @@ export default function PlannedMealDetailPage() {
             </div>
           </div>
 
+          <div className="bg-surface rounded-lg p-4 mb-6">
+            <h2 className="text-xl font-semibold mb-3 text-white">Edit Planned Meal</h2>
+            <form onSubmit={handleSave} className="space-y-4">
+              <div>
+                <label className="block mb-1 font-medium">Meal Time</label>
+                <select
+                  name="meal_time"
+                  value={editData?.meal_time || ''}
+                  onChange={handleChange}
+                  className="bg-[#232323] text-white border border-[#232323] rounded px-3 py-2 w-full"
+                  required
+                >
+                  <option value="breakfast">Breakfast</option>
+                  <option value="lunch">Lunch</option>
+                  <option value="dinner">Dinner</option>
+                  <option value="snack">Snack</option>
+                </select>
+              </div>
+              <div>
+                <label className="block mb-1 font-medium">Planned Date</label>
+                <input
+                  type="date"
+                  name="planned_date"
+                  value={editData?.planned_date || ''}
+                  onChange={handleChange}
+                  className="bg-[#232323] text-white border border-[#232323] rounded px-3 py-2 w-full"
+                  required
+                />
+              </div>
+              {error && <div className="text-red-400 text-sm">{error}</div>}
+              <Button type="submit" variant="primary" disabled={saving}>
+                {saving ? 'Saving...' : 'Save Changes'}
+              </Button>
+            </form>
+          </div>
           <div className="bg-surface rounded-lg p-4">
             <h2 className="text-xl font-semibold mb-3 text-white">
               <FaUtensils className="inline w-5 h-5 text-base align-text-bottom mr-2" />
@@ -118,6 +230,7 @@ export default function PlannedMealDetailPage() {
           </div>
         </div>
       </div>
+      {showToast && <Toast message={toastMsg} />}
     </>
   );
 } 
