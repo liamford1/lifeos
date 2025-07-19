@@ -9,6 +9,7 @@ import BackButton from '@/components/BackButton';
 import Button from '@/components/Button';
 import { CALENDAR_SOURCES } from '@/lib/calendarUtils';
 import { useToast } from '@/components/Toast';
+import { createCalendarEventForEntity } from '@/lib/calendarSync';
 
 export default function AddExpensePage() {
   const { user, loading } = useUser();
@@ -51,14 +52,13 @@ export default function AddExpensePage() {
       return;
     }
     // Create calendar event for the expense
-    const startTime = new Date(formData.date);
-    const { error: calendarError } = await supabase.from('calendar_events').insert({
+    const calendarError = await createCalendarEventForEntity(CALENDAR_SOURCES.EXPENSE, {
+      id: data.id,
       user_id: user_id,
-      title: `Expense: ${formData.name} - $${formData.amount}`,
-      source: CALENDAR_SOURCES.EXPENSE,
-      source_id: data.id,
-      start_time: startTime.toISOString(),
-      end_time: null,
+      name: formData.name,
+      amount: formData.amount,
+      date: formData.date,
+      notes: formData.notes,
     });
     if (calendarError) {
       console.error('Calendar event creation failed:', calendarError);

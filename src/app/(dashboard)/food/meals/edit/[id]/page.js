@@ -228,14 +228,15 @@ export default function EditMealPage() {
 
       // Update calendar event for the edited meal
       const startTime = new Date();
-      const calendarError = await updateCalendarEvent(
+      const calendarError = await updateCalendarEventFromSource(
         CALENDAR_SOURCES.MEAL,
         id,
-        `Meal: ${mealData.name}`,
-        startTime.toISOString(),
-        null
+        {
+          title: `Meal: ${mealData.name}`,
+          start_time: startTime.toISOString(),
+          description: mealData.description || null,
+        }
       );
-
       if (calendarError) {
         console.error('Calendar event update failed:', calendarError);
       }

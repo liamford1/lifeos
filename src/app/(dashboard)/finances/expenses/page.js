@@ -10,6 +10,7 @@ import { deleteEntityWithCalendarEvent } from '@/lib/deleteUtils';
 import BackButton from '@/components/BackButton';
 import Button from '@/components/Button';
 import { useToast } from '@/components/Toast';
+import { deleteCalendarEventForEntity } from '@/lib/calendarSync';
 
 export default function FinancesOverview() {
   const { user, loading } = useUser();
@@ -41,19 +42,25 @@ export default function FinancesOverview() {
   const handleDelete = async (id) => {
     if (!user) return;
     const user_id = user.id;
-    const error = await deleteEntityWithCalendarEvent({
-      table: 'expenses',
-      id: id,
-      user_id: user_id,
-      source: 'expense',
-    });
-    if (!error) {
-      setExpenses((prev) => prev.filter((exp) => exp.id !== id));
-      showSuccess('Expense deleted successfully!');
-    } else {
-      console.error(error);
+    // Delete the expense
+    const { error: deleteError } = await supabase
+      .from('expenses')
+      .delete()
+      .eq('id', id);
+    if (deleteError) {
+      console.error(deleteError);
       showError('Error deleting expense.');
+      return;
     }
+    // Delete the linked calendar event
+    const calendarError = await deleteCalendarEventForEntity('expense', id);
+    if (calendarError) {
+      console.error(calendarError);
+      showError('Error deleting linked calendar event.');
+      return;
+    }
+    setExpenses((prev) => prev.filter((exp) => exp.id !== id));
+    showSuccess('Expense deleted successfully!');
   };
 
   if (loading) return <LoadingSpinner />;

@@ -11,6 +11,7 @@ import MealForm from '@/components/MealForm';
 import { CALENDAR_SOURCES } from '@/lib/calendarUtils';
 import { useToast } from '@/components/Toast';
 import { CirclePlus } from 'lucide-react';
+import { createCalendarEventForEntity } from '@/lib/calendarSync';
 
 export default function AddMealPage(props) {
   const { user, loading } = useUser();
@@ -112,21 +113,6 @@ export default function AddMealPage(props) {
         }
       } else {
         console.log("🧪 No ingredients to insert (all were empty)");
-      }
-
-      // Create calendar event for the meal
-      const startTime = new Date();
-      const { error: calendarError } = await supabase.from('calendar_events').insert({
-        user_id: userId,
-        title: `Meal: ${mealData.name}`,
-        source: CALENDAR_SOURCES.MEAL,
-        source_id: mealId,
-        start_time: startTime.toISOString(),
-        end_time: null,
-      });
-
-      if (calendarError) {
-        console.error('Calendar event creation failed:', calendarError);
       }
 
       showSuccess('Meal and ingredients saved successfully!');

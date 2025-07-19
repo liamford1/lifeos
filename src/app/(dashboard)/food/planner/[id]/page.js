@@ -7,6 +7,7 @@ import BackButton from '@/components/BackButton';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { MdOutlineCalendarToday } from 'react-icons/md';
 import { FaUtensils } from 'react-icons/fa';
+import { CALENDAR_SOURCES, updateCalendarEventFromSource } from '@/lib/calendarUtils';
 
 export default function PlannedMealDetailPage() {
   const { id } = useParams();

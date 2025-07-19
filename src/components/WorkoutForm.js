@@ -10,10 +10,11 @@ import FormLabel from '@/components/FormLabel';
 import FormInput from '@/components/FormInput';
 import FormTextarea from '@/components/FormTextarea';
 import FormSection from '@/components/FormSection';
-import { CALENDAR_SOURCES } from '@/lib/calendarUtils';
+import { CALENDAR_SOURCES, updateCalendarEventFromSource } from '@/lib/calendarUtils';
 import { useToast } from '@/components/Toast';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { MdOutlineStickyNote2 } from 'react-icons/md';
+import { createCalendarEventForEntity } from '@/lib/calendarSync';
 
 export default function WorkoutForm({ initialWorkout = null, initialExercises = [], isEdit = false }) {
   const router = useRouter();
@@ -83,7 +84,20 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
         const { error: exError } = await insertExercises(formatted);
         if (exError) return; // Toast handled by hook
       }
-      // Update calendar event (not handled by insert hook, so just show success)
+      // Update calendar event
+      const startTime = new Date(date);
+      const calendarError = await updateCalendarEventFromSource(
+        CALENDAR_SOURCES.WORKOUT,
+        workoutId,
+        {
+          title: `Workout: ${title}`,
+          start_time: startTime.toISOString(),
+          description: notes || null,
+        }
+      );
+      if (calendarError) {
+        console.error('Calendar event update failed:', calendarError);
+      }
       showSuccess('Workout updated successfully!');
       router.push('/fitness/workouts');
       return;
@@ -111,14 +125,12 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
       if (exError) return; // Toast handled by hook
     }
     // Insert calendar event
-    const startTime = new Date(date);
-    const { error: calendarError } = await insertCalendar({
+    const calendarError = await createCalendarEventForEntity(CALENDAR_SOURCES.WORKOUT, {
+      id: workoutId,
       user_id: user.id,
-      title: `Workout: ${title}`,
-      source: CALENDAR_SOURCES.WORKOUT,
-      source_id: workoutId,
-      start_time: startTime.toISOString(),
-      end_time: null,
+      title,
+      date,
+      notes,
     });
     if (calendarError) return; // Toast handled by hook
     showSuccess('Workout created successfully!');
@@ -243,8 +255,8 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
         )}
         <Button 
           type="submit" 
-          variant="primary"
-          className="w-full mt-6"
+          variant="none"
+          className="bg-card text-base border border-default px-4 py-2 rounded hover:bg-[#4a4a4a] transition-colors duration-200 focus:outline-none focus:ring-0 font-medium w-full mt-6"
           disabled={isLoading}
         >
           {isLoading ? <LoadingSpinner size={20} /> : `✅ ${isEdit ? 'Update Workout' : 'Save Workout'}`}

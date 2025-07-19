@@ -26,9 +26,6 @@ export default function WorkoutsDashboard() {
     }
   }, [loading, user]);
 
-  if (loading) return <LoadingSpinner />;
-  if (!user) return null;
-
   const fetchWorkouts = async () => {
     setWorkoutsLoading(true);
     const { data, error } = await supabase
@@ -91,7 +88,12 @@ export default function WorkoutsDashboard() {
         Workout History
       </h2>
 
-      {workoutsLoading ? (
+      {/* Conditional rendering here */}
+      {loading ? (
+        <LoadingSpinner />
+      ) : !user ? (
+        null
+      ) : workoutsLoading ? (
         <LoadingSpinner />
       ) : workouts.length === 0 ? (
         <p className="text-muted-foreground text-sm">No entries yet. Add one above ⬆️</p>

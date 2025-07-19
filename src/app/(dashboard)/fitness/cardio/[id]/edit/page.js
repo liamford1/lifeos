@@ -8,6 +8,7 @@ import CardioForm from "@/components/CardioForm";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import Button from "@/components/Button";
 import { useToast } from "@/components/Toast";
+import { CALENDAR_SOURCES, updateCalendarEventFromSource } from '@/lib/calendarUtils';
 
 export default function EditCardioPage() {
   const { id } = useParams();
@@ -51,6 +52,19 @@ export default function EditCardioPage() {
       setError("Failed to update cardio entry");
       setSaving(false);
       return;
+    }
+    // Update linked calendar event
+    const calendarError = await updateCalendarEventFromSource(
+      CALENDAR_SOURCES.CARDIO,
+      id,
+      {
+        title: `Cardio: ${cardioData.activity_type}`,
+        start_time: cardioData.date ? new Date(cardioData.date).toISOString() : undefined,
+        description: cardioData.notes || null,
+      }
+    );
+    if (calendarError) {
+      console.error('Calendar event update failed:', calendarError);
     }
     showSuccess("Cardio entry updated!");
     router.push(`/fitness/cardio/${id}`);

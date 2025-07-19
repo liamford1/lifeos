@@ -9,6 +9,7 @@ import FormTextarea from '@/components/FormTextarea'
 import dayjs from 'dayjs'
 import { CALENDAR_SOURCES } from '@/lib/calendarUtils'
 import { useToast } from '@/components/Toast'
+import { createCalendarEventForEntity } from '@/lib/calendarSync';
 
 export default function PlannedWorkoutForm({ onSuccess }) {
   const { showSuccess, showError } = useToast();
@@ -84,27 +85,19 @@ export default function PlannedWorkoutForm({ onSuccess }) {
                  : type === 'cardio' ? CALENDAR_SOURCES.CARDIO 
                  : CALENDAR_SOURCES.SPORT
 
-    const { error: calendarError } = await supabase.from('calendar_events').insert({
+    const calendarError = await createCalendarEventForEntity(source, {
+      id: data.id,
       user_id: userId,
-      title: calendarTitle,
-      source: source,
-      source_id: data.id,
-      start_time: startTime,
+      title,
+      activity_type: type === 'cardio' ? title : undefined,
+      date: startTime,
+      notes,
       end_time: endTime || null,
-    })
-
+    });
     if (calendarError) {
-      console.error('⚠️ Calendar event creation failed:', calendarError)
-      console.error('📅 Calendar event data:', {
-        user_id: userId,
-        title: calendarTitle,
-        source: source,
-        source_id: data.id,
-        start_time: startTime,
-        end_time: endTime || null,
-      })
+      console.error('⚠️ Calendar event creation failed:', calendarError);
     } else {
-      console.log('📅 Calendar event created.')
+      console.log('📅 Calendar event created.');
     }
 
     setLoading(false)

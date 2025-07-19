@@ -150,7 +150,7 @@ export default function MealForm({
               onChange={(e) => handleIngredientChange(index, 'name', e.target.value)}
               placeholder="Ingredient"
               disabled={loading}
-              className="flex-1"
+              className="flex-[2] min-w-0"
             />
             <FormInput
               type="number"
@@ -187,6 +187,7 @@ export default function MealForm({
           variant="success"
           size="sm"
           disabled={loading}
+          className="mt-4"
         >
           + Add Ingredient
         </Button>
@@ -222,6 +223,7 @@ export default function MealForm({
           variant="success"
           size="sm"
           disabled={loading}
+          className="mt-4"
         >
           + Add Step
         </Button>

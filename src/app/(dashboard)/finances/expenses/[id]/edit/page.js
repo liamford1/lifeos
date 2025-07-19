@@ -9,6 +9,7 @@ import Button from "@/components/Button";
 import { useToast } from "@/components/Toast";
 import FormInput from "@/components/FormInput";
 import FormSection from "@/components/FormSection";
+import { CALENDAR_SOURCES, updateCalendarEventFromSource } from '@/lib/calendarUtils';
 
 export default function EditExpensePage() {
   const { id } = useParams();
@@ -63,6 +64,19 @@ export default function EditExpensePage() {
       setError("Failed to update expense entry");
       setSaving(false);
       return;
+    }
+    // Update linked calendar event
+    const calendarError = await updateCalendarEventFromSource(
+      CALENDAR_SOURCES.EXPENSE,
+      id,
+      {
+        title: `Expense: ${updated.name} - $${updated.amount}`,
+        start_time: updated.date ? new Date(updated.date).toISOString() : undefined,
+        description: updated.notes || null,
+      }
+    );
+    if (calendarError) {
+      console.error('Calendar event update failed:', calendarError);
     }
     showSuccess("Expense entry updated!");
     router.push(`/finances/expenses/${id}`);

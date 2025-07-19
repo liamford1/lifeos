@@ -10,6 +10,8 @@ import { CALENDAR_SOURCES } from '@/lib/calendarUtils'
 import { useToast } from '@/components/Toast'
 import { MdOutlineCalendarToday } from 'react-icons/md';
 import { CalendarCheck } from 'lucide-react';
+import { createCalendarEventForEntity } from '@/lib/calendarSync';
+import { deleteCalendarEventForEntity } from '@/lib/calendarSync';
 
 export default function MealPlannerPage() {
   const { showSuccess, showError } = useToast();
@@ -125,11 +127,18 @@ export default function MealPlannerPage() {
       )
 
       await addCalendarEvent({
-        userId: user.id,
-        title: `${mealTime[0].toUpperCase() + mealTime.slice(1)}: ${meal.name}`,
-        startTime: startTime.toISOString(),
-        source: CALENDAR_SOURCES.PLANNED_MEAL,
-        sourceId: insertData.id,
+        // Use the new utility for planned meal
+        const calendarError = await createCalendarEventForEntity(CALENDAR_SOURCES.PLANNED_MEAL, {
+          id: insertData.id,
+          user_id: user.id,
+          meal_time: mealTime,
+          meal_name: meal.name,
+          planned_date: plannedDate,
+          description: meal.description,
+        });
+        if (calendarError) {
+          console.error('Calendar event creation failed:', calendarError);
+        }
       })
 
       setMessage('Meal planned successfully!')
@@ -149,20 +158,25 @@ export default function MealPlannerPage() {
       return;
     }
 
-    const error = await deleteEntityWithCalendarEvent({
-      table: 'planned_meals',
-      id: id,
-      user_id: user_id,
-      source: CALENDAR_SOURCES.PLANNED_MEAL,
-    });
-
-    if (error) {
-      console.error('Error deleting planned meal:', error);
+    // Delete the planned meal
+    const { error: deleteError } = await supabase
+      .from('planned_meals')
+      .delete()
+      .eq('id', id);
+    if (deleteError) {
+      console.error('Error deleting planned meal:', deleteError);
       showError('Failed to delete planned meal.');
-    } else {
-      fetchPlannedMeals();
-      showSuccess('Planned meal deleted successfully!');
+      return;
     }
+    // Delete the linked calendar event
+    const calendarError = await deleteCalendarEventForEntity(CALENDAR_SOURCES.PLANNED_MEAL, id);
+    if (calendarError) {
+      console.error('Error deleting linked calendar event:', calendarError);
+      showError('Failed to delete linked calendar event.');
+      return;
+    }
+    fetchPlannedMeals();
+    showSuccess('Planned meal deleted successfully!');
   }
 
   const groupedMeals = {}

@@ -8,7 +8,6 @@ import { supabase } from '@/lib/supabaseClient';
 import BackButton from '@/components/BackButton';
 import Button from '@/components/Button';
 import Link from 'next/link';
-import { deleteEntityWithCalendarEvent } from '@/lib/deleteUtils';
 import { CALENDAR_SOURCES } from '@/lib/calendarUtils';
 import { useToast } from '@/components/Toast';
 import { MdOutlineCalendarToday, MdOutlineStickyNote2 } from 'react-icons/md';
@@ -134,16 +133,13 @@ export default function MealDetailPage() {
       }
 
       // Then, delete the meal and its calendar events
-      const error = await deleteEntityWithCalendarEvent({
-        table: 'meals',
-        id: meal.id,
-        user_id: userId,
-        source: CALENDAR_SOURCES.MEAL,
-      });
-
-      if (error) {
-        console.error('❌ Failed to delete meal:', error);
-        showError('Could not fully delete meal.');
+      const { error: mealError } = await supabase
+        .from('meals')
+        .delete()
+        .eq('id', meal.id);
+      if (mealError) {
+        console.error('❌ Failed to delete meal:', mealError);
+        showError('Could not delete meal.');
       } else {
         showSuccess('Meal deleted successfully!');
         // Redirect back to meals list

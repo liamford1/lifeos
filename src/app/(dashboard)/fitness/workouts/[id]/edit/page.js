@@ -7,6 +7,7 @@ import WorkoutForm from '@/components/WorkoutForm';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/context/UserContext';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import { CALENDAR_SOURCES, updateCalendarEventFromSource } from '@/lib/calendarUtils';
 
 export default function EditWorkoutPage() {
   const params = useParams();

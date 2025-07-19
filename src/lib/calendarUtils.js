@@ -73,6 +73,33 @@ export const updateCalendarEvent = async (source, source_id, title, startTime, e
   }
 }
 
+/**
+ * Updates a calendar event for a given source and source_id with arbitrary fields.
+ * @param {string} source - The source type (e.g., 'meal', 'workout', etc.)
+ * @param {string|number} source_id - The ID of the source entity
+ * @param {Object} updatedFields - Fields to update (e.g., { title, start_time, end_time, description })
+ * @returns {Promise<Object|null>} - Returns any Supabase error encountered or null on success
+ */
+export const updateCalendarEventFromSource = async (source, source_id, updatedFields) => {
+  try {
+    const { error } = await supabase
+      .from('calendar_events')
+      .update(updatedFields)
+      .eq('source', source)
+      .eq('source_id', source_id);
+
+    if (error) {
+      console.error('Error updating calendar event:', error);
+      return error;
+    }
+    console.log(`✅ Successfully updated calendar event for ${source} with ID ${source_id}`);
+    return null;
+  } catch (error) {
+    console.error('Unexpected error in updateCalendarEventFromSource:', error);
+    return error;
+  }
+}
+
 export const addCalendarEvent = async ({
   userId,
   title,
