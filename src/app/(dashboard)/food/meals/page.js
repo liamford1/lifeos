@@ -23,7 +23,7 @@ export default function MealsPage() {
     if (!loading && !user) {
       router.push('/auth');
     }
-  }, [loading, user]);
+  }, [loading, user, router]);
 
   useEffect(() => {
     async function loadMeals() {
@@ -34,7 +34,7 @@ export default function MealsPage() {
       setMealsLoading(false);
     }
     if (user) loadMeals();
-  }, [user]);
+  }, [user, fetchMeals]);
 
   // --- DELETE HANDLER ---
   const handleDelete = async (mealId) => {

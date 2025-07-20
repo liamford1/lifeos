@@ -28,7 +28,7 @@ export default function AddExpensePage() {
     if (!loading && !user) {
       router.push('/auth');
     }
-  }, [loading, user]);
+  }, [loading, user, router]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;

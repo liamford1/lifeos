@@ -34,7 +34,7 @@ export default function SportsDashboard() {
     };
 
     fetchSessions();
-  }, []);
+  }, [showError]);
 
   const handleDelete = async (id) => {
     const confirm = window.confirm('Delete this session?');

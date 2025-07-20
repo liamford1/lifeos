@@ -21,7 +21,7 @@ export default function EditWorkoutPage() {
     if (!userLoading && !user) {
       router.push('/auth');
     }
-  }, [userLoading, user]);
+  }, [userLoading, user, router]);
 
   useEffect(() => {
     const fetchWorkout = async () => {
@@ -42,7 +42,7 @@ export default function EditWorkoutPage() {
     };
 
     fetchWorkout();
-  }, [params.id]);
+  }, [params.id, router]);
 
   if (loading) return <LoadingSpinner />;
   if (!user) return null;

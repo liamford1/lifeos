@@ -165,7 +165,7 @@ export default function MealDetailPage() {
       <BackButton />
       <div className="text-center py-8">
         <h1 className="text-xl font-bold mb-4">Meal Not Found</h1>
-        <p>The meal you're looking for doesn't exist or you don't have permission to view it.</p>
+        <p>The meal you&rsquo;re looking for doesn&rsquo;t exist or you don&rsquo;t have permission to view it.</p>
         <Button 
           onClick={() => router.push('/food/meals')}
           variant="primary"

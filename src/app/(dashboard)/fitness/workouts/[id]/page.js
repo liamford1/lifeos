@@ -69,7 +69,7 @@ export default function WorkoutDetailPage() {
     };
     if (user) fetchAll();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [params.id, user]);
+  }, [params.id, user, router]);
 
   if (loading || userLoading) return <LoadingSpinner />;
   if (!user) return null;

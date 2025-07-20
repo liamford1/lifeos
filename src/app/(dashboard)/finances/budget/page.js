@@ -13,7 +13,7 @@ export default function BudgetPage() {
     if (!loading && !user) {
       router.push('/auth');
     }
-  }, [loading, user]);
+  }, [loading, user, router]);
 
   if (loading) return <LoadingSpinner />;
   if (!user) return null;

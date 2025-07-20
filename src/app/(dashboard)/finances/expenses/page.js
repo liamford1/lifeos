@@ -24,7 +24,7 @@ export default function FinancesOverview() {
     if (!loading && !user) {
       router.push('/auth');
     }
-  }, [loading, user]);
+  }, [loading, user, router]);
 
   useEffect(() => {
     if (!user) return;
@@ -38,7 +38,7 @@ export default function FinancesOverview() {
       setExpensesLoading(false);
     };
     fetchExpenses();
-  }, [user]);
+  }, [user, router]);
 
   const handleDelete = async (id) => {
     if (!user) return;

@@ -32,7 +32,7 @@ export default function CardioDashboard() {
       setSessionsLoading(false);
     };
     fetchData();
-  }, []);
+  }, [fetchCardioSessions]);
 
   const handleDelete = async (id) => {
     const confirm = window.confirm('Delete this session?');

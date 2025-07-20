@@ -62,7 +62,7 @@ export default function MealPlannerPage() {
   useEffect(() => {
     fetchMeals()
     fetchPlannedMeals()
-  }, [])
+  }, [fetchMeals, fetchPlannedMeals])
 
   const addCalendarEvent = async ({ userId, title, startTime, source, sourceId }) => {
     const { error } = await supabase

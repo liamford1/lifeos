@@ -78,13 +78,13 @@ export default function EditMealPage() {
     }
 
     fetchMeal();
-  }, [id, loading, user]);
+  }, [id, loading, user, router]);
 
   useEffect(() => {
     if (!loading && !user) {
       router.push('/auth');
     }
-  }, [loading, user]);
+  }, [loading, user, router]);
 
   if (mealLoading) {
     return (
