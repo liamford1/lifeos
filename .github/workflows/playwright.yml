@@ -16,4 +16,9 @@ jobs:
           node-version: 18
       - run: npm ci
       - run: npx playwright install --with-deps
-      - run: npx playwright test 
+      - name: Build app
+        run: npm run build
+      - name: Start app server
+        run: npm run start & npx wait-on http://localhost:3000
+      - name: Run Playwright tests
+        run: npx playwright test 
