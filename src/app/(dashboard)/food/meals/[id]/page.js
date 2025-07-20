@@ -195,51 +195,55 @@ export default function MealDetailPage() {
   );
 
   return (
-    <div className="max-w-6xl mx-auto p-4 space-y-4">
+    <div className="w-full max-w-6xl mx-auto bg-zinc-900 p-8 rounded-2xl shadow-lg space-y-6 mt-6 text-base">
       <BackButton />
       <h1 className="text-2xl font-bold">{meal.name}</h1>
-      <p className="text-base">View your meal recipe details.</p>
-      {meal.description && <p className="text-base mb-4">{meal.description}</p>}
-
-      {/* Place the Cook Meal button here, right below description/instructions */}
-      <Link href={`/food/meals/${id}/cook`}>
-        <Button variant="primary" className="mb-4">
-          Cook Meal
+      {meal.description && <p className="text-sm text-zinc-400">{meal.description}</p>}
+      <div className="flex flex-wrap gap-4 items-center text-xs text-zinc-500 mt-1">
+        <span>Prep: {meal.prep_time || 0} min</span>
+        <span>Cook: {meal.cook_time || 0} min</span>
+        <span>Servings: {meal.servings || 1}</span>
+      </div>
+      <div className="flex gap-4 mt-4">
+        <Link href={`/food/meals/${id}/cook`}>
+          <Button variant="primary">Cook Meal</Button>
+        </Link>
+        <Button
+          onClick={() => router.push(`/food/meals/edit/${meal.id}`)}
+          variant="secondary"
+        >
+          Edit
         </Button>
-      </Link>
-
-      <Button
-        onClick={() => router.push(`/food/meals/edit/${meal.id}`)}
-        variant="secondary"
-        className="mt-4"
-      >
-        Edit
-      </Button>
-
-      <p className="text-sm text-base mb-6">
-        Prep: {meal.prep_time || 0} min • Cook: {meal.cook_time || 0} min • Servings: {meal.servings || 1}
-      </p>
-
-      <h2 className="text-xl font-semibold mb-2">🧺 Ingredients</h2>
-      <ul className="list-disc list-inside mb-6 text-base">
-        {ingredients.map((item, i) => (
-          <li key={i}>
-            {item.quantity} {item.unit} {item.food_item_name}
-          </li>
-        ))}
-      </ul>
-
-      <h2 className="text-xl font-semibold mb-2">
-        <MdOutlineStickyNote2 className="inline w-5 h-5 text-base align-text-bottom mr-2" />
-        Instructions
-      </h2>
-      <ol className="list-decimal list-inside space-y-2 text-base">
-        {meal.instructions?.map((step, index) => (
-          <li key={index}>{step}</li>
-        ))}
-      </ol>
-
-      <div className="mt-8 flex gap-4 mb-4">
+      </div>
+      <div className="border-t border-zinc-700 mt-4 pt-4">
+        <h3 className="text-lg font-semibold mb-2">Ingredients</h3>
+        <ul className="list-disc list-inside space-y-2 text-base">
+          {ingredients.map((item, i) => (
+            <li key={i}>
+              {item.quantity} {item.unit} {item.food_item_name}
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div className="border-t border-zinc-700 mt-4 pt-4">
+        <h3 className="text-lg font-semibold mb-2 flex items-center">
+          <MdOutlineStickyNote2 className="inline w-5 h-5 text-base align-text-bottom mr-2" />
+          Instructions
+        </h3>
+        <ol className="list-decimal list-inside space-y-2 text-base">
+          {Array.isArray(meal.instructions)
+            ? meal.instructions.map((step, index) => (
+                <li key={index}>{step}</li>
+              ))
+            : (typeof meal.instructions === 'string' && meal.instructions.trim()
+                ? meal.instructions.split('\n').map((step, index) => (
+                    <li key={index}>{step}</li>
+                  ))
+                : <li className="text-zinc-500 italic">No instructions provided.</li>
+              )}
+        </ol>
+      </div>
+      <div className="flex justify-between mt-6 gap-4">
         <Button
           onClick={() => router.push('/')}
           variant="primary"
@@ -247,13 +251,12 @@ export default function MealDetailPage() {
           <MdOutlineCalendarToday className="inline w-5 h-5 text-base align-text-bottom mr-2" />
           Back to Calendar
         </Button>
+        <DeleteButton
+          onClick={handleDeleteMeal}
+          loading={deleting}
+          ariaLabel="Delete this meal"
+        />
       </div>
-
-      <DeleteButton
-        onClick={handleDeleteMeal}
-        loading={deleting}
-        ariaLabel="Delete this meal"
-      />
     </div>
   );
 }
