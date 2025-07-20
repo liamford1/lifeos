@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import BackButton from '@/components/BackButton';
 import MealForm from '@/components/MealForm';
-import { CALENDAR_SOURCES, updateCalendarEvent } from '@/lib/calendarUtils';
+import { CALENDAR_SOURCES, updateCalendarEvent, updateCalendarEventFromSource } from '@/lib/calendarUtils';
 import { useUser } from '@/context/UserContext';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import DeleteButton from '@/components/DeleteButton';

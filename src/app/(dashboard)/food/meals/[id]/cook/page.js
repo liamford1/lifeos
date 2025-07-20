@@ -6,6 +6,8 @@ import { supabase } from '@/lib/supabaseClient';
 import Button from '@/components/Button';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { useToast } from '@/components/Toast';
+import { useCookingSession } from '@/context/CookingSessionContext';
+import BackButton from '@/components/BackButton';
 
 export default function CookMealPage() {
   const router = useRouter();
@@ -13,6 +15,18 @@ export default function CookMealPage() {
   const { showSuccess, showError } = useToast();
   const [meal, setMeal] = useState(null);
   const [mealLoading, setMealLoading] = useState(true);
+
+  const {
+    mealId: cookingMealId,
+    currentStep,
+    instructions: cookingInstructions,
+    startCooking,
+    nextStep,
+    previousStep,
+    endCooking,
+    cancelCooking,
+    isCooking
+  } = useCookingSession();
 
   useEffect(() => {
     async function fetchMeal() {
@@ -27,95 +41,34 @@ export default function CookMealPage() {
   if (mealLoading) return <LoadingSpinner />;
   if (!meal) return <div className="p-6"><p className="text-muted-foreground text-sm">Meal not found.</p></div>;
 
-  async function handleDoneCooking() {
-    try {
-      const { data: userData, error: userError } = await supabase.auth.getUser();
-      const user = userData?.user;
-      if (!user) {
-        showError('You must be logged in to record a cooked meal.');
-        return;
-      }
-      
-      console.log('Attempting to record cooked meal for:', {
-        user_id: user.id,
-        meal_id: meal.id,
-      });
-      
-      // First, check if a record already exists
-      const { data: existingRecord, error: checkError } = await supabase
-        .from('cooked_meals')
-        .select('*')
-        .eq('user_id', user.id)
-        .eq('meal_id', meal.id)
-        .single();
-      
-      console.log('Existing record check:', { existingRecord, checkError });
-      
-      if (checkError && checkError.code !== 'PGRST116') {
-        // PGRST116 is "not found" error, which is expected if no record exists
-        console.error('Error checking existing record:', checkError);
-        showError(`Failed to check existing record: ${checkError.message}`);
-        return;
-      }
-      
-      let result;
-      
-      if (existingRecord) {
-        // Update existing record
-        console.log('Updating existing record with cook_count:', existingRecord.cook_count + 1);
-        result = await supabase
-          .from('cooked_meals')
-          .update({
-            last_cooked_at: new Date().toISOString(),
-            cook_count: existingRecord.cook_count + 1
-          })
-          .eq('user_id', user.id)
-          .eq('meal_id', meal.id)
-          .select();
-      } else {
-        // Insert new record
-        console.log('Inserting new record');
-        result = await supabase
-          .from('cooked_meals')
-          .insert({
-            user_id: user.id,
-            meal_id: meal.id,
-            last_cooked_at: new Date().toISOString(),
-            cook_count: 1
-          })
-          .select();
-      }
-      
-      if (result.error) {
-        console.error('Database operation error:', result.error);
-        console.error('Error details:', {
-          code: result.error.code,
-          message: result.error.message,
-          details: result.error.details,
-          hint: result.error.hint
-        });
-        showError(`Failed to record cooked meal: ${result.error.message}`);
-        return;
-      }
-      
-      console.log('Successfully recorded cooked meal:', result.data);
-      showSuccess('Meal recorded as cooked successfully!');
-      router.push('/food/meals');
-    } catch (error) {
-      console.error('Unexpected error:', error);
-      showError('An unexpected error occurred while recording the cooked meal.');
-    }
-  }
+  // Parse instructions as string array
+  const parsedInstructions = Array.isArray(meal.instructions)
+    ? meal.instructions
+    : (typeof meal.instructions === 'string' && meal.instructions.trim()
+        ? meal.instructions.split('\n').map(s => s.trim()).filter(Boolean)
+        : []);
+
+  const isThisMealActive = isCooking && cookingMealId === meal.id;
 
   return (
     <div className="p-6 space-y-4">
+      {/* Back button or link at the top */}
+      {!isCooking && (
+        <button
+          type="button"
+          onClick={() => router.push(`/food/meals/${meal.id}`)}
+          className="bg-card text-base border border-default px-4 py-2 rounded hover:bg-[#4a4a4a] transition-colors duration-200 focus:outline-none focus:ring-0 mb-4"
+        >
+          ← Back to meal
+        </button>
+      )}
       <h1 className="text-3xl font-bold">{meal.name}</h1>
       <p className="text-base">{meal.description}</p>
       <div className="bg-surface p-4 rounded-lg shadow">
         <h2 className="text-xl font-semibold mb-2">Instructions</h2>
-        {typeof meal.instructions === 'string' && meal.instructions.trim() ? (
+        {parsedInstructions.length > 0 ? (
           <ol className="list-decimal list-inside space-y-2">
-            {meal.instructions.split('\n').map((step, idx) => (
+            {parsedInstructions.map((step, idx) => (
               <li key={idx}>{step}</li>
             ))}
           </ol>
@@ -123,21 +76,53 @@ export default function CookMealPage() {
           <div className="text-muted-foreground text-sm italic">No entries yet. Add one above ⬆️</div>
         )}
       </div>
-      <Button
-        onClick={handleDoneCooking}
-        variant="success"
-      >
-        Done Cooking
-      </Button>
-      <Button
-        type="button"
-        onClick={() => router.back()}
-        variant="link"
-        size="sm"
-        className="block mt-2"
-      >
-        Cancel
-      </Button>
+
+      {/* Cooking session controls */}
+      {!isCooking && parsedInstructions.length > 0 && (
+        <Button onClick={() => startCooking(meal.id, parsedInstructions)}>
+          Cook Meal
+        </Button>
+      )}
+      {isCooking && !isThisMealActive && (
+        <div className="text-orange-600 text-sm font-medium">
+          Finish your current meal before starting another.
+        </div>
+      )}
+      {isThisMealActive && (
+        <div className="mt-6">
+          <h2 className="text-xl font-semibold mb-2">Step {currentStep + 1}</h2>
+          <p className="text-base mb-4">{cookingInstructions[currentStep]}</p>
+          <div className="flex gap-4 mt-4">
+            {currentStep > 0 && (
+              <Button onClick={previousStep}>
+                Previous Step
+              </Button>
+            )}
+            {currentStep < cookingInstructions.length - 1 ? (
+              <Button onClick={nextStep}>
+                Next Step
+              </Button>
+            ) : (
+              <Button onClick={endCooking} variant="success">
+                Finish Cooking
+              </Button>
+            )}
+          </div>
+          {/* Cancel Cooking button only during active session for this meal */}
+          <Button
+            type="button"
+            onClick={() => {
+              cancelCooking();
+              router.push(`/food/meals/${meal.id}`);
+            }}
+            variant="link"
+            size="sm"
+            className="block mt-2"
+          >
+            Cancel Cooking
+          </Button>
+        </div>
+      )}
     </div>
   );
 } 
