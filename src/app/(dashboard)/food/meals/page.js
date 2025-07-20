@@ -34,7 +34,7 @@ export default function MealsPage() {
       setMealsLoading(false);
     }
     if (user) loadMeals();
-  }, [user, fetchMeals]);
+  }, [user, fetchMeals, router]);
 
   // --- DELETE HANDLER ---
   const handleDelete = async (mealId) => {

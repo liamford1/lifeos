@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '@/lib/supabaseClient'
 import { deleteEntityWithCalendarEvent } from '@/lib/deleteUtils'
 import BackButton from '@/components/BackButton'
@@ -24,7 +24,7 @@ export default function MealPlannerPage() {
   const [mealsLoading, setMealsLoading] = useState(true)
   const [plannedMealsLoading, setPlannedMealsLoading] = useState(true)
 
-  const fetchMeals = async () => {
+  const fetchMeals = useCallback(async () => {
     setMealsLoading(true)
     const { data, error } = await supabase
       .from('meals')
@@ -37,9 +37,9 @@ export default function MealPlannerPage() {
       setMeals(data)
     }
     setMealsLoading(false)
-  }
+  }, [showError])
 
-  const fetchPlannedMeals = async () => {
+  const fetchPlannedMeals = useCallback(async () => {
     setPlannedMealsLoading(true)
     const { data, error } = await supabase
       .from('planned_meals')
@@ -57,7 +57,7 @@ export default function MealPlannerPage() {
       setPlannedMeals(data)
     }
     setPlannedMealsLoading(false)
-  }
+  }, [showError])
 
   useEffect(() => {
     fetchMeals()

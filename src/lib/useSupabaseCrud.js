@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { useToast } from '@/components/Toast';
 
@@ -11,11 +11,14 @@ export function useFetchEntity(table, filters = {}) {
   const [error, setError] = useState(null);
   const { showSuccess, showError } = useToast();
 
+  // Memoize filters to ensure stable reference
+  const memoizedFilters = useMemo(() => filters, [filters]);
+
   const fetchData = useCallback(async () => {
     setLoading(true);
     setError(null);
     let query = supabase.from(table).select('*');
-    Object.entries(filters).forEach(([key, value]) => {
+    Object.entries(memoizedFilters).forEach(([key, value]) => {
       query = query.eq(key, value);
     });
     const { data, error } = await query;
@@ -28,7 +31,7 @@ export function useFetchEntity(table, filters = {}) {
       showSuccess('Fetched successfully');
     }
     setLoading(false);
-  }, [table, JSON.stringify(filters), showSuccess, showError]);
+  }, [table, memoizedFilters, showSuccess, showError]);
 
   // Fetch on mount or filters change
   // (User should call fetchData manually if they want more control)

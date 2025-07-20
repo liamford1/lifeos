@@ -40,7 +40,7 @@ export default function EditReceiptPage() {
       setLoading(false);
     }
     fetchReceipt();
-  }, [id]);
+  }, [id, router]);
 
   async function handleUpdate(e) {
     e.preventDefault();

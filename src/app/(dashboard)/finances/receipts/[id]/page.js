@@ -38,7 +38,7 @@ export default function ReceiptDetailPage() {
       setLoading(false);
     }
     fetchReceipt();
-  }, [id]);
+  }, [id, router]);
 
   async function handleDelete() {
     if (!window.confirm("Delete this receipt entry?")) return;

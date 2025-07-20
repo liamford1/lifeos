@@ -57,7 +57,7 @@ export default function CalendarView() {
     };
 
     fetchUserAndEvents();
-  }, []);
+  }, [showError]);
 
   const eventsForSelectedDate = events.filter((event) =>
     dayjs(event.start_time).isSame(selectedDate, 'day')

@@ -40,7 +40,7 @@ export default function EditInventoryPage() {
       setLoading(false);
     }
     fetchItem();
-  }, [id]);
+  }, [id, router]);
 
   async function handleUpdate(e) {
     e.preventDefault();

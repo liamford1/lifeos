@@ -41,7 +41,7 @@ export default function EditExpensePage() {
       setLoading(false);
     }
     fetchExpense();
-  }, [id]);
+  }, [id, router]);
 
   async function handleUpdate(e) {
     e.preventDefault();

@@ -25,7 +25,7 @@ export default function InventoryPage() {
     if (!loading && !user) {
       router.push('/auth');
     }
-  }, [loading, user]);
+  }, [loading, user, router]);
 
   useEffect(() => {
     fetchInventory();

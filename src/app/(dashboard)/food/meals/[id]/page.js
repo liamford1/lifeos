@@ -28,7 +28,7 @@ export default function MealDetailPage() {
     if (!loading && !user) {
       router.push('/auth');
     }
-  }, [loading, user]);
+  }, [loading, user, router]);
 
   useEffect(() => {
     async function fetchMeal() {

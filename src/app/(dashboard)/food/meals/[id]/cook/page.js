@@ -37,7 +37,7 @@ export default function CookMealPage() {
       setMealLoading(false);
     }
     fetchMeal();
-  }, [id]);
+  }, [id, router]);
 
   if (mealLoading) return <LoadingSpinner />;
   if (!meal) return <div className="p-6"><p className="text-muted-foreground text-sm">Meal not found.</p></div>;

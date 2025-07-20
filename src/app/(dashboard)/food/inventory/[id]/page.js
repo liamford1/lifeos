@@ -38,7 +38,7 @@ export default function InventoryDetailPage() {
       setLoading(false);
     }
     fetchItem();
-  }, [id]);
+  }, [id, router]);
 
   async function handleDelete() {
     if (!window.confirm("Delete this inventory item?")) return;

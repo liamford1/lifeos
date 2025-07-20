@@ -38,7 +38,7 @@ export default function ExpenseDetailPage() {
       setLoading(false);
     }
     fetchExpense();
-  }, [id]);
+  }, [id, router]);
 
   async function handleDelete() {
     if (!window.confirm("Delete this expense entry?")) return;
