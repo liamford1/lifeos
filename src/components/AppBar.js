@@ -10,6 +10,7 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import Button from '@/components/Button';
 import { useWorkoutSession } from '@/context/WorkoutSessionContext';
 import { useCookingSession } from '@/context/CookingSessionContext';
+import Image from 'next/image';
 
 export default function AppBar() {
   const { user, loading } = useUser();
@@ -51,11 +52,14 @@ export default function AppBar() {
     // Main navigation bar with dark theme and shadow
     <nav className="flex items-center justify-between p-4 bg-panel border-b border-default">
       {/* App title - clickable to navigate home */}
-      <img
+      <Image
         src="/threados-logo.png"
         alt="Thread OS Logo"
+        width={80}
+        height={40}
         className="h-10 w-auto cursor-pointer ml-4"
         onClick={() => router.push('/')}
+        priority
       />
 
       {/* Right side actions container */}

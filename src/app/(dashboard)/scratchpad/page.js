@@ -30,7 +30,7 @@ export default function ScratchpadPage() {
     if (!loading && !user) {
       router.push('/auth');
     }
-  }, [loading, user]);
+  }, [loading, user, router]);
 
   const fetchEntries = async () => {
     setEntriesLoading(true)
