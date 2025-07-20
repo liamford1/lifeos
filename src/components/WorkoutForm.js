@@ -19,13 +19,11 @@ import DeleteButton from '@/components/DeleteButton';
 import { supabase } from '@/lib/supabaseClient';
 import SetEditor from './SetEditor';
 
-export default function WorkoutForm({ initialWorkout = null, initialExercises = [], isEdit = false }) {
+export default function WorkoutForm({ initialWorkout = null, initialExercises = [] }) {
   const router = useRouter();
   const { showSuccess, showError } = useToast();
   const { user, loading: userLoading } = useUser();
-  const { insert: insertWorkout, loading: workoutLoading } = useInsertEntity('fitness_workouts');
   const { insert: insertExercises, loading: exercisesLoading } = useInsertEntity('fitness_exercises');
-  const { insert: insertCalendar, loading: calendarLoading } = useInsertEntity('calendar_events');
   const { deleteByFilters, loading: deleteLoading } = useDeleteEntity('fitness_exercises');
 
   const [title, setTitle] = useState(initialWorkout?.title || '');
@@ -34,20 +32,17 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
   const [exerciseForm, setExerciseForm] = useState({ name: '', notes: '' });
   const [exercises, setExercises] = useState(initialExercises);
   const [setsByExercise, setSetsByExercise] = useState({});
-  // Track edited sets in edit mode
   const [editedSetsByExercise, setEditedSetsByExercise] = useState({});
-  // For new exercises being added in edit mode, track their sets
-  const [newExercisesWithSets, setNewExercisesWithSets] = useState([]); // [{name, notes, sets: []}]
-  const [pendingSets, setPendingSets] = useState([]); // Sets being entered for the current new exercise
+  const [newExercisesWithSets, setNewExercisesWithSets] = useState([]);
+  const [pendingSets, setPendingSets] = useState([]);
   const [formError, setFormError] = useState('');
 
-  // Fetch sets for each exercise in edit mode on page load
   useEffect(() => {
-    if (!isEdit || !exercises || exercises.length === 0) return;
+    if (!exercises || exercises.length === 0) return;
     const fetchSets = async () => {
       const newSetsByExercise = {};
       for (const ex of exercises) {
-        if (!ex.id) continue; // Only fetch sets for exercises with a defined id
+        if (!ex.id) continue;
         const { data } = await supabase
           .from('fitness_sets')
           .select('*')
@@ -58,43 +53,38 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
       setSetsByExercise(newSetsByExercise);
     };
     fetchSets();
-  }, [isEdit, exercises]);
+  }, [exercises]);
 
-  // When setsByExercise changes (after fetch), initialize editedSetsByExercise
   useEffect(() => {
-    if (isEdit && Object.keys(setsByExercise).length > 0) {
+    if (Object.keys(setsByExercise).length > 0) {
       setEditedSetsByExercise(setsByExercise);
     }
-  }, [isEdit, setsByExercise]);
+  }, [setsByExercise]);
 
   const handleExerciseChange = (e) => {
     const { name, value } = e.target;
     setExerciseForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // For new exercises, handle set changes for the pending (not yet added) exercise
   const handlePendingSetsChange = (sets) => {
     setPendingSets(sets);
   };
 
-  // Remove push to setExercises for new exercises in edit mode
   const handleAddExercise = (e) => {
     e.preventDefault();
     if (!exerciseForm.name) {
       showError('Please enter an exercise name.');
       return;
     }
-    // Only push to newExercisesWithSets, not exercises, for new exercises
     setNewExercisesWithSets((prev) => [...prev, { name: exerciseForm.name, notes: exerciseForm.notes, sets: pendingSets }]);
     setExerciseForm({ name: '', notes: '' });
-    setPendingSets([]); // Clear the temporary set input state
+    setPendingSets([]);
   };
 
   const handleDeleteExercise = (index) => {
     setExercises((prev) => prev.filter((_, i) => i !== index));
   };
 
-  // Helper for SetEditor
   const handleSetsChange = (exerciseId, sets) => {
     setEditedSetsByExercise((prev) => ({ ...prev, [exerciseId]: sets }));
   };
@@ -110,144 +100,82 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
       setFormError('Workout title and date are required.');
       return;
     }
-    // Validate sets for new exercises only
-    for (let i = 0; i < exercises.length; i++) {
-      const ex = exercises[i];
-      if (!ex.id) { // Only validate new exercises
-        const sets = newExercisesWithSets[i]?.sets || [];
-        if (sets.length === 0) {
-          setFormError(`Please add at least one set for new exercise "${ex.name}".`);
-          return;
-        }
-        for (let j = 0; j < sets.length; j++) {
-          const set = sets[j];
-          if (!set.reps || isNaN(set.reps) || set.reps < 1) {
-            setFormError(`Set ${j + 1} for new exercise "${ex.name}" is missing reps or reps is invalid.`);
-            return;
-          }
-          // weight is optional, but if present, must be a number
-          if (set.weight !== null && set.weight !== undefined && set.weight !== '' && isNaN(set.weight)) {
-            setFormError(`Set ${j + 1} for new exercise "${ex.name}" has invalid weight.`);
-            return;
-          }
-        }
-      }
-    }
     let workoutId = initialWorkout?.id;
-    if (isEdit) {
-      // Update workout (use supabase update, not insert)
-      const { error: updateError } = await supabase
-        .from('fitness_workouts')
-        .update({
-          user_id: user.id,
-          title,
-          date,
-          notes,
-        })
-        .eq('id', workoutId);
-      if (updateError) return;
+    // Update workout (use supabase update, not insert)
+    const { error: updateError } = await supabase
+      .from('fitness_workouts')
+      .update({
+        user_id: user.id,
+        title,
+        date,
+        notes,
+      })
+      .eq('id', workoutId);
+    if (updateError) return;
 
-      // 1. Find deleted exercises (in initialExercises but not in exercises)
-      const initialIds = initialExercises.map(ex => ex.id).filter(Boolean);
-      const currentIds = exercises.map(ex => ex.id).filter(Boolean);
-      const deletedIds = initialIds.filter(id => !currentIds.includes(id));
-      // 2. Delete sets and exercises for deletedIds
-      if (deletedIds.length > 0) {
-        await supabase.from('fitness_sets').delete().in('exercise_id', deletedIds);
-        await supabase.from('fitness_exercises').delete().in('id', deletedIds);
-      }
-
-      // 3. Insert new exercises (with sets) if any
-      let insertedExercises = [];
-      if (newExercisesWithSets.length > 0) {
-        const formatted = newExercisesWithSets.map((ex) => ({
-          workout_id: workoutId,
-          name: ex.name,
-          notes: ex.notes,
-        }));
-        const { data: inserted, error: exError } = await insertExercises(formatted);
-        if (exError) return;
-        insertedExercises = inserted || [];
-        // 4. Insert sets for new exercises, matching by array index
-        for (let i = 0; i < insertedExercises.length; i++) {
-          const ex = insertedExercises[i];
-          const sets = newExercisesWithSets[i]?.sets || [];
-          // Debug log: print exercise id and sets
-          console.log('Inserting sets for exercise:', ex.id, ex.name, sets);
-          if (sets.length > 0) {
-            const formattedSets = sets.map((set) => ({
-              exercise_id: ex.id, // Use the id returned from Supabase
-              reps: set.reps,
-              weight: set.weight,
-            }));
-            if (formattedSets.length > 0) {
-              await supabase.from('fitness_sets').insert(formattedSets);
-            }
-          }
-        }
-      }
-      // Update calendar event
-      const startTime = new Date(date);
-      const calendarError = await updateCalendarEventFromSource(
-        CALENDAR_SOURCES.WORKOUT,
-        workoutId,
-        {
-          title: `Workout: ${title}`,
-          start_time: startTime.toISOString(),
-          description: notes || null,
-        }
-      );
-      if (calendarError) {
-        console.error('Calendar event update failed:', calendarError);
-      }
-      showSuccess('Workout updated successfully!');
-      router.push('/fitness/workouts');
-      return;
+    // 1. Find deleted exercises (in initialExercises but not in exercises)
+    const initialIds = initialExercises.map(ex => ex.id).filter(Boolean);
+    const currentIds = exercises.map(ex => ex.id).filter(Boolean);
+    const deletedIds = initialIds.filter(id => !currentIds.includes(id));
+    // 2. Delete sets and exercises for deletedIds
+    if (deletedIds.length > 0) {
+      await supabase.from('fitness_sets').delete().in('exercise_id', deletedIds);
+      await supabase.from('fitness_exercises').delete().in('id', deletedIds);
     }
-    // Create mode: insert workout, then exercises, then calendar event
-    const { data: workoutData, error: workoutError } = await insertWorkout({
-      user_id: user.id,
-      title,
-      date,
-      notes,
-    });
-    if (workoutError || !workoutData || !workoutData[0]?.id) return; // Toast handled by hook
-    workoutId = workoutData[0].id;
-    // Insert exercises
-    if (exercises.length > 0) {
-      const formatted = exercises.map((ex) => ({
+
+    // 3. Insert new exercises (with sets) if any
+    let insertedExercises = [];
+    if (newExercisesWithSets.length > 0) {
+      const formatted = newExercisesWithSets.map((ex) => ({
         workout_id: workoutId,
         name: ex.name,
         notes: ex.notes,
       }));
-      const { error: exError } = await insertExercises(formatted);
-      if (exError) return; // Toast handled by hook
+      const { data: inserted, error: exError } = await insertExercises(formatted);
+      if (exError) return;
+      insertedExercises = inserted || [];
+      // 4. Insert sets for new exercises, matching by array index
+      for (let i = 0; i < insertedExercises.length; i++) {
+        const ex = insertedExercises[i];
+        const sets = newExercisesWithSets[i]?.sets || [];
+        if (sets.length > 0) {
+          const formattedSets = sets.map((set) => ({
+            exercise_id: ex.id,
+            reps: set.reps,
+            weight: set.weight,
+          }));
+          if (formattedSets.length > 0) {
+            await supabase.from('fitness_sets').insert(formattedSets);
+          }
+        }
+      }
     }
-    // Insert calendar event
-    const calendarError = await createCalendarEventForEntity(CALENDAR_SOURCES.WORKOUT, {
-      id: workoutId,
-      user_id: user.id,
-      title,
-      date,
-      notes,
-    });
-    if (calendarError) return; // Toast handled by hook
-    showSuccess('Workout created successfully!');
-    setTitle('');
-    setDate('');
-    setNotes('');
-    setExercises([]);
-    setExerciseForm({ name: '', notes: '' });
+    // Update calendar event
+    const startTime = new Date(date);
+    const calendarError = await updateCalendarEventFromSource(
+      CALENDAR_SOURCES.WORKOUT,
+      workoutId,
+      {
+        title: `Workout: ${title}`,
+        start_time: startTime.toISOString(),
+        description: notes || null,
+      }
+    );
+    if (calendarError) {
+      console.error('Calendar event update failed:', calendarError);
+    }
+    showSuccess('Workout updated successfully!');
     router.push('/fitness/workouts');
+    return;
   };
 
-  const isLoading = userLoading || workoutLoading || exercisesLoading || calendarLoading || deleteLoading;
+  const isLoading = userLoading || exercisesLoading || deleteLoading;
 
   return (
     <div className="max-w-6xl mx-auto p-4 space-y-4">
       <BackButton />
-      <h1 className="text-2xl font-bold">{isEdit ? '✏️ Edit Workout' : '➕ Add Workout'}</h1>
-      <p className="text-base">Create a new workout session with exercises and details.</p>
+      <h1 className="text-2xl font-bold">✏️ Edit Workout</h1>
+      <p className="text-base">Edit your workout session, exercises, and details.</p>
       {formError && <div className="text-red-500 mb-2">{formError}</div>}
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
@@ -293,14 +221,11 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
               placeholder="Notes (optional)" 
               rows={2} 
             />
-            {/* Only show set entry for new exercise in edit mode */}
-            {isEdit && (
-              <SetEditor
-                initialSets={pendingSets}
-                onSetsChange={handlePendingSetsChange}
-                exerciseId={null}
-              />
-            )}
+            <SetEditor
+              initialSets={pendingSets}
+              onSetsChange={handlePendingSetsChange}
+              exerciseId={null}
+            />
             <Button 
               type="button" 
               onClick={handleAddExercise} 
@@ -311,14 +236,13 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
             </Button>
           </div>
         </FormSection>
-        {exercises.length > 0 || newExercisesWithSets.length > 0 ? (
+        {(exercises.length > 0 || newExercisesWithSets.length > 0) && (
           <div className="mt-4">
             <h3 className="font-semibold text-md mb-2">
               <MdOutlineStickyNote2 className="inline w-5 h-5 text-base align-text-bottom mr-2" />
               Exercises Preview
             </h3>
             <ul className="space-y-2">
-              {/* Existing exercises (read-only) */}
               {exercises.map((ex, i) => (
                 <li key={ex.id || `existing-${i}`} className="border p-2 rounded flex flex-col gap-2">
                   <div className="flex justify-between items-start">
@@ -327,23 +251,19 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
                       {ex.notes && <p className="text-sm text-base">{ex.notes}</p>}
                     </div>
                   </div>
-                  {/* Existing exercises: read-only preview of sets */}
-                  {isEdit && i < initialExercises.length && (
-                    <div className="ml-2">
-                      {editedSetsByExercise[ex.id]?.length ? (
-                        editedSetsByExercise[ex.id].map((set, idx) => (
-                          <div key={set.id || idx}>
-                            Set {idx + 1}: {set.reps} reps{set.weight != null ? ` @ ${set.weight} lbs` : ''}
-                          </div>
-                        ))
-                      ) : (
-                        <div className="text-muted-foreground text-sm">No sets logged yet.</div>
-                      )}
-                    </div>
-                  )}
+                  <div className="ml-2">
+                    {editedSetsByExercise[ex.id]?.length ? (
+                      editedSetsByExercise[ex.id].map((set, idx) => (
+                        <div key={set.id || idx}>
+                          Set {idx + 1}: {set.reps} reps{set.weight != null ? ` @ ${set.weight} lbs` : ''}
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-muted-foreground text-sm">No sets logged yet.</div>
+                    )}
+                  </div>
                 </li>
               ))}
-              {/* New exercises (just added, not yet saved to DB) */}
               {newExercisesWithSets.map((ex, i) => (
                 <li key={`new-${i}`} className="border p-2 rounded flex flex-col gap-2">
                   <div className="flex justify-between items-start">
@@ -367,14 +287,14 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
               ))}
             </ul>
           </div>
-        ) : null}
+        )}
         <Button 
           type="submit" 
           variant="none"
           className="bg-card text-base border border-default px-4 py-2 rounded hover:bg-[#4a4a4a] transition-colors duration-200 focus:outline-none focus:ring-0 font-medium w-full mt-6"
           disabled={isLoading}
         >
-          {isLoading ? <LoadingSpinner size={20} /> : `✅ ${isEdit ? 'Update Workout' : 'Save Workout'}`}
+          {isLoading ? <LoadingSpinner size={20} /> : '✅ Update Workout'}
         </Button>
       </form>
     </div>

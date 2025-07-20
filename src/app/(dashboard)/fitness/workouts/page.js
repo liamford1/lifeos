@@ -13,6 +13,7 @@ import { useToast } from '@/components/Toast';
 import { MdOutlineCalendarToday } from 'react-icons/md';
 import { Dumbbell } from 'lucide-react';
 import DeleteButton from '@/components/DeleteButton';
+import { format } from 'date-fns';
 
 export default function WorkoutsDashboard() {
   const { user, loading } = useUser();
@@ -20,6 +21,7 @@ export default function WorkoutsDashboard() {
   const { showSuccess, showError } = useToast();
   const [workouts, setWorkouts] = useState([]);
   const [workoutsLoading, setWorkoutsLoading] = useState(true);
+  const [creating, setCreating] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -63,6 +65,32 @@ export default function WorkoutsDashboard() {
     }
   };
 
+  const handleStartWorkout = async () => {
+    if (!user) return router.push('/auth');
+    setCreating(true);
+    const now = new Date();
+    const today = now.toISOString().split('T')[0];
+    const formattedTitle = `Workout - ${format(now, 'MMMM d, yyyy')}`;
+    const { data, error } = await supabase
+      .from('fitness_workouts')
+      .insert({
+        user_id: user.id,
+        title: formattedTitle,
+        notes: '',
+        in_progress: true,
+        start_time: now.toISOString(),
+        date: today,
+      })
+      .select()
+      .single();
+    setCreating(false);
+    if (!error && data) {
+      router.push('/fitness/workouts/live');
+    } else {
+      showError(error?.message || 'Failed to start workout');
+    }
+  };
+
   useEffect(() => {
     fetchWorkouts();
   }, []);
@@ -77,12 +105,14 @@ export default function WorkoutsDashboard() {
       <p className="text-base">Track your weightlifting and strength training sessions.</p>
 
       <div className="flex gap-4 mb-4">
-        <Button variant="primary" onClick={() => router.push('/fitness/workouts/live')}>
+        <Button
+          variant="primary"
+          onClick={handleStartWorkout}
+          loading={creating}
+          disabled={creating}
+        >
           Start Workout
         </Button>
-        <Link href="/fitness/workouts/add" className="text-blue-600 underline inline-block">
-          ➕ Add New Workout
-        </Link>
       </div>
 
       <h2 className="text-xl font-semibold mb-2">
