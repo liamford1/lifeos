@@ -31,7 +31,7 @@ export function useFetchEntity(table, filters = {}) {
       showSuccess('Fetched successfully');
     }
     setLoading(false);
-  }, [table, memoizedFilters, showSuccess, showError]);
+  }, [table, memoizedFilters, showSuccess, showError, supabase]);
 
   // Fetch on mount or filters change
   // (User should call fetchData manually if they want more control)
