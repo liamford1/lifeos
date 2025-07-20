@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 import { useToast } from '@/components/Toast';
 import { MdOutlineCalendarToday } from 'react-icons/md';
 import { supabase } from '@/lib/supabaseClient';
+import SharedDeleteButton from '@/components/SharedDeleteButton';
 
 export default function WorkoutDetailPage() {
   const params = useParams();
@@ -91,6 +92,7 @@ export default function WorkoutDetailPage() {
           {exercises.map((ex) => (
             <li key={ex.id} className="border p-2 rounded">
               <strong>{ex.name}</strong>
+              <SharedDeleteButton onClick={() => handleDeleteExercise(ex.id)} label="Remove Exercise" size="sm" className="ml-2" />
               <div className="ml-2">
                 {setsByExercise[ex.id]?.length ? (
                   setsByExercise[ex.id].map((set, i) => (

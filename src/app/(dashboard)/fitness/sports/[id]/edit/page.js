@@ -8,7 +8,6 @@ import SportForm from "@/components/SportForm";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import Button from "@/components/Button";
 import { useToast } from "@/components/Toast";
-import DeleteButton from '@/components/DeleteButton';
 
 export default function EditSportPage() {
   const { id } = useParams();
@@ -82,11 +81,15 @@ export default function EditSportPage() {
       <BackButton />
       <h1 className="text-xl font-bold mb-4">Edit Sport Entry</h1>
       <SportForm initialValues={sport} onSubmit={handleUpdateSport} loading={saving} />
-      <DeleteButton
+      <Button
+        variant="danger"
+        size="sm"
         onClick={handleDelete}
+        aria-label="Delete sport entry"
         loading={deleting}
-        ariaLabel="Delete sport entry"
-      />
+      >
+        🗑️ Delete
+      </Button>
     </div>
   );
 } 

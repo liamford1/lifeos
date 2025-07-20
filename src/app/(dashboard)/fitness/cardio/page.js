@@ -10,6 +10,7 @@ import Button from '@/components/Button';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { useToast } from '@/components/Toast';
 import { HeartPulse } from 'lucide-react';
+import SharedDeleteButton from '@/components/SharedDeleteButton';
 
 export default function CardioDashboard() {
   const { showSuccess, showError } = useToast();
@@ -114,17 +115,15 @@ export default function CardioDashboard() {
                 >
                   ✏️ Edit
                 </Button>
-                <Button
+                <SharedDeleteButton
                   onClick={(e) => {
                     e.stopPropagation();
                     handleDelete(s.id);
                   }}
-                  variant="link"
                   size="sm"
-                  className="text-red-500 hover:text-red-700"
-                >
-                  🗑️ Delete
-                </Button>
+                  aria-label="Delete cardio session"
+                  label="Delete"
+                />
               </div>
             </li>
           ))}

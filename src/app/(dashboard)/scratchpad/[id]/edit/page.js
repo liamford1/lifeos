@@ -9,7 +9,6 @@ import Button from "@/components/Button";
 import { useToast } from "@/components/Toast";
 import FormInput from "@/components/FormInput";
 import FormSection from "@/components/FormSection";
-import DeleteButton from '@/components/DeleteButton';
 
 export default function EditScratchpadPage() {
   const { id } = useParams();
@@ -102,11 +101,15 @@ export default function EditScratchpadPage() {
           </FormSection>
           <div className="flex gap-2">
             <Button type="submit" variant="primary" loading={saving}>Save</Button>
-            <DeleteButton
+            <Button
+              variant="danger"
+              size="sm"
               onClick={handleDelete}
+              aria-label="Delete note"
               loading={deleting}
-              ariaLabel="Delete entry"
-            />
+            >
+              🗑️ Delete
+            </Button>
           </div>
         </form>
       )}

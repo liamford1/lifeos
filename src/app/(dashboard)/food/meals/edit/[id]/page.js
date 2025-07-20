@@ -8,7 +8,8 @@ import MealForm from '@/components/MealForm';
 import { CALENDAR_SOURCES, updateCalendarEvent, updateCalendarEventFromSource } from '@/lib/calendarUtils';
 import { useUser } from '@/context/UserContext';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import DeleteButton from '@/components/DeleteButton';
+import Button from '@/components/Button';
+import SharedDeleteButton from '@/components/SharedDeleteButton';
 
 export default function EditMealPage() {
   const { user, loading } = useUser();
@@ -382,10 +383,12 @@ export default function EditMealPage() {
         loading={saving}
         error={error}
       />
-      <DeleteButton
+      <SharedDeleteButton
         onClick={handleDelete}
-        loading={deleting}
-        ariaLabel="Delete this meal"
+        size="sm"
+        aria-label="Delete meal"
+        disabled={deleting}
+        label="Delete"
       />
     </div>
   );

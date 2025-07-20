@@ -8,7 +8,6 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import Button from "@/components/Button";
 import Link from "next/link";
 import { useToast } from "@/components/Toast";
-import DeleteButton from '@/components/DeleteButton';
 
 export default function ReceiptDetailPage() {
   const { id } = useParams();
@@ -76,11 +75,15 @@ export default function ReceiptDetailPage() {
       <Link href={`/finances/receipts/${id}/edit`} className="mr-2">
         <Button variant="primary">Edit</Button>
       </Link>
-      <DeleteButton
+      <Button
+        variant="danger"
+        size="sm"
         onClick={handleDelete}
+        aria-label="Delete receipt entry"
         loading={deleting}
-        ariaLabel="Delete receipt entry"
-      />
+      >
+        🗑️ Delete
+      </Button>
     </div>
   );
 } 

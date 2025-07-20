@@ -10,7 +10,6 @@ import { useToast } from "@/components/Toast";
 import FormInput from "@/components/FormInput";
 import FormSection from "@/components/FormSection";
 import { CALENDAR_SOURCES, updateCalendarEventFromSource } from '@/lib/calendarUtils';
-import DeleteButton from '@/components/DeleteButton';
 
 export default function EditExpensePage() {
   const { id } = useParams();
@@ -133,11 +132,15 @@ export default function EditExpensePage() {
           </FormSection>
           <div className="flex gap-2">
             <Button type="submit" variant="primary" loading={saving}>Save</Button>
-            <DeleteButton
+            <Button
+              variant="danger"
+              size="sm"
               onClick={handleDelete}
+              aria-label="Delete expense entry"
               loading={deleting}
-              ariaLabel="Delete expense entry"
-            />
+            >
+              🗑️ Delete
+            </Button>
           </div>
         </form>
       )}

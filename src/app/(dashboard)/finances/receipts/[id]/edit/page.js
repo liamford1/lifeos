@@ -9,7 +9,6 @@ import Button from "@/components/Button";
 import { useToast } from "@/components/Toast";
 import FormInput from "@/components/FormInput";
 import FormSection from "@/components/FormSection";
-import DeleteButton from '@/components/DeleteButton';
 
 export default function EditReceiptPage() {
   const { id } = useParams();
@@ -102,11 +101,15 @@ export default function EditReceiptPage() {
           </FormSection>
           <div className="flex gap-2">
             <Button type="submit" variant="primary" loading={saving}>Save</Button>
-            <DeleteButton
+            <Button
+              variant="danger"
+              size="sm"
               onClick={handleDelete}
+              aria-label="Delete receipt entry"
               loading={deleting}
-              ariaLabel="Delete receipt entry"
-            />
+            >
+              🗑️ Delete
+            </Button>
           </div>
         </form>
       )}

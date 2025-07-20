@@ -13,7 +13,7 @@ import { useToast } from '@/components/Toast';
 import Link from 'next/link';
 import { MdOutlineStickyNote2 } from 'react-icons/md';
 import { NotebookPen } from 'lucide-react';
-import DeleteButton from '@/components/DeleteButton';
+import SharedDeleteButton from '@/components/SharedDeleteButton';
 
 export default function ScratchpadPage() {
   const { user, loading } = useUser();
@@ -154,10 +154,11 @@ export default function ScratchpadPage() {
                     <Link href={`/scratchpad/${entry.id}/edit`}>
                       <Button variant="primary" size="sm">Edit</Button>
                     </Link>
-                    <DeleteButton
+                    <SharedDeleteButton
+                      size="sm"
                       onClick={() => handleDelete(entry.id)}
-                      loading={loadingId === entry.id}
-                      ariaLabel="Delete entry"
+                      aria-label="Delete entry"
+                      label="Delete"
                     />
                   </div>
                 </div>

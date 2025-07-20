@@ -8,7 +8,6 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import Button from "@/components/Button";
 import Link from "next/link";
 import { useToast } from "@/components/Toast";
-import DeleteButton from '@/components/DeleteButton';
 
 export default function CardioDetailPage() {
   const { id } = useParams();
@@ -75,11 +74,15 @@ export default function CardioDetailPage() {
       <Link href={`/fitness/cardio/${id}/edit`} className="mr-2">
         <Button variant="primary">Edit</Button>
       </Link>
-      <DeleteButton
+      <Button
+        variant="danger"
+        size="sm"
         onClick={handleDelete}
+        aria-label="Delete cardio entry"
         loading={deleting}
-        ariaLabel="Delete cardio entry"
-      />
+      >
+        🗑️ Delete
+      </Button>
     </div>
   );
 }

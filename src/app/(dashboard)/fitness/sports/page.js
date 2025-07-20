@@ -10,7 +10,6 @@ import Button from '@/components/Button';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { useToast } from '@/components/Toast';
 import { Goal } from 'lucide-react';
-import DeleteButton from '@/components/DeleteButton';
 
 export default function SportsDashboard() {
   const { showSuccess, showError } = useToast();
@@ -115,11 +114,15 @@ export default function SportsDashboard() {
                 >
                   ✏️ Edit
                 </Button>
-                <DeleteButton
+                <Button
+                  variant="danger"
+                  size="sm"
                   onClick={() => handleDelete(s.id)}
+                  aria-label="Delete sport entry"
                   loading={false} // Placeholder for loading state if needed, currently not used in this component
-                  ariaLabel={`Delete sport session for ${s.activity_type || 'this entry'}`}
-                />
+                >
+                  🗑️ Delete
+                </Button>
               </div>
             </li>
           ))}

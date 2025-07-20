@@ -12,8 +12,8 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import { useToast } from '@/components/Toast';
 import { MdOutlineCalendarToday } from 'react-icons/md';
 import { Dumbbell } from 'lucide-react';
-import DeleteButton from '@/components/DeleteButton';
 import { format } from 'date-fns';
+import SharedDeleteButton from '@/components/SharedDeleteButton';
 
 export default function WorkoutsDashboard() {
   const { user, loading } = useUser();
@@ -151,10 +151,11 @@ export default function WorkoutsDashboard() {
                 >
                   ✏️ Edit
                 </Button>
-                <DeleteButton
+                <SharedDeleteButton
                   onClick={() => handleDelete(w.id)}
-                  loading={loading}
-                  ariaLabel={`Delete workout for ${w.title || 'this entry'}`}
+                  size="sm"
+                  aria-label="Delete workout"
+                  label="Delete"
                 />
               </div>
             </li>

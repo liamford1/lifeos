@@ -9,7 +9,6 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import Button from "@/components/Button";
 import { useToast } from "@/components/Toast";
 import { CALENDAR_SOURCES, updateCalendarEventFromSource } from '@/lib/calendarUtils';
-import DeleteButton from '@/components/DeleteButton';
 
 export default function EditCardioPage() {
   const { id } = useParams();
@@ -99,11 +98,15 @@ export default function EditCardioPage() {
       <BackButton />
       <h1 className="text-xl font-bold mb-4">Edit Cardio Entry</h1>
       <CardioForm initialValues={cardio} onSubmit={handleUpdateCardio} loading={saving} />
-      <DeleteButton
+      <Button
+        variant="danger"
+        size="sm"
         onClick={handleDelete}
+        aria-label="Delete cardio entry"
         loading={deleting}
-        ariaLabel="Delete cardio entry"
-      />
+      >
+        🗑️ Delete
+      </Button>
     </div>
   );
 } 

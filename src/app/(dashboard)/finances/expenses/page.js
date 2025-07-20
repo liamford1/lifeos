@@ -11,6 +11,7 @@ import BackButton from '@/components/BackButton';
 import Button from '@/components/Button';
 import { useToast } from '@/components/Toast';
 import { deleteCalendarEventForEntity } from '@/lib/calendarSync';
+import SharedDeleteButton from '@/components/SharedDeleteButton';
 
 export default function FinancesOverview() {
   const { user, loading } = useUser();
@@ -92,14 +93,12 @@ export default function FinancesOverview() {
                 <Link href={`/finances/expenses/${exp.id}/edit`} passHref legacyBehavior>
                   <Button as="a" variant="primary" size="sm">Edit</Button>
                 </Link>
-                <Button
-                  onClick={() => handleDelete(exp.id)}
-                  variant="link"
+                <SharedDeleteButton
                   size="sm"
-                  className="text-red-600 hover:text-red-700"
-                >
-                  🗑️ Delete
-                </Button>
+                  onClick={() => handleDelete(exp.id)}
+                  aria-label="Delete expense entry"
+                  label="Delete"
+                />
               </div>
             </li>
           ))}

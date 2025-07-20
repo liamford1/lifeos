@@ -15,7 +15,6 @@ import { useToast } from '@/components/Toast';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { MdOutlineStickyNote2 } from 'react-icons/md';
 import { createCalendarEventForEntity } from '@/lib/calendarSync';
-import DeleteButton from '@/components/DeleteButton';
 import { supabase } from '@/lib/supabaseClient';
 import SetEditor from './SetEditor';
 

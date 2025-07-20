@@ -8,6 +8,7 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import { useToast } from '@/components/Toast';
 import { useCookingSession } from '@/context/CookingSessionContext';
 import BackButton from '@/components/BackButton';
+import SharedDeleteButton from '@/components/SharedDeleteButton';
 
 export default function CookMealPage() {
   const router = useRouter();
@@ -109,18 +110,16 @@ export default function CookMealPage() {
             )}
           </div>
           {/* Cancel Cooking button only during active session for this meal */}
-          <Button
-            type="button"
+          <SharedDeleteButton
             onClick={() => {
               cancelCooking();
               router.push(`/food/meals/${meal.id}`);
             }}
-            variant="link"
+            label="Cancel Cooking"
+            icon={false}
             size="sm"
             className="block mt-2"
-          >
-            Cancel Cooking
-          </Button>
+          />
         </div>
       )}
     </div>

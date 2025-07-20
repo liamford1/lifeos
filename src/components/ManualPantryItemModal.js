@@ -3,6 +3,7 @@ import { supabase } from '@/lib/supabaseClient';
 import FormInput from './FormInput';
 import FormLabel from './FormLabel';
 import Button from './Button';
+import SharedDeleteButton from './SharedDeleteButton';
 
 export default function ManualPantryItemModal({ onClose, onAddSuccess }) {
   const [name, setName] = useState('');
@@ -55,13 +56,12 @@ export default function ManualPantryItemModal({ onClose, onAddSuccess }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
       <div className="bg-surface rounded-lg shadow-lg p-6 w-full max-w-md relative">
-        <button
-          className="absolute top-2 right-2 text-xl text-muted-foreground hover:text-white"
+        <SharedDeleteButton
           onClick={onClose}
           aria-label="Close"
-        >
-          ×
-        </button>
+          className="absolute top-2 right-2 text-xl text-muted-foreground hover:text-white p-2"
+          disabled={loading}
+        />
         <h2 className="text-xl font-bold mb-4">Add Pantry Item</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>

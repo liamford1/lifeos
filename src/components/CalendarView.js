@@ -14,7 +14,7 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import { useToast } from '@/components/Toast';
 import { navigateToSource } from '@/lib/navigateToSource';
 import { MdOutlineCalendarToday } from 'react-icons/md';
-import DeleteButton from '@/components/DeleteButton';
+import SharedDeleteButton from '@/components/SharedDeleteButton';
 
 export default function CalendarView() {
   const { showSuccess, showError } = useToast();
@@ -298,13 +298,10 @@ export default function CalendarView() {
                     <div className="font-semibold">
                       {Icon && <Icon className="inline mr-1 align-text-bottom" size={18} />} {event.title}
                     </div>
-                    <DeleteButton
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDeleteEvent(event);
-                      }}
-                      loading={false} // This loading state is not directly tied to the event deletion, but the component handles it.
-                      ariaLabel="Delete event"
+                    <SharedDeleteButton
+                      size="sm"
+                      onClick={() => handleDeleteEvent(event)}
+                      aria-label="Delete event"
                       label="Delete"
                     />
                   </div>

@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import FormInput from './FormInput';
 import Button from './Button';
-import DeleteButton from './DeleteButton';
 
 export default function SetEditor({
   initialSets = [],
@@ -106,7 +105,14 @@ export default function SetEditor({
                 <Button type="button" variant="ghost" onClick={() => handleEditSet(idx)}>
                   Edit
                 </Button>
-                <DeleteButton onClick={() => handleDeleteSet(idx)} ariaLabel={`Delete set ${idx + 1}`} />
+                <Button
+                  variant="danger"
+                  size="sm"
+                  onClick={() => handleDeleteSet(idx)}
+                  aria-label={`Delete set ${idx + 1}`}
+                >
+                  🗑️ Delete
+                </Button>
               </>
             )}
           </li>

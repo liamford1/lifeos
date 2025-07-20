@@ -11,7 +11,7 @@ import Link from 'next/link';
 import { CALENDAR_SOURCES } from '@/lib/calendarUtils';
 import { useToast } from '@/components/Toast';
 import { MdOutlineCalendarToday, MdOutlineStickyNote2 } from 'react-icons/md';
-import DeleteButton from '@/components/DeleteButton';
+import SharedDeleteButton from '@/components/SharedDeleteButton';
 
 export default function MealDetailPage() {
   const { id } = useParams();
@@ -251,10 +251,12 @@ export default function MealDetailPage() {
           <MdOutlineCalendarToday className="inline w-5 h-5 text-base align-text-bottom mr-2" />
           Back to Calendar
         </Button>
-        <DeleteButton
+        <SharedDeleteButton
           onClick={handleDeleteMeal}
-          loading={deleting}
-          ariaLabel="Delete this meal"
+          size="sm"
+          aria-label="Delete meal"
+          disabled={deleting}
+          label="Delete"
         />
       </div>
     </div>

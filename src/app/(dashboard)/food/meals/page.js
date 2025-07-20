@@ -8,7 +8,7 @@ import { supabase } from '@/lib/supabaseClient';
 import Link from 'next/link';
 import BackButton from '@/components/BackButton';
 import { UtensilsCrossed } from 'lucide-react';
-import DeleteButton from '@/components/DeleteButton';
+import Button from '@/components/Button';
 
 export default function MealsPage() {
   const { user, loading } = useUser();
@@ -107,11 +107,15 @@ export default function MealsPage() {
                   </p>
                 </div>
               </Link>
-              <DeleteButton
+              <Button
+                variant="danger"
+                size="sm"
                 onClick={() => handleDelete(meal.id)}
+                aria-label="Delete meal"
                 loading={loadingId === meal.id}
-                ariaLabel={`Delete ${meal.name}`}
-              />
+              >
+                🗑️ Delete
+              </Button>
             </li>
           ))}
         </ul>

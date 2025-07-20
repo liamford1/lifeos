@@ -8,7 +8,6 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import Button from "@/components/Button";
 import Link from "next/link";
 import { useToast } from "@/components/Toast";
-import DeleteButton from '@/components/DeleteButton';
 
 export default function ExpenseDetailPage() {
   const { id } = useParams();
@@ -78,11 +77,15 @@ export default function ExpenseDetailPage() {
       <Link href={`/finances/expenses/${id}/edit`} className="mr-2">
         <Button variant="primary">Edit</Button>
       </Link>
-      <DeleteButton
+      <Button
+        variant="danger"
+        size="sm"
         onClick={handleDelete}
+        aria-label="Delete expense entry"
         loading={deleting}
-        ariaLabel="Delete expense entry"
-      />
+      >
+        🗑️ Delete
+      </Button>
     </div>
   );
 } 

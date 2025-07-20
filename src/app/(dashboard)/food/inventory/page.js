@@ -9,6 +9,7 @@ import BackButton from '@/components/BackButton'
 import { useDeleteEntity } from '@/lib/useSupabaseCrud';
 import { Package } from 'lucide-react';
 import ManualPantryItemModal from '@/components/ManualPantryItemModal';
+import SharedDeleteButton from '@/components/SharedDeleteButton';
 
 export default function InventoryPage() {
   // All hooks at the top!
@@ -147,16 +148,12 @@ export default function InventoryPage() {
                     Added on: {new Date(item.added_at).toLocaleDateString()}
                   </div>
                 </div>
-                <Button
+                <SharedDeleteButton
                   onClick={() => handleDelete(item.id)}
-                  variant="ghost"
                   size="sm"
-                  className="text-red-400 hover:text-red-300 text-xl font-bold ml-4 p-0"
                   title="Delete"
                   disabled={deleteLoading}
-                >
-                  {deleteLoading ? <LoadingSpinner size={18} /> : '✕'}
-                </Button>
+                />
               </div>
 
               <div className="mt-4 flex gap-2 items-center">
