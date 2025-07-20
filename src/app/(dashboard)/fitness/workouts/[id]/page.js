@@ -69,7 +69,7 @@ export default function WorkoutDetailPage() {
 
   useEffect(() => {
     if (user) fetchAll();
-  }, [user, fetchAll, router]);
+  }, [user, fetchAll]);
 
   if (loading || userLoading) return <LoadingSpinner />;
   if (!user) return null;
