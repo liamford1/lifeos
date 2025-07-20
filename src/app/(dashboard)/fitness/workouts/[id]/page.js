@@ -5,7 +5,7 @@ import { useFetchEntity } from '@/lib/useSupabaseCrud';
 import BackButton from '@/components/BackButton';
 import { useUser } from '@/context/UserContext';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useToast } from '@/components/Toast';
 import { MdOutlineCalendarToday } from 'react-icons/md';
 import { supabase } from '@/lib/supabaseClient';
@@ -28,48 +28,48 @@ export default function WorkoutDetailPage() {
     }
   }, [userLoading, user]);
 
-  useEffect(() => {
-    const fetchAll = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const { data: workoutData, error: workoutErr } = await supabase
-          .from('fitness_workouts')
-          .select('*')
-          .eq('id', params.id)
-          .single();
-        if (workoutErr) throw workoutErr;
-        setWorkout(workoutData);
+  const fetchAll = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const { data: workoutData, error: workoutErr } = await supabase
+        .from('fitness_workouts')
+        .select('*')
+        .eq('id', params.id)
+        .single();
+      if (workoutErr) throw workoutErr;
+      setWorkout(workoutData);
 
-        const { data: exerciseData, error: exerciseErr } = await supabase
-          .from('fitness_exercises')
-          .select('*')
-          .eq('workout_id', params.id);
-        if (exerciseErr) throw exerciseErr;
-        setExercises(exerciseData);
+      const { data: exerciseData, error: exerciseErr } = await supabase
+        .from('fitness_exercises')
+        .select('*')
+        .eq('workout_id', params.id);
+      if (exerciseErr) throw exerciseErr;
+      setExercises(exerciseData);
 
-        // Fetch sets for each exercise
-        const setsByEx = {};
-        for (const ex of exerciseData) {
-          const { data: setsData, error: setsErr } = await supabase
-            .from('fitness_sets')
-            .select('*')
-            .eq('exercise_id', ex.id)
-            .order('created_at', { ascending: true });
-          if (setsErr) throw setsErr;
-          setsByEx[ex.id] = setsData || [];
-        }
-        setSetsByExercise(setsByEx);
-      } catch (err) {
-        setError(err.message || 'Failed to load workout details.');
-        showError(err.message || 'Failed to load workout details.');
-      } finally {
-        setLoading(false);
+      // Fetch sets for each exercise
+      const setsByEx = {};
+      for (const ex of exerciseData) {
+        const { data: setsData, error: setsErr } = await supabase
+          .from('fitness_sets')
+          .select('*')
+          .eq('exercise_id', ex.id)
+          .order('created_at', { ascending: true });
+        if (setsErr) throw setsErr;
+        setsByEx[ex.id] = setsData || [];
       }
-    };
+      setSetsByExercise(setsByEx);
+    } catch (err) {
+      setError(err.message || 'Failed to load workout details.');
+      showError(err.message || 'Failed to load workout details.');
+    } finally {
+      setLoading(false);
+    }
+  }, [params.id, showError]);
+
+  useEffect(() => {
     if (user) fetchAll();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [params.id, user, router]);
+  }, [user, fetchAll]);
 
   if (loading || userLoading) return <LoadingSpinner />;
   if (!user) return null;

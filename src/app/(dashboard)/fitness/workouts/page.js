@@ -39,7 +39,7 @@ export default function WorkoutsDashboard() {
       setWorkoutsLoading(false);
     }
     if (user) loadWorkouts();
-  }, [user, router]);
+  }, [user, router, fetchWorkouts]);
 
   const handleDelete = async (id) => {
     const confirm = window.confirm('Delete this workout?');

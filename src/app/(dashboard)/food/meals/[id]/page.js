@@ -88,7 +88,7 @@ export default function MealDetailPage() {
     }
 
     fetchMeal();
-  }, [id, router]);
+  }, [id, router, showError]);
 
   async function handleDeleteMeal() {
     try {
