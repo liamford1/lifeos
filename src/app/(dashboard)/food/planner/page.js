@@ -32,7 +32,7 @@ export default function MealPlannerPage() {
       .order('name')
 
     if (error) {
-      console.error('Error fetching meals:', error.message)
+      showError('Error fetching meals:', error.message)
     } else {
       setMeals(data)
     }
@@ -52,7 +52,7 @@ export default function MealPlannerPage() {
       .order('planned_date')
 
     if (error) {
-      console.error('Error fetching planned meals:', error.message)
+      showError('Error fetching planned meals:', error.message)
     } else {
       setPlannedMeals(data)
     }
@@ -78,7 +78,7 @@ export default function MealPlannerPage() {
       ])
 
     if (error) {
-      console.error('Error adding calendar event:', error.message)
+      showError('Error adding calendar event:', error.message)
     }
   }
 
@@ -115,31 +115,7 @@ export default function MealPlannerPage() {
     if (error) {
       setMessage(`Error: ${error.message}`)
     } else {
-      // Log the planned meal ID when inserting the calendar event
-      console.log('Planned meal ID:', insertData.id)
-      
-      const meal = meals.find((m) => m.id === selectedMealId)
-      const [year, month, day] = plannedDate.split('-').map(Number)
-      const startTime = new Date(year, month - 1, day,
-        mealTime === 'breakfast' ? 8 :
-        mealTime === 'lunch' ? 12 :
-        mealTime === 'dinner' ? 18 : 15
-      )
-
-      // Create calendar event for planned meal
-      const calendarError = await createCalendarEventForEntity(CALENDAR_SOURCES.PLANNED_MEAL, {
-        id: insertData.id,
-        user_id: user.id,
-        meal_time: mealTime,
-        meal_name: meal.name,
-        planned_date: plannedDate,
-        description: meal.description,
-      });
-      if (calendarError) {
-        console.error('Calendar event creation failed:', calendarError);
-      }
-
-      setMessage('Meal planned successfully!')
+      showSuccess('Meal planned successfully!')
       setSelectedMealId('')
       setPlannedDate('')
       setMealTime('dinner')
@@ -162,14 +138,12 @@ export default function MealPlannerPage() {
       .delete()
       .eq('id', id);
     if (deleteError) {
-      console.error('Error deleting planned meal:', deleteError);
       showError('Failed to delete planned meal.');
       return;
     }
     // Delete the linked calendar event
     const calendarError = await deleteCalendarEventForEntity(CALENDAR_SOURCES.PLANNED_MEAL, id);
     if (calendarError) {
-      console.error('Error deleting linked calendar event:', calendarError);
       showError('Failed to delete linked calendar event.');
       return;
     }

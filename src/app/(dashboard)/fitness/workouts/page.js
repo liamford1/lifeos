@@ -37,7 +37,7 @@ export default function WorkoutsDashboard() {
       .order('date', { ascending: false });
 
     if (!error) setWorkouts(data);
-    else console.error(error);
+    else showError('Failed to fetch workouts.');
     setWorkoutsLoading(false);
   };
 
@@ -57,7 +57,6 @@ export default function WorkoutsDashboard() {
     const error = await deleteWorkoutCascade({ workoutId: id, user_id });
 
     if (error) {
-      console.error(error);
       showError('Failed to delete workout.');
     } else {
       setWorkouts((prev) => prev.filter((w) => w.id !== id));

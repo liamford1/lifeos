@@ -161,9 +161,10 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
       }
     );
     if (calendarError) {
-      console.error('Calendar event update failed:', calendarError);
+      showError('Calendar event update failed:', calendarError);
+    } else {
+      showSuccess('Workout updated successfully!');
     }
-    showSuccess('Workout updated successfully!');
     router.push('/fitness/workouts');
     return;
   };

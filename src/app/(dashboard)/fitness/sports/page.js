@@ -26,7 +26,7 @@ export default function SportsDashboard() {
         .order('date', { ascending: false });
 
       if (error) {
-        console.error(error);
+        showError('Failed to fetch sports sessions.');
       } else {
         setSessions(data);
       }
@@ -56,7 +56,6 @@ export default function SportsDashboard() {
     });
 
     if (error) {
-      console.error(error);
       showError('Failed to delete session.');
     } else {
       setSessions((prev) => prev.filter((s) => s.id !== id));

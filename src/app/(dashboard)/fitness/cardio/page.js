@@ -27,7 +27,7 @@ export default function CardioDashboard() {
         .order('date', { ascending: false });
 
       if (error) {
-        console.error(error);
+        showError('Failed to fetch cardio sessions.');
       } else {
         setSessions(data);
       }
@@ -57,7 +57,6 @@ export default function CardioDashboard() {
     });
 
     if (error) {
-      console.error(error);
       showError('Failed to delete session.');
     } else {
       setSessions((prev) => prev.filter((s) => s.id !== id));

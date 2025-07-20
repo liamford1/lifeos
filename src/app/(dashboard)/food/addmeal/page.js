@@ -43,9 +43,6 @@ export default function AddMealPage(props) {
         return;
       }
 
-      console.log("🧪 Final ingredient state being saved:", mealData.ingredients);
-      console.log("🧪 Raw ingredients count:", mealData.ingredients.length);
-
       // Call the new API route to create the meal
       const response = await fetch('/api/meal/create', {
         method: 'POST',
@@ -67,7 +64,6 @@ export default function AddMealPage(props) {
 
       const result = await response.json();
       if (!response.ok && result.error) {
-        console.error(result.error);
         showError('Failed to save meal.');
         setIsSaving(false);
         return;
@@ -96,17 +92,12 @@ export default function AddMealPage(props) {
           unit: i.unit.trim()
         }));
 
-      console.log("🧪 Cleaned ingredients to insert:", cleanedIngredients);
-      console.log("🧪 Cleaned ingredients count:", cleanedIngredients.length);
-
       if (cleanedIngredients.length > 0) {
         const { error: insertError } = await supabase
           .from('meal_ingredients')
           .insert(cleanedIngredients);
 
         if (insertError) {
-          console.error('Error inserting ingredients:', insertError);
-          console.error('Attempted to insert:', cleanedIngredients);
           showError('Meal saved, but failed to save ingredients.');
           setIsSaving(false);
           return;
@@ -118,7 +109,6 @@ export default function AddMealPage(props) {
       showSuccess('Meal and ingredients saved successfully!');
       router.push('/food/meals');
     } catch (err) {
-      console.error('Error saving meal:', err);
       showError('An unexpected error occurred.');
       setIsSaving(false);
     }

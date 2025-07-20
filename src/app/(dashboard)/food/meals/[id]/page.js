@@ -35,17 +35,12 @@ export default function MealDetailPage() {
       // Always fetch the authenticated user directly from Supabase
       const { data: authUserData, error: authUserError } = await supabase.auth.getUser();
       const authUser = authUserData?.user;
-      console.log('[MealDetailPage] Supabase auth user:', authUser);
       if (!authUser) {
         router.push('/auth');
         return;
       }
 
       try {
-        console.log('=== fetchMeal started ===');
-        console.log('User ID:', authUser.id);
-        console.log('Meal ID:', id);
-
         const { data: mealData, error: mealError } = await supabase
           .from('meals')
           .select('*')
@@ -54,17 +49,11 @@ export default function MealDetailPage() {
           .single();
 
         if (mealError) {
-          console.error('Error fetching meal:', mealError);
-          console.error('Error details:', {
-            code: mealError.code,
-            message: mealError.message,
-            details: mealError.details,
-            hint: mealError.hint
-          });
           if (mealError.code === 'PGRST116') {
-            console.error('Meal not found for this user - possible ownership issue');
+            showError('Meal not found for this user - possible ownership issue');
             setError('Meal not found or you do not have permission to view it.');
           } else {
+            showError('Error loading meal data.');
             setError('Error loading meal data.');
           }
           setMealLoading(false);
@@ -72,7 +61,7 @@ export default function MealDetailPage() {
         }
 
         if (!mealData) {
-          console.error('No meal data returned');
+          showError('No meal data returned.');
           setError('No meal data returned.');
           setMealLoading(false);
           return;
@@ -86,17 +75,14 @@ export default function MealDetailPage() {
           .eq('meal_id', id);
 
         if (ingredientsError) {
-          console.error('Error fetching ingredients:', ingredientsError);
+          showError('Error fetching ingredients.');
         } else {
           setIngredients(ingredientsData || []);
         }
 
         setMealLoading(false);
-        console.log('=== fetchMeal completed successfully ===');
       } catch (error) {
-        console.error('Unexpected error in fetchMeal:', error);
-        console.error('Error stack:', error.stack);
-        setError('An unexpected error occurred while loading the meal.');
+        showError('An unexpected error occurred while loading the meal.');
         setMealLoading(false);
       }
     }
@@ -132,7 +118,6 @@ export default function MealDetailPage() {
         .eq('meal_id', meal.id);
 
       if (ingredientsError) {
-        console.error('Error deleting meal ingredients:', ingredientsError);
         showError('Could not delete meal ingredients.');
         setDeleting(false);
         return;
@@ -144,7 +129,6 @@ export default function MealDetailPage() {
         .delete()
         .eq('id', meal.id);
       if (mealError) {
-        console.error('❌ Failed to delete meal:', mealError);
         showError('Could not delete meal.');
       } else {
         showSuccess('Meal deleted successfully!');
@@ -152,7 +136,6 @@ export default function MealDetailPage() {
         window.location.href = '/food/meals';
       }
     } catch (error) {
-      console.error('Unexpected error in handleDeleteMeal:', error);
       showError('An unexpected error occurred while deleting the meal.');
     } finally {
       setDeleting(false);

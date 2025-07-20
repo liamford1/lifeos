@@ -65,7 +65,7 @@ export default function EditCardioPage() {
       }
     );
     if (calendarError) {
-      console.error('Calendar event update failed:', calendarError);
+      showError('Calendar event update failed:', calendarError);
     }
     showSuccess("Cardio entry updated!");
     router.push(`/fitness/cardio/${id}`);

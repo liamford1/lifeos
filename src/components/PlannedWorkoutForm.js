@@ -35,7 +35,6 @@ export default function PlannedWorkoutForm({ onSuccess }) {
     const userId = userData?.user?.id
 
     if (!userId) {
-      console.error('❌ Not logged in:', authError)
       showError('Not logged in.')
       setLoading(false)
       return
@@ -58,9 +57,6 @@ export default function PlannedWorkoutForm({ onSuccess }) {
         }),
     }         
 
-    console.log('📋 Attempting to insert into:', table)
-    console.log('📦 Insert data:', insertData)
-
     const { data, error } = await supabase
       .from(table)
       .insert(insertData)
@@ -68,15 +64,10 @@ export default function PlannedWorkoutForm({ onSuccess }) {
       .single()
 
     if (error) {
-      console.error('🔥 Supabase insert error:', error)
-      console.error('📋 Table:', table)
-      console.error('📦 Insert data:', insertData)
       showError(`Failed to save planned workout: ${error.message}`)
       setLoading(false)
       return
     }
-
-    console.log('✅ Inserted entry:', data)
 
     const calendarTitle = `Planned ${type.charAt(0).toUpperCase() + type.slice(1)}: ${title}`
 
@@ -95,13 +86,12 @@ export default function PlannedWorkoutForm({ onSuccess }) {
       end_time: endTime || null,
     });
     if (calendarError) {
-      console.error('⚠️ Calendar event creation failed:', calendarError);
+      showError('Failed to create calendar event.');
     } else {
-      console.log('📅 Calendar event created.');
+      showSuccess('Planned workout created successfully!');
     }
 
     setLoading(false)
-    showSuccess('Planned workout created successfully!')
     onSuccess?.()
   }
 

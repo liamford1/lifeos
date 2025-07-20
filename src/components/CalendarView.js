@@ -45,12 +45,12 @@ export default function CalendarView() {
           .eq('user_id', user.id);
 
         if (error) {
-          console.error('Error fetching calendar events:', error);
+          showError('Failed to fetch calendar events.');
         } else {
           setEvents(data || []);
         }
       } catch (error) {
-        console.error('Error in fetchUserAndEvents:', error);
+        showError('Error in fetchUserAndEvents.');
       } finally {
         setIsLoading(false);
       }
@@ -79,7 +79,6 @@ export default function CalendarView() {
 
     if (error) {
       showError('Failed to add event.');
-      console.error('Error:', error);
     } else {
       setShowAddModal(false);
       setNewEvent({ title: '', start_time: '', end_time: '', description: '' });
@@ -95,7 +94,6 @@ export default function CalendarView() {
   };
 
   const handleDeleteEvent = async (event) => {
-    console.log('🗑️ Deleting event:', event);
     const confirm = window.confirm('Delete this event? This will also remove the linked workout/cardio/sports entry if one exists.');
     if (!confirm) return;
   
@@ -107,13 +105,10 @@ export default function CalendarView() {
         .eq('id', event.id);
       
       if (error) {
-        console.error('❌ Failed to delete calendar event:', error);
         showError('Could not delete event.');
       } else {
         setEvents((prev) => {
           const filtered = prev.filter((ev) => ev.id !== event.id);
-          console.log('❌ Deleted ID:', event.id);
-          console.log('✅ Remaining Events:', filtered);
           return filtered;
         });
       }
@@ -130,13 +125,12 @@ export default function CalendarView() {
     if (event.source === CALENDAR_SOURCES.EXPENSE) sourceTable = 'expenses';
   
     if (!sourceTable) {
-      console.error('Unknown source type:', event.source);
       showError('Unknown event type.');
       return;
     }
   
-    const user = await supabase.auth.getUser();
-    const user_id = user?.data?.user?.id;
+    const { data: { user } } = await supabase.auth.getUser();
+    const user_id = user?.id;
     
     if (!user_id) {
       showError('You must be logged in.');
@@ -152,13 +146,10 @@ export default function CalendarView() {
     });
   
     if (error) {
-      console.error('❌ Failed to delete:', error);
       showError('Could not fully delete event.');
     } else {
       setEvents((prev) => {
         const filtered = prev.filter((ev) => ev.id !== event.id);
-        console.log('❌ Deleted ID:', event.id);
-        console.log('✅ Remaining Events:', filtered);
         return filtered;
       });
       showSuccess('Event deleted successfully!');
@@ -213,7 +204,6 @@ export default function CalendarView() {
                             } else if (event.source === CALENDAR_SOURCES.EXPENSE) {
                               router.push(`/finances/expenses/${event.source_id}`);
                             } else if (event.source === CALENDAR_SOURCES.WORKOUT) {
-                              console.log('CalendarView event.source_id:', String(event.source_id));
                               router.push(`/fitness/workouts/${String(event.source_id)}`);
                             }
                           },

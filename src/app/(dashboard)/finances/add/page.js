@@ -47,7 +47,6 @@ export default function AddExpensePage() {
       },
     ]).select().single();
     if (error) {
-      console.error(error);
       showError('Error adding expense.');
       return;
     }
@@ -61,9 +60,10 @@ export default function AddExpensePage() {
       notes: formData.notes,
     });
     if (calendarError) {
-      console.error('Calendar event creation failed:', calendarError);
+      showError('Calendar event creation failed.');
+    } else {
+      showSuccess('Expense added successfully!');
     }
-    showSuccess('Expense added successfully!');
     setFormData({
       name: '',
       amount: '',

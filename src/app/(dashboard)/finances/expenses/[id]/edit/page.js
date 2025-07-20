@@ -77,7 +77,7 @@ export default function EditExpensePage() {
       }
     );
     if (calendarError) {
-      console.error('Calendar event update failed:', calendarError);
+      showError('Calendar event update failed:', calendarError);
     }
     showSuccess("Expense entry updated!");
     router.push(`/finances/expenses/${id}`);
@@ -106,7 +106,7 @@ export default function EditExpensePage() {
       }
     );
     if (calendarError) {
-      console.error('Calendar event update failed:', calendarError);
+      showError('Calendar event update failed:', calendarError);
     }
     showSuccess("Expense entry deleted");
     router.push("/finances/expenses");

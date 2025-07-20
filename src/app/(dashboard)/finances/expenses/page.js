@@ -49,14 +49,12 @@ export default function FinancesOverview() {
       .delete()
       .eq('id', id);
     if (deleteError) {
-      console.error(deleteError);
       showError('Error deleting expense.');
       return;
     }
     // Delete the linked calendar event
     const calendarError = await deleteCalendarEventForEntity('expense', id);
     if (calendarError) {
-      console.error(calendarError);
       showError('Error deleting linked calendar event.');
       return;
     }
