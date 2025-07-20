@@ -12,6 +12,9 @@ const customJestConfig = {
   transform: {
     '^.+\\.[jt]sx?$': 'babel-jest',
   },
+  moduleNameMapper: {
+    '^@/(.*)$': '<rootDir>/src/$1',
+  },
 };
 
 module.exports = customJestConfig; 
