@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import FormInput from './FormInput';
 import Button from './Button';
 import DeleteButton from './DeleteButton';
@@ -9,6 +9,10 @@ export default function SetEditor({
   exerciseId,
 }) {
   const [sets, setSets] = useState(initialSets);
+  // Add this useEffect to sync sets with initialSets
+  useEffect(() => {
+    setSets(initialSets);
+  }, [initialSets]);
   const [form, setForm] = useState({ reps: '', weight: '' });
   const [editIndex, setEditIndex] = useState(null);
   const [editForm, setEditForm] = useState({ reps: '', weight: '' });
