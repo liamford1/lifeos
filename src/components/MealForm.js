@@ -106,7 +106,7 @@ export default function MealForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6" role="form">
       {/* Basic Info */}
       <div>
         <FormLabel>Meal Name</FormLabel>

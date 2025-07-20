@@ -30,7 +30,7 @@ jobs:
       - name: Lint
         run: npm run lint
 
-      - name: Run tests
+      - name: Run Jest unit tests
         run: npm run test
 
       # - name: Type check (Next.js)
