@@ -212,3 +212,68 @@ CREATE TABLE public.scratchpad_entries (
   CONSTRAINT scratchpad_entries_pkey PRIMARY KEY (id),
   CONSTRAINT scratchpad_entries_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id)
 );
+
+-- Food Items
+CREATE POLICY "Delete own food_items" ON public.food_items FOR DELETE TO public USING (auth.uid() = user_id);
+CREATE POLICY "Insert own food_items" ON public.food_items FOR INSERT TO public WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Select own food_items" ON public.food_items FOR SELECT TO public USING (auth.uid() = user_id);
+CREATE POLICY "Update own food_items" ON public.food_items FOR UPDATE TO public USING (auth.uid() = user_id);
+
+-- Receipts
+CREATE POLICY "Delete own receipts" ON public.receipts FOR DELETE TO public USING (auth.uid() = user_id);
+CREATE POLICY "Insert own receipts" ON public.receipts FOR INSERT TO public WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Select own receipts" ON public.receipts FOR SELECT TO public USING (auth.uid() = user_id);
+CREATE POLICY "Update own receipts" ON public.receipts FOR UPDATE TO public USING (auth.uid() = user_id);
+
+-- Receipt Items
+CREATE POLICY "Insert receipt_items if parent receipt is user's" ON public.receipt_items FOR INSERT TO public WITH CHECK (auth.uid() = (SELECT receipts.user_id FROM receipts WHERE receipts.id = receipt_items.receipt_id));
+CREATE POLICY "Select receipt_items by receipt's user" ON public.receipt_items FOR SELECT TO public USING (auth.uid() = (SELECT receipts.user_id FROM receipts WHERE receipts.id = receipt_items.receipt_id));
+
+-- Meals
+CREATE POLICY "Delete own meals" ON public.meals FOR DELETE TO public USING (auth.uid() = user_id);
+CREATE POLICY "Insert own meals" ON public.meals FOR INSERT TO public WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Select own meals" ON public.meals FOR SELECT TO public USING (auth.uid() = user_id);
+CREATE POLICY "Update own meals" ON public.meals FOR UPDATE TO public USING (auth.uid() = user_id);
+CREATE POLICY "Users can insert their own meals" ON public.meals FOR INSERT TO public WITH CHECK (user_id = auth.uid());
+
+-- Meal Ingredients
+CREATE POLICY "Insert meal_ingredients if parent meal is user's" ON public.meal_ingredients FOR INSERT TO public WITH CHECK (auth.uid() = (SELECT meals.user_id FROM meals WHERE meals.id = meal_ingredients.meal_id));
+CREATE POLICY "Select meal_ingredients by meal's user" ON public.meal_ingredients FOR SELECT TO public USING (auth.uid() = (SELECT meals.user_id FROM meals WHERE meals.id = meal_ingredients.meal_id));
+CREATE POLICY "Users can delete their own meal ingredients" ON public.meal_ingredients FOR DELETE TO public USING (EXISTS (SELECT 1 FROM meals WHERE meals.id = meal_ingredients.meal_id AND meals.user_id = auth.uid()));
+
+-- Cooked Meals
+CREATE POLICY "Users can insert their own logs" ON public.cooked_meals FOR INSERT TO public WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can update their own cooked_meals" ON public.cooked_meals FOR UPDATE TO public USING (user_id = auth.uid());
+CREATE POLICY "Users can view their own logs" ON public.cooked_meals FOR SELECT TO public USING (auth.uid() = user_id);
+
+-- Planned Meals
+CREATE POLICY "Users can access their own planned meals" ON public.planned_meals FOR ALL TO public USING (auth.uid() = user_id);
+
+-- Scratchpad Entries
+CREATE POLICY "Users can access their own scratchpad entries" ON public.scratchpad_entries FOR ALL TO public USING (auth.uid() = user_id);
+
+-- Expenses
+CREATE POLICY "Users can manage their own expenses" ON public.expenses FOR ALL TO public USING (user_id = auth.uid()) WITH CHECK (user_id = auth.uid());
+
+-- Fitness Workouts
+CREATE POLICY "Users can access their workouts" ON public.fitness_workouts FOR ALL TO public USING (user_id = auth.uid()) WITH CHECK (user_id = auth.uid());
+
+-- Fitness Exercises
+CREATE POLICY "User can access their own exercises via workout" ON public.fitness_exercises FOR ALL TO public USING (EXISTS (SELECT 1 FROM fitness_workouts WHERE fitness_workouts.id = fitness_exercises.workout_id AND fitness_workouts.user_id = auth.uid())) WITH CHECK (EXISTS (SELECT 1 FROM fitness_workouts WHERE fitness_workouts.id = fitness_exercises.workout_id AND fitness_workouts.user_id = auth.uid()));
+
+-- Fitness Cardio
+CREATE POLICY "User can access their own cardio sessions" ON public.fitness_cardio FOR ALL TO public USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+
+-- Fitness Sports
+CREATE POLICY "User can access their own sports logs" ON public.fitness_sports FOR ALL TO public USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+
+-- Profiles
+CREATE POLICY "Users can manage their own profile" ON public.profiles FOR ALL TO public USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+
+-- Calendar Events
+CREATE POLICY "Users can access their own calendar events" ON public.calendar_events FOR ALL TO public USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can insert their own calendar events" ON public.calendar_events FOR INSERT TO public WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Users can view their own calendar events" ON public.calendar_events FOR SELECT TO public USING (auth.uid() = user_id);
+
+-- Fitness Sets
+CREATE POLICY "Full access to owned sets" ON public.fitness_sets FOR ALL TO public USING (EXISTS (SELECT 1 FROM fitness_exercises fe JOIN fitness_workouts fw ON fe.workout_id = fw.id WHERE fe.id = fitness_sets.exercise_id AND fw.user_id = auth.uid())) WITH CHECK (EXISTS (SELECT 1 FROM fitness_exercises fe JOIN fitness_workouts fw ON fe.workout_id = fw.id WHERE fe.id = fitness_sets.exercise_id AND fw.user_id = auth.uid()));

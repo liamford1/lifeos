@@ -14,14 +14,15 @@ import { MdOutlineCalendarToday } from 'react-icons/md';
 import { Dumbbell } from 'lucide-react';
 import { format } from 'date-fns';
 import SharedDeleteButton from '@/components/SharedDeleteButton';
+import { useWorkouts } from '@/lib/hooks/useWorkouts';
 
 export default function WorkoutsDashboard() {
   const { user, loading } = useUser();
   const router = useRouter();
-  const { showSuccess, showError } = useToast();
   const [workouts, setWorkouts] = useState([]);
   const [workoutsLoading, setWorkoutsLoading] = useState(true);
   const [creating, setCreating] = useState(false);
+  const { fetchWorkouts, createWorkout, deleteWorkout } = useWorkouts();
 
   useEffect(() => {
     if (!loading && !user) {
@@ -29,38 +30,23 @@ export default function WorkoutsDashboard() {
     }
   }, [loading, user]);
 
-  const fetchWorkouts = async () => {
-    setWorkoutsLoading(true);
-    const { data, error } = await supabase
-      .from('fitness_workouts')
-      .select('*')
-      .order('date', { ascending: false });
-
-    if (!error) setWorkouts(data);
-    else showError('Failed to fetch workouts.');
-    setWorkoutsLoading(false);
-  };
+  useEffect(() => {
+    async function loadWorkouts() {
+      if (!user) return;
+      setWorkoutsLoading(true);
+      const data = await fetchWorkouts(user.id);
+      if (data) setWorkouts(data);
+      setWorkoutsLoading(false);
+    }
+    if (user) loadWorkouts();
+  }, [user]);
 
   const handleDelete = async (id) => {
     const confirm = window.confirm('Delete this workout?');
     if (!confirm) return;
-
-    const user = await supabase.auth.getUser();
-    const user_id = user?.data?.user?.id;
-    
-    if (!user_id) {
-      showError('You must be logged in.');
-      return;
-    }
-
-    // Use cascade delete for workouts
-    const error = await deleteWorkoutCascade({ workoutId: id, user_id });
-
-    if (error) {
-      showError('Failed to delete workout.');
-    } else {
+    const success = await deleteWorkout(id);
+    if (success) {
       setWorkouts((prev) => prev.filter((w) => w.id !== id));
-      showSuccess('Workout deleted successfully!');
     }
   };
 
@@ -70,29 +56,19 @@ export default function WorkoutsDashboard() {
     const now = new Date();
     const today = now.toISOString().split('T')[0];
     const formattedTitle = `Workout - ${format(now, 'MMMM d, yyyy')}`;
-    const { data, error } = await supabase
-      .from('fitness_workouts')
-      .insert({
-        user_id: user.id,
-        title: formattedTitle,
-        notes: '',
-        in_progress: true,
-        start_time: now.toISOString(),
-        date: today,
-      })
-      .select()
-      .single();
+    const data = await createWorkout({
+      user_id: user.id,
+      title: formattedTitle,
+      notes: '',
+      in_progress: true,
+      start_time: now.toISOString(),
+      date: today,
+    });
     setCreating(false);
-    if (!error && data) {
+    if (data) {
       router.push('/fitness/workouts/live');
-    } else {
-      showError(error?.message || 'Failed to start workout');
     }
   };
-
-  useEffect(() => {
-    fetchWorkouts();
-  }, []);
 
   return (
     <div className="max-w-6xl mx-auto p-4 space-y-4">

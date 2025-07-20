@@ -10,6 +10,17 @@ import dayjs from 'dayjs'
 import { CALENDAR_SOURCES } from '@/lib/calendarUtils'
 import { useToast } from '@/components/Toast'
 import { createCalendarEventForEntity } from '@/lib/calendarSync';
+import { z } from 'zod'
+import { mapZodErrors } from '@/lib/validationHelpers'
+
+// Zod schema for planned workout form
+const plannedWorkoutSchema = z.object({
+  type: z.enum(['workout', 'cardio', 'sports']),
+  title: z.string().min(1, 'Title is required'),
+  startTime: z.string().min(1, 'Start time is required'),
+  endTime: z.string().optional(),
+  notes: z.string().optional(),
+})
 
 export default function PlannedWorkoutForm({ onSuccess }) {
   const { showSuccess, showError } = useToast();
@@ -19,14 +30,17 @@ export default function PlannedWorkoutForm({ onSuccess }) {
   const [endTime, setEndTime] = useState('')
   const [notes, setNotes] = useState('')
   const [loading, setLoading] = useState(false)
+  const [fieldErrors, setFieldErrors] = useState({})
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
+    setFieldErrors({})
 
-    // Validate required fields
-    if (!title.trim() || !startTime) {
-      showError('Please fill in all required fields.')
+    // Zod validation
+    const result = plannedWorkoutSchema.safeParse({ type, title, startTime, endTime, notes })
+    if (!result.success) {
+      setFieldErrors(mapZodErrors(result.error))
       setLoading(false)
       return
     }
@@ -104,6 +118,7 @@ export default function PlannedWorkoutForm({ onSuccess }) {
           <option value="cardio">Cardio</option>
           <option value="sports">Sports</option>
         </select>
+        {fieldErrors.type && <div className="text-red-400 text-xs mt-1">{fieldErrors.type}</div>}
       </div>
 
       <div>
@@ -116,6 +131,7 @@ export default function PlannedWorkoutForm({ onSuccess }) {
           onChange={e => setTitle(e.target.value)}
           required
         />
+        {fieldErrors.title && <div className="text-red-400 text-xs mt-1">{fieldErrors.title}</div>}
       </div>
 
       <div>
@@ -126,6 +142,7 @@ export default function PlannedWorkoutForm({ onSuccess }) {
           onChange={e => setStartTime(e.target.value)}
           required
         />
+        {fieldErrors.startTime && <div className="text-red-400 text-xs mt-1">{fieldErrors.startTime}</div>}
       </div>
 
       <div>
@@ -135,6 +152,7 @@ export default function PlannedWorkoutForm({ onSuccess }) {
           value={endTime}
           onChange={e => setEndTime(e.target.value)}
         />
+        {fieldErrors.endTime && <div className="text-red-400 text-xs mt-1">{fieldErrors.endTime}</div>}
       </div>
 
       <div>
@@ -144,6 +162,7 @@ export default function PlannedWorkoutForm({ onSuccess }) {
           onChange={e => setNotes(e.target.value)}
           rows={3}
         />
+        {fieldErrors.notes && <div className="text-red-400 text-xs mt-1">{fieldErrors.notes}</div>}
       </div>
 
       <Button type="submit" className="mt-2">

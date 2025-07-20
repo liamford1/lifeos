@@ -7,8 +7,9 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import BackButton from '@/components/BackButton';
 import Link from 'next/link';
 import { Wallet, BarChart2, PlusCircle, Receipt, PiggyBank } from 'lucide-react';
+import AuthGuard from '@/components/AuthGuard';
 
-export default function FinancesHome() {
+export function FinancesHomeContent() {
   const { user, loading } = useUser();
   const router = useRouter();
 
@@ -67,5 +68,13 @@ export default function FinancesHome() {
         </Link>
       </div>
     </div>
+  );
+}
+
+export default function FinancesHome(props) {
+  return (
+    <AuthGuard>
+      <FinancesHomeContent {...props} />
+    </AuthGuard>
   );
 }

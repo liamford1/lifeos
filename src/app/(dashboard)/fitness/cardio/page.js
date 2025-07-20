@@ -4,63 +4,45 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabaseClient';
-import { deleteEntityWithCalendarEvent } from '@/lib/deleteUtils';
 import BackButton from '@/components/BackButton';
 import Button from '@/components/Button';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import { useToast } from '@/components/Toast';
 import { HeartPulse } from 'lucide-react';
 import SharedDeleteButton from '@/components/SharedDeleteButton';
+import { useCardioSessions } from '@/lib/hooks/useCardioSessions';
 
 export default function CardioDashboard() {
-  const { showSuccess, showError } = useToast();
   const [sessions, setSessions] = useState([]);
   const [sessionsLoading, setSessionsLoading] = useState(true);
   const router = useRouter();
+  const { fetchCardioSessions, deleteCardioSession } = useCardioSessions();
 
   useEffect(() => {
-    const fetchSessions = async () => {
+    const fetchData = async () => {
       setSessionsLoading(true);
-      const { data, error } = await supabase
-        .from('fitness_cardio')
-        .select('*')
-        .order('date', { ascending: false });
-
-      if (error) {
-        showError('Failed to fetch cardio sessions.');
-      } else {
-        setSessions(data);
+      const user = await supabase.auth.getUser();
+      const userId = user?.data?.user?.id;
+      if (!userId) {
+        setSessions([]);
+        setSessionsLoading(false);
+        return;
       }
+      const data = await fetchCardioSessions(userId);
+      setSessions(data || []);
       setSessionsLoading(false);
     };
-
-    fetchSessions();
+    fetchData();
   }, []);
 
   const handleDelete = async (id) => {
     const confirm = window.confirm('Delete this session?');
     if (!confirm) return;
-
     const user = await supabase.auth.getUser();
-    const user_id = user?.data?.user?.id;
-    
-    if (!user_id) {
-      showError('You must be logged in.');
-      return;
-    }
-
-    const error = await deleteEntityWithCalendarEvent({
-      table: 'fitness_cardio',
-      id: id,
-      user_id: user_id,
-      source: 'cardio',
-    });
-
-    if (error) {
-      showError('Failed to delete session.');
-    } else {
+    const userId = user?.data?.user?.id;
+    if (!userId) return;
+    const success = await deleteCardioSession(id, userId);
+    if (success) {
       setSessions((prev) => prev.filter((s) => s.id !== id));
-      showSuccess('Cardio session deleted successfully!');
     }
   };
 

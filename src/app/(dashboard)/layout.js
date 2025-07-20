@@ -7,6 +7,7 @@ import AppBar from '@/components/AppBar';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import Link from 'next/link';
 import { FaUtensils, FaDumbbell, FaCalculator, FaStickyNote, FaHome, FaUser } from 'react-icons/fa';
+import { CookingSessionProvider } from '@/context/CookingSessionContext';
 
 export default function DashboardLayout({ children }) {
   const [user, setUser] = useState(null);
@@ -44,39 +45,41 @@ export default function DashboardLayout({ children }) {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-panel">
-      <AppBar />
-      <div className="flex flex-1">
-        {/* Sidebar */}
-        <aside className="w-64 bg-surface shadow-lg">
-          <nav className="p-4">
-            <ul className="space-y-2">
-              {navItems.map((item) => {
-                const Icon = item.icon;
-                return (
-                  <li key={item.href}>
-                    <Link
-                      href={item.href}
-                      className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-[#2e2e2e] transition-colors duration-200"
-                      style={{ color: '#e6e6e6' }}
-                    >
-                      <Icon size={20} />
-                      <span className="font-medium">{item.label}</span>
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-          </nav>
-        </aside>
+    <CookingSessionProvider>
+      <div className="min-h-screen flex flex-col bg-panel">
+        <AppBar />
+        <div className="flex flex-1">
+          {/* Sidebar */}
+          <aside className="w-64 bg-surface shadow-lg">
+            <nav className="p-4">
+              <ul className="space-y-2">
+                {navItems.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <li key={item.href}>
+                      <Link
+                        href={item.href}
+                        className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-[#2e2e2e] transition-colors duration-200"
+                        style={{ color: '#e6e6e6' }}
+                      >
+                        <Icon size={20} />
+                        <span className="font-medium">{item.label}</span>
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </nav>
+          </aside>
 
-        {/* Main content */}
-        <main className="flex-1 p-6">
-          <div className="h-full">
-            {children}
-          </div>
-        </main>
+          {/* Main content */}
+          <main className="flex-1 p-6">
+            <div className="h-full">
+              {children}
+            </div>
+          </main>
+        </div>
       </div>
-    </div>
+    </CookingSessionProvider>
   );
 } 

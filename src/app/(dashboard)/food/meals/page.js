@@ -9,6 +9,7 @@ import Link from 'next/link';
 import BackButton from '@/components/BackButton';
 import { UtensilsCrossed } from 'lucide-react';
 import Button from '@/components/Button';
+import { useMeals } from '@/lib/hooks/useMeals';
 
 export default function MealsPage() {
   const { user, loading } = useUser();
@@ -16,7 +17,7 @@ export default function MealsPage() {
   const [meals, setMeals] = useState([]);
   const [mealsLoading, setMealsLoading] = useState(true);
   const [loadingId, setLoadingId] = useState(null);
-  const [error, setError] = useState(null);
+  const { fetchMeals, deleteMeal } = useMeals();
 
   useEffect(() => {
     if (!loading && !user) {
@@ -25,50 +26,22 @@ export default function MealsPage() {
   }, [loading, user]);
 
   useEffect(() => {
-    async function fetchMeals() {
-      const user = await supabase.auth.getUser();
-      const userId = user?.data?.user?.id;
-
-      if (!userId) return;
-
-      const { data, error } = await supabase
-        .from('meals')
-        .select('*')
-        .eq('user_id', userId)
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        console.error(error);
-      } else {
-        setMeals(data);
-      }
-
+    async function loadMeals() {
+      if (!user) return;
+      setMealsLoading(true);
+      const data = await fetchMeals(user.id);
+      if (data) setMeals(data);
       setMealsLoading(false);
     }
-
-    fetchMeals();
-  }, []);
+    if (user) loadMeals();
+  }, [user]);
 
   // --- DELETE HANDLER ---
   const handleDelete = async (mealId) => {
-    console.log('Delete clicked for meal:', mealId);
     setLoadingId(mealId);
-    setError(null);
-    try {
-      const { error } = await supabase
-        .from('meals')
-        .delete()
-        .eq('id', mealId);
-      if (error) {
-        console.error('Supabase delete error:', error);
-        setError(error.message || 'Failed to delete meal.');
-      } else {
-        console.log('Meal deleted successfully:', mealId);
-        setMeals((prev) => prev.filter((meal) => meal.id !== mealId));
-      }
-    } catch (err) {
-      console.error('Unexpected error during delete:', err);
-      setError('Unexpected error during delete.');
+    const success = await deleteMeal(mealId);
+    if (success) {
+      setMeals((prev) => prev.filter((meal) => meal.id !== mealId));
     }
     setLoadingId(null);
   };
@@ -85,9 +58,6 @@ export default function MealsPage() {
       </h1>
       <p className="text-base">Browse and manage your saved meal recipes.</p>
 
-      {error && (
-        <div className="mb-2 text-sm text-red-600 bg-red-50 p-2 rounded">{error}</div>
-      )}
       {mealsLoading ? (
         <LoadingSpinner />
       ) : meals.length === 0 ? (

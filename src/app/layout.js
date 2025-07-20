@@ -5,6 +5,7 @@ import { UserProvider } from '@/context/UserContext';
 import { ToastContainer } from '@/components/Toast';
 import { WorkoutSessionProvider } from '@/context/WorkoutSessionContext';
 import { CookingSessionProvider } from '@/context/CookingSessionContext';
+import ErrorBoundaryWrapper from "../components/ErrorBoundaryWrapper";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
@@ -16,19 +17,21 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <UserProvider>
-      <WorkoutSessionProvider>
-        <CookingSessionProvider>
-          <html lang="en">
-            <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-              <SupabaseProvider>
-                {children}
-                <ToastContainer />
-              </SupabaseProvider>
-            </body>
-          </html>
-        </CookingSessionProvider>
-      </WorkoutSessionProvider>
-    </UserProvider>
+    <html lang="en">
+      <body>
+        <SupabaseProvider>
+          <UserProvider>
+            <WorkoutSessionProvider>
+              <CookingSessionProvider>
+                <ErrorBoundaryWrapper>
+                  <ToastContainer />
+                  {children}
+                </ErrorBoundaryWrapper>
+              </CookingSessionProvider>
+            </WorkoutSessionProvider>
+          </UserProvider>
+        </SupabaseProvider>
+      </body>
+    </html>
   );
 }

@@ -6,6 +6,22 @@ import FormLabel from '@/components/FormLabel';
 import FormInput from '@/components/FormInput';
 import FormTextarea from '@/components/FormTextarea';
 import FormSection from '@/components/FormSection';
+import { z } from 'zod';
+import { mapZodErrors } from '@/lib/validationHelpers';
+
+// Zod schema for meal form
+const mealSchema = z.object({
+  name: z.string().min(1, 'Meal name is required'),
+  instructions: z.array(z.string().min(1, 'Instruction step is required')).min(1, 'At least one instruction is required'),
+  ingredients: z.array(
+    z.object({
+      name: z.string().min(1, 'Ingredient name is required'),
+      quantity: z.string().min(1, 'Amount is required'),
+    })
+  ).min(1, 'At least one ingredient is required'),
+  tags: z.array(z.string()).optional(),
+  notes: z.string().optional(),
+});
 
 export default function MealForm({ 
   initialValues = {}, 
@@ -22,6 +38,9 @@ export default function MealForm({
   const [servings, setServings] = useState(initialValues.servings || '');
   const [ingredients, setIngredients] = useState(initialValues.ingredients || [{ name: '', quantity: '', unit: '' }]);
   const [instructions, setInstructions] = useState(initialValues.instructions || ['']);
+  const [tags, setTags] = useState(initialValues.tags || []);
+  const [notes, setNotes] = useState(initialValues.notes || '');
+  const [fieldErrors, setFieldErrors] = useState({});
 
   useEffect(() => {
     if (initialValues.name) {
@@ -32,6 +51,8 @@ export default function MealForm({
       setServings(initialValues.servings || '');
       setIngredients(initialValues.ingredients || [{ name: '', quantity: '', unit: '' }]);
       setInstructions(initialValues.instructions || ['']);
+      setTags(initialValues.tags || []);
+      setNotes(initialValues.notes || '');
     }
   }, [initialValues]);
 
@@ -65,22 +86,22 @@ export default function MealForm({
 
   function handleSubmit(e) {
     e.preventDefault();
-    
+    setFieldErrors({});
+    // Prepare data for validation
     const mealData = {
       name: mealName.trim(),
-      description: description.trim() || null,
-      prep_time: prepTime ? parseInt(prepTime) : null,
-      cook_time: cookTime ? parseInt(cookTime) : null,
-      servings: servings ? parseInt(servings) : null,
-      instructions: instructions.filter(step => step.trim()),
-      ingredients: ingredients.filter(ing => 
-        ing.name?.trim() !== '' &&
-        ing.quantity !== '' &&
-        ing.unit?.trim() !== ''
-      ),
+      instructions: instructions.map(step => step.trim()).filter(Boolean),
+      ingredients: ingredients
+        .map(ing => ({ name: ing.name?.trim() || '', quantity: ing.quantity?.toString() || '' }))
+        .filter(ing => ing.name !== '' && ing.quantity !== ''),
+      tags: tags && Array.isArray(tags) ? tags : [],
+      notes: notes || '',
     };
-
-    console.log('📤 MealForm submitting data:', mealData);
+    const result = mealSchema.safeParse(mealData);
+    if (!result.success) {
+      setFieldErrors(mapZodErrors(result.error));
+      return;
+    }
     onSubmit(mealData);
   }
 
@@ -97,6 +118,7 @@ export default function MealForm({
           disabled={loading}
           required
         />
+        {fieldErrors.name && <div className="text-red-400 text-xs mt-1">{fieldErrors.name}</div>}
       </div>
 
       <div>
@@ -142,6 +164,7 @@ export default function MealForm({
 
       {/* Ingredients */}
       <FormSection title="Ingredients">
+        {fieldErrors.ingredients && <div className="text-red-400 text-xs mb-2">{fieldErrors.ingredients}</div>}
         {ingredients.map((ingredient, index) => (
           <div key={index} className="flex gap-2 items-center">
             <FormInput
@@ -177,8 +200,11 @@ export default function MealForm({
               disabled={loading}
               aria-label="Remove ingredient"
             >
-              ✕
+              ×
             </Button>
+            {/* Inline errors for ingredient fields */}
+            {fieldErrors[`ingredients.${index}.name`] && <div className="text-red-400 text-xs ml-2">{fieldErrors[`ingredients.${index}.name`]}</div>}
+            {fieldErrors[`ingredients.${index}.quantity`] && <div className="text-red-400 text-xs ml-2">{fieldErrors[`ingredients.${index}.quantity`]}</div>}
           </div>
         ))}
         <Button 
@@ -195,6 +221,7 @@ export default function MealForm({
 
       {/* Instructions */}
       <FormSection title="Instructions">
+        {fieldErrors.instructions && <div className="text-red-400 text-xs mb-2">{fieldErrors.instructions}</div>}
         {instructions.map((step, index) => (
           <div key={index} className="flex items-start gap-2">
             <FormTextarea
@@ -213,8 +240,10 @@ export default function MealForm({
               className="text-red-400 hover:text-red-300"
               disabled={loading}
             >
-              ✕
+              ×
             </Button>
+            {/* Inline error for instruction step */}
+            {fieldErrors[`instructions.${index}`] && <div className="text-red-400 text-xs ml-2">{fieldErrors[`instructions.${index}`]}</div>}
           </div>
         ))}
         <Button 
@@ -228,6 +257,22 @@ export default function MealForm({
           + Add Step
         </Button>
       </FormSection>
+
+      {/* Tags (optional) */}
+      {/* Add your tags input here if needed, with error display if you add a UI for it */}
+
+      {/* Notes (optional) */}
+      <div>
+        <FormLabel>Notes</FormLabel>
+        <FormTextarea
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+          rows={2}
+          placeholder="Any extra notes..."
+          disabled={loading}
+        />
+        {fieldErrors.notes && <div className="text-red-400 text-xs mt-1">{fieldErrors.notes}</div>}
+      </div>
 
       {/* Error Display */}
       {error && (

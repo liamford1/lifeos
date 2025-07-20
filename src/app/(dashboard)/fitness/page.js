@@ -6,8 +6,9 @@ import { useRouter } from 'next/navigation';
 import { useUser } from '@/context/UserContext';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { Activity, Goal, Timer, StretchHorizontal, HeartPulse, Dumbbell, CalendarDays } from 'lucide-react';
+import AuthGuard from '@/components/AuthGuard';
 
-export default function FitnessHome() {
+export function FitnessHomeContent() {
   const { user, loading } = useUser();
   const router = useRouter();
 
@@ -59,5 +60,13 @@ export default function FitnessHome() {
         </Link>
       </div>
     </div>
+  );
+}
+
+export default function FitnessHome(props) {
+  return (
+    <AuthGuard>
+      <FitnessHomeContent {...props} />
+    </AuthGuard>
   );
 }

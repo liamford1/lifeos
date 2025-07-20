@@ -1,29 +1,63 @@
 'use client';
 
 import { useState } from 'react';
+import { z } from 'zod';
+import { mapZodErrors } from '@/lib/validationHelpers';
 import Button from '@/components/Button';
 import FormLabel from '@/components/FormLabel';
 import FormInput from '@/components/FormInput';
 import FormTextarea from '@/components/FormTextarea';
 
+const cardioSchema = z.object({
+  activity: z.string().min(1, 'Activity is required'),
+  date: z.string().min(1, 'Date is required'),
+  duration: z.union([
+    z.string().min(1, 'Duration is required'),
+    z.number()
+  ]),
+  distance: z.union([
+    z.string(),
+    z.number()
+  ]).optional(),
+  notes: z.string().optional(),
+});
+
 export default function CardioForm({ initialData = {}, onSubmit }) {
-  const [activityType, setActivityType] = useState(initialData.activity_type || '');
+  const [activity, setActivity] = useState(initialData.activity_type || '');
   const [date, setDate] = useState(initialData.date || '');
   const [duration, setDuration] = useState(initialData.duration_minutes || '');
   const [distance, setDistance] = useState(initialData.distance_miles || '');
-  const [location, setLocation] = useState(initialData.location || '');
   const [notes, setNotes] = useState(initialData.notes || '');
+  const [fieldErrors, setFieldErrors] = useState({});
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSubmit({
-      activity_type: activityType,
+    setLoading(true);
+    setFieldErrors({});
+
+    // Validate with Zod
+    const result = cardioSchema.safeParse({
+      activity,
       date,
-      duration_minutes: parseInt(duration),
-      distance_miles: parseFloat(distance),
-      location,
+      duration,
+      distance,
       notes,
     });
+    if (!result.success) {
+      setFieldErrors(mapZodErrors(result.error));
+      setLoading(false);
+      return;
+    }
+
+    onSubmit({
+      activity_type: activity,
+      date,
+      duration_minutes: parseInt(duration),
+      distance_miles: distance ? parseFloat(distance) : undefined,
+      notes,
+    });
+    setLoading(false);
   };
 
   return (
@@ -32,11 +66,12 @@ export default function CardioForm({ initialData = {}, onSubmit }) {
         <FormLabel>Activity Type</FormLabel>
         <FormInput
           type="text"
-          value={activityType}
-          onChange={(e) => setActivityType(e.target.value)}
+          value={activity}
+          onChange={(e) => setActivity(e.target.value)}
           placeholder="e.g., Running, Cycling, Swimming"
           required
         />
+        {fieldErrors.activity && <div className="text-red-400 text-xs mt-1">{fieldErrors.activity}</div>}
       </div>
 
       <div>
@@ -47,6 +82,7 @@ export default function CardioForm({ initialData = {}, onSubmit }) {
           onChange={(e) => setDate(e.target.value)}
           required
         />
+        {fieldErrors.date && <div className="text-red-400 text-xs mt-1">{fieldErrors.date}</div>}
       </div>
 
       <div className="grid grid-cols-2 gap-4">
@@ -59,6 +95,7 @@ export default function CardioForm({ initialData = {}, onSubmit }) {
             placeholder="30"
             required
           />
+          {fieldErrors.duration && <div className="text-red-400 text-xs mt-1">{fieldErrors.duration}</div>}
         </div>
         <div>
           <FormLabel>Distance (miles)</FormLabel>
@@ -69,17 +106,8 @@ export default function CardioForm({ initialData = {}, onSubmit }) {
             onChange={(e) => setDistance(e.target.value)}
             placeholder="3.1"
           />
+          {fieldErrors.distance && <div className="text-red-400 text-xs mt-1">{fieldErrors.distance}</div>}
         </div>
-      </div>
-
-      <div>
-        <FormLabel>Location</FormLabel>
-        <FormInput
-          type="text"
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
-          placeholder="e.g., Central Park, Gym"
-        />
       </div>
 
       <div>
@@ -90,10 +118,11 @@ export default function CardioForm({ initialData = {}, onSubmit }) {
           rows={3}
           placeholder="How did it feel? Any observations?"
         />
+        {fieldErrors.notes && <div className="text-red-400 text-xs mt-1">{fieldErrors.notes}</div>}
       </div>
 
-      <Button type="submit" variant="primary" className="w-full">
-        Save Cardio Activity
+      <Button type="submit" variant="primary" className="w-full" disabled={loading}>
+        {loading ? 'Saving...' : 'Save Cardio Activity'}
       </Button>
     </form>
   );

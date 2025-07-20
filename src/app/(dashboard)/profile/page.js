@@ -8,21 +8,15 @@ import { supabase } from '@/lib/supabaseClient';
 import BackButton from '@/components/BackButton';
 import Button from '@/components/Button';
 import { useToast } from '@/components/Toast';
+import AuthGuard from '@/components/AuthGuard';
 
-export default function ProfilePage() {
+function ProfilePage(props) {
   const { user, loading } = useUser();
   const router = useRouter();
   const { showSuccess, showError } = useToast();
   const [profile, setProfile] = useState(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
-
-  // Auth protection
-  useEffect(() => {
-    if (!loading && !user) {
-      router.push('/auth');
-    }
-  }, [loading, user]);
 
   // Form state
   const [firstName, setFirstName] = useState('');
@@ -206,5 +200,13 @@ export default function ProfilePage() {
         </Button>
       </form>
     </div>
+  );
+}
+
+export default function ProfilePageWithAuth(props) {
+  return (
+    <AuthGuard>
+      <ProfilePage {...props} />
+    </AuthGuard>
   );
 } 
