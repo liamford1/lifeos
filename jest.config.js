@@ -17,4 +17,12 @@ const customJestConfig = {
   },
 };
 
-module.exports = customJestConfig; 
+module.exports = {
+  testEnvironment: "jsdom",
+  moduleNameMapper: {
+    "^@/(.*)$": "<rootDir>/src/$1",
+  },
+  transform: {
+    "^.+\\.(js|jsx)$": ["babel-jest", { configFile: "./babel-jest.config.js" }],
+  },
+}; 
