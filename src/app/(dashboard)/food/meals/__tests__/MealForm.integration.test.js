@@ -43,7 +43,9 @@ describe('MealForm integration', () => {
     fireEvent.change(screen.getAllByPlaceholderText(/step/i)[0], { target: { value: 'Mix ingredients' } });
 
     // Submit the form
-    fireEvent.submit(screen.getByRole('button', { name: /save meal/i }).closest('form'));
+    const saveButton = screen.getByRole('button', { name: /save meal/i });
+    const form = saveButton.closest('form');
+    fireEvent.submit(form);
 
     await waitFor(() => {
       expect(onSubmit).toHaveBeenCalledWith(
