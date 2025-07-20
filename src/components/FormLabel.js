@@ -1,3 +1,5 @@
+import React from 'react';
+
 export default function FormLabel({ children, className = '', htmlFor, ...props }) {
   return (
     <label 
