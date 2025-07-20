@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useInsertEntity, useDeleteEntity } from '@/lib/useSupabaseCrud';
 import { useUser } from '@/context/UserContext';
@@ -52,7 +52,7 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
       setSetsByExercise(newSetsByExercise);
     };
     fetchSets();
-  }, [exercises]);
+  }, [exercises, router]);
 
   useEffect(() => {
     if (Object.keys(setsByExercise).length > 0) {
