@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useInsertEntity, useDeleteEntity } from '@/lib/useSupabaseCrud';

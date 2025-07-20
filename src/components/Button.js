@@ -1,3 +1,4 @@
+import React from 'react';
 // src/components/Button.js
 export default function Button({ 
   children, 
