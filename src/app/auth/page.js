@@ -19,7 +19,7 @@ export default function AuthPage() {
       if (error) {
         setMessage(error.message)
       } else {
-        router.push('/') // ✅ Redirect to home on successful login
+        router.push('/') // ✅ Redirect to home on successful login , ...
       }
     } else {
       const { error } = await supabase.auth.signUp({ email, password })
