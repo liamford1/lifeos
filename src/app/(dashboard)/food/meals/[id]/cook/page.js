@@ -1,5 +1,5 @@
-// src/app/(dashboard)/food/meals/[id]/cook/page.js
 'use client';
+// src/app/(dashboard)/food/meals/[id]/cook/page.js
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';

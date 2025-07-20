@@ -1,5 +1,5 @@
-// src/app/fitness/planner/page.js
 'use client'
+// src/app/fitness/planner/page.js
 
 import CalendarView from '@/components/CalendarView'
 import BackButton from '@/components/BackButton'
