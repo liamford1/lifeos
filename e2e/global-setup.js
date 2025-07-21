@@ -21,36 +21,66 @@ module.exports = async () => {
   }
 
   const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
+  const testEmail = 'test@example.com';
+  const testPassword = 'password123';
 
-  // Try to get the test user ID from the auth.users table using schema option
-  let user, userError;
-  try {
-    ({ data: user, error: userError } = await supabase
-      .from('users', { schema: 'auth' })
-      .select('id')
-      .eq('email', 'test@example.com')
-      .single());
-  } catch (e) {
-    userError = e;
-  }
-
-  // Fallback: try without schema option
-  if (userError || !user) {
-    console.warn('First attempt to fetch test user failed, trying fallback:', userError);
-    try {
-      ({ data: user, error: userError } = await supabase
-        .from('users')
-        .select('id')
-        .eq('email', 'test@example.com')
-        .single());
-    } catch (e) {
-      userError = e;
+  // Helper to fetch user by email using Supabase Admin API
+  async function fetchUserByEmail(email) {
+    const res = await fetch(`${supabaseUrl}/auth/v1/admin/users?email=${encodeURIComponent(email)}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'apiKey': supabaseServiceRoleKey,
+        'Authorization': `Bearer ${supabaseServiceRoleKey}`
+      }
+    });
+    if (!res.ok) {
+      throw new Error(`Failed to fetch user by email: ${res.status} ${await res.text()}`);
     }
+    const json = await res.json();
+    if (!json.users || !json.users.length) return null;
+    return { id: json.users[0].id };
   }
 
-  if (userError || !user) {
-    console.warn('Test user not found or error occurred:', userError);
-    return;
+  // Try to get the test user ID from the auth.users table using Admin API
+  let user = await fetchUserByEmail(testEmail);
+
+  // If user does not exist, insert into auth.users using the admin API
+  if (!user) {
+    console.warn('Test user not found, creating test user in auth.users...');
+    // Use the Supabase Auth Admin API to create a user
+    const res = await fetch(`${supabaseUrl}/auth/v1/admin/users`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'apiKey': supabaseServiceRoleKey,
+        'Authorization': `Bearer ${supabaseServiceRoleKey}`
+      },
+      body: JSON.stringify({
+        email: testEmail,
+        password: testPassword,
+        email_confirm: true
+      })
+    });
+    if (!res.ok) {
+      const text = await res.text();
+      if (res.status === 422 && text.includes('email_exists')) {
+        console.warn('Test user already exists according to Supabase admin API. Attempting to fetch user again...');
+        user = await fetchUserByEmail(testEmail);
+        if (!user) {
+          throw new Error('Failed to fetch test user after email_exists');
+        }
+        console.log('Fetched existing test user after email_exists:', user.id);
+      } else {
+        throw new Error(`Failed to create test user: ${res.status} ${text}`);
+      }
+    } else {
+      const json = await res.json();
+      user = { id: json.user.id };
+      console.log('Created test user:', user.id);
+    }
+  } else {
+    console.log('Found test user:', user.id);
   }
 
   // End all in-progress workouts for the test user
@@ -65,4 +95,7 @@ module.exports = async () => {
   } else {
     console.log('Cleared in-progress workouts for test user.');
   }
+
+  // Return the user id for Playwright
+  return user.id;
 }; 

@@ -16,9 +16,10 @@ const config = {
     },
   ],
   webServer: {
-    command: 'npm run start',
-    port: 3000,
-    reuseExistingServer: true,
+    command: 'npm run e2e:start',
+    url: 'http://localhost:3000',
+    timeout: 120000,
+    reuseExistingServer: !process.env.CI,
   },
   globalSetup: require.resolve('./e2e/global-setup.js'),
 };

@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "test": "jest",
-    "test:e2e": "npx playwright test"
+    "e2e:start": "next build && next start -p 3000",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@sentry/nextjs": "^9.40.0",
