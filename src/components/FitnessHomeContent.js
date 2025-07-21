@@ -5,14 +5,12 @@ import { useRouter } from 'next/navigation';
 import { useUser } from '@/context/UserContext';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { CalendarIconClient as CalendarIcon } from "@/components/client/CalendarIconClient";
-import {
-  Activity,
-  Dumbbell,
-  HeartPulse,
-  Goal,
-  StretchHorizontal,
-  Timer,
-} from "lucide-react";
+import Activity from "lucide-react/dist/esm/icons/activity";
+import Dumbbell from "lucide-react/dist/esm/icons/dumbbell";
+import HeartPulse from "lucide-react/dist/esm/icons/heart-pulse";
+import Goal from "lucide-react/dist/esm/icons/goal";
+import StretchHorizontal from "lucide-react/dist/esm/icons/stretch-horizontal";
+import Timer from "lucide-react/dist/esm/icons/timer";
 
 export default function FitnessHomeContent() {
   const { user, loading } = useUser();
