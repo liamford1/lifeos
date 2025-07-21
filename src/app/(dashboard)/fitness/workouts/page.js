@@ -12,7 +12,7 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import { useToast } from '@/components/Toast';
 import { MdOutlineCalendarToday } from 'react-icons/md';
 import dynamic from "next/dynamic";
-const Dumbbell = dynamic(() => import("lucide-react").then(m => m.Dumbbell), { ssr: false });
+const Dumbbell = dynamic(() => import("lucide-react/dist/esm/icons/dumbbell"), { ssr: false });
 import { format } from 'date-fns';
 import SharedDeleteButton from '@/components/SharedDeleteButton';
 import { useWorkouts } from '@/lib/hooks/useWorkouts';

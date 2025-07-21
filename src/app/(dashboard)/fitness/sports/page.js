@@ -10,7 +10,7 @@ import Button from '@/components/Button';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { useToast } from '@/components/Toast';
 import dynamic from "next/dynamic";
-const Goal = dynamic(() => import("lucide-react").then(m => m.Goal), { ssr: false });
+const Goal = dynamic(() => import("lucide-react/dist/esm/icons/goal"), { ssr: false });
 
 export default function SportsDashboard() {
   const { showSuccess, showError } = useToast();

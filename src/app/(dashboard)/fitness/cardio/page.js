@@ -8,7 +8,7 @@ import BackButton from '@/components/BackButton';
 import Button from '@/components/Button';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import dynamic from "next/dynamic";
-const HeartPulse = dynamic(() => import("lucide-react").then(m => m.HeartPulse), { ssr: false });
+const HeartPulse = dynamic(() => import("lucide-react/dist/esm/icons/heart-pulse"), { ssr: false });
 import SharedDeleteButton from '@/components/SharedDeleteButton';
 import { useCardioSessions } from '@/lib/hooks/useCardioSessions';
 

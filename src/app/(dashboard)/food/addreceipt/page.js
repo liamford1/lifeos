@@ -9,7 +9,7 @@ import { supabase } from '@/lib/supabaseClient'
 import BackButton from '@/components/BackButton'
 import Button from '@/components/Button'
 import dynamic from "next/dynamic";
-const Receipt = dynamic(() => import("lucide-react").then(m => m.Receipt), { ssr: false });
+const Receipt = dynamic(() => import("lucide-react/dist/esm/icons/receipt"), { ssr: false });
 
 export default function AddReceiptPage(props) {
   const { user, loading } = useUser();

@@ -8,7 +8,7 @@ import { supabase } from '@/lib/supabaseClient';
 import Link from 'next/link';
 import BackButton from '@/components/BackButton';
 import dynamic from "next/dynamic";
-const UtensilsCrossed = dynamic(() => import("lucide-react").then(m => m.UtensilsCrossed), { ssr: false });
+const UtensilsCrossed = dynamic(() => import("lucide-react/dist/esm/icons/utensils-crossed"), { ssr: false });
 import Button from '@/components/Button';
 import { useMeals } from '@/lib/hooks/useMeals';
 

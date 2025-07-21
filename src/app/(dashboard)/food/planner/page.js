@@ -10,7 +10,7 @@ import { CALENDAR_SOURCES } from '@/lib/calendarUtils'
 import { useToast } from '@/components/Toast'
 import { MdOutlineCalendarToday } from 'react-icons/md';
 import dynamic from "next/dynamic";
-const CalendarCheck = dynamic(() => import("lucide-react").then(m => m.CalendarCheck), { ssr: false });
+const CalendarCheck = dynamic(() => import("lucide-react/dist/esm/icons/calendar-check"), { ssr: false });
 import { createCalendarEventForEntity } from '@/lib/calendarSync';
 import { deleteCalendarEventForEntity } from '@/lib/calendarSync';
 

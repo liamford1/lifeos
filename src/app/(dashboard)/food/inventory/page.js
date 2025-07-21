@@ -8,7 +8,7 @@ import Button from '@/components/Button';
 import BackButton from '@/components/BackButton'
 import { useDeleteEntity } from '@/lib/useSupabaseCrud';
 import dynamic from "next/dynamic";
-const Package = dynamic(() => import("lucide-react").then(m => m.Package), { ssr: false });
+const Package = dynamic(() => import("lucide-react/dist/esm/icons/package"), { ssr: false });
 import ManualPantryItemModal from '@/components/ManualPantryItemModal';
 import SharedDeleteButton from '@/components/SharedDeleteButton';
 

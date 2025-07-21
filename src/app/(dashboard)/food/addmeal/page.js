@@ -11,7 +11,7 @@ import MealForm from '@/components/MealForm';
 import { CALENDAR_SOURCES } from '@/lib/calendarUtils';
 import { useToast } from '@/components/Toast';
 import dynamic from "next/dynamic";
-const CirclePlus = dynamic(() => import("lucide-react").then(m => m.CirclePlus), { ssr: false });
+const CirclePlus = dynamic(() => import("lucide-react/dist/esm/icons/circle-plus"), { ssr: false });
 import { createCalendarEventForEntity } from '@/lib/calendarSync';
 
 export default function AddMealPage(props) {

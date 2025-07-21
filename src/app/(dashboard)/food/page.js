@@ -6,11 +6,11 @@ import { useRouter } from 'next/navigation';
 import { useUser } from '@/context/UserContext';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import dynamic from "next/dynamic";
-const Package = dynamic(() => import("lucide-react").then(m => m.Package), { ssr: false });
-const Utensils = dynamic(() => import("lucide-react").then(m => m.Utensils), { ssr: false });
-const CalendarClock = dynamic(() => import("lucide-react").then(m => m.CalendarClock), { ssr: false });
-const Receipt = dynamic(() => import("lucide-react").then(m => m.Receipt), { ssr: false });
-const CirclePlus = dynamic(() => import("lucide-react").then(m => m.CirclePlus), { ssr: false });
+const Package = dynamic(() => import("lucide-react/dist/esm/icons/package"), { ssr: false });
+const Utensils = dynamic(() => import("lucide-react/dist/esm/icons/utensils"), { ssr: false });
+const CalendarClock = dynamic(() => import("lucide-react/dist/esm/icons/calendar-clock"), { ssr: false });
+const Receipt = dynamic(() => import("lucide-react/dist/esm/icons/receipt"), { ssr: false });
+const CirclePlus = dynamic(() => import("lucide-react/dist/esm/icons/circle-plus"), { ssr: false });
 
 export default function FoodHome() {
   const { user, loading } = useUser();

@@ -13,7 +13,7 @@ import { useToast } from '@/components/Toast';
 import Link from 'next/link';
 import { MdOutlineStickyNote2 } from 'react-icons/md';
 import dynamic from "next/dynamic";
-const NotebookPen = dynamic(() => import("lucide-react").then(m => m.NotebookPen), { ssr: false });
+const NotebookPen = dynamic(() => import("lucide-react/dist/esm/icons/notebook-pen"), { ssr: false });
 import SharedDeleteButton from '@/components/SharedDeleteButton';
 
 export default function ScratchpadPage() {
