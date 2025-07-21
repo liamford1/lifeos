@@ -16,7 +16,6 @@
     "analyze": "ANALYZE=true npm run build:profile"
   },
   "dependencies": {
-    "@sentry/nextjs": "^9.40.0",
     "@supabase/auth-helpers-nextjs": "^0.10.0",
     "@supabase/auth-helpers-react": "^0.5.0",
     "@supabase/supabase-js": "^2.50.5",
@@ -35,18 +34,21 @@
     "@babel/preset-react": "^7.27.1",
     "@eslint/eslintrc": "^3",
     "@next/bundle-analyzer": "^15.4.2",
+    "@opentelemetry/instrumentation": "^0.46.0",
     "@playwright/test": "^1.54.1",
-    "@tailwindcss/postcss": "^4",
+    "@sentry/nextjs": "^9.40.0",
+    "@tailwindcss/postcss": "^4.1.11",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
+    "@types/node": "^24.0.15",
     "@types/react": "19.1.8",
     "babel-jest": "^30.0.4",
     "dotenv": "^17.2.0",
-    "eslint": "^9",
-    "eslint-config-next": "15.3.5",
+    "eslint": "^9.31.0",
+    "eslint-config-next": "^15.4.2",
     "jest": "^30.0.4",
     "jest-environment-jsdom": "^30.0.4",
-    "tailwindcss": "^4",
+    "tailwindcss": "^4.1.11",
     "typescript": "^5.8.3"
   }
 }
