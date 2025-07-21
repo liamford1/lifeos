@@ -9,7 +9,9 @@
     "lint": "next lint",
     "test": "jest",
     "e2e:start": "next build && next start -p 3000",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "type-check": "tsc --noEmit",
+    "tsc": "tsc"
   },
   "dependencies": {
     "@sentry/nextjs": "^9.40.0",
@@ -34,12 +36,14 @@
     "@tailwindcss/postcss": "^4",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
+    "@types/react": "19.1.8",
     "babel-jest": "^30.0.4",
     "dotenv": "^17.2.0",
     "eslint": "^9",
     "eslint-config-next": "15.3.5",
     "jest": "^30.0.4",
     "jest-environment-jsdom": "^30.0.4",
-    "tailwindcss": "^4"
+    "tailwindcss": "^4",
+    "typescript": "^5.8.3"
   }
 }

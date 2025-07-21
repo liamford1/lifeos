@@ -1,10 +1,17 @@
-const { test, expect } = require('@playwright/test');
-const { createClient } = require('@supabase/supabase-js');
+/// <reference types="@playwright/test" />
+import { test, expect } from '@playwright/test';
+import { createClient } from '@supabase/supabase-js';
 
 // Helper to get today's date in yyyy-mm-dd format
 function today() {
   const d = new Date();
   return d.toISOString().slice(0, 10);
+}
+
+declare global {
+  interface Window {
+    supabase: any;
+  }
 }
 
 test('Login and add a workout', async ({ page }) => {
@@ -42,7 +49,7 @@ test('Login and add a workout', async ({ page }) => {
   await page.waitForURL((url) => /\/fitness(\/)?$/.test(url.pathname), { timeout: 10000 });
 
   // Click the "Workouts Weightlifting" link on /fitness (unique match, strict mode)
-  await page.getByRole('link', { name: /workouts weightlifting/i, exact: false }).click({ strict: true });
+  await page.getByRole('link', { name: /workouts weightlifting/i, exact: false }).click();
   await page.waitForURL((url) => /\/fitness\/workouts$/.test(url.pathname), { timeout: 10000 });
 
   // Click the "Start Workout" button
