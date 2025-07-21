@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState } from 'react';
-import { supabase } from '@/lib/supabaseClient';
+import { useMutation } from "@tanstack/react-query";
 import FormInput from './FormInput';
 import FormLabel from './FormLabel';
 import Button from './Button';
@@ -15,6 +15,20 @@ export default function ManualPantryItemModal({ onClose, onAddSuccess }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  const insertItem = useMutation((payload) =>
+    fetch("/api/food/pantry/insert", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    }).then(async (r) => {
+      if (!r.ok) throw new Error((await r.json()).error);
+    })
+  );
+
+  const handleAddItem = async (payload) => {
+    await insertItem.mutateAsync(payload);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -24,15 +38,7 @@ export default function ManualPantryItemModal({ onClose, onAddSuccess }) {
     }
     setLoading(true);
     try {
-      const { data: userData, error: userError } = await supabase.auth.getUser();
-      const userId = userData?.user?.id;
-      if (!userId) {
-        setError('Not logged in.');
-        setLoading(false);
-        return;
-      }
-      const { error: insertError } = await supabase.from('food_items').insert({
-        user_id: userId,
+      const payload = {
         name: name.trim(),
         quantity: quantity ? parseFloat(quantity) : null,
         unit: unit || null,
@@ -40,12 +46,8 @@ export default function ManualPantryItemModal({ onClose, onAddSuccess }) {
         expires_at: expiresAt || null,
         added_from: 'manual',
         added_at: new Date().toISOString(),
-      });
-      if (insertError) {
-        setError(insertError.message);
-        setLoading(false);
-        return;
-      }
+      };
+      await handleAddItem(payload);
       if (onAddSuccess) onAddSuccess();
       onClose();
     } catch (err) {

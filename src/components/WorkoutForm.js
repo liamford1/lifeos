@@ -16,7 +16,7 @@ import { useToast } from '@/components/Toast';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { MdOutlineStickyNote2 } from 'react-icons/md';
 import { createCalendarEventForEntity } from '@/lib/calendarSync';
-import { supabase } from '@/lib/supabaseClient';
+import { useMutation } from "@tanstack/react-query";
 import SetEditor from './SetEditor';
 
 export default function WorkoutForm({ initialWorkout = null, initialExercises = [] }) {
@@ -119,8 +119,7 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
     const deletedIds = initialIds.filter(id => !currentIds.includes(id));
     // 2. Delete sets and exercises for deletedIds
     if (deletedIds.length > 0) {
-      await supabase.from('fitness_sets').delete().in('exercise_id', deletedIds);
-      await supabase.from('fitness_exercises').delete().in('id', deletedIds);
+      await deleteSets.mutateAsync({ setIds: deletedIds, exerciseIds: deletedIds });
     }
 
     // 3. Insert new exercises (with sets) if any
@@ -145,7 +144,7 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
             weight: set.weight,
           }));
           if (formattedSets.length > 0) {
-            await supabase.from('fitness_sets').insert(formattedSets);
+            await insertSets.mutateAsync(formattedSets);
           }
         }
       }

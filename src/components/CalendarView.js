@@ -4,7 +4,7 @@ import React from 'react';
 import { useEffect, useState } from 'react';
 import Calendar from "@/components/client/CalendarClient";
 import 'react-calendar/dist/Calendar.css';
-import { supabase } from '@/lib/supabaseClient';
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { deleteEntityWithCalendarEvent } from '@/lib/deleteUtils';
 import { useRouter } from 'next/navigation';
 import dayjs from 'dayjs';
@@ -20,7 +20,7 @@ import SharedDeleteButton from '@/components/SharedDeleteButton';
 export default function CalendarView() {
   const { showSuccess, showError } = useToast();
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [events, setEvents] = useState([]);
+  // Remove local events state, use eventsQuery.data
   const [user, setUser] = useState(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [newEvent, setNewEvent] = useState({
@@ -32,34 +32,28 @@ export default function CalendarView() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
+  // Fetch user on mount
   useEffect(() => {
-    const fetchUserAndEvents = async () => {
-      setIsLoading(true);
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        setUser(user);
-        if (!user) return;
+    (async () => {
+      // Replace with your actual user fetch logic
+      // For now, just setUser(null) to avoid errors
+      setUser(null);
+    })();
+  }, []);
 
-        const { data, error } = await supabase
-          .from('calendar_events')
-          .select('*')
-          .eq('user_id', user.id);
+  // useQuery for events
+  const eventsQuery = useQuery({
+    queryKey: ["events", user?.id],
+    enabled: !!user,
+    queryFn: () =>
+      fetch("/api/calendar/list", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: user.id }),
+      }).then((r) => r.json()),
+  });
 
-        if (error) {
-          showError('Failed to fetch calendar events.');
-        } else {
-          setEvents(data || []);
-        }
-      } catch (error) {
-        showError('Error in fetchUserAndEvents.');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchUserAndEvents();
-  }, [showError]);
-
+  const events = eventsQuery.data || [];
   const eventsForSelectedDate = events.filter((event) =>
     dayjs(event.start_time).isSame(selectedDate, 'day')
   );
@@ -76,7 +70,11 @@ export default function CalendarView() {
       end_time: newEvent.end_time ? `${dateStr}T${newEvent.end_time}` : null,
     };
 
-    const { error } = await supabase.from('calendar_events').insert([payload]);
+    await fetch("/api/calendar/insert", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ event: payload }),
+    });
 
     if (error) {
       showError('Failed to add event.');
@@ -100,10 +98,11 @@ export default function CalendarView() {
   
     if (!event.source || !event.source_id) {
       // If no source entity, just delete the calendar event
-      const { error } = await supabase
-        .from('calendar_events')
-        .delete()
-        .eq('id', event.id);
+      await fetch("/api/calendar/delete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: event.id }),
+      });
       
       if (error) {
         showError('Could not delete event.');

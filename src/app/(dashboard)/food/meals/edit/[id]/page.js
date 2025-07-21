@@ -194,7 +194,7 @@ export default function EditMealPage() {
           return;
         }
       } else {
-        console.log('ℹ️ No ingredients to insert (all were empty)');
+        // console.log('ℹ️ No ingredients to insert (all were empty)');
       }
 
       // Final verification - check total ingredients for this meal
@@ -206,8 +206,8 @@ export default function EditMealPage() {
       if (finalError) {
         console.error('❌ Error in final verification:', finalError);
       } else {
-        console.log('✅ Final verification: Meal now has', finalIngredients?.length || 0, 'ingredients');
-        console.log('✅ Final ingredients:', finalIngredients);
+        // console.log('✅ Final verification: Meal now has', finalIngredients?.length || 0, 'ingredients');
+        // console.log('✅ Final ingredients:', finalIngredients);
       }
 
       // Update calendar event for the edited meal
