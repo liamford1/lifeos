@@ -1,3 +1,4 @@
+"use client";
 import dynamic from "next/dynamic";
 const Move3D = dynamic(() => import("lucide-react").then(m => m.Move3D), { ssr: false });
 

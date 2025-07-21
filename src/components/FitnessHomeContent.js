@@ -3,14 +3,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/context/UserContext';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import dynamic from "next/dynamic";
-const Activity = dynamic(() => import("lucide-react").then(m => m.Activity), { ssr: false });
-const Goal = dynamic(() => import("lucide-react").then(m => m.Goal), { ssr: false });
-const Timer = dynamic(() => import("lucide-react").then(m => m.Timer), { ssr: false });
-const StretchHorizontal = dynamic(() => import("lucide-react").then(m => m.StretchHorizontal), { ssr: false });
-const HeartPulse = dynamic(() => import("lucide-react").then(m => m.HeartPulse), { ssr: false });
-const Dumbbell = dynamic(() => import("lucide-react").then(m => m.Dumbbell), { ssr: false });
-const CalendarDays = dynamic(() => import("lucide-react").then(m => m.CalendarDays), { ssr: false });
+import { CalendarIconClient as CalendarIcon } from "@/components/client/CalendarIconClient";
 
 export default function FitnessHomeContent() {
   const { user, loading } = useUser();
@@ -58,7 +51,7 @@ export default function FitnessHomeContent() {
           <div className="text-sm text-base">Steps, mood, energy</div>
         </Link>
         <Link href="/fitness/planner" className="block p-5 bg-surface rounded shadow hover:bg-[#2e2e2e] transition">
-          <CalendarDays className="w-5 h-5 text-base mr-2 inline-block" />
+          <CalendarIcon className="w-5 h-5 text-base mr-2 inline-block" />
           <span className="font-semibold">Plan Workouts</span>
           <div className="text-sm text-base">Schedule fitness sessions</div>
         </Link>
