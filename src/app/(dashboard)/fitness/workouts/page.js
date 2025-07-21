@@ -85,6 +85,7 @@ export default function WorkoutsDashboard() {
           onClick={handleStartWorkout}
           loading={creating}
           disabled={creating}
+          data-testid="add-workout-button"
         >
           Start Workout
         </Button>

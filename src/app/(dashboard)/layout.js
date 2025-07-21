@@ -8,6 +8,7 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import Link from 'next/link';
 import { FaUtensils, FaDumbbell, FaCalculator, FaStickyNote, FaHome, FaUser } from 'react-icons/fa';
 import { CookingSessionProvider } from '@/context/CookingSessionContext';
+import SupabaseExpose from '@/components/SupabaseExpose';
 
 export default function DashboardLayout({ children }) {
   const [user, setUser] = useState(null);
@@ -46,6 +47,7 @@ export default function DashboardLayout({ children }) {
 
   return (
     <CookingSessionProvider>
+      <SupabaseExpose />
       <div className="min-h-screen flex flex-col bg-panel">
         <AppBar />
         <div className="flex flex-1">

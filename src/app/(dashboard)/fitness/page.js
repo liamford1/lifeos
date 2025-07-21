@@ -23,7 +23,7 @@ export function FitnessHomeContent() {
 
   return (
     <div className="max-w-6xl mx-auto p-4 space-y-4">
-      <h1 className="text-2xl font-bold flex items-center">
+      <h1 className="text-2xl font-bold flex items-center" data-testid="home-header">
         <Activity className="w-5 h-5 text-base mr-2 inline-block" />
         Fitness Dashboard
       </h1>

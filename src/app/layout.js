@@ -7,6 +7,11 @@ import { ToastContainer } from '@/components/Toast';
 import { WorkoutSessionProvider } from '@/context/WorkoutSessionContext';
 import { CookingSessionProvider } from '@/context/CookingSessionContext';
 import ErrorBoundaryWrapper from "../components/ErrorBoundaryWrapper";
+import { supabase } from '@/lib/supabaseClient';
+
+if (typeof window !== 'undefined' && !window.supabase) {
+  window.supabase = supabase;
+}
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });

@@ -187,6 +187,7 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
             value={title} 
             onChange={(e) => setTitle(e.target.value)} 
             required 
+            data-testid="workout-title"
           />
         </div>
         <div>
@@ -196,6 +197,7 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
             value={date} 
             onChange={(e) => setDate(e.target.value)} 
             required 
+            data-testid="workout-date"
           />
         </div>
         <div>
@@ -294,8 +296,9 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
           variant="none"
           className="bg-card text-base border border-default px-4 py-2 rounded hover:bg-[#4a4a4a] transition-colors duration-200 focus:outline-none focus:ring-0 font-medium w-full mt-6"
           disabled={isLoading}
+          data-testid="workout-submit"
         >
-          {isLoading ? <LoadingSpinner size={20} /> : '✅ Update Workout'}
+          {isLoading ? <LoadingSpinner size={20} /> : '\u2705 Update Workout'}
         </Button>
       </form>
     </div>

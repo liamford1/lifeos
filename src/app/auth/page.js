@@ -37,6 +37,7 @@ export default function AuthPage() {
         placeholder="Email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
+        data-testid="auth-email"
       />
       <input
         className="border p-2 rounded mb-4 w-64"
@@ -44,11 +45,13 @@ export default function AuthPage() {
         type="password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
+        data-testid="auth-password"
       />
       <Button
         onClick={handleAuth}
         variant="primary"
         className="w-64"
+        data-testid="auth-submit"
       >
         {isLogin ? 'Log In' : 'Sign Up'}
       </Button>
