@@ -1,9 +1,18 @@
+"use client";
 import Link from 'next/link';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/context/UserContext';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { CalendarIconClient as CalendarIcon } from "@/components/client/CalendarIconClient";
+import {
+  Activity,
+  Dumbbell,
+  HeartPulse,
+  Goal,
+  StretchHorizontal,
+  Timer,
+} from "lucide-react";
 
 export default function FitnessHomeContent() {
   const { user, loading } = useUser();
