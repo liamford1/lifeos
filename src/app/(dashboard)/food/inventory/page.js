@@ -7,7 +7,8 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import Button from '@/components/Button';
 import BackButton from '@/components/BackButton'
 import { useDeleteEntity } from '@/lib/useSupabaseCrud';
-import { Package } from 'lucide-react';
+import dynamic from "next/dynamic";
+const Package = dynamic(() => import("lucide-react").then(m => m.Package), { ssr: false });
 import ManualPantryItemModal from '@/components/ManualPantryItemModal';
 import SharedDeleteButton from '@/components/SharedDeleteButton';
 

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useEffect, useState } from 'react';
-import Calendar from 'react-calendar';
+import dynamic from "next/dynamic";
 import 'react-calendar/dist/Calendar.css';
 import { supabase } from '@/lib/supabaseClient';
 import { deleteEntityWithCalendarEvent } from '@/lib/deleteUtils';
@@ -16,6 +16,8 @@ import { useToast } from '@/components/Toast';
 import { navigateToSource } from '@/lib/navigateToSource';
 import { MdOutlineCalendarToday } from 'react-icons/md';
 import SharedDeleteButton from '@/components/SharedDeleteButton';
+
+const Calendar = dynamic(() => import("react-calendar"), { ssr: false, loading: () => <div className="animate-pulse p-4">Loading calendar…</div> });
 
 export default function CalendarView() {
   const { showSuccess, showError } = useToast();

@@ -9,7 +9,8 @@ import BackButton from '@/components/BackButton';
 import Button from '@/components/Button';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { useToast } from '@/components/Toast';
-import { Goal } from 'lucide-react';
+import dynamic from "next/dynamic";
+const Goal = dynamic(() => import("lucide-react").then(m => m.Goal), { ssr: false });
 
 export default function SportsDashboard() {
   const { showSuccess, showError } = useToast();

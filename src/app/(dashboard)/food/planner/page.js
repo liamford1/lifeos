@@ -9,7 +9,8 @@ import LoadingSpinner from '@/components/LoadingSpinner'
 import { CALENDAR_SOURCES } from '@/lib/calendarUtils'
 import { useToast } from '@/components/Toast'
 import { MdOutlineCalendarToday } from 'react-icons/md';
-import { CalendarCheck } from 'lucide-react';
+import dynamic from "next/dynamic";
+const CalendarCheck = dynamic(() => import("lucide-react").then(m => m.CalendarCheck), { ssr: false });
 import { createCalendarEventForEntity } from '@/lib/calendarSync';
 import { deleteCalendarEventForEntity } from '@/lib/calendarSync';
 

@@ -7,7 +7,8 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import { supabase } from '@/lib/supabaseClient';
 import Link from 'next/link';
 import BackButton from '@/components/BackButton';
-import { UtensilsCrossed } from 'lucide-react';
+import dynamic from "next/dynamic";
+const UtensilsCrossed = dynamic(() => import("lucide-react").then(m => m.UtensilsCrossed), { ssr: false });
 import Button from '@/components/Button';
 import { useMeals } from '@/lib/hooks/useMeals';
 

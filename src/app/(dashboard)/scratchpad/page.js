@@ -12,7 +12,8 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import { useToast } from '@/components/Toast';
 import Link from 'next/link';
 import { MdOutlineStickyNote2 } from 'react-icons/md';
-import { NotebookPen } from 'lucide-react';
+import dynamic from "next/dynamic";
+const NotebookPen = dynamic(() => import("lucide-react").then(m => m.NotebookPen), { ssr: false });
 import SharedDeleteButton from '@/components/SharedDeleteButton';
 
 export default function ScratchpadPage() {

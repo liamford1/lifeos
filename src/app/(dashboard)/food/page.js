@@ -5,7 +5,12 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/context/UserContext';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import { Package, Utensils, CalendarClock, Receipt, CirclePlus } from 'lucide-react';
+import dynamic from "next/dynamic";
+const Package = dynamic(() => import("lucide-react").then(m => m.Package), { ssr: false });
+const Utensils = dynamic(() => import("lucide-react").then(m => m.Utensils), { ssr: false });
+const CalendarClock = dynamic(() => import("lucide-react").then(m => m.CalendarClock), { ssr: false });
+const Receipt = dynamic(() => import("lucide-react").then(m => m.Receipt), { ssr: false });
+const CirclePlus = dynamic(() => import("lucide-react").then(m => m.CirclePlus), { ssr: false });
 
 export default function FoodHome() {
   const { user, loading } = useUser();

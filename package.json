@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "build:profile": "NEXT_PRIVATE_DEBUG_BUNDLE_ANALYZER=1 next build --profile",
     "start": "next start",
     "lint": "next lint",
     "test": "jest",

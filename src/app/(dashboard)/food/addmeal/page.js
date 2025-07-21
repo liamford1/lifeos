@@ -10,7 +10,8 @@ import BackButton from '@/components/BackButton';
 import MealForm from '@/components/MealForm';
 import { CALENDAR_SOURCES } from '@/lib/calendarUtils';
 import { useToast } from '@/components/Toast';
-import { CirclePlus } from 'lucide-react';
+import dynamic from "next/dynamic";
+const CirclePlus = dynamic(() => import("lucide-react").then(m => m.CirclePlus), { ssr: false });
 import { createCalendarEventForEntity } from '@/lib/calendarSync';
 
 export default function AddMealPage(props) {

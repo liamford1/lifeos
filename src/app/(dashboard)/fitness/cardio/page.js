@@ -7,7 +7,8 @@ import { supabase } from '@/lib/supabaseClient';
 import BackButton from '@/components/BackButton';
 import Button from '@/components/Button';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import { HeartPulse } from 'lucide-react';
+import dynamic from "next/dynamic";
+const HeartPulse = dynamic(() => import("lucide-react").then(m => m.HeartPulse), { ssr: false });
 import SharedDeleteButton from '@/components/SharedDeleteButton';
 import { useCardioSessions } from '@/lib/hooks/useCardioSessions';
 
