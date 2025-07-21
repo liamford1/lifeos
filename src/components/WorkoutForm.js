@@ -53,7 +53,7 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
       setSetsByExercise(newSetsByExercise);
     };
     fetchSets();
-  }, [exercises, router, supabase]);
+  }, [exercises, router]);
 
   useEffect(() => {
     if (Object.keys(setsByExercise).length > 0) {

@@ -26,7 +26,7 @@ export default function WorkoutDetailPage() {
     if (!userLoading && !user) {
       router.push('/auth');
     }
-  }, [userLoading, user]);
+  }, [userLoading, user, router]);
 
   const fetchAll = useCallback(async () => {
     setLoading(true);

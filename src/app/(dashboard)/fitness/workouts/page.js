@@ -28,7 +28,7 @@ export default function WorkoutsDashboard() {
     if (!loading && !user) {
       router.push('/auth');
     }
-  }, [loading, user]);
+  }, [loading, user, router]);
 
   useEffect(() => {
     async function loadWorkouts() {
