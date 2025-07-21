@@ -15,7 +15,9 @@ export const deleteWorkoutCascade = async ({ workoutId, user_id }) => {
       .select('id')
       .eq('workout_id', workoutId);
     if (exError) {
-      console.error('Error fetching exercises:', exError);
+      if (process.env.NODE_ENV !== "production") {
+        console.error('Error fetching exercises:', exError);
+      }
       return exError;
     }
     const exerciseIds = exercises?.map(e => e.id) || [];
@@ -27,7 +29,9 @@ export const deleteWorkoutCascade = async ({ workoutId, user_id }) => {
         .delete()
         .in('exercise_id', exerciseIds);
       if (setsError) {
-        console.error('Error deleting sets:', setsError);
+        if (process.env.NODE_ENV !== "production") {
+          console.error('Error deleting sets:', setsError);
+        }
         return setsError;
       }
     }
@@ -38,7 +42,9 @@ export const deleteWorkoutCascade = async ({ workoutId, user_id }) => {
       .delete()
       .eq('workout_id', workoutId);
     if (delExError) {
-      console.error('Error deleting exercises:', delExError);
+      if (process.env.NODE_ENV !== "production") {
+        console.error('Error deleting exercises:', delExError);
+      }
       return delExError;
     }
 
@@ -49,7 +55,9 @@ export const deleteWorkoutCascade = async ({ workoutId, user_id }) => {
       .eq('id', workoutId)
       .eq('user_id', user_id);
     if (workoutError) {
-      console.error('Error deleting workout:', workoutError);
+      if (process.env.NODE_ENV !== "production") {
+        console.error('Error deleting workout:', workoutError);
+      }
       return workoutError;
     }
 
@@ -61,14 +69,17 @@ export const deleteWorkoutCascade = async ({ workoutId, user_id }) => {
       .eq('source_id', workoutId)
       .eq('user_id', user_id);
     if (calendarError) {
-      console.error('Error deleting calendar event:', calendarError);
+      if (process.env.NODE_ENV !== "production") {
+        console.error('Error deleting calendar event:', calendarError);
+      }
       return calendarError;
     }
 
-    console.log(`✅ Successfully deleted workout ${workoutId} and all child data.`);
     return null;
   } catch (error) {
-    console.error('Unexpected error in deleteWorkoutCascade:', error);
+    if (process.env.NODE_ENV !== "production") {
+      console.error('Unexpected error in deleteWorkoutCascade:', error);
+    }
     return error;
   }
 };
@@ -93,7 +104,9 @@ export const deleteEntityWithCalendarEvent = async ({ table, id, user_id, source
       .eq('user_id', user_id);
 
     if (calendarError) {
-      console.error('Error deleting calendar event:', calendarError);
+      if (process.env.NODE_ENV !== "production") {
+        console.error('Error deleting calendar event:', calendarError);
+      }
       return calendarError;
     }
 
@@ -105,14 +118,17 @@ export const deleteEntityWithCalendarEvent = async ({ table, id, user_id, source
       .eq('user_id', user_id);
 
     if (entityError) {
-      console.error('Error deleting entity:', entityError);
+      if (process.env.NODE_ENV !== "production") {
+        console.error('Error deleting entity:', entityError);
+      }
       return entityError;
     }
 
-    console.log(`✅ Successfully deleted ${source} with ID ${id} and its calendar event`);
     return null; // Success
   } catch (error) {
-    console.error('Unexpected error in deleteEntityWithCalendarEvent:', error);
+    if (process.env.NODE_ENV !== "production") {
+      console.error('Unexpected error in deleteEntityWithCalendarEvent:', error);
+    }
     return error;
   }
 }; 

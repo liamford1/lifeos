@@ -56,7 +56,9 @@ export default function AddReceiptPage(props) {
       .single()
 
     if (receiptError) {
-      console.error('Error inserting receipt:', receiptError)
+      if (process.env.NODE_ENV !== "production") {
+        console.error('Error inserting receipt:', receiptError)
+      }
       setMessage('Error creating receipt.')
       return
     }
@@ -76,7 +78,9 @@ export default function AddReceiptPage(props) {
       .insert(receiptItems)
 
     if (itemError) {
-      console.error('Error inserting receipt items:', itemError)
+      if (process.env.NODE_ENV !== "production") {
+        console.error('Error inserting receipt items:', itemError)
+      }
       setMessage('Error adding items to receipt.')
       return
     }
@@ -95,7 +99,9 @@ export default function AddReceiptPage(props) {
       .insert(foodItems)
 
     if (foodError) {
-      console.error('Error syncing to food_items:', foodError)
+      if (process.env.NODE_ENV !== "production") {
+        console.error('Error syncing to food_items:', foodError)
+      }
       setMessage('Receipt saved, but failed to update inventory.')
       return
     }

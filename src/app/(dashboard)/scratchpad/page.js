@@ -40,7 +40,9 @@ export default function ScratchpadPage() {
       .order('created_at', { ascending: false })
 
     if (error) {
-      console.error('Error fetching entries:', error.message)
+      if (process.env.NODE_ENV !== "production") {
+        console.error('Error fetching entries:', error.message)
+      }
     } else {
       setEntries(data)
     }
@@ -84,7 +86,9 @@ export default function ScratchpadPage() {
       source: 'scratchpad',
     });
     if (error) {
-      console.error('Error deleting entry:', error.message);
+      if (process.env.NODE_ENV !== "production") {
+        console.error('Error deleting entry:', error.message);
+      }
       showError('Failed to delete entry.');
     } else {
       fetchEntries();

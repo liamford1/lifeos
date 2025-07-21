@@ -13,11 +13,11 @@ export const checkAndFixCalendarEvents = async () => {
       .order('created_at')
 
     if (error) {
-      console.error('Error fetching calendar events:', error)
+      if (process.env.NODE_ENV !== "production") {
+        console.error('Error fetching calendar events:', error)
+      }
       return
     }
-
-    console.log('📊 Found', events.length, 'calendar events')
 
     // Check for events that might be planned meals but have wrong source
     const eventsToUpdate = []
@@ -31,7 +31,6 @@ export const checkAndFixCalendarEvents = async () => {
            event.title.includes('Breakfast:') || 
            event.title.includes('Snack:'))) {
         
-        console.log('🔧 Found planned meal with wrong source:', event)
         eventsToUpdate.push({
           id: event.id,
           source: 'planned_meal'
@@ -40,7 +39,6 @@ export const checkAndFixCalendarEvents = async () => {
     }
 
     if (eventsToUpdate.length > 0) {
-      console.log('🔧 Updating', eventsToUpdate.length, 'events...')
       
       for (const update of eventsToUpdate) {
         const { error: updateError } = await supabase
@@ -49,17 +47,25 @@ export const checkAndFixCalendarEvents = async () => {
           .eq('id', update.id)
         
         if (updateError) {
-          console.error('❌ Error updating event', update.id, ':', updateError)
+          if (process.env.NODE_ENV !== "production") {
+            console.error('❌ Error updating event', update.id, ':', updateError)
+          }
         } else {
-          console.log('✅ Updated event', update.id, 'to source:', update.source)
+          if (process.env.NODE_ENV !== "production") {
+            console.log('✅ Updated event', update.id, 'to source:', update.source)
+          }
         }
       }
     } else {
-      console.log('✅ No events need updating')
+      if (process.env.NODE_ENV !== "production") {
+        console.log('✅ No events need updating')
+      }
     }
 
   } catch (error) {
-    console.error('Unexpected error:', error)
+    if (process.env.NODE_ENV !== "production") {
+      console.error('Unexpected error:', error)
+    }
   }
 }
 
@@ -74,7 +80,9 @@ export const checkSourceTypes = async () => {
       .order('created_at')
 
     if (error) {
-      console.error('Error fetching calendar events:', error)
+      if (process.env.NODE_ENV !== "production") {
+        console.error('Error fetching calendar events:', error)
+      }
       return
     }
 
@@ -83,7 +91,9 @@ export const checkSourceTypes = async () => {
       sourceCounts[event.source] = (sourceCounts[event.source] || 0) + 1
     })
 
-    console.log('📊 Source type counts:', sourceCounts)
+    if (process.env.NODE_ENV !== "production") {
+      console.log('📊 Source type counts:', sourceCounts)
+    }
     
     // Show some examples of each source type
     const examples = {}
@@ -96,9 +106,13 @@ export const checkSourceTypes = async () => {
       }
     })
 
-    console.log('📋 Examples by source type:', examples)
+    if (process.env.NODE_ENV !== "production") {
+      console.log('📋 Examples by source type:', examples)
+    }
 
   } catch (error) {
-    console.error('Unexpected error:', error)
+    if (process.env.NODE_ENV !== "production") {
+      console.error('Unexpected error:', error)
+    }
   }
 } 

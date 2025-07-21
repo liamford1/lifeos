@@ -110,11 +110,6 @@ export default function EditMealPage() {
         return;
       }
 
-      console.log("🧪 Final ingredient state being saved:", mealData.ingredients);
-      console.log("🧪 Raw ingredients count:", mealData.ingredients.length);
-      console.log("🧪 Meal ID from URL params:", id);
-      console.log("🧪 User ID:", userId);
-
       // Verify the meal belongs to the current user
       const { data: mealCheck, error: mealCheckError } = await supabase
         .from('meals')
@@ -129,8 +124,6 @@ export default function EditMealPage() {
         setSaving(false);
         return;
       }
-
-      console.log('✅ Meal ownership verified:', mealCheck);
 
       // 1. Update the meal
       const { error: mealError } = await supabase
@@ -153,7 +146,6 @@ export default function EditMealPage() {
       }
 
       // 2. Delete old ingredients
-      console.log('🗑️ Deleting old ingredients for meal_id:', id);
       const { error: deleteError } = await supabase
         .from('meal_ingredients')
         .delete()
@@ -165,7 +157,6 @@ export default function EditMealPage() {
         setSaving(false);
         return;
       }
-      console.log('✅ Old ingredients deleted successfully');
 
       // 3. Insert new ingredients
       const cleanedIngredients = mealData.ingredients
@@ -181,9 +172,6 @@ export default function EditMealPage() {
           unit: i.unit.trim()
         }));
 
-      console.log("🧪 Cleaned ingredients to insert:", cleanedIngredients);
-      console.log("🧪 Cleaned ingredients count:", cleanedIngredients.length);
-
       if (cleanedIngredients.length > 0) {
         const { data: insertResult, error: insertError } = await supabase
           .from('meal_ingredients')
@@ -196,11 +184,6 @@ export default function EditMealPage() {
           setSaving(false);
           return;
         }
-
-        console.log('✅ New ingredients inserted successfully');
-        console.log('📝 Inserted ingredient IDs:', insertResult?.map(r => r.id) || []);
-        console.log('📝 Expected insert count:', cleanedIngredients.length);
-        console.log('📝 Actual insert count:', insertResult?.length || 0);
 
         // Verify insertion was successful
         if (!insertResult || insertResult.length !== cleanedIngredients.length) {
@@ -226,8 +209,6 @@ export default function EditMealPage() {
         console.log('✅ Final verification: Meal now has', finalIngredients?.length || 0, 'ingredients');
         console.log('✅ Final ingredients:', finalIngredients);
       }
-
-      console.log('✅ Meal and ingredients updated successfully');
 
       // Update calendar event for the edited meal
       const startTime = new Date();
@@ -281,8 +262,6 @@ export default function EditMealPage() {
         return;
       }
 
-      console.log('✅ Meal ownership verified:', mealCheck);
-
       // Delete the meal
       const { error: deleteError } = await supabase
         .from('meals')
@@ -295,7 +274,6 @@ export default function EditMealPage() {
         setDeleting(false);
         return;
       }
-      console.log('✅ Meal deleted successfully');
 
       // Delete associated ingredients
       const { error: deleteIngredientsError } = await supabase
@@ -309,7 +287,6 @@ export default function EditMealPage() {
         setDeleting(false);
         return;
       }
-      console.log('✅ Ingredients deleted successfully');
 
       // Update calendar event for the deleted meal
       const calendarError = await updateCalendarEventFromSource(
@@ -366,8 +343,6 @@ export default function EditMealPage() {
       unit: ing.unit || '',
     })),
   };
-
-  console.log('📋 Initial values prepared for MealForm:', initialValues);
 
   return (
     <div className="max-w-6xl mx-auto p-4 space-y-4">

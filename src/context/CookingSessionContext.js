@@ -91,7 +91,9 @@ export function CookingSessionProvider({ children }) {
       }
     } catch (err) {
       // Log error silently
-      console.error('Error updating cooked_meals in endCooking:', err);
+      if (process.env.NODE_ENV !== "production") {
+        console.error('Error updating cooked_meals in endCooking:', err);
+      }
     }
     setMealId(null);
     setCurrentStep(0);

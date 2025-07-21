@@ -34,7 +34,6 @@ export const getCalendarEventRoute = (source, source_id) => {
     case CALENDAR_SOURCES.NOTE:
       return `/scratchpad` // Notes don't have individual pages, redirect to scratchpad
     default:
-      console.warn(`Unknown calendar event source: ${source}`)
       return '/'
   }
 }
@@ -61,14 +60,11 @@ export const updateCalendarEvent = async (source, source_id, title, startTime, e
       .eq('source_id', source_id);
 
     if (error) {
-      console.error('Error updating calendar event:', error);
       return error;
     }
 
-    console.log(`✅ Successfully updated calendar event for ${source} with ID ${source_id}`);
     return null; // Success
   } catch (error) {
-    console.error('Unexpected error in updateCalendarEvent:', error);
     return error;
   }
 }
@@ -89,13 +85,10 @@ export const updateCalendarEventFromSource = async (source, source_id, updatedFi
       .eq('source_id', source_id);
 
     if (error) {
-      console.error('Error updating calendar event:', error);
       return error;
     }
-    console.log(`✅ Successfully updated calendar event for ${source} with ID ${source_id}`);
     return null;
   } catch (error) {
-    console.error('Unexpected error in updateCalendarEventFromSource:', error);
     return error;
   }
 }
@@ -112,7 +105,6 @@ export const addCalendarEvent = async ({
   // Validate source value
   const validSources = Object.values(CALENDAR_SOURCES)
   if (!validSources.includes(source)) {
-    console.error(`Invalid source value: ${source}. Must be one of: ${validSources.join(', ')}`)
     return { error: `Invalid source value: ${source}` }
   }
 
@@ -129,6 +121,6 @@ export const addCalendarEvent = async ({
   ]);
 
   if (error) {
-    console.error('Error adding calendar event:', error.message);
+    return error;
   }
 }

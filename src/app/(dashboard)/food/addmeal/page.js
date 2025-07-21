@@ -73,8 +73,6 @@ export default function AddMealPage(props) {
       const mealId = result.mealId;
       if (!mealId) {
         // Log or silently return if needed
-        console.warn('No mealId returned from API. Skipping ingredient/calendar insert.');
-        setIsSaving(false);
         return;
       }
 
@@ -102,8 +100,6 @@ export default function AddMealPage(props) {
           setIsSaving(false);
           return;
         }
-      } else {
-        console.log("🧪 No ingredients to insert (all were empty)");
       }
 
       showSuccess('Meal and ingredients saved successfully!');

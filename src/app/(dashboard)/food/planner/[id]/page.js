@@ -33,11 +33,10 @@ export default function PlannedMealDetailPage() {
         .eq('id', id)
         .single();
 
-      // Add detailed logging for debugging
-      console.log('Supabase fetch result:', { id, data, error });
-
       if (error) {
-        console.error('Error fetching planned meal:', error);
+        if (process.env.NODE_ENV !== "production") {
+          console.error('Error fetching planned meal:', error);
+        }
         setError('Failed to load planned meal. Please try again.');
         setLoading(false);
         return;
@@ -99,14 +98,6 @@ export default function PlannedMealDetailPage() {
       if (plannedDate instanceof Date) {
         plannedDate = plannedDate.toISOString().slice(0, 10);
       }
-      // Debug log
-      console.log('Updating planned_meals:', {
-        id,
-        meal_time: editData.meal_time,
-        planned_date: plannedDate,
-        user_id: plannedMeal.user_id,
-        meal_id: plannedMeal.meal_id,
-      });
       // Update planned_meals
       const { error: updateError } = await supabase
         .from('planned_meals')
@@ -118,7 +109,9 @@ export default function PlannedMealDetailPage() {
         })
         .eq('id', id);
       if (updateError) {
-        console.error('Supabase update error:', updateError);
+        if (process.env.NODE_ENV !== "production") {
+          console.error('Supabase update error:', updateError);
+        }
         setError(updateError.message || 'Failed to update planned meal.');
         return;
       }

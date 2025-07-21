@@ -7,7 +7,6 @@ export default function SupabaseExpose() {
   useEffect(() => {
     if (typeof window !== 'undefined' && !window.supabase) {
       window.supabase = supabase;
-      console.log('[E2E] ✅ SupabaseExpose mounted and window.supabase attached');
     }
   }, []);
 

@@ -56,12 +56,16 @@ export const createCalendarEventForEntity = async (type, entity) => {
       },
     ]);
     if (error) {
-      console.error('Error creating calendar event:', error);
+      if (process.env.NODE_ENV !== "production") {
+        console.error('Error creating calendar event:', error);
+      }
       return error;
     }
     return null;
   } catch (error) {
-    console.error('Unexpected error in createCalendarEventForEntity:', error);
+    if (process.env.NODE_ENV !== "production") {
+      console.error('Unexpected error in createCalendarEventForEntity:', error);
+    }
     return error;
   }
 };
@@ -80,12 +84,16 @@ export const deleteCalendarEventForEntity = async (type, source_id) => {
       .eq('source', type)
       .eq('source_id', source_id);
     if (error) {
-      console.error('Error deleting calendar event:', error);
+      if (process.env.NODE_ENV !== "production") {
+        console.error('Error deleting calendar event:', error);
+      }
       return error;
     }
     return null;
   } catch (error) {
-    console.error('Unexpected error in deleteCalendarEventForEntity:', error);
+    if (process.env.NODE_ENV !== "production") {
+      console.error('Unexpected error in deleteCalendarEventForEntity:', error);
+    }
     return error;
   }
 }; 

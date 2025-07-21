@@ -3,7 +3,6 @@
 
 export function navigateToSource(source, sourceId, router) {
   if (!source || !sourceId) {
-    console.warn('Missing source or sourceId for navigation:', { source, sourceId });
     return;
   }
 
@@ -23,7 +22,6 @@ export function navigateToSource(source, sourceId, router) {
       break;
     // Add more cases as needed
     default:
-      console.warn('Unknown source type for navigation:', source);
       return;
   }
 

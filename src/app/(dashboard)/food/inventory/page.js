@@ -38,7 +38,6 @@ export default function InventoryPage() {
     } = await import('@/lib/supabaseClient').then(m => m.supabase.auth.getUser())
 
     if (!user) {
-      console.log('Not logged in')
       return
     }
 
@@ -57,7 +56,9 @@ export default function InventoryPage() {
       `).eq('user_id', user.id).order('added_at', { ascending: false }))
 
     if (error) {
-      console.error('Error fetching inventory:', error)
+      if (process.env.NODE_ENV !== "production") {
+        console.error('Error fetching inventory:', error)
+      }
     } else {
       setItems(data)
     }
@@ -90,7 +91,9 @@ export default function InventoryPage() {
       const { error } = await import('@/lib/supabaseClient').then(m => m.supabase.from('food_items').update({ quantity: newQty }).eq('id', id))
 
       if (error) {
-        console.error('Update error:', error)
+        if (process.env.NODE_ENV !== "production") {
+          console.error('Update error:', error)
+        }
       } else {
         setItems((prev) =>
           prev.map((i) => (i.id === id ? { ...i, quantity: newQty } : i))

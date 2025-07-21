@@ -22,7 +22,9 @@ export default function AddSportSession() {
     ]).select().single();
 
     if (error) {
-      console.error(error);
+      if (process.env.NODE_ENV !== "production") {
+        console.error(error);
+      }
       showError('Failed to add session.');
       return;
     }
@@ -41,7 +43,9 @@ export default function AddSportSession() {
     });
 
     if (calendarError) {
-      console.error('Calendar event creation failed:', calendarError);
+      if (process.env.NODE_ENV !== "production") {
+        console.error('Calendar event creation failed:', calendarError);
+      }
     }
 
     showSuccess('Sport session added successfully!');
