@@ -34,6 +34,9 @@ export default function SportForm({ initialData = {}, onSubmit }) {
       injuries_or_flags: flags,
       calories_burned: null, // reserved for AI estimation
     });
+    // TODO: Provide accurate start_time and end_time if available
+    // import { createCalendarEventForEntity } from '@/lib/calendarUtils';
+    // await createCalendarEventForEntity('sport', /* newEntry.id */, /* user.id */, /* start_time */, /* end_time */);
   };
 
   return (

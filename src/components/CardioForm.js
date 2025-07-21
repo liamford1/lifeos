@@ -58,6 +58,9 @@ export default function CardioForm({ initialData = {}, onSubmit }) {
       distance_miles: distance ? parseFloat(distance) : undefined,
       notes,
     });
+    // TODO: Provide accurate start_time and end_time if available
+    // import { createCalendarEventForEntity } from '@/lib/calendarUtils';
+    // await createCalendarEventForEntity('cardio', /* newEntry.id */, /* user.id */, /* start_time */, /* end_time */);
     setLoading(false);
   };
 

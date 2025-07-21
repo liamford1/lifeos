@@ -151,15 +151,8 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
     }
     // Update calendar event
     const startTime = new Date(date);
-    const calendarError = await updateCalendarEventFromSource(
-      CALENDAR_SOURCES.WORKOUT,
-      workoutId,
-      {
-        title: `Workout: ${title}`,
-        start_time: startTime.toISOString(),
-        description: notes || null,
-      }
-    );
+    // TODO: Provide accurate start_time and end_time if available
+    await createCalendarEventForEntity('workout', workoutId, user.id, startTime.toISOString(), null);
     if (calendarError) {
       showError('Calendar event update failed:', calendarError);
     } else {

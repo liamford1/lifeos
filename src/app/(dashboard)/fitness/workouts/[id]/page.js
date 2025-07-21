@@ -10,6 +10,7 @@ import { useToast } from '@/components/Toast';
 import { MdOutlineCalendarToday } from 'react-icons/md';
 import { supabase } from '@/lib/supabaseClient';
 import SharedDeleteButton from '@/components/SharedDeleteButton';
+import Button from '@/components/Button';
 
 export default function WorkoutDetailPage() {
   const params = useParams();
@@ -110,13 +111,14 @@ export default function WorkoutDetailPage() {
       )}
 
       <div className="mt-6">
-        <button
+        <Button
+          variant="secondary"
           onClick={() => router.push('/')}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          className="px-4 py-2"
         >
           <MdOutlineCalendarToday className="inline w-5 h-5 text-base align-text-bottom mr-2" />
           Back to Calendar
-        </button>
+        </Button>
       </div>
     </div>
   );

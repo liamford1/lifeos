@@ -34,12 +34,8 @@ export default function InventoryPage() {
 
   // fetchInventory must be defined before useEffect, so move it above
   async function fetchInventory() {
-    const {
-      data: { user },
-    } = await import('@/lib/supabaseClient').then(m => m.supabase.auth.getUser())
-
     if (!user) {
-      return
+      return;
     }
 
     const { data, error } = await import('@/lib/supabaseClient').then(m => m.supabase.from('food_items').select(`
@@ -113,12 +109,13 @@ export default function InventoryPage() {
           <Package className="w-5 h-5 text-base mr-2 inline-block" />
           Your Pantry
         </h1>
-        <button
+        <Button
           className="ml-4 bg-card text-base border border-default px-4 py-2 rounded hover:bg-[#4a4a4a] transition-colors duration-200 focus:outline-none focus:ring-0 font-medium"
           onClick={() => setShowManualAddModal(true)}
+          variant="secondary"
         >
           + Add Item
-        </button>
+        </Button>
       </div>
       <p className="text-base">Track your food inventory and pantry items.</p>
       {showManualAddModal && (

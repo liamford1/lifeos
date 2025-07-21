@@ -1,4 +1,5 @@
 import React from "react";
+import Button from "./Button";
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -38,12 +39,13 @@ class ErrorBoundary extends React.Component {
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 text-center p-8">
           <h1 className="text-2xl font-bold mb-4">Something went wrong</h1>
           <p className="mb-6">An unexpected error occurred. Please try again.</p>
-          <button
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          <Button
+            variant="secondary"
             onClick={this.handleReset}
+            className="px-4 py-2"
           >
             Reload
-          </button>
+          </Button>
         </div>
       );
     }

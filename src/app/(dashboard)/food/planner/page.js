@@ -13,6 +13,7 @@ import dynamic from "next/dynamic";
 const CalendarCheck = dynamic(() => import("lucide-react/dist/esm/icons/calendar-check"), { ssr: false });
 import { createCalendarEventForEntity } from '@/lib/calendarSync';
 import { deleteCalendarEventForEntity } from '@/lib/calendarSync';
+import { useUser } from '@/context/UserContext';
 
 export default function MealPlannerPage() {
   const { showSuccess, showError } = useToast();
@@ -24,6 +25,7 @@ export default function MealPlannerPage() {
   const [message, setMessage] = useState('')
   const [mealsLoading, setMealsLoading] = useState(true)
   const [plannedMealsLoading, setPlannedMealsLoading] = useState(true)
+  const { user, loading } = useUser();
 
   const fetchMeals = useCallback(async () => {
     setMealsLoading(true)
@@ -90,14 +92,9 @@ export default function MealPlannerPage() {
       return
     }
 
-    const {
-      data: { user },
-      error: userError,
-    } = await supabase.auth.getUser()
-
-    if (userError || !user) {
-      setMessage('Error: not logged in')
-      return
+    if (!user) {
+      setMessage('Error: not logged in');
+      return;
     }
 
     const { data: insertData, error } = await supabase
@@ -125,13 +122,11 @@ export default function MealPlannerPage() {
   }
 
   const handleDelete = async (id) => {
-    const user = await supabase.auth.getUser();
-    const user_id = user?.data?.user?.id;
-    
-    if (!user_id) {
+    if (!user) {
       showError('You must be logged in.');
       return;
     }
+    const user_id = user.id;
 
     // Delete the planned meal
     const { error: deleteError } = await supabase

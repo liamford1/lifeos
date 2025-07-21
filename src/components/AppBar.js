@@ -81,14 +81,16 @@ export default function AppBar() {
         )}
         {/* Cooking in progress indicator */}
         {mealId && instructions.length > 0 && (
-          <button
+          <Button
             type="button"
             onClick={() => router.push(`/food/meals/${mealId}/cook`)}
+            variant="secondary"
+            size="sm"
             className="text-sm text-orange-600 font-medium ml-4 cursor-pointer hover:underline focus:underline focus:outline-none"
             aria-label="Go to Cooking Session"
           >
             🍳 Cooking in progress – Step {currentStep + 1} of {instructions.length}
-          </button>
+          </Button>
         )}
         {/* Profile icon button - only show when user is logged in */}
         {user && (

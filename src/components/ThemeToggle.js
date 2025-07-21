@@ -1,5 +1,6 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
+import { Button } from './Button';
 
 export default function ThemeToggle() {
   const [isDark, setIsDark] = useState(false);
@@ -40,12 +41,14 @@ export default function ThemeToggle() {
   };
 
   return (
-    <button
+    <Button
       onClick={toggleTheme}
       aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-      className="p-2 rounded bg-card border border-default text-base hover:bg-surface transition"
+      variant="secondary"
+      size="sm"
+      className="p-2"
     >
-      {isDark ? '🌙 Dark' : '☀️ Light'}
-    </button>
+      {isDark ? '\ud83c\udf19 Dark' : '\u2600\ufe0f Light'}
+    </Button>
   );
 } 

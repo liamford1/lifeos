@@ -32,10 +32,7 @@ export default function MealDetailPage() {
 
   useEffect(() => {
     async function fetchMeal() {
-      // Always fetch the authenticated user directly from Supabase
-      const { data: authUserData, error: authUserError } = await supabase.auth.getUser();
-      const authUser = authUserData?.user;
-      if (!authUser) {
+      if (!user) {
         router.push('/auth');
         return;
       }
@@ -45,7 +42,7 @@ export default function MealDetailPage() {
           .from('meals')
           .select('*')
           .eq('id', id)
-          .eq('user_id', authUser.id)
+          .eq('user_id', user.id)
           .single();
 
         if (mealError) {
@@ -88,7 +85,7 @@ export default function MealDetailPage() {
     }
 
     fetchMeal();
-  }, [id, router, showError]);
+  }, [id, router, showError, user]);
 
   async function handleDeleteMeal() {
     try {
@@ -96,14 +93,12 @@ export default function MealDetailPage() {
       if (!confirm) return;
 
       setDeleting(true);
-      const user = await supabase.auth.getUser();
-      const userId = user?.data?.user?.id;
-
-      if (!userId) {
+      if (!user) {
         showError('You must be logged in.');
         setDeleting(false);
         return;
       }
+      const userId = user.id;
 
       if (!meal) {
         showError('No meal data available.');

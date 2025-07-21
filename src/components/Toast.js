@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useState, useEffect } from 'react';
+import Button from './Button'; // Added import for Button
 
 export default function Toast({ 
   message, 
@@ -84,12 +85,15 @@ export default function Toast({
       <div className={`flex items-center p-4 rounded-lg shadow-lg border ${getTypeStyles()} animate-in slide-in-from-top-2 duration-300`}>
         <span className="mr-2 text-lg">{getIcon()}</span>
         <span className="flex-1 text-sm font-medium">{message}</span>
-        <button
+        <Button
           onClick={handleClose}
-          className="ml-2 text-base hover:text-base focus:outline-none"
+          variant="secondary"
+          size="sm"
+          className="ml-2"
+          aria-label="Close toast"
         >
           ✕
-        </button>
+        </Button>
       </div>
     </div>
   );

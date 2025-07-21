@@ -55,13 +55,14 @@ export default function CookMealPage() {
     <div className="p-6 space-y-4">
       {/* Back button or link at the top */}
       {!isCooking && (
-        <button
+        <Button
           type="button"
           onClick={() => router.push(`/food/meals/${meal.id}`)}
-          className="bg-card text-base border border-default px-4 py-2 rounded hover:bg-[#4a4a4a] transition-colors duration-200 focus:outline-none focus:ring-0 mb-4"
+          variant="secondary"
+          className="mb-4"
         >
           ← Back to meal
-        </button>
+        </Button>
       )}
       <h1 className="text-3xl font-bold">{meal.name}</h1>
       <p className="text-base">{meal.description}</p>

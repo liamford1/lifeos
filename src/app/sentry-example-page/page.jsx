@@ -3,6 +3,7 @@
 import Head from "next/head";
 import * as Sentry from "@sentry/nextjs";
 import { useState, useEffect } from "react";
+import Button from "@/components/Button";
 
 class SentryExampleFrontendError extends Error {
   constructor(message) {
@@ -45,7 +46,7 @@ export default function Page() {
            href="https://docs.sentry.io/platforms/javascript/guides/nextjs/">read our docs</a>.
         </p>
 
-        <button
+        <Button
           type="button"
           onClick={async () => {
             await Sentry.startSpan({
@@ -60,11 +61,12 @@ export default function Page() {
             throw new SentryExampleFrontendError("This error is raised on the frontend of the example page.");
           }}
           disabled={!isConnected}
+          variant="secondary"
         >
           <span>
             Throw Sample Error
           </span>
-        </button>
+        </Button>
 
         {hasSentError ? (
           <p className="success">

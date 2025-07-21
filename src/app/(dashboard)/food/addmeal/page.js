@@ -35,14 +35,12 @@ export default function AddMealPage(props) {
     setError('');
 
     try {
-      const user = await supabase.auth.getUser();
-      const userId = user?.data?.user?.id;
-
-      if (!userId) {
+      if (!user) {
         showError('User not logged in.');
         setIsSaving(false);
         return;
       }
+      const userId = user.id;
 
       // Call the new API route to create the meal
       const response = await fetch('/api/meal/create', {

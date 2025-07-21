@@ -101,14 +101,12 @@ export default function EditMealPage() {
     setError('');
 
     try {
-      const user = await supabase.auth.getUser();
-      const userId = user?.data?.user?.id;
-
-      if (!userId || !id) {
+      if (!user || !id) {
         setError('User not authenticated or meal ID missing');
         setSaving(false);
         return;
       }
+      const userId = user.id;
 
       // Verify the meal belongs to the current user
       const { data: mealCheck, error: mealCheckError } = await supabase
@@ -193,8 +191,6 @@ export default function EditMealPage() {
           setSaving(false);
           return;
         }
-      } else {
-        // console.log('ℹ️ No ingredients to insert (all were empty)');
       }
 
       // Final verification - check total ingredients for this meal
@@ -205,9 +201,6 @@ export default function EditMealPage() {
 
       if (finalError) {
         console.error('❌ Error in final verification:', finalError);
-      } else {
-        // console.log('✅ Final verification: Meal now has', finalIngredients?.length || 0, 'ingredients');
-        // console.log('✅ Final ingredients:', finalIngredients);
       }
 
       // Update calendar event for the edited meal
@@ -238,14 +231,12 @@ export default function EditMealPage() {
     setDeleting(true);
     setError('');
     try {
-      const user = await supabase.auth.getUser();
-      const userId = user?.data?.user?.id;
-
-      if (!userId || !id) {
+      if (!user || !id) {
         setError('User not authenticated or meal ID missing');
         setDeleting(false);
         return;
       }
+      const userId = user.id;
 
       // Verify the meal belongs to the current user
       const { data: mealCheck, error: mealCheckError } = await supabase
