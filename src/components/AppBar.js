@@ -14,7 +14,7 @@ import { useCookingSession } from '@/context/CookingSessionContext';
 import Image from 'next/image';
 
 export default function AppBar() {
-  const { user, loading } = useUser();
+  const { user, loading, session } = useUser();
   const { activeWorkoutId } = useWorkoutSession();
   const { mealId, currentStep, instructions } = useCookingSession();
   const [profile, setProfile] = useState(null);
@@ -23,10 +23,12 @@ export default function AppBar() {
   // Fetch user profile data when user is available
   useEffect(() => {
     const getProfile = async () => {
-      if (!user) return;
+      if (loading) return;
+      if (!session?.access_token) return;
+      if (!user?.id) return;
       const { data, error } = await supabase
         .from('profiles')
-        .select('first_name, last_name')
+        .select('first_name, last_name', { headers: { Accept: 'application/json' } })
         .eq('user_id', user.id)
         .single();
       if (!error && data) {
@@ -34,7 +36,7 @@ export default function AppBar() {
       }
     };
     getProfile();
-  }, [user]);
+  }, [user, loading, session]);
 
   // Handle user logout and redirect
   const handleLogout = async () => {

@@ -13,6 +13,11 @@ test('Login and add a workout', async ({ page }) => {
     console.log(`[BROWSER LOG] ${msg.type()}: ${msg.text()}`);
   });
 
+  // Log 406 responses
+  page.on('response', res => {
+    if (res.status() === 406) console.log('406:', res.url());
+  });
+
   // Go to /auth
   await page.goto('http://localhost:3000/auth');
 
