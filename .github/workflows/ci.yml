@@ -30,6 +30,9 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Type check
+        run: npm run type-check || npm run tsc --noEmit
+
       - name: Run Jest unit tests
         run: npm run test
 
