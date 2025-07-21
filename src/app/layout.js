@@ -8,6 +8,7 @@ import { WorkoutSessionProvider } from '@/context/WorkoutSessionContext';
 import { CookingSessionProvider } from '@/context/CookingSessionContext';
 import ErrorBoundaryWrapper from "../components/ErrorBoundaryWrapper";
 import { supabase } from '@/lib/supabaseClient';
+import ReactQueryProvider from '@/components/ReactQueryProvider';
 
 if (typeof window !== 'undefined' && !window.supabase) {
   window.supabase = supabase;
@@ -25,18 +26,20 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        <SupabaseProvider>
-          <UserProvider>
-            <WorkoutSessionProvider>
-              <CookingSessionProvider>
-                <ErrorBoundaryWrapper>
-                  <ToastContainer />
-                  {children}
-                </ErrorBoundaryWrapper>
-              </CookingSessionProvider>
-            </WorkoutSessionProvider>
-          </UserProvider>
-        </SupabaseProvider>
+        <ReactQueryProvider>
+          <SupabaseProvider>
+            <UserProvider>
+              <WorkoutSessionProvider>
+                <CookingSessionProvider>
+                  <ErrorBoundaryWrapper>
+                    <ToastContainer />
+                    {children}
+                  </ErrorBoundaryWrapper>
+                </CookingSessionProvider>
+              </WorkoutSessionProvider>
+            </UserProvider>
+          </SupabaseProvider>
+        </ReactQueryProvider>
       </body>
     </html>
   );

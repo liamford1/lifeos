@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 
 const LOCAL_STORAGE_KEY = 'cookingSession';
@@ -110,22 +110,30 @@ export function CookingSessionProvider({ children }) {
     localStorage.removeItem(LOCAL_STORAGE_KEY);
   }, []);
 
-  const value = {
-    mealId,
-    currentStep,
-    instructions,
-    startedAt,
-    startCooking,
-    nextStep,
-    previousStep,
-    endCooking,
-    cancelCooking,
-    isCooking: !!mealId && instructions.length > 0,
-  };
+  // Compute isCooking as before
+  const cooking = !!mealId && instructions.length > 0;
 
+  const value = useMemo(
+    () => ({
+      cooking,
+      mealId,
+      currentStep,
+      instructions,
+      startCooking,
+      nextStep,
+      previousStep,
+      endCooking,
+      cancelCooking,
+    }),
+    [cooking, mealId, currentStep, instructions, startCooking, nextStep, previousStep, endCooking, cancelCooking]
+  );
+
+  // React Profiler root marker
   return (
     <CookingSessionContext.Provider value={value}>
+      {/* react-profiler-start:CookingSessionContext */}
       {children}
+      {/* react-profiler-end */}
     </CookingSessionContext.Provider>
   );
 }

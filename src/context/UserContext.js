@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState, useMemo, useCallback } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 
 const UserContext = createContext({
@@ -40,9 +40,32 @@ export function UserProvider({ children }) {
     };
   }, []);
 
+  // stable refresh fn
+  const fetchCurrentUser = useCallback(async () => {
+    setLoading(true);
+    const { data: { session } } = await supabase.auth.getSession();
+    const { data: { user } } = await supabase.auth.getUser();
+    setSession(session);
+    setUser(user);
+    setLoading(false);
+  }, []);
+
+  const refresh = useCallback(() => {
+    fetchCurrentUser();
+  }, [fetchCurrentUser]);
+
+  // memoised value
+  const value = useMemo(
+    () => ({ session, user, loading, refresh }),
+    [session, user, loading, refresh]
+  );
+
+  // React Profiler root marker
   return (
-    <UserContext.Provider value={{ session, user, loading }}>
+    <UserContext.Provider value={value}>
+      {/* react-profiler-start:UserContext */}
       {children}
+      {/* react-profiler-end */}
     </UserContext.Provider>
   );
 }

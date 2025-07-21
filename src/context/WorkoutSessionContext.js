@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState, useMemo, useCallback } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { useUser } from '@/context/UserContext';
 
@@ -14,14 +14,14 @@ const WorkoutSessionContext = createContext({
 
 export function WorkoutSessionProvider({ children }) {
   const { user, loading: userLoading } = useUser();
-  const [activeWorkoutId, setActiveWorkoutId] = useState(null);
+  const [activeWorkoutId, setActiveWorkoutIdRaw] = useState(null);
   const [workoutData, setWorkoutData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchInProgressWorkout = async () => {
+  const fetchInProgressWorkout = useCallback(async () => {
     if (!user) {
       setWorkoutData(null);
-      setActiveWorkoutId(null);
+      setActiveWorkoutIdRaw(null);
       setLoading(false);
       return;
     }
@@ -35,31 +35,42 @@ export function WorkoutSessionProvider({ children }) {
       .limit(1)
       .maybeSingle();
     if (!error && data) {
-      setActiveWorkoutId(data.id);
+      setActiveWorkoutIdRaw(data.id);
       setWorkoutData(data);
     } else {
-      setActiveWorkoutId(null);
+      setActiveWorkoutIdRaw(null);
       setWorkoutData(null);
     }
     setLoading(false);
-  };
+  }, [user]);
+
+  const setActiveWorkoutId = useCallback((id) => {
+    setActiveWorkoutIdRaw(id);
+  }, []);
 
   useEffect(() => {
     if (!userLoading) {
       fetchInProgressWorkout();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, userLoading]);
+  }, [user, userLoading, fetchInProgressWorkout]);
 
-  return (
-    <WorkoutSessionContext.Provider value={{
+  const value = useMemo(
+    () => ({
       activeWorkoutId,
       setActiveWorkoutId,
       workoutData,
       refreshWorkout: fetchInProgressWorkout,
       loading,
-    }}>
+    }),
+    [activeWorkoutId, setActiveWorkoutId, workoutData, fetchInProgressWorkout, loading]
+  );
+
+  // React Profiler root marker
+  return (
+    <WorkoutSessionContext.Provider value={value}>
+      {/* react-profiler-start:WorkoutSessionContext */}
       {children}
+      {/* react-profiler-end */}
     </WorkoutSessionContext.Provider>
   );
 }

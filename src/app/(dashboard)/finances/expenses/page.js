@@ -85,11 +85,11 @@ export default function FinancesOverview() {
               <div className="text-sm text-base">{exp.category} — {exp.store} — {exp.payment_method}</div>
               <div className="text-xs text-base">{exp.date}</div>
               <div className="flex gap-2 mt-2">
-                <Link href={`/finances/expenses/${exp.id}`} passHref legacyBehavior>
-                  <Button as="a" variant="secondary" size="sm">View</Button>
+                <Link href={`/finances/expenses/${exp.id}`}>
+                  <Button variant="secondary" size="sm">View</Button>
                 </Link>
-                <Link href={`/finances/expenses/${exp.id}/edit`} passHref legacyBehavior>
-                  <Button as="a" variant="primary" size="sm">Edit</Button>
+                <Link href={`/finances/expenses/${exp.id}/edit`}>
+                  <Button variant="primary" size="sm">Edit</Button>
                 </Link>
                 <SharedDeleteButton
                   size="sm"
