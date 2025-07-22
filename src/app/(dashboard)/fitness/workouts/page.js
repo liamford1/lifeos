@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabaseClient';
 import { deleteEntityWithCalendarEvent, deleteWorkoutCascade } from '@/lib/deleteUtils';
@@ -24,6 +24,8 @@ export default function WorkoutsDashboard() {
   const [workoutsLoading, setWorkoutsLoading] = useState(true);
   const [creating, setCreating] = useState(false);
   const { fetchWorkouts, createWorkout, deleteWorkout } = useWorkouts();
+  // Memoize fetchWorkouts to avoid unnecessary effect reruns
+  const memoizedFetchWorkouts = useCallback(fetchWorkouts, []);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -32,15 +34,20 @@ export default function WorkoutsDashboard() {
   }, [loading, user, router]);
 
   useEffect(() => {
+    let isMounted = true;
     async function loadWorkouts() {
       if (!user) return;
       setWorkoutsLoading(true);
-      const data = await fetchWorkouts(user.id);
-      if (data) setWorkouts(data);
-      setWorkoutsLoading(false);
+      const data = await memoizedFetchWorkouts(user.id);
+      // Only update state if data is different
+      if (isMounted && data && JSON.stringify(data) !== JSON.stringify(workouts)) {
+        setWorkouts(data);
+      }
+      if (isMounted) setWorkoutsLoading(false);
     }
     if (user) loadWorkouts();
-  }, [user, fetchWorkouts]);
+    return () => { isMounted = false; };
+  }, [user, memoizedFetchWorkouts]);
 
   const handleDelete = async (id) => {
     const confirm = window.confirm('Delete this workout?');
@@ -97,13 +104,11 @@ export default function WorkoutsDashboard() {
         Workout History
       </h2>
 
-      {/* Conditional rendering here */}
-      {loading ? (
+      {/* Simplified loading logic */}
+      {(loading || workoutsLoading) ? (
         <LoadingSpinner />
       ) : !user ? (
         null
-      ) : workoutsLoading ? (
-        <LoadingSpinner />
       ) : workouts.length === 0 ? (
         <p className="text-muted-foreground text-sm">No entries yet. Add one above ⬆️</p>
       ) : (
