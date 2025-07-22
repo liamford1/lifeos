@@ -38,19 +38,20 @@
     "@opentelemetry/instrumentation": "^0.46.0",
     "@playwright/test": "^1.54.1",
     "@sentry/nextjs": "^9.40.0",
-    "@tailwindcss/postcss": "^4.1.11",
     "@tanstack/react-query-devtools": "^5.83.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@types/node": "^24.0.15",
     "@types/react": "19.1.8",
+    "autoprefixer": "^10.4.21",
     "babel-jest": "^30.0.4",
     "dotenv": "^17.2.0",
     "eslint": "^9.31.0",
     "eslint-config-next": "^15.4.2",
     "jest": "^30.0.4",
     "jest-environment-jsdom": "^30.0.4",
-    "tailwindcss": "^4.1.11",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.17",
     "typescript": "^5.8.3"
   }
 }
