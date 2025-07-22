@@ -29,8 +29,10 @@ export default function InventoryPage() {
   }, [loading, user, router]);
 
   useEffect(() => {
-    fetchInventory();
-  }, []);
+    if (user) {
+      fetchInventory();
+    }
+  }, [user]);
 
   // fetchInventory must be defined before useEffect, so move it above
   async function fetchInventory() {

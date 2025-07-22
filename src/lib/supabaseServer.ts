@@ -14,6 +14,9 @@ let supabaseServer: ReturnType<typeof createClient> | undefined;
 
 export function createSupabaseServerClient() {
   if (!supabaseServer) {
+    if (!SUPABASE_URL || !SERVICE_ROLE_KEY) {
+      throw new Error('Missing Supabase environment variables: NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY');
+    }
     supabaseServer = createClient(SUPABASE_URL, SERVICE_ROLE_KEY, {
       auth: { persistSession: false },
     });
