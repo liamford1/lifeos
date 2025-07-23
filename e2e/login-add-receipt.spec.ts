@@ -52,7 +52,7 @@ test('Complete receipt workflow with multiple items', async ({ page }) => {
       .eq('store_name', 'Test Grocery Store');
     
     if (receipts && receipts.length > 0) {
-      const receiptIds = receipts.map(r => r.id);
+      const receiptIds = receipts.map((r: { id: string }) => r.id);
       await supabase
         .from('receipt_items')
         .delete()
@@ -218,7 +218,7 @@ test('Complete receipt workflow with multiple items', async ({ page }) => {
       .eq('store_name', 'Test Grocery Store');
     
     if (receipts && receipts.length > 0) {
-      const receiptIds = receipts.map(r => r.id);
+      const receiptIds = receipts.map((r: { id: string }) => r.id);
       await supabase
         .from('receipt_items')
         .delete()
