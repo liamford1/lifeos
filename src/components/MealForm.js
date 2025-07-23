@@ -91,9 +91,13 @@ export default function MealForm({
     // Prepare data for validation
     const mealData = {
       name: mealName.trim(),
+      description: description,
+      prep_time: prepTime === '' ? null : Number(prepTime),
+      cook_time: cookTime === '' ? null : Number(cookTime),
+      servings: servings === '' ? null : Number(servings),
       instructions: instructions.map(step => step.trim()).filter(Boolean),
       ingredients: ingredients
-        .map(ing => ({ name: ing.name?.trim() || '', quantity: ing.quantity?.toString() || '' }))
+        .map(ing => ({ name: ing.name?.trim() || '', quantity: ing.quantity?.toString() || '', unit: ing.unit || '' }))
         .filter(ing => ing.name !== '' && ing.quantity !== ''),
       tags: tags && Array.isArray(tags) ? tags : [],
       notes: notes || '',
@@ -135,8 +139,9 @@ export default function MealForm({
 
       <div className="flex gap-4">
         <div className="flex-1">
-          <FormLabel>Prep Time (min)</FormLabel>
+          <FormLabel htmlFor="prep-time">Prep Time (min)</FormLabel>
           <FormInput
+            id="prep-time"
             type="number"
             value={prepTime}
             onChange={(e) => setPrepTime(e.target.value)}
@@ -144,8 +149,9 @@ export default function MealForm({
           />
         </div>
         <div className="flex-1">
-          <FormLabel>Cook Time (min)</FormLabel>
+          <FormLabel htmlFor="cook-time">Cook Time (min)</FormLabel>
           <FormInput
+            id="cook-time"
             type="number"
             value={cookTime}
             onChange={(e) => setCookTime(e.target.value)}
@@ -153,8 +159,9 @@ export default function MealForm({
           />
         </div>
         <div className="flex-1">
-          <FormLabel>Servings</FormLabel>
+          <FormLabel htmlFor="servings">Servings</FormLabel>
           <FormInput
+            id="servings"
             type="number"
             value={servings}
             onChange={(e) => setServings(e.target.value)}

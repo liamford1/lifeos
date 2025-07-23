@@ -117,15 +117,15 @@ export function useCreateMealMutation() {
       if (ingredients && Array.isArray(ingredients)) {
         const cleanedIngredients = ingredients
           .filter(i =>
-            i.name?.trim() !== '' &&
+            typeof i.name === 'string' && i.name.trim() !== '' &&
             i.quantity !== '' &&
-            i.unit?.trim() !== ''
+            typeof i.unit === 'string' && i.unit.trim() !== ''
           )
           .map(i => ({
             meal_id: createdMeal.id,
-            food_item_name: i.name.trim(),
+            food_item_name: (i.name || '').trim(),
             quantity: Number(i.quantity),
-            unit: i.unit.trim()
+            unit: (i.unit || '').trim()
           }));
 
         if (cleanedIngredients.length > 0) {
