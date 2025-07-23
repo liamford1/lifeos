@@ -1,21 +1,28 @@
 'use client';
 // src/app/(dashboard)/food/meals/[id]/cook/page.js
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabaseClient';
 import Button from '@/components/Button';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { useToast } from '@/components/Toast';
 import { useCookingSession } from '@/context/CookingSessionContext';
 import BackButton from '@/components/BackButton';
 import SharedDeleteButton from '@/components/SharedDeleteButton';
+import { useMealQuery } from '@/lib/hooks/useMeals';
+import { useUser } from '@/context/UserContext';
 
 export default function CookMealPage() {
   const router = useRouter();
   const { id } = useParams();
   const { showSuccess, showError } = useToast();
-  const [meal, setMeal] = useState(null);
-  const [mealLoading, setMealLoading] = useState(true);
+  const { user, loading: userLoading } = useUser();
+
+  // Use React Query for data fetching
+  const { 
+    data: meal, 
+    isLoading: mealLoading, 
+    error: mealError 
+  } = useMealQuery(id, user?.id);
 
   const {
     mealId: cookingMealId,
@@ -29,18 +36,64 @@ export default function CookMealPage() {
     isCooking
   } = useCookingSession();
 
-  useEffect(() => {
-    async function fetchMeal() {
-      setMealLoading(true);
-      const { data, error } = await supabase.from('meals').select('*').eq('id', id).single();
-      if (!error) setMeal(data);
-      setMealLoading(false);
-    }
-    fetchMeal();
-  }, [id, router]);
+  // Show loading spinner only when user is loading or when we don't have user data yet
+  if (userLoading || (!user && !userLoading)) {
+    return <LoadingSpinner />;
+  }
 
-  if (mealLoading) return <LoadingSpinner />;
-  if (!meal) return <div className="p-6"><p className="text-muted-foreground text-sm">Meal not found.</p></div>;
+  // Don't render anything if user is not authenticated
+  if (!user) {
+    return null;
+  }
+
+  // Show loading state while fetching meal data
+  if (mealLoading) {
+    return (
+      <div className="p-6">
+        <div className="flex justify-center py-8">
+          <LoadingSpinner />
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (mealError) {
+    return (
+      <div className="p-6">
+        <div className="text-red-400 text-center py-8">
+          <h1 className="text-xl font-bold mb-4">Error Loading Meal</h1>
+          <p>{mealError.message}</p>
+          <Button 
+            onClick={() => router.push('/food/meals')}
+            variant="primary"
+            className="mt-4"
+          >
+            Back to Meals
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Show not found state
+  if (!meal) {
+    return (
+      <div className="p-6">
+        <div className="text-center py-8">
+          <h1 className="text-xl font-bold mb-4">Meal Not Found</h1>
+          <p>The meal you&rsquo;re looking for doesn&rsquo;t exist or you don&rsquo;t have permission to view it.</p>
+          <Button 
+            onClick={() => router.push('/food/meals')}
+            variant="primary"
+            className="mt-4"
+          >
+            Back to Meals
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   // Parse instructions as string array
   const parsedInstructions = Array.isArray(meal.instructions)

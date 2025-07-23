@@ -1,8 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabaseClient';
 import BackButton from '@/components/BackButton';
 import MealForm from '@/components/MealForm';
 import { CALENDAR_SOURCES, updateCalendarEvent, updateCalendarEventFromSource } from '@/lib/calendarUtils';
@@ -10,291 +9,121 @@ import { useUser } from '@/context/UserContext';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import Button from '@/components/Button';
 import SharedDeleteButton from '@/components/SharedDeleteButton';
+import { useMealQuery, useMealIngredientsQuery, useUpdateMealMutation, useDeleteMealMutation } from '@/lib/hooks/useMeals';
+import { useToast } from '@/components/Toast';
 
 export default function EditMealPage() {
-  const { user, loading } = useUser();
+  const { user, loading: userLoading } = useUser();
   const router = useRouter();
   const { id } = useParams();
-  const [meal, setMeal] = useState(null);
-  const [ingredients, setIngredients] = useState([]);
-  const [mealLoading, setMealLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState('');
-  const [deleting, setDeleting] = useState(false);
+  const { showSuccess, showError } = useToast();
+
+  // Use React Query for data fetching
+  const { 
+    data: meal, 
+    isLoading: mealLoading, 
+    error: mealError 
+  } = useMealQuery(id, user?.id);
+  
+  const { 
+    data: ingredients = [], 
+    isLoading: ingredientsLoading, 
+    error: ingredientsError 
+  } = useMealIngredientsQuery(id);
+  
+  const updateMealMutation = useUpdateMealMutation();
+  const deleteMealMutation = useDeleteMealMutation();
 
   useEffect(() => {
-    async function fetchMeal() {
-      try {
-        if (!loading && !user) {
-          router.push('/auth');
-          return;
-        }
-
-        if (!user || !id) {
-          setError('User not authenticated or meal ID missing');
-          setMealLoading(false);
-          return;
-        }
-
-        // Fetch meal data
-        const { data: mealData, error: mealError } = await supabase
-          .from('meals')
-          .select('*')
-          .eq('id', id)
-          .eq('user_id', user.id)
-          .single();
-
-        if (mealError) {
-          console.error('Error fetching meal:', mealError);
-          setError('Failed to load meal');
-          setMealLoading(false);
-          return;
-        }
-
-        if (!mealData) {
-          setError('Meal not found');
-          setMealLoading(false);
-          return;
-        }
-
-        // Fetch ingredients
-        const { data: ingredientsData, error: ingredientsError } = await supabase
-          .from('meal_ingredients')
-          .select('*')
-          .eq('meal_id', id);
-
-        if (ingredientsError) {
-          console.error('Error fetching ingredients:', ingredientsError);
-        }
-
-        setMeal(mealData);
-        setIngredients(ingredientsData || []);
-        setMealLoading(false);
-      } catch (err) {
-        console.error('Error in fetchMeal:', err);
-        setError('An unexpected error occurred');
-        setMealLoading(false);
-      }
-    }
-
-    fetchMeal();
-  }, [id, loading, user, router]);
-
-  useEffect(() => {
-    if (!loading && !user) {
+    if (!userLoading && !user) {
       router.push('/auth');
     }
-  }, [loading, user, router]);
-
-  if (mealLoading) {
-    return (
-      <div className="max-w-6xl mx-auto p-4 space-y-4">
-        <BackButton />
-        <LoadingSpinner />
-      </div>
-    );
-  }
-  if (!user) return null;
+  }, [userLoading, user, router]);
 
   async function handleUpdateMeal(mealData) {
-    setSaving(true);
-    setError('');
+    if (!user || !id) {
+      showError('User not authenticated or meal ID missing');
+      return;
+    }
 
     try {
-      if (!user || !id) {
-        setError('User not authenticated or meal ID missing');
-        setSaving(false);
-        return;
-      }
-      const userId = user.id;
-
-      // Verify the meal belongs to the current user
-      const { data: mealCheck, error: mealCheckError } = await supabase
-        .from('meals')
-        .select('id, user_id')
-        .eq('id', id)
-        .eq('user_id', userId)
-        .single();
-
-      if (mealCheckError || !mealCheck) {
-        console.error('❌ Meal ownership verification failed:', mealCheckError);
-        setError('Meal not found or access denied');
-        setSaving(false);
-        return;
-      }
-
-      // 1. Update the meal
-      const { error: mealError } = await supabase
-        .from('meals')
-        .update({ 
-          name: mealData.name, 
-          description: mealData.description,
-          prep_time: mealData.prep_time,
-          cook_time: mealData.cook_time,
-          servings: mealData.servings,
-          instructions: mealData.instructions
-        })
-        .eq('id', id);
-
-      if (mealError) {
-        console.error('❌ Error updating meal:', mealError);
-        setError('Failed to update meal');
-        setSaving(false);
-        return;
-      }
-
-      // 2. Delete old ingredients
-      const { error: deleteError } = await supabase
-        .from('meal_ingredients')
-        .delete()
-        .eq('meal_id', id);
-
-      if (deleteError) {
-        console.error('❌ Error deleting old ingredients:', deleteError);
-        setError('Failed to update ingredients');
-        setSaving(false);
-        return;
-      }
-
-      // 3. Insert new ingredients
-      const cleanedIngredients = mealData.ingredients
-        .filter(i =>
-          i.name?.trim() !== '' &&
-          i.quantity !== '' &&
-          i.unit?.trim() !== ''
-        )
-        .map(i => ({
-          meal_id: id,
-          food_item_name: i.name.trim(),
-          quantity: Number(i.quantity),
-          unit: i.unit.trim()
-        }));
-
-      if (cleanedIngredients.length > 0) {
-        const { data: insertResult, error: insertError } = await supabase
-          .from('meal_ingredients')
-          .insert(cleanedIngredients)
-          .select('id');
-
-        if (insertError) {
-          console.error('❌ Error inserting new ingredients:', insertError);
-          setError('Failed to save ingredients');
-          setSaving(false);
-          return;
-        }
-
-        // Verify insertion was successful
-        if (!insertResult || insertResult.length !== cleanedIngredients.length) {
-          console.error('❌ WARNING: Insert count mismatch!');
-          console.error('❌ Expected:', cleanedIngredients.length, 'Actual:', insertResult?.length || 0);
-          setError('Failed to insert all ingredients correctly');
-          setSaving(false);
-          return;
-        }
-      }
-
-      // Final verification - check total ingredients for this meal
-      const { data: finalIngredients, error: finalError } = await supabase
-        .from('meal_ingredients')
-        .select('*')
-        .eq('meal_id', id);
-
-      if (finalError) {
-        console.error('❌ Error in final verification:', finalError);
-      }
-
-      // Update calendar event for the edited meal
-      const startTime = new Date();
-      const calendarError = await updateCalendarEventFromSource(
-        CALENDAR_SOURCES.MEAL,
-        id,
+      // Update the meal using React Query mutation
+      updateMealMutation.mutate(
         {
-          title: `Meal: ${mealData.name}`,
-          start_time: startTime.toISOString(),
-          description: mealData.description || null,
+          id,
+          updatedData: {
+            name: mealData.name,
+            description: mealData.description,
+            prep_time: mealData.prep_time,
+            cook_time: mealData.cook_time,
+            servings: mealData.servings,
+            instructions: mealData.instructions
+          },
+          ingredients: mealData.ingredients
+        },
+        {
+          onSuccess: async (updatedMeal) => {
+            // Update calendar event for the edited meal
+            const startTime = new Date();
+            const calendarError = await updateCalendarEventFromSource(
+              CALENDAR_SOURCES.MEAL,
+              id,
+              {
+                title: `Meal: ${mealData.name}`,
+                start_time: startTime.toISOString(),
+                description: mealData.description || null,
+              }
+            );
+            if (calendarError) {
+              console.error('Calendar event update failed:', calendarError);
+            }
+
+            showSuccess('Meal updated successfully!');
+            // Redirect to the meal view page
+            router.push(`/food/meals/${id}`);
+          },
+          onError: (error) => {
+            showError(error.message || 'Failed to update meal');
+          }
         }
       );
-      if (calendarError) {
-        console.error('Calendar event update failed:', calendarError);
-      }
-
-      // Redirect to the meal view page
-      router.push(`/food/meals/${id}`);
     } catch (err) {
       console.error('Error in handleUpdateMeal:', err);
-      setError('An unexpected error occurred');
-      setSaving(false);
+      showError('An unexpected error occurred');
     }
   }
 
   async function handleDelete() {
-    setDeleting(true);
-    setError('');
+    if (!user || !id) {
+      showError('User not authenticated or meal ID missing');
+      return;
+    }
+
     try {
-      if (!user || !id) {
-        setError('User not authenticated or meal ID missing');
-        setDeleting(false);
-        return;
-      }
-      const userId = user.id;
+      // Delete the meal using React Query mutation
+      deleteMealMutation.mutate(id, {
+        onSuccess: async (deletedId) => {
+          // Update calendar event for the deleted meal
+          const calendarError = await updateCalendarEventFromSource(
+            CALENDAR_SOURCES.MEAL,
+            deletedId,
+            null // Set to null to indicate deletion
+          );
+          if (calendarError) {
+            console.error('Calendar event update failed:', calendarError);
+          }
 
-      // Verify the meal belongs to the current user
-      const { data: mealCheck, error: mealCheckError } = await supabase
-        .from('meals')
-        .select('id, user_id')
-        .eq('id', id)
-        .eq('user_id', userId)
-        .single();
-
-      if (mealCheckError || !mealCheck) {
-        console.error('❌ Meal ownership verification failed:', mealCheckError);
-        setError('Meal not found or access denied');
-        setDeleting(false);
-        return;
-      }
-
-      // Delete the meal
-      const { error: deleteError } = await supabase
-        .from('meals')
-        .delete()
-        .eq('id', id);
-
-      if (deleteError) {
-        console.error('❌ Error deleting meal:', deleteError);
-        setError('Failed to delete meal');
-        setDeleting(false);
-        return;
-      }
-
-      // Delete associated ingredients
-      const { error: deleteIngredientsError } = await supabase
-        .from('meal_ingredients')
-        .delete()
-        .eq('meal_id', id);
-
-      if (deleteIngredientsError) {
-        console.error('❌ Error deleting ingredients:', deleteIngredientsError);
-        setError('Failed to delete ingredients');
-        setDeleting(false);
-        return;
-      }
-
-      // Update calendar event for the deleted meal
-      const calendarError = await updateCalendarEventFromSource(
-        CALENDAR_SOURCES.MEAL,
-        id,
-        null // Set to null to indicate deletion
-      );
-      if (calendarError) {
-        console.error('Calendar event update failed:', calendarError);
-      }
-
-      // Redirect to the meals list page
-      router.push('/food/meals');
+          showSuccess('Meal deleted successfully!');
+          // Redirect to the meals list page
+          router.push('/food/meals');
+        },
+        onError: (error) => {
+          showError(error.message || 'Failed to delete meal');
+        }
+      });
     } catch (err) {
       console.error('Error in handleDelete:', err);
-      setError('An unexpected error occurred');
-      setDeleting(false);
+      showError('An unexpected error occurred');
     }
   }
 
@@ -302,20 +131,64 @@ export default function EditMealPage() {
     router.push(`/food/meals/${id}`);
   }
 
+  // Show loading spinner only when user is loading or when we don't have user data yet
+  if (userLoading || (!user && !userLoading)) {
+    return <LoadingSpinner />;
+  }
+
+  // Don't render anything if user is not authenticated
+  if (!user) {
+    return null;
+  }
+
+  // Show loading state while fetching meal data
   if (mealLoading) {
     return (
-      <div className="p-4">
+      <div className="max-w-6xl mx-auto p-4 space-y-4">
         <BackButton />
-        <LoadingSpinner />
+        <div className="flex justify-center py-8">
+          <LoadingSpinner />
+        </div>
       </div>
     );
   }
 
-  if (error && !meal) {
+  // Show error state
+  if (mealError) {
     return (
       <div className="max-w-6xl mx-auto p-4 space-y-4">
         <BackButton />
-        <div className="text-red-400 text-center py-8">{error}</div>
+        <div className="text-red-400 text-center py-8">
+          <h1 className="text-xl font-bold mb-4">Error Loading Meal</h1>
+          <p>{mealError.message}</p>
+          <Button 
+            onClick={() => router.push('/food/meals')}
+            variant="primary"
+            className="mt-4"
+          >
+            Back to Meals
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Show not found state
+  if (!meal) {
+    return (
+      <div className="max-w-6xl mx-auto p-4 space-y-4">
+        <BackButton />
+        <div className="text-center py-8">
+          <h1 className="text-xl font-bold mb-4">Meal Not Found</h1>
+          <p>The meal you&rsquo;re looking for doesn&rsquo;t exist or you don&rsquo;t have permission to view it.</p>
+          <Button 
+            onClick={() => router.push('/food/meals')}
+            variant="primary"
+            className="mt-4"
+          >
+            Back to Meals
+          </Button>
+        </div>
       </div>
     );
   }
@@ -346,14 +219,14 @@ export default function EditMealPage() {
         onSubmit={handleUpdateMeal}
         onCancel={handleCancel}
         isEditing={true}
-        loading={saving}
-        error={error}
+        loading={updateMealMutation.isPending}
+        error={updateMealMutation.error?.message}
       />
       <SharedDeleteButton
         onClick={handleDelete}
         size="sm"
         aria-label="Delete meal"
-        disabled={deleting}
+        disabled={deleteMealMutation.isPending}
         label="Delete"
       />
     </div>

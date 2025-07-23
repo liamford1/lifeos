@@ -4,8 +4,6 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/context/UserContext';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import { useState } from 'react';
-import { supabase } from '@/lib/supabaseClient';
 import BackButton from '@/components/BackButton';
 import MealForm from '@/components/MealForm';
 import { CALENDAR_SOURCES } from '@/lib/calendarUtils';
@@ -13,42 +11,41 @@ import { useToast } from '@/components/Toast';
 import dynamic from "next/dynamic";
 const CirclePlus = dynamic(() => import("lucide-react/dist/esm/icons/circle-plus"), { ssr: false });
 import { createCalendarEventForEntity } from '@/lib/calendarSync';
+import { useCreateMealMutation } from '@/lib/hooks/useMeals';
 
 export default function AddMealPage(props) {
-  const { user, loading } = useUser();
+  const { user, loading: userLoading } = useUser();
   const router = useRouter();
   const { showSuccess, showError } = useToast();
-  const [isSaving, setIsSaving] = useState(false);
-  const [error, setError] = useState('');
+  const createMealMutation = useCreateMealMutation();
 
   useEffect(() => {
-    if (!loading && !user) {
+    if (!userLoading && !user) {
       router.push('/auth');
     }
-  }, [loading, user, router]);
+  }, [userLoading, user, router]);
 
-  if (loading) return <LoadingSpinner />;
-  if (!user) return null;
+  // Show loading spinner only when user is loading or when we don't have user data yet
+  if (userLoading || (!user && !userLoading)) {
+    return <LoadingSpinner />;
+  }
+
+  // Don't render anything if user is not authenticated
+  if (!user) {
+    return null;
+  }
 
   async function handleSaveMeal(mealData) {
-    setIsSaving(true);
-    setError('');
+    if (!user) {
+      showError('User not logged in.');
+      return;
+    }
 
     try {
-      if (!user) {
-        showError('User not logged in.');
-        setIsSaving(false);
-        return;
-      }
-      const userId = user.id;
-
-      // Call the new API route to create the meal
-      const response = await fetch('/api/meal/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      // Create the meal using React Query mutation
+      createMealMutation.mutate(
+        {
+          user_id: user.id,
           name: mealData.name,
           description: mealData.description,
           prep_time: mealData.prep_time,
@@ -58,54 +55,20 @@ export default function AddMealPage(props) {
           notes: mealData.notes,
           calories: mealData.calories,
           date: mealData.date,
-        }),
-      });
-
-      const result = await response.json();
-      if (!response.ok && result.error) {
-        showError('Failed to save meal.');
-        setIsSaving(false);
-        return;
-      }
-
-      // Use mealId from the new API response
-      const mealId = result.mealId;
-      if (!mealId) {
-        // Log or silently return if needed
-        return;
-      }
-
-      // Insert the current state of ingredients
-      const cleanedIngredients = mealData.ingredients
-        .filter(i =>
-          i.name?.trim() !== '' &&
-          i.quantity !== '' &&
-          i.unit?.trim() !== ''
-        )
-        .map(i => ({
-          meal_id: mealId,
-          food_item_name: i.name.trim(),
-          quantity: Number(i.quantity),
-          unit: i.unit.trim()
-        }));
-
-      if (cleanedIngredients.length > 0) {
-        const { error: insertError } = await supabase
-          .from('meal_ingredients')
-          .insert(cleanedIngredients);
-
-        if (insertError) {
-          showError('Meal saved, but failed to save ingredients.');
-          setIsSaving(false);
-          return;
+          ingredients: mealData.ingredients
+        },
+        {
+          onSuccess: (createdMeal) => {
+            showSuccess('Meal and ingredients saved successfully!');
+            router.push('/food/meals');
+          },
+          onError: (error) => {
+            showError(error.message || 'Failed to save meal.');
+          }
         }
-      }
-
-      showSuccess('Meal and ingredients saved successfully!');
-      router.push('/food/meals');
+      );
     } catch (err) {
       showError('An unexpected error occurred.');
-      setIsSaving(false);
     }
   }
 
@@ -120,8 +83,8 @@ export default function AddMealPage(props) {
 
       <MealForm
         onSubmit={handleSaveMeal}
-        loading={isSaving}
-        error={error}
+        loading={createMealMutation.isPending}
+        error={createMealMutation.error?.message}
       />
     </div>
   );
