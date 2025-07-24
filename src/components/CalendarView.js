@@ -1,7 +1,7 @@
 'use client';
 
-import React from 'react';
-import { useEffect, useState } from 'react';
+import React, { useState } from 'react';
+import { useUser } from '@/context/UserContext';
 import Calendar from "@/components/client/CalendarClient";
 import 'react-calendar/dist/Calendar.css';
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -21,7 +21,7 @@ export default function CalendarView() {
   const { showSuccess, showError } = useToast();
   const [selectedDate, setSelectedDate] = useState(new Date());
   // Remove local events state, use eventsQuery.data
-  const [user, setUser] = useState(null);
+  const { user, loading } = useUser();
   const [showAddModal, setShowAddModal] = useState(false);
   const [newEvent, setNewEvent] = useState({
     title: '',
@@ -31,15 +31,6 @@ export default function CalendarView() {
   });
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-
-  // Fetch user on mount
-  useEffect(() => {
-    (async () => {
-      // Replace with your actual user fetch logic
-      // For now, just setUser(null) to avoid errors
-      setUser(null);
-    })();
-  }, []);
 
   // useQuery for events
   const eventsQuery = useQuery({
@@ -232,6 +223,7 @@ export default function CalendarView() {
                     return (
                       <div
                         key={event.id}
+                        data-testid={`calendar-event-${event.id}`}
                         className={`w-full h-5 text-xs truncate whitespace-nowrap overflow-hidden text-ellipsis rounded px-1 py-0.5 text-left ${colorClass}`}
                         {...eventDivProps}
                       >
