@@ -62,11 +62,12 @@ export default function WorkoutDetailPage() {
       setSetsByExercise(setsByEx);
     } catch (err) {
       setError(err.message || 'Failed to load workout details.');
-      showError(err.message || 'Failed to load workout details.');
+      if (typeof showError === 'function') showError(err.message || 'Failed to load workout details.');
     } finally {
       setLoading(false);
     }
-  }, [params.id, showError]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params.id]);
 
   useEffect(() => {
     if (user) fetchAll();

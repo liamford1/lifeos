@@ -48,6 +48,11 @@ export function WorkoutSessionProvider({ children }) {
     setActiveWorkoutIdRaw(id);
   }, []);
 
+  const clearSession = useCallback(() => {
+    setActiveWorkoutIdRaw(null);
+    setWorkoutData(null);
+  }, []);
+
   useEffect(() => {
     if (!userLoading) {
       fetchInProgressWorkout();
@@ -60,9 +65,10 @@ export function WorkoutSessionProvider({ children }) {
       setActiveWorkoutId,
       workoutData,
       refreshWorkout: fetchInProgressWorkout,
+      clearSession,
       loading,
     }),
-    [activeWorkoutId, setActiveWorkoutId, workoutData, fetchInProgressWorkout, loading]
+    [activeWorkoutId, setActiveWorkoutId, workoutData, fetchInProgressWorkout, clearSession, loading]
   );
 
   // React Profiler root marker
