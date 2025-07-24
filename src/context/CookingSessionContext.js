@@ -2,59 +2,127 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { supabase } from '@/lib/supabaseClient';
-
-const LOCAL_STORAGE_KEY = 'cookingSession';
+import { useUser } from '@/context/UserContext';
 
 const CookingSessionContext = createContext();
 
 export function CookingSessionProvider({ children }) {
+  const { user, loading: userLoading } = useUser();
   const [mealId, setMealId] = useState(null);
-  const [currentStep, setCurrentStep] = useState(0);
+  const [currentStep, setCurrentStep] = useState(1);
   const [instructions, setInstructions] = useState([]);
+  const [sessionId, setSessionId] = useState(null);
   const [startedAt, setStartedAt] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // Hydrate from localStorage on mount
-  useEffect(() => {
-    const saved = typeof window !== 'undefined' ? localStorage.getItem(LOCAL_STORAGE_KEY) : null;
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        setMealId(parsed.mealId || null);
-        setCurrentStep(typeof parsed.currentStep === 'number' ? parsed.currentStep : 0);
-        setInstructions(Array.isArray(parsed.instructions) ? parsed.instructions : []);
-        setStartedAt(parsed.startedAt || null);
-      } catch (e) {
-        // If corrupted, clear
-        localStorage.removeItem(LOCAL_STORAGE_KEY);
+  // Fetch active session from Supabase
+  const fetchActiveSession = useCallback(async () => {
+    if (!user) {
+      setMealId(null);
+      setCurrentStep(0);
+      setInstructions([]);
+      setSessionId(null);
+      setStartedAt(null);
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    const { data, error } = await supabase
+      .from('cooking_sessions')
+      .select('*')
+      .eq('user_id', user.id)
+      .eq('in_progress', true)
+      .order('started_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (!error && data) {
+      setMealId(data.meal_id);
+      setSessionId(data.id);
+      setStartedAt(data.started_at);
+      setCurrentStep(typeof data.current_step === 'number' ? data.current_step : 1);
+      // Optionally fetch instructions from the meal
+      const mealRes = await supabase
+        .from('meals')
+        .select('instructions')
+        .eq('id', data.meal_id)
+        .single();
+      if (mealRes.data && mealRes.data.instructions) {
+        setInstructions(Array.isArray(mealRes.data.instructions)
+          ? mealRes.data.instructions
+          : (typeof mealRes.data.instructions === 'string' && mealRes.data.instructions.trim()
+            ? mealRes.data.instructions.split('\n').map(s => s.trim()).filter(Boolean)
+            : []));
+      } else {
+        setInstructions([]);
       }
-    }
-  }, []);
-
-  // Persist to localStorage on state change
-  useEffect(() => {
-    if (mealId && instructions.length > 0 && startedAt) {
-      const session = {
-        mealId,
-        currentStep,
-        instructions,
-        startedAt,
-      };
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(session));
     } else {
-      localStorage.removeItem(LOCAL_STORAGE_KEY);
+      setMealId(null);
+      setSessionId(null);
+      setStartedAt(null);
+      setInstructions([]);
+      setCurrentStep(1);
     }
-  }, [mealId, currentStep, instructions, startedAt]);
+    setLoading(false);
+  }, [user]);
 
-  const startCooking = useCallback((newMealId, newInstructions) => {
-    setMealId(newMealId);
-    setInstructions(Array.isArray(newInstructions) ? newInstructions : []);
-    setCurrentStep(0);
-    setStartedAt(new Date().toISOString());
-  }, []);
+  useEffect(() => {
+    if (!userLoading) {
+      fetchActiveSession();
+    }
+  }, [user, userLoading, fetchActiveSession]);
+
+  const startCooking = useCallback(async (newMealId, newInstructions) => {
+    if (!user) return;
+    // End any previous session
+    await supabase
+      .from('cooking_sessions')
+      .update({ in_progress: false, ended_at: new Date().toISOString() })
+      .eq('user_id', user.id)
+      .eq('in_progress', true);
+    // Start new session
+    const { data, error } = await supabase
+      .from('cooking_sessions')
+      .insert({
+        user_id: user.id,
+        meal_id: newMealId,
+        in_progress: true,
+        started_at: new Date().toISOString(),
+        current_step: 1,
+      })
+      .select()
+      .single();
+    if (!error && data) {
+      setMealId(newMealId);
+      setSessionId(data.id);
+      setStartedAt(data.started_at);
+      setInstructions(Array.isArray(newInstructions) ? newInstructions : []);
+      setCurrentStep(1);
+    }
+  }, [user]);
+
+  // Update currentStep in DB when it changes and session is active
+  useEffect(() => {
+    if (!sessionId || typeof currentStep !== 'number') {
+      console.log('[CookingSession] Skipping DB update:', { sessionId, currentStep });
+      return;
+    }
+    console.log('[CookingSession] Updating current_step in DB:', { sessionId, currentStep });
+    supabase
+      .from('cooking_sessions')
+      .update({ current_step: currentStep })
+      .eq('id', sessionId)
+      .then(({ data, error }) => {
+        if (error) {
+          console.error('[CookingSession] Failed to update current_step:', error);
+        } else {
+          console.log('[CookingSession] Successfully updated current_step to:', currentStep);
+        }
+      });
+  }, [currentStep, sessionId]);
 
   const nextStep = useCallback(() => {
     setCurrentStep((prev) => {
-      if (instructions && prev < instructions.length - 1) {
+      if (instructions && prev < instructions.length) {
         return prev + 1;
       }
       return prev;
@@ -62,60 +130,71 @@ export function CookingSessionProvider({ children }) {
   }, [instructions]);
 
   const previousStep = useCallback(() => {
-    setCurrentStep((prev) => (prev > 0 ? prev - 1 : 0));
+    setCurrentStep((prev) => (prev > 1 ? prev - 1 : 1));
   }, []);
 
   const endCooking = useCallback(async () => {
-    // Update CookedMeals in Supabase before clearing session
-    try {
-      const { data: userData } = await supabase.auth.getUser();
-      const userId = userData?.user?.id;
-      if (userId && mealId) {
-        // Check if record exists
-        const { data: existing, error: fetchError } = await supabase
-          .from('cooked_meals')
-          .select('cook_count')
-          .eq('user_id', userId)
-          .eq('meal_id', mealId)
-          .single();
-        if (!fetchError && existing) {
-          await supabase
-            .from('cooked_meals')
-            .update({
-              cook_count: (existing.cook_count || 0) + 1,
-              last_cooked_at: new Date().toISOString(),
-            })
-            .eq('user_id', userId)
-            .eq('meal_id', mealId);
-        }
-      }
-    } catch (err) {
-      // Log error silently
-      if (process.env.NODE_ENV !== "production") {
-        console.error('Error updating cooked_meals in endCooking:', err);
-      }
+    if (!user || !sessionId || !mealId) return;
+    // End the cooking session in the DB
+    await supabase
+      .from('cooking_sessions')
+      .update({ in_progress: false, ended_at: new Date().toISOString(), current_step: 1 })
+      .eq('id', sessionId);
+    // Upsert into cooked_meals
+    const { data: existing, error: fetchError } = await supabase
+      .from('cooked_meals')
+      .select('cook_count')
+      .eq('user_id', user.id)
+      .eq('meal_id', mealId)
+      .single();
+    if (!fetchError && existing) {
+      // Increment cook_count
+      await supabase
+        .from('cooked_meals')
+        .update({
+          cook_count: (existing.cook_count || 0) + 1,
+          last_cooked_at: new Date().toISOString(),
+        })
+        .eq('user_id', user.id)
+        .eq('meal_id', mealId);
+    } else {
+      // Insert new row
+      await supabase
+        .from('cooked_meals')
+        .insert({
+          user_id: user.id,
+          meal_id: mealId,
+          cook_count: 1,
+          last_cooked_at: new Date().toISOString(),
+        });
     }
     setMealId(null);
-    setCurrentStep(0);
-    setInstructions([]);
+    setSessionId(null);
     setStartedAt(null);
-    localStorage.removeItem(LOCAL_STORAGE_KEY);
-  }, [mealId]);
+    setInstructions([]);
+    setCurrentStep(1);
+    fetchActiveSession();
+  }, [user, sessionId, mealId, fetchActiveSession]);
 
-  const cancelCooking = useCallback(() => {
+  const cancelCooking = useCallback(async () => {
+    if (!user || !sessionId) return;
+    await supabase
+      .from('cooking_sessions')
+      .update({ in_progress: false, ended_at: new Date().toISOString(), current_step: 1 })
+      .eq('id', sessionId);
     setMealId(null);
-    setCurrentStep(0);
-    setInstructions([]);
+    setSessionId(null);
     setStartedAt(null);
-    localStorage.removeItem(LOCAL_STORAGE_KEY);
-  }, []);
+    setInstructions([]);
+    setCurrentStep(1);
+    fetchActiveSession();
+  }, [user, sessionId, fetchActiveSession]);
 
-  // Compute isCooking as before
-  const cooking = !!mealId && instructions.length > 0;
+  const isCooking = !!mealId && instructions.length > 0;
 
   const value = useMemo(
     () => ({
-      cooking,
+      isCooking,
       mealId,
       currentStep,
       instructions,
@@ -124,16 +203,14 @@ export function CookingSessionProvider({ children }) {
       previousStep,
       endCooking,
       cancelCooking,
+      loading,
     }),
-    [cooking, mealId, currentStep, instructions, startCooking, nextStep, previousStep, endCooking, cancelCooking]
+    [isCooking, mealId, currentStep, instructions, startCooking, nextStep, previousStep, endCooking, cancelCooking, loading]
   );
 
-  // React Profiler root marker
   return (
     <CookingSessionContext.Provider value={value}>
-      {/* react-profiler-start:CookingSessionContext */}
       {children}
-      {/* react-profiler-end */}
     </CookingSessionContext.Provider>
   );
 }

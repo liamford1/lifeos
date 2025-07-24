@@ -1,6 +1,6 @@
 'use client';
 // src/app/(dashboard)/food/meals/[id]/cook/page.js
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Button from '@/components/Button';
 import LoadingSpinner from '@/components/LoadingSpinner';
@@ -16,6 +16,8 @@ export default function CookMealPage() {
   const { id } = useParams();
   const { showSuccess, showError } = useToast();
   const { user, loading: userLoading } = useUser();
+  const didHandleDeletedMeal = useRef(false);
+  const [sessionStarted, setSessionStarted] = useState(0);
 
   // Use React Query for data fetching
   const { 
@@ -33,11 +35,66 @@ export default function CookMealPage() {
     previousStep,
     endCooking,
     cancelCooking,
-    isCooking
+    isCooking,
+    loading: sessionLoading,
   } = useCookingSession();
 
-  // Show loading spinner only when user is loading or when we don't have user data yet
-  if (userLoading || (!user && !userLoading)) {
+  // Parse instructions as string array (must be before any conditional returns)
+  const parsedInstructions = Array.isArray(meal?.instructions)
+    ? meal.instructions
+    : (typeof meal?.instructions === 'string' && meal.instructions.trim()
+        ? meal.instructions.split('\n').map(s => s.trim()).filter(Boolean)
+        : []);
+
+  const isThisMealActive = isCooking && cookingMealId === meal?.id;
+
+  // TEMP DEBUG: Log context and parsedInstructions
+  useEffect(() => {
+    if (!meal) return;
+    console.log('[CookPage] meal.id:', meal.id);
+    console.log('[CookPage] parsedInstructions:', parsedInstructions);
+    console.log('[CookPage] isCooking:', isCooking, 'cookingMealId:', cookingMealId, 'currentStep:', currentStep, 'instructions:', cookingInstructions);
+  }, [meal?.id, parsedInstructions, isCooking, cookingMealId, currentStep, cookingInstructions]);
+
+  // Handler for Cook Meal button
+  const handleCookMeal = () => {
+    if (!meal) return;
+    console.log('[CookPage] Cook Meal button clicked');
+    console.log('[CookPage] Calling startCooking with:', meal.id, parsedInstructions);
+    startCooking(meal.id, parsedInstructions);
+    setSessionStarted((n) => n + 1); // force re-render
+    // Log context after
+    setTimeout(() => {
+      console.log('[CookPage] After startCooking: isCooking:', isCooking, 'cookingMealId:', cookingMealId, 'currentStep:', currentStep, 'instructions:', cookingInstructions);
+    }, 100);
+  };
+
+  // Handle the case where the meal being cooked is deleted
+  useEffect(() => {
+    // Only run if a cooking session is active for this meal and the meal is missing
+    if (!meal && isCooking && cookingMealId === id && !didHandleDeletedMeal.current) {
+      didHandleDeletedMeal.current = true;
+      endCooking();
+      showError("The meal you're cooking was deleted.");
+      router.replace('/food/meals');
+      router.refresh(); // Force context consumers like AppBar to update
+    }
+  }, [meal, isCooking, cookingMealId, id, endCooking, showError, router]);
+
+  // If a session is active for a different meal, redirect to that meal's cook page
+  useEffect(() => {
+    if (
+      isCooking &&
+      cookingMealId &&
+      meal?.id &&
+      cookingMealId !== meal.id
+    ) {
+      router.replace(`/food/meals/${cookingMealId}/cook`);
+    }
+  }, [isCooking, cookingMealId, meal?.id, router]);
+
+  // Show loading spinner if session context is loading
+  if (userLoading || sessionLoading || (!user && !userLoading)) {
     return <LoadingSpinner />;
   }
 
@@ -78,6 +135,7 @@ export default function CookMealPage() {
 
   // Show not found state
   if (!meal) {
+    // If a session was just ended, the effect above will redirect
     return (
       <div className="p-6">
         <div className="text-center py-8">
@@ -95,19 +153,10 @@ export default function CookMealPage() {
     );
   }
 
-  // Parse instructions as string array
-  const parsedInstructions = Array.isArray(meal.instructions)
-    ? meal.instructions
-    : (typeof meal.instructions === 'string' && meal.instructions.trim()
-        ? meal.instructions.split('\n').map(s => s.trim()).filter(Boolean)
-        : []);
-
-  const isThisMealActive = isCooking && cookingMealId === meal.id;
-
   return (
     <div className="p-6 space-y-4">
       {/* Back button or link at the top */}
-      {!isCooking && (
+      {!isThisMealActive && (
         <Button
           type="button"
           onClick={() => router.push(`/food/meals/${meal.id}`)}
@@ -132,28 +181,25 @@ export default function CookMealPage() {
         )}
       </div>
 
-      {/* Cooking session controls */}
+      {/* Start Cooking button if not already in session for this meal */}
       {!isCooking && parsedInstructions.length > 0 && (
-        <Button onClick={() => startCooking(meal.id, parsedInstructions)}>
-          Cook Meal
+        <Button onClick={handleCookMeal} variant="primary">
+          Start Cooking
         </Button>
       )}
-      {isCooking && !isThisMealActive && (
-        <div className="text-orange-600 text-sm font-medium">
-          Finish your current meal before starting another.
-        </div>
-      )}
-      {isThisMealActive && (
+
+      {/* Cooking session controls */}
+      {isThisMealActive ? (
         <div className="mt-6">
-          <h2 className="text-xl font-semibold mb-2">Step {currentStep + 1}</h2>
-          <p className="text-base mb-4">{cookingInstructions[currentStep]}</p>
+          <h2 className="text-xl font-semibold mb-2">Step {currentStep}</h2>
+          <p className="text-base mb-4" data-testid="current-step">{cookingInstructions[currentStep - 1] || "No step found."}</p>
           <div className="flex gap-4 mt-4">
-            {currentStep > 0 && (
+            {currentStep > 1 && (
               <Button onClick={previousStep}>
                 Previous Step
               </Button>
             )}
-            {currentStep < cookingInstructions.length - 1 ? (
+            {currentStep < cookingInstructions.length ? (
               <Button onClick={nextStep}>
                 Next Step
               </Button>
@@ -163,7 +209,6 @@ export default function CookMealPage() {
               </Button>
             )}
           </div>
-          {/* Cancel Cooking button only during active session for this meal */}
           <SharedDeleteButton
             onClick={() => {
               cancelCooking();
@@ -175,7 +220,7 @@ export default function CookMealPage() {
             className="block mt-2"
           />
         </div>
-      )}
+      ) : null}
     </div>
   );
 } 
