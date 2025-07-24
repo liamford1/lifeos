@@ -127,9 +127,8 @@ export default function WorkoutsDashboard() {
               <div className="flex gap-4 mt-2 text-sm">
                 <Button
                   onClick={() => router.push(`/fitness/workouts/${w.id}/edit`)}
-                  variant="link"
+                  variant="primary"
                   size="sm"
-                  className="text-blue-500 hover:text-blue-700"
                 >
                   ✏️ Edit
                 </Button>

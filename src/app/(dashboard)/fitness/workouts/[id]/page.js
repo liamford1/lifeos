@@ -92,16 +92,18 @@ export default function WorkoutDetailPage() {
       ) : (
         <ul className="space-y-2">
           {exercises.map((ex) => (
-            <li key={ex.id} className="border p-2 rounded">
-              <strong>{ex.name}</strong>
-              <SharedDeleteButton onClick={() => handleDeleteExercise(ex.id)} label="Remove Exercise" size="sm" className="ml-2" />
+            <li key={ex.id} className="border p-2 rounded bg-panel">
+              <strong className="block text-lg mb-1">{ex.name}</strong>
+              {ex.notes && <div className="text-sm text-muted-foreground mb-1">{ex.notes}</div>}
               <div className="ml-2">
                 {setsByExercise[ex.id]?.length ? (
-                  setsByExercise[ex.id].map((set, i) => (
-                    <div key={set.id}>
-                      Set {i + 1}: {set.reps} reps{set.weight != null ? ` @ ${set.weight} lbs` : ''}
-                    </div>
-                  ))
+                  <ul className="list-disc ml-4">
+                    {setsByExercise[ex.id].map((set, i) => (
+                      <li key={set.id} className="text-base">
+                        Set {i + 1}: {set.reps} reps{set.weight != null ? ` @ ${set.weight} lbs` : ''}
+                      </li>
+                    ))}
+                  </ul>
                 ) : (
                   <div className="text-muted-foreground text-sm">No sets logged yet.</div>
                 )}
