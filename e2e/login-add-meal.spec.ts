@@ -50,7 +50,7 @@ test('Basic meal workflow: add and verify meal', async ({ page }) => {
       if (findError) console.error('Find meals error:', findError);
       meals = foundMeals;
       if (meals && meals.length > 0) {
-        const mealIds = meals.map((m) => m.id);
+        const mealIds = meals.map((m: { id: string }) => m.id);
         console.log('Attempting to clean up meals:', mealIds);
         try {
           // Delete cooked_meals first (FK constraint)
