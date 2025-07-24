@@ -356,16 +356,64 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
                       className="ml-2"
                     />
                   </div>
-                  <div className="ml-2">
+                  <div className="ml-2 space-y-2">
                     {editedSetsByExercise[ex.id]?.length ? (
                       editedSetsByExercise[ex.id].map((set, idx) => (
-                        <div key={set.id || idx}>
-                          Set {idx + 1}: {set.reps} reps{set.weight != null ? ` @ ${set.weight} lbs` : ''}
+                        <div key={set.id || idx} className="flex items-center gap-2 mb-1">
+                          <span className="text-sm mr-2">Set {idx + 1}:</span>
+                          <FormInput
+                            type="number"
+                            min={0}
+                            value={set.reps}
+                            onChange={e => {
+                              const newSets = [...editedSetsByExercise[ex.id]];
+                              newSets[idx] = { ...newSets[idx], reps: Number(e.target.value) };
+                              setEditedSetsByExercise(prev => ({ ...prev, [ex.id]: newSets }));
+                            }}
+                            placeholder="Reps"
+                            className="w-20"
+                          />
+                          <FormInput
+                            type="number"
+                            min={0}
+                            value={set.weight ?? ''}
+                            onChange={e => {
+                              const newSets = [...editedSetsByExercise[ex.id]];
+                              newSets[idx] = { ...newSets[idx], weight: e.target.value === '' ? null : Number(e.target.value) };
+                              setEditedSetsByExercise(prev => ({ ...prev, [ex.id]: newSets }));
+                            }}
+                            placeholder="Weight (lbs)"
+                            className="w-28"
+                          />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            aria-label="Delete set"
+                            onClick={() => {
+                              const newSets = editedSetsByExercise[ex.id].filter((_, sidx) => sidx !== idx);
+                              setEditedSetsByExercise(prev => ({ ...prev, [ex.id]: newSets }));
+                            }}
+                          >
+                            🗑️
+                          </Button>
                         </div>
                       ))
                     ) : (
                       <div className="text-muted-foreground text-sm">No sets logged yet.</div>
                     )}
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      size="sm"
+                      className="mt-1"
+                      onClick={() => {
+                        const newSets = [...(editedSetsByExercise[ex.id] || []), { reps: 0, weight: null }];
+                        setEditedSetsByExercise(prev => ({ ...prev, [ex.id]: newSets }));
+                      }}
+                    >
+                      ➕ Add Set
+                    </Button>
                   </div>
                 </li>
               ))}
@@ -383,16 +431,64 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
                       className="ml-2"
                     />
                   </div>
-                  <div className="ml-2">
+                  <div className="ml-2 space-y-2">
                     {ex.sets && ex.sets.length > 0 ? (
                       ex.sets.map((set, idx) => (
-                        <div key={set.id || idx}>
-                          Set {idx + 1}: {set.reps} reps{set.weight != null ? ` @ ${set.weight} lbs` : ''}
+                        <div key={set.id || idx} className="flex items-center gap-2 mb-1">
+                          <span className="text-sm mr-2">Set {idx + 1}:</span>
+                          <FormInput
+                            type="number"
+                            min={0}
+                            value={set.reps}
+                            onChange={e => {
+                              const newSets = [...ex.sets];
+                              newSets[idx] = { ...newSets[idx], reps: Number(e.target.value) };
+                              setNewExercisesWithSets(prev => prev.map((ex2, j) => j === i ? { ...ex2, sets: newSets } : ex2));
+                            }}
+                            placeholder="Reps"
+                            className="w-20"
+                          />
+                          <FormInput
+                            type="number"
+                            min={0}
+                            value={set.weight ?? ''}
+                            onChange={e => {
+                              const newSets = [...ex.sets];
+                              newSets[idx] = { ...newSets[idx], weight: e.target.value === '' ? null : Number(e.target.value) };
+                              setNewExercisesWithSets(prev => prev.map((ex2, j) => j === i ? { ...ex2, sets: newSets } : ex2));
+                            }}
+                            placeholder="Weight (lbs)"
+                            className="w-28"
+                          />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            aria-label="Delete set"
+                            onClick={() => {
+                              const newSets = ex.sets.filter((_, sidx) => sidx !== idx);
+                              setNewExercisesWithSets(prev => prev.map((ex2, j) => j === i ? { ...ex2, sets: newSets } : ex2));
+                            }}
+                          >
+                            🗑️
+                          </Button>
                         </div>
                       ))
                     ) : (
                       <div className="text-muted-foreground text-sm">No sets logged yet.</div>
                     )}
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      size="sm"
+                      className="mt-1"
+                      onClick={() => {
+                        const newSets = [...(ex.sets || []), { reps: 0, weight: null }];
+                        setNewExercisesWithSets(prev => prev.map((ex2, j) => j === i ? { ...ex2, sets: newSets } : ex2));
+                      }}
+                    >
+                      ➕ Add Set
+                    </Button>
                   </div>
                 </li>
               ))}
