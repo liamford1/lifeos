@@ -38,6 +38,44 @@ test('Login and add a workout', async ({ page }) => {
   // Wait for dashboard to load by checking for visible text "Planner"
   await expect(page.locator('text=Planner')).toBeVisible({ timeout: 10000 });
 
+  // --- Robust cleanup at the start (match planned meals test) ---
+  await page.evaluate(async () => {
+    const supabase = window.supabase;
+    const { data: session } = await supabase.auth.getSession();
+    const userId = session.session.user.id;
+    let cleanupIterations = 0;
+    const maxIterations = 5;
+    do {
+      if (cleanupIterations >= maxIterations) break;
+      // Find all workouts for the test user
+      const { data: foundWorkouts } = await supabase
+        .from('fitness_workouts')
+        .select('id, title')
+        .eq('user_id', userId);
+      const workoutIds = (foundWorkouts || []).map((w: any) => w.id);
+      if (workoutIds.length > 0) {
+        // Delete sets (FK: fitness_sets.exercise_id -> fitness_exercises.id)
+        const { data: foundExercises } = await supabase
+          .from('fitness_exercises')
+          .select('id')
+          .in('workout_id', workoutIds);
+        const exerciseIds = (foundExercises || []).map((e: any) => e.id);
+        if (exerciseIds.length > 0) {
+          await supabase.from('fitness_sets').delete().in('exercise_id', exerciseIds);
+        }
+        // Delete exercises
+        await supabase.from('fitness_exercises').delete().in('workout_id', workoutIds);
+        // Delete workouts
+        await supabase.from('fitness_workouts').delete().in('id', workoutIds);
+        // Delete related calendar events
+        await supabase.from('calendar_events').delete().eq('user_id', userId).in('source_id', workoutIds);
+      }
+      // Clean up any orphaned calendar events with source = 'workout' and user_id
+      await supabase.from('calendar_events').delete().eq('user_id', userId).eq('source', 'workout');
+      cleanupIterations++;
+    } while (true);
+  });
+
   // ✅ Sanity check: window.supabase is defined
   await page.evaluate(() => {
     if (!window.supabase) throw new Error('[E2E] ❌ window.supabase is still not defined');
@@ -114,4 +152,131 @@ test('Login and add a workout', async ({ page }) => {
   const workoutSaved = await page.getByText(/workout saved|workout created|workout history|workouts/i).isVisible().catch(() => false);
 
   expect(inProgressHeading || inProgressButton || workoutSaved).toBe(true);
+
+  // --- Begin expanded test ---
+
+  // 1. Navigate away (to Food), then return to Workouts
+  await page.getByRole('link', { name: /food/i }).click();
+  await page.waitForURL((url) => /\/food(\/)?$/.test(url.pathname), { timeout: 10000 });
+  // Confirm nav button for workout in progress is visible
+  await expect(page.getByRole('button', { name: /workout in progress/i })).toBeVisible();
+  // Click the nav button to return to live workout
+  await page.getByRole('button', { name: /workout in progress/i }).click();
+  await page.waitForURL((url) => /\/fitness\/workouts\/live$/.test(url.pathname), { timeout: 10000 });
+  // Confirm the workout in progress UI is still present
+  await expect(page.getByRole('heading', { name: /workout in progress/i })).toBeVisible();
+  await expect(page.getByText('Push Day')).toBeVisible();
+
+  // 2. Reload the page and confirm session state persists
+  await page.reload();
+  await expect(page.getByRole('heading', { name: /workout in progress/i })).toBeVisible();
+  await expect(page.getByText('Push Day')).toBeVisible();
+
+  // 3. Add an exercise with a name
+  const exerciseName = `Bench Press ${Math.floor(Math.random() * 10000)}`;
+  await page.getByPlaceholder('e.g. Bench Press, Squat, etc.').fill(exerciseName);
+  await page.getByRole('button', { name: /^add$/i }).click();
+  // Wait for exercise to appear
+  await expect(page.getByText(exerciseName)).toBeVisible({ timeout: 5000 });
+
+  // 4. Add a set to the exercise (reps = 10, weight = 100)
+  // Find the exercise block by name
+  const exerciseBlock = page.locator('.font-semibold.mb-1', { hasText: exerciseName }).locator('..');
+  // Fill reps and weight in the set form inside this block
+  await exerciseBlock.getByPlaceholder('Reps').fill('10');
+  await exerciseBlock.getByPlaceholder('Weight (lbs)').fill('100');
+  await exerciseBlock.getByRole('button', { name: /log set/i }).click();
+  // Wait for set to appear
+  await expect(exerciseBlock.getByText(/set 1: 10 reps @ 100 lbs/i)).toBeVisible({ timeout: 5000 });
+
+  // 5. Reload and confirm set persists
+  await page.reload();
+  await expect(page.getByText(exerciseName)).toBeVisible();
+  await expect(page.getByText(/set 1: 10 reps @ 100 lbs/i)).toBeVisible();
+
+  // 6. End the workout
+  await page.getByRole('button', { name: /end workout/i }).click();
+  await page.waitForURL((url) => /\/fitness\/workouts$/.test(url.pathname), { timeout: 10000 });
+
+  // 7. Confirm workout status is completed in the list
+  await expect(page.getByRole('heading', { name: /workouts/i })).toBeVisible();
+  // Find the workout in the list by title
+  const workoutListItem = page.getByText('Push Day').locator('..');
+  await expect(workoutListItem).toBeVisible();
+  // Click to view workout detail
+  await workoutListItem.click();
+  await page.waitForURL(/\/fitness\/workouts\/[\w-]+$/);
+  // Confirm exercises and sets are present
+  await expect(page.getByText(exerciseName)).toBeVisible();
+  await expect(page.getByText(/set 1: 10 reps @ 100 lbs/i)).toBeVisible();
+
+  // 8. Reload and confirm persistence
+  await page.reload();
+  await expect(page.getByText(exerciseName)).toBeVisible();
+  await expect(page.getByText(/set 1: 10 reps @ 100 lbs/i)).toBeVisible();
+
+  // 9. Delete the workout (from detail page)
+  // Go back to workouts list if needed
+  await page.goto('http://localhost:3000/fitness/workouts');
+  await expect(page.getByRole('heading', { name: /workouts/i })).toBeVisible();
+  // Locate the list item or div that contains both the workout title and the delete button
+  const workoutCard = page.locator('li, div').filter({ hasText: 'Push Day' }).first();
+  // Ensure it's visible
+  await expect(workoutCard).toBeVisible();
+  // Locate and click the delete button inside it
+  const deleteButton = workoutCard.getByRole('button', { name: /delete/i });
+  await expect(deleteButton).toBeVisible();
+  await deleteButton.click();
+  // Reload and confirm that "Push Day" no longer appears
+  await page.reload();
+  await expect(page.getByText('Push Day')).not.toBeVisible();
+
+  // --- End expanded test ---
+
+  // --- Robust cleanup at the end ---
+  await page.evaluate(async () => {
+    const supabase = window.supabase;
+    const { data: session } = await supabase.auth.getSession();
+    const userId = session.session.user.id;
+    let cleanupIterations = 0;
+    const maxIterations = 5;
+    do {
+      if (cleanupIterations >= maxIterations) break;
+      // Find all workouts for the test user
+      const { data: foundWorkouts } = await supabase
+        .from('fitness_workouts')
+        .select('id, title')
+        .eq('user_id', userId);
+      const workoutIds = (foundWorkouts || []).map((w: any) => w.id);
+      if (workoutIds.length > 0) {
+        // Delete sets (FK: fitness_sets.exercise_id -> fitness_exercises.id)
+        const { data: foundExercises } = await supabase
+          .from('fitness_exercises')
+          .select('id')
+          .in('workout_id', workoutIds);
+        const exerciseIds = (foundExercises || []).map((e: any) => e.id);
+        if (exerciseIds.length > 0) {
+          await supabase.from('fitness_sets').delete().in('exercise_id', exerciseIds);
+        }
+        // Delete exercises
+        await supabase.from('fitness_exercises').delete().in('workout_id', workoutIds);
+        // Delete workouts
+        await supabase.from('fitness_workouts').delete().in('id', workoutIds);
+        // Delete related calendar events
+        await supabase.from('calendar_events').delete().eq('user_id', userId).in('source_id', workoutIds);
+      }
+      // Clean up any orphaned calendar events with source = 'workout' and user_id
+      await supabase.from('calendar_events').delete().eq('user_id', userId).eq('source', 'workout');
+      cleanupIterations++;
+    } while (true);
+  });
+
+  // Optionally, reload and confirm no test workouts remain
+  await page.goto('http://localhost:3000/fitness/workouts');
+  await expect(page.getByRole('heading', { name: /workouts/i })).toBeVisible();
+  const testWorkoutLinks = await page.locator('a', { hasText: 'Push Day' }).count();
+  if (testWorkoutLinks > 0) {
+    console.log(`Warning: ${testWorkoutLinks} test workouts still present after cleanup, but continuing with test`);
+  }
+
 }); 

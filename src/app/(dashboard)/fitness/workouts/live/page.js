@@ -12,7 +12,7 @@ import { useToast } from '@/components/Toast';
 
 export default function LiveWorkoutPage() {
   const { user, loading: userLoading } = useUser();
-  const { activeWorkoutId, workoutData, refreshWorkout, loading: workoutLoading } = useWorkoutSession();
+  const { activeWorkoutId, workoutData, refreshWorkout, clearSession, loading: workoutLoading } = useWorkoutSession();
   const [creating, setCreating] = useState(false);
   const [title, setTitle] = useState('');
   const [notes, setNotes] = useState('');
@@ -145,7 +145,8 @@ export default function LiveWorkoutPage() {
       showError('Failed to end workout.');
       return;
     }
-    // Clear activeWorkoutId in context
+    // Clear session state in context immediately
+    if (typeof clearSession === 'function') clearSession();
     if (typeof refreshWorkout === 'function') await refreshWorkout();
     // Optionally show a toast
     showSuccess('Workout ended!');
