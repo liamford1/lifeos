@@ -25,47 +25,60 @@ export default function MealPlannerPage() {
   const [message, setMessage] = useState('')
   const [mealsLoading, setMealsLoading] = useState(true)
   const [plannedMealsLoading, setPlannedMealsLoading] = useState(true)
-  const { user, loading } = useUser();
-
-  const fetchMeals = useCallback(async () => {
-    setMealsLoading(true)
-    const { data, error } = await supabase
-      .from('meals')
-      .select('*')
-      .order('name')
-
-    if (error) {
-      showError('Error fetching meals:', error.message)
-    } else {
-      setMeals(data)
-    }
-    setMealsLoading(false)
-  }, [showError])
-
-  const fetchPlannedMeals = useCallback(async () => {
-    setPlannedMealsLoading(true)
-    const { data, error } = await supabase
-      .from('planned_meals')
-      .select(`
-        *,
-        meals (
-          name
-        )
-      `)
-      .order('planned_date')
-
-    if (error) {
-      showError('Error fetching planned meals:', error.message)
-    } else {
-      setPlannedMeals(data)
-    }
-    setPlannedMealsLoading(false)
-  }, [showError])
+  const { user, loading: userLoading } = useUser();
 
   useEffect(() => {
-    fetchMeals()
-    fetchPlannedMeals()
-  }, [fetchMeals, fetchPlannedMeals])
+    if (!userLoading && user) {
+      const fetchData = async () => {
+        setMealsLoading(true);
+        setPlannedMealsLoading(true);
+        try {
+          const { data: mealsData, error: mealsError } = await supabase
+            .from('meals')
+            .select('*')
+            .order('name');
+          if (mealsError) {
+            showError('Error fetching meals:', mealsError.message);
+            setMeals([]);
+          } else {
+            setMeals(mealsData);
+          }
+        } catch (err) {
+          showError('Error fetching meals:', err.message || String(err));
+          setMeals([]);
+        } finally {
+          setMealsLoading(false);
+        }
+
+        try {
+          const { data: plannedData, error: plannedError } = await supabase
+            .from('planned_meals')
+            .select(`
+              *,
+              meals (
+                name
+              )
+            `)
+            .order('planned_date');
+          if (plannedError) {
+            showError('Error fetching planned meals:', plannedError.message);
+            setPlannedMeals([]);
+          } else {
+            setPlannedMeals(plannedData);
+          }
+        } catch (err) {
+          showError('Error fetching planned meals:', err.message || String(err));
+          setPlannedMeals([]);
+        } finally {
+          setPlannedMealsLoading(false);
+        }
+      };
+      fetchData();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, userLoading]);
+
+  const isLoading = userLoading || mealsLoading || plannedMealsLoading;
 
   const addCalendarEvent = async ({ userId, title, startTime, source, sourceId }) => {
     const { error } = await supabase
@@ -117,7 +130,30 @@ export default function MealPlannerPage() {
       setSelectedMealId('')
       setPlannedDate('')
       setMealTime('dinner')
-      fetchPlannedMeals()
+      // Refetch planned meals only
+      setPlannedMealsLoading(true);
+      try {
+        const { data: plannedData, error: plannedError } = await supabase
+          .from('planned_meals')
+          .select(`
+            *,
+            meals (
+              name
+            )
+          `)
+          .order('planned_date');
+        if (plannedError) {
+          showError('Error fetching planned meals:', plannedError.message);
+          setPlannedMeals([]);
+        } else {
+          setPlannedMeals(plannedData);
+        }
+      } catch (err) {
+        showError('Error fetching planned meals:', err.message || String(err));
+        setPlannedMeals([]);
+      } finally {
+        setPlannedMealsLoading(false);
+      }
     }
   }
 
@@ -143,7 +179,30 @@ export default function MealPlannerPage() {
       showError('Failed to delete linked calendar event.');
       return;
     }
-    fetchPlannedMeals();
+    // Refetch planned meals only
+    setPlannedMealsLoading(true);
+    try {
+      const { data: plannedData, error: plannedError } = await supabase
+        .from('planned_meals')
+        .select(`
+          *,
+          meals (
+            name
+          )
+        `)
+        .order('planned_date');
+      if (plannedError) {
+        showError('Error fetching planned meals:', plannedError.message);
+        setPlannedMeals([]);
+      } else {
+        setPlannedMeals(plannedData);
+      }
+    } catch (err) {
+      showError('Error fetching planned meals:', err.message || String(err));
+      setPlannedMeals([]);
+    } finally {
+      setPlannedMealsLoading(false);
+    }
     showSuccess('Planned meal deleted successfully!');
   }
 
@@ -211,7 +270,7 @@ export default function MealPlannerPage() {
 
       {message && <p className="mt-4 text-sm text-green-400">{message}</p>}
 
-      {plannedMealsLoading ? (
+      {isLoading ? (
         <div className="mt-10">
           <h2 className="text-xl font-semibold mb-4">
             <CalendarCheck className="w-5 h-5 text-base mr-2 inline-block" />
