@@ -16,7 +16,7 @@ import Image from 'next/image';
 export default function AppBar() {
   const { user, loading, session } = useUser();
   const { activeWorkoutId } = useWorkoutSession();
-  const { mealId, currentStep, instructions } = useCookingSession();
+  const { mealId, currentStep, instructions, loading: cookingSessionLoading } = useCookingSession();
   const [profile, setProfile] = useState(null);
   const router = useRouter();
 
@@ -80,7 +80,7 @@ export default function AppBar() {
           </Button>
         )}
         {/* Cooking in progress indicator */}
-        {mealId && instructions.length > 0 && (
+        {mealId && instructions.length > 0 && !cookingSessionLoading && (
           <Button
             type="button"
             onClick={() => router.push(`/food/meals/${mealId}/cook`)}
@@ -88,8 +88,9 @@ export default function AppBar() {
             size="sm"
             className="text-sm text-orange-600 font-medium ml-4 cursor-pointer hover:underline focus:underline focus:outline-none"
             aria-label="Go to Cooking Session"
+            data-testid="cooking-session-indicator"
           >
-            🍳 Cooking in progress – Step {currentStep + 1} of {instructions.length}
+            🍳 Cooking in progress – Step {currentStep} of {instructions.length}
           </Button>
         )}
         {/* Profile icon button - only show when user is logged in */}

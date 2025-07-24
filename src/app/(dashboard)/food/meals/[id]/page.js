@@ -11,12 +11,14 @@ import { useToast } from '@/components/Toast';
 import { MdOutlineCalendarToday, MdOutlineStickyNote2 } from 'react-icons/md';
 import SharedDeleteButton from '@/components/SharedDeleteButton';
 import { useMealQuery, useMealIngredientsQuery, useDeleteMealMutation } from '@/lib/hooks/useMeals';
+import { useCookingSession } from '@/context/CookingSessionContext';
 
 export default function MealDetailPage() {
   const { id } = useParams();
   const { user, loading: userLoading } = useUser();
   const router = useRouter();
   const { showSuccess, showError } = useToast();
+  const { endCooking, mealId: cookingMealId } = useCookingSession();
 
   // Use React Query for data fetching
   const { 
@@ -52,6 +54,11 @@ export default function MealDetailPage() {
       if (!meal) {
         showError('No meal data available.');
         return;
+      }
+
+      // End cooking session if this meal is being cooked
+      if (cookingMealId === meal.id) {
+        await endCooking();
       }
 
       // Delete the meal (this will cascade delete ingredients)
