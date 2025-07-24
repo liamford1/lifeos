@@ -3,8 +3,9 @@ import { listEvents, insertEvent, deleteEvent } from "@/lib/api/calendar";
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { action: "list" | "insert" | "delete" } }
+  context: { params: { action: "list" | "insert" | "delete" } }
 ) {
+  const params = await context.params;
   const body = await req.json();
   try {
     if (params.action === "list")

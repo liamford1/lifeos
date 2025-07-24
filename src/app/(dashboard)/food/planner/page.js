@@ -130,6 +130,16 @@ export default function MealPlannerPage() {
       setSelectedMealId('')
       setPlannedDate('')
       setMealTime('dinner')
+
+      // Add calendar event for the planned meal
+      await addCalendarEvent({
+        userId: user.id,
+        title: `${mealTime.charAt(0).toUpperCase() + mealTime.slice(1)}: ${meals.find(m => m.id === selectedMealId)?.name || ''}`,
+        startTime: plannedDate,
+        source: CALENDAR_SOURCES.PLANNED_MEAL,
+        sourceId: insertData.id,
+      });
+
       // Refetch planned meals only
       setPlannedMealsLoading(true);
       try {
@@ -229,6 +239,7 @@ export default function MealPlannerPage() {
           value={selectedMealId}
           onChange={(e) => setSelectedMealId(e.target.value)}
           className="bg-surface text-white border border-[#232323] rounded px-3 py-2"
+          data-testid="meal-select"
         >
           <option value="">-- Choose a meal --</option>
           {mealsLoading ? (
@@ -253,6 +264,7 @@ export default function MealPlannerPage() {
           value={mealTime}
           onChange={(e) => setMealTime(e.target.value)}
           className="bg-surface text-white border border-[#232323] rounded px-3 py-2"
+          data-testid="meal-time-select"
         >
           <option value="breakfast">Breakfast</option>
           <option value="lunch">Lunch</option>
@@ -301,6 +313,7 @@ export default function MealPlannerPage() {
                   <div
                     key={item.id}
                     className="bg-surface p-3 rounded mb-2 flex justify-between items-center border border-[#232323]"
+                    data-testid={`planned-meal-card-${item.id}`}
                   >
                     <div>
                       <div className="font-medium">{item.meals?.name}</div>
