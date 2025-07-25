@@ -12,6 +12,7 @@ import { MdOutlineCalendarToday } from 'react-icons/md';
 import dynamic from "next/dynamic";
 const HeartPulse = dynamic(() => import("lucide-react/dist/esm/icons/heart-pulse"), { ssr: false });
 import SharedDeleteButton from '@/components/SharedDeleteButton';
+import EditButton from '@/components/EditButton';
 import { useCardioSessions } from '@/lib/hooks/useCardioSessions';
 
 export default function CardioDashboard() {
@@ -32,16 +33,18 @@ export default function CardioDashboard() {
   useEffect(() => {
     let isMounted = true;
     async function loadSessions() {
-      if (!user) return;
+      if (!user) {
+        if (isMounted) setSessionsLoading(false);
+        return;
+      }
       setSessionsLoading(true);
       const data = await memoizedFetchCardioSessions(user.id);
-      // Only update state if data is different
-      if (isMounted && data && JSON.stringify(data) !== JSON.stringify(sessions)) {
-        setSessions(data);
+      if (isMounted) {
+        setSessions(data || []);
+        setSessionsLoading(false);
       }
-      if (isMounted) setSessionsLoading(false);
     }
-    if (user) loadSessions();
+    loadSessions();
     return () => { isMounted = false; };
   }, [user, memoizedFetchCardioSessions]);
 
@@ -108,17 +111,12 @@ export default function CardioDashboard() {
               )}
 
               <div className="flex gap-4 mt-2 text-sm">
-                <Button
+                <EditButton
                   onClick={(e) => {
                     e.stopPropagation();
-                    router.push(`/fitness/cardio/${s.id}?edit=true`);
+                    router.push(`/fitness/cardio/${s.id}/edit`);
                   }}
-                  variant="link"
-                  size="sm"
-                  className="text-blue-500 hover:text-blue-700"
-                >
-                  ✏️ Edit
-                </Button>
+                />
                 <SharedDeleteButton
                   onClick={(e) => {
                     e.stopPropagation();

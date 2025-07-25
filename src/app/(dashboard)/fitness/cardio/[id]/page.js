@@ -1,88 +1,132 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabaseClient";
-import BackButton from "@/components/BackButton";
-import LoadingSpinner from "@/components/LoadingSpinner";
-import Button from "@/components/Button";
-import Link from "next/link";
-import { useToast } from "@/components/Toast";
+import { useParams, useRouter } from 'next/navigation';
+import { useUser } from '@/context/UserContext';
+import LoadingSpinner from '@/components/LoadingSpinner';
+import { useEffect, useState, useCallback } from 'react';
+import { useToast } from '@/components/Toast';
+import { MdOutlineCalendarToday } from 'react-icons/md';
+import { supabase } from '@/lib/supabaseClient';
+import SharedDeleteButton from '@/components/SharedDeleteButton';
+import Button from '@/components/Button';
+import BackButton from '@/components/BackButton';
 
 export default function CardioDetailPage() {
-  const { id } = useParams();
+  const params = useParams();
+  const { user, loading: userLoading } = useUser();
   const router = useRouter();
-  const { showSuccess, showError } = useToast();
+  const { showError } = useToast();
   const [cardio, setCardio] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [deleting, setDeleting] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    async function fetchCardio() {
-      if (!id) {
-        setError("Missing cardio ID");
-        setLoading(false);
-        return;
-      }
-      const { data, error } = await supabase
-        .from("fitness_cardio")
-        .select("*")
-        .eq("id", id)
+    if (!userLoading && !user) {
+      router.push('/auth');
+    }
+  }, [userLoading, user, router]);
+
+  const fetchCardio = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const { data: cardioData, error: cardioErr } = await supabase
+        .from('fitness_cardio')
+        .select('*')
+        .eq('id', params.id)
         .single();
-      if (error || !data) {
-        setError("Failed to load cardio entry");
-      } else {
-        setCardio(data);
-      }
+      if (cardioErr) throw cardioErr;
+      setCardio(cardioData);
+    } catch (err) {
+      setError(err.message || 'Failed to load cardio details.');
+      if (typeof showError === 'function') showError(err.message || 'Failed to load cardio details.');
+    } finally {
       setLoading(false);
     }
-    fetchCardio();
-  }, [id]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params.id]);
+
+  useEffect(() => {
+    if (user) fetchCardio();
+  }, [user, fetchCardio]);
 
   async function handleDelete() {
     if (!window.confirm("Delete this cardio entry?")) return;
-    setDeleting(true);
     const { error } = await supabase
-      .from("fitness_cardio")
+      .from('fitness_cardio')
       .delete()
-      .eq("id", id);
-    setDeleting(false);
+      .eq('id', params.id);
     if (error) {
       showError("Failed to delete cardio entry");
     } else {
-      showSuccess("Cardio entry deleted");
       router.push("/fitness/cardio");
     }
   }
 
-  if (loading) return <LoadingSpinner />;
-  if (error) return <div className="p-4 text-red-600">{error}</div>;
+  if (loading || userLoading) return <LoadingSpinner />;
+  if (!user) return null;
+  if (error) return <div className="p-4"><p className="text-red-500 text-sm">{error}</p></div>;
+  if (!cardio) return <div className="p-4"><p className="text-muted-foreground text-sm">Cardio session not found.</p></div>;
 
   return (
-    <div className="max-w-2xl mx-auto p-4">
+    <div className="max-w-6xl mx-auto p-4 space-y-4">
       <BackButton />
-      <h1 className="text-xl font-bold mb-4">Cardio Entry Details</h1>
-      {cardio && (
-        <div className="mb-4">
-          <div><strong>Type:</strong> {cardio.type}</div>
-          <div><strong>Duration:</strong> {cardio.duration} min</div>
-          <div><strong>Date:</strong> {cardio.date}</div>
-          <div><strong>Notes:</strong> {cardio.notes}</div>
+      <h1 className="text-2xl font-bold">{cardio.activity_type || 'Cardio Session'}</h1>
+      <p className="text-base">View your cardio session details.</p>
+      <p className="text-sm text-base mb-3">{cardio.date}</p>
+      {cardio.notes && <p className="mb-4 italic text-base">{cardio.notes}</p>}
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+        <div className="border p-4 rounded bg-panel">
+          <h3 className="font-semibold text-lg mb-2">📊 Session Details</h3>
+          <div className="space-y-2">
+            <div><strong>Activity:</strong> {cardio.activity_type || 'Cardio'}</div>
+            <div><strong>Duration:</strong> {cardio.duration_minutes ?? '-'} minutes</div>
+            {cardio.distance_miles && (
+              <div><strong>Distance:</strong> {cardio.distance_miles} miles</div>
+            )}
+            {cardio.calories_burned && (
+              <div><strong>Calories:</strong> {cardio.calories_burned} kcal</div>
+            )}
+          </div>
         </div>
-      )}
-      <Link href={`/fitness/cardio/${id}/edit`} className="mr-2">
-        <Button variant="primary">Edit</Button>
-      </Link>
-      <Button
-        variant="danger"
-        size="sm"
-        onClick={handleDelete}
-        aria-label="Delete cardio entry"
-        loading={deleting}
-      >
-        🗑️ Delete
-      </Button>
+        
+        <div className="border p-4 rounded bg-panel">
+          <h3 className="font-semibold text-lg mb-2">📍 Location & Notes</h3>
+          <div className="space-y-2">
+            {cardio.location && (
+              <div><strong>Location:</strong> {cardio.location}</div>
+            )}
+            <div><strong>Started:</strong> {cardio.start_time ? new Date(cardio.start_time).toLocaleString() : 'Unknown'}</div>
+            {cardio.end_time && (
+              <div><strong>Ended:</strong> {new Date(cardio.end_time).toLocaleString()}</div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div className="flex gap-4 mt-6">
+        <Button
+          variant="primary"
+          onClick={() => router.push(`/fitness/cardio/${params.id}/edit`)}
+          className="px-4 py-2"
+        >
+          ✏️ Edit Session
+        </Button>
+        <SharedDeleteButton
+          onClick={handleDelete}
+          aria-label="Delete cardio entry"
+          label="Delete Session"
+        />
+        <Button
+          variant="secondary"
+          onClick={() => router.push('/')}
+          className="px-4 py-2"
+        >
+          <MdOutlineCalendarToday className="inline w-5 h-5 text-base align-text-bottom mr-2" />
+          Back to Calendar
+        </Button>
+      </div>
     </div>
   );
 }

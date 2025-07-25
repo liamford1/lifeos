@@ -1,9 +1,12 @@
 "use client";
 import React from 'react';
 
-const LoadingSpinner = () => (
+const LoadingSpinner = ({ size = 48 }) => (
   <div className="flex justify-center items-center h-full">
-    <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-blue-500"></div>
+    <div 
+      className="animate-spin rounded-full border-t-4 border-b-4 border-blue-500"
+      style={{ width: size, height: size }}
+    ></div>
   </div>
 );
 

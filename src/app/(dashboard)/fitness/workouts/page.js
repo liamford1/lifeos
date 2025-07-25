@@ -15,6 +15,7 @@ import dynamic from "next/dynamic";
 const Dumbbell = dynamic(() => import("lucide-react/dist/esm/icons/dumbbell"), { ssr: false });
 import { format } from 'date-fns';
 import SharedDeleteButton from '@/components/SharedDeleteButton';
+import EditButton from '@/components/EditButton';
 import { useWorkouts } from '@/lib/hooks/useWorkouts';
 
 export default function WorkoutsDashboard() {
@@ -109,13 +110,9 @@ export default function WorkoutsDashboard() {
               </div>
 
               <div className="flex gap-4 mt-2 text-sm">
-                <Button
+                <EditButton
                   onClick={() => router.push(`/fitness/workouts/${w.id}/edit`)}
-                  variant="primary"
-                  size="sm"
-                >
-                  ✏️ Edit
-                </Button>
+                />
                 <SharedDeleteButton
                   onClick={() => handleDelete(w.id)}
                   size="sm"
