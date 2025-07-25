@@ -22,8 +22,7 @@ export default function WorkoutsDashboard() {
   const router = useRouter();
   const [workouts, setWorkouts] = useState([]);
   const [workoutsLoading, setWorkoutsLoading] = useState(true);
-  const [creating, setCreating] = useState(false);
-  const { fetchWorkouts, createWorkout, deleteWorkout } = useWorkouts();
+  const { fetchWorkouts, deleteWorkout } = useWorkouts();
   // Memoize fetchWorkouts to avoid unnecessary effect reruns
   const memoizedFetchWorkouts = useCallback(fetchWorkouts, []);
 
@@ -60,22 +59,9 @@ export default function WorkoutsDashboard() {
 
   const handleStartWorkout = async () => {
     if (!user) return router.push('/auth');
-    setCreating(true);
-    const now = new Date();
-    const today = now.toISOString().split('T')[0];
-    const formattedTitle = `Workout - ${format(now, 'MMMM d, yyyy')}`;
-    const data = await createWorkout({
-      user_id: user.id,
-      title: formattedTitle,
-      notes: '',
-      in_progress: true,
-      start_time: now.toISOString(),
-      date: today,
-    });
-    setCreating(false);
-    if (data) {
-      router.push('/fitness/workouts/live');
-    }
+    // Instead of creating a workout here, just redirect to the live page
+    // where the user can create a workout with a custom title
+    router.push('/fitness/workouts/live');
   };
 
   return (
@@ -91,8 +77,6 @@ export default function WorkoutsDashboard() {
         <Button
           variant="primary"
           onClick={handleStartWorkout}
-          loading={creating}
-          disabled={creating}
           data-testid="add-workout-button"
         >
           Start Workout

@@ -14,7 +14,14 @@ export default function LiveWorkoutPage() {
   const { user, loading: userLoading } = useUser();
   const { activeWorkoutId, workoutData, refreshWorkout, clearSession, loading: workoutLoading } = useWorkoutSession();
   const [creating, setCreating] = useState(false);
-  const [title, setTitle] = useState('');
+  const [title, setTitle] = useState(() => {
+    const now = new Date();
+    return `Workout - ${now.toLocaleDateString('en-US', { 
+      weekday: 'short', 
+      month: 'short', 
+      day: 'numeric' 
+    })}`;
+  });
   const [notes, setNotes] = useState('');
   const [formError, setFormError] = useState('');
 
@@ -154,6 +161,15 @@ export default function LiveWorkoutPage() {
     router.push('/fitness/workouts');
   };
 
+  // Show loading while workout session is loading
+  if (workoutLoading) {
+    return (
+      <div className="max-w-xl mx-auto p-6 mt-8 bg-panel rounded shadow">
+        <div className="text-center">Loading workout session...</div>
+      </div>
+    );
+  }
+
   // Show the form if there is no active workout (workoutData is falsy)
   if (!workoutData) {
     const handleStartWorkout = async (e) => {
@@ -164,6 +180,22 @@ export default function LiveWorkoutPage() {
         return;
       }
       setCreating(true);
+      
+      // Double-check that there's no in-progress workout before creating a new one
+      const { data: existingWorkout } = await supabase
+        .from('fitness_workouts')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('in_progress', true)
+        .maybeSingle();
+      
+      if (existingWorkout) {
+        // There's already an in-progress workout, refresh the context and return
+        await refreshWorkout();
+        setCreating(false);
+        return;
+      }
+      
       const now = new Date();
       const today = now.toISOString().split('T')[0];
       const { data, error } = await supabase

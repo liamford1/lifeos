@@ -26,22 +26,30 @@ export function WorkoutSessionProvider({ children }) {
       return;
     }
     setLoading(true);
-    const { data, error } = await supabase
-      .from('fitness_workouts')
-      .select('*')
-      .eq('user_id', user.id)
-      .eq('in_progress', true)
-      .order('start_time', { ascending: false })
-      .limit(1)
-      .maybeSingle();
-    if (!error && data) {
-      setActiveWorkoutIdRaw(data.id);
-      setWorkoutData(data);
-    } else {
+    try {
+      const { data, error } = await supabase
+        .from('fitness_workouts')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('in_progress', true)
+        .order('start_time', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      
+      if (!error && data) {
+        setActiveWorkoutIdRaw(data.id);
+        setWorkoutData(data);
+      } else {
+        setActiveWorkoutIdRaw(null);
+        setWorkoutData(null);
+      }
+    } catch (err) {
+      console.error('Error fetching in-progress workout:', err);
       setActiveWorkoutIdRaw(null);
       setWorkoutData(null);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }, [user]);
 
   const setActiveWorkoutId = useCallback((id) => {
