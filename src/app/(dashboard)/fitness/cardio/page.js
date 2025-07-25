@@ -1,47 +1,55 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { supabase } from '@/lib/supabaseClient';
 import BackButton from '@/components/BackButton';
 import Button from '@/components/Button';
+import { useUser } from '@/context/UserContext';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import { useToast } from '@/components/Toast';
+import { MdOutlineCalendarToday } from 'react-icons/md';
 import dynamic from "next/dynamic";
 const HeartPulse = dynamic(() => import("lucide-react/dist/esm/icons/heart-pulse"), { ssr: false });
 import SharedDeleteButton from '@/components/SharedDeleteButton';
 import { useCardioSessions } from '@/lib/hooks/useCardioSessions';
 
 export default function CardioDashboard() {
+  const { user, loading } = useUser();
+  const router = useRouter();
   const [sessions, setSessions] = useState([]);
   const [sessionsLoading, setSessionsLoading] = useState(true);
-  const router = useRouter();
   const { fetchCardioSessions, deleteCardioSession } = useCardioSessions();
+  // Memoize fetchCardioSessions to avoid unnecessary effect reruns
+  const memoizedFetchCardioSessions = useCallback(fetchCardioSessions, []);
 
   useEffect(() => {
-    const fetchData = async () => {
+    if (!loading && !user) {
+      router.push('/auth');
+    }
+  }, [loading, user, router]);
+
+  useEffect(() => {
+    let isMounted = true;
+    async function loadSessions() {
+      if (!user) return;
       setSessionsLoading(true);
-      const user = await supabase.auth.getUser();
-      const userId = user?.data?.user?.id;
-      if (!userId) {
-        setSessions([]);
-        setSessionsLoading(false);
-        return;
+      const data = await memoizedFetchCardioSessions(user.id);
+      // Only update state if data is different
+      if (isMounted && data && JSON.stringify(data) !== JSON.stringify(sessions)) {
+        setSessions(data);
       }
-      const data = await fetchCardioSessions(userId);
-      setSessions(data || []);
-      setSessionsLoading(false);
-    };
-    fetchData();
-  }, [fetchCardioSessions]);
+      if (isMounted) setSessionsLoading(false);
+    }
+    if (user) loadSessions();
+    return () => { isMounted = false; };
+  }, [user, memoizedFetchCardioSessions]);
 
   const handleDelete = async (id) => {
     const confirm = window.confirm('Delete this session?');
     if (!confirm) return;
-    const user = await supabase.auth.getUser();
-    const userId = user?.data?.user?.id;
-    if (!userId) return;
-    const success = await deleteCardioSession(id, userId);
+    if (!user) return;
+    const success = await deleteCardioSession(id, user.id);
     if (success) {
       setSessions((prev) => prev.filter((s) => s.id !== id));
     }
@@ -56,14 +64,28 @@ export default function CardioDashboard() {
       </h1>
       <p className="text-base">Track your running, cycling, and other cardio activities.</p>
 
-      <Link href="/fitness/cardio/add" className="text-blue-600 underline mb-6 inline-block">
-        ➕ Add Cardio Session
-      </Link>
+      <div className="flex gap-4 mb-4">
+        <Button
+          variant="primary"
+          onClick={() => router.push('/fitness/cardio/live')}
+          data-testid="start-cardio-button"
+        >
+          Start Cardio
+        </Button>
+      </div>
 
-      {sessionsLoading ? (
+      <h2 className="text-xl font-semibold mb-2">
+        <MdOutlineCalendarToday className="inline w-5 h-5 text-base align-text-bottom mr-2" />
+        Cardio History
+      </h2>
+
+      {/* Simplified loading logic */}
+      {(loading || sessionsLoading) ? (
         <LoadingSpinner />
+      ) : !user ? (
+        null
       ) : sessions.length === 0 ? (
-        <p className="text-muted-foreground text-sm">No entries yet. Add one above ⬆️</p>
+        <p className="text-muted-foreground text-sm">No cardio sessions yet. Click &quot;Start Cardio&quot; to begin tracking your first session.</p>
       ) : (
         <ul className="space-y-3">
           {sessions.map((s) => (

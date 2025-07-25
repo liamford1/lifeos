@@ -1,0 +1,179 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useUser } from '@/context/UserContext';
+import { useCardioSession } from '@/context/CardioSessionContext';
+import { supabase } from '@/lib/supabaseClient';
+import Button from '@/components/Button';
+import FormInput from '@/components/FormInput';
+import FormTextarea from '@/components/FormTextarea';
+import { useRouter } from 'next/navigation';
+import { useToast } from '@/components/Toast';
+
+export default function LiveCardioPage() {
+  const { user, loading: userLoading } = useUser();
+  const { activeCardioId, cardioData, refreshCardio, clearSession, loading: cardioLoading } = useCardioSession();
+  const [creating, setCreating] = useState(false);
+  const [activityType, setActivityType] = useState(() => {
+    const now = new Date();
+    return `Cardio - ${now.toLocaleDateString('en-US', { 
+      weekday: 'short', 
+      month: 'short', 
+      day: 'numeric' 
+    })}`;
+  });
+  const [notes, setNotes] = useState('');
+  const [location, setLocation] = useState('');
+  const [formError, setFormError] = useState('');
+
+  const router = useRouter();
+  const { showSuccess, showError } = useToast();
+
+  // Show loading while cardio session is loading
+  if (cardioLoading) {
+    return (
+      <div className="max-w-xl mx-auto p-6 mt-8 bg-panel rounded shadow">
+        <div className="text-center">Loading cardio session...</div>
+      </div>
+    );
+  }
+
+  // Show the form if there is no active cardio session
+  if (!cardioData) {
+    const handleStartCardio = async (e) => {
+      e.preventDefault();
+      setFormError('');
+      if (!activityType.trim()) {
+        setFormError('Activity type is required.');
+        return;
+      }
+      setCreating(true);
+      
+      // Double-check that there's no in-progress cardio before creating a new one
+      const { data: existingCardio } = await supabase
+        .from('fitness_cardio')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('in_progress', true)
+        .maybeSingle();
+      
+      if (existingCardio) {
+        // There's already an in-progress cardio, refresh the context and return
+        await refreshCardio();
+        setCreating(false);
+        return;
+      }
+      
+      const now = new Date();
+      const today = now.toISOString().split('T')[0];
+      const { data, error } = await supabase
+        .from('fitness_cardio')
+        .insert({
+          user_id: user.id,
+          activity_type: activityType.trim(),
+          notes: notes.trim(),
+          location: location.trim(),
+          in_progress: true,
+          start_time: now.toISOString(),
+          date: today,
+        })
+        .select()
+        .single();
+      setCreating(false);
+      if (!error && data) {
+        await refreshCardio();
+      } else {
+        setFormError(error?.message || 'Failed to start cardio session');
+      }
+    };
+    return (
+      <div className="max-w-xl mx-auto p-6 mt-8 bg-panel rounded shadow">
+        <h1 className="text-2xl font-bold mb-4">Start a New Cardio Session</h1>
+        {formError && <div className="text-red-500 mb-2">{formError}</div>}
+        <form onSubmit={handleStartCardio} className="space-y-4">
+          <div>
+            <label className="font-semibold">Activity Type</label>
+            <FormInput
+              value={activityType}
+              onChange={e => setActivityType(e.target.value)}
+              required
+              placeholder="e.g. Running, Cycling, Swimming, Walking"
+            />
+          </div>
+          <div>
+            <label className="font-semibold">Location (optional)</label>
+            <FormInput
+              value={location}
+              onChange={e => setLocation(e.target.value)}
+              placeholder="e.g. Central Park, Gym, Home"
+            />
+          </div>
+          <div>
+            <label className="font-semibold">Notes (optional)</label>
+            <FormTextarea
+              value={notes}
+              onChange={e => setNotes(e.target.value)}
+              placeholder="Add any notes or goals for this session (optional)"
+            />
+          </div>
+          <Button type="submit" variant="primary" loading={creating} disabled={creating}>
+            Start Cardio
+          </Button>
+        </form>
+      </div>
+    );
+  }
+
+  // Show the logging UI if a cardio session is active
+  return (
+    <div className="max-w-xl mx-auto p-6 mt-8 bg-panel rounded shadow">
+      <h1 className="text-2xl font-bold mb-2">Cardio Session In Progress</h1>
+      <p className="mb-2"><strong>Activity:</strong> {cardioData.activity_type || 'Untitled Cardio'}</p>
+      {cardioData.location && <p className="mb-2"><strong>Location:</strong> {cardioData.location}</p>}
+      {cardioData.notes && <p className="mb-2"><strong>Notes:</strong> {cardioData.notes}</p>}
+      <p className="mb-2"><strong>Started:</strong> {cardioData.start_time ? new Date(cardioData.start_time).toLocaleString() : 'Unknown'}</p>
+      
+      {/* End Cardio Button */}
+      <Button variant="danger" className="mb-4" onClick={handleEndCardio}>
+        End Cardio Session
+      </Button>
+      
+      <div className="text-sm text-muted-foreground">
+        <p>Your cardio session is active. Click &quot;End Cardio Session&quot; when you&apos;re finished to save your session.</p>
+      </div>
+    </div>
+  );
+
+  async function handleEndCardio() {
+    if (!activeCardioId) return;
+    
+    // Calculate duration from start time
+    const startTime = new Date(cardioData.start_time);
+    const endTime = new Date();
+    const durationMinutes = Math.round((endTime - startTime) / (1000 * 60));
+    
+    const { error } = await supabase
+      .from('fitness_cardio')
+      .update({ 
+        in_progress: false, 
+        end_time: endTime.toISOString(),
+        duration_minutes: durationMinutes
+      })
+      .eq('id', activeCardioId);
+    
+    if (error) {
+      showError('Failed to end cardio session.');
+      return;
+    }
+    
+    // Clear session state in context immediately
+    if (typeof clearSession === 'function') clearSession();
+    if (typeof refreshCardio === 'function') await refreshCardio();
+    
+    // Show success message
+    showSuccess('Cardio session ended!');
+    
+    // Redirect
+    router.push('/fitness/cardio');
+  }
+} 
