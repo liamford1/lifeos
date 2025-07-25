@@ -197,6 +197,7 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
     // 5. Insert all sets for all exercises (from editedSetsByExercise and newExercisesWithSets)
     // Map sets from editor state to the correct inserted exercise IDs
     // First, handle sets for exercises (editedSetsByExercise)
+    /** @type {Array<{exercise_id: string, reps: number, weight: number}>} */
     let allSetsToInsert = [];
     // For old exercises (from exercises array)
     for (let i = 0; i < exercises.length; i++) {
