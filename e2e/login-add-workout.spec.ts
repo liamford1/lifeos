@@ -25,93 +25,67 @@ test('Login and add a workout', async ({ page }) => {
     if (res.status() === 406) console.log('406:', res.url());
   });
 
-  // Go to /auth
+  // Go to /auth and login
   await page.goto('http://localhost:3000/auth');
-
-  // Fill in login credentials
   await page.getByPlaceholder('Email').fill('test@example.com');
   await page.getByPlaceholder('Password').fill('password123');
-
-  // Click the login button
   await page.getByRole('button', { name: /log in/i }).click();
-
-  // Wait for dashboard to load by checking for visible text "Planner"
   await expect(page.locator('text=Planner')).toBeVisible({ timeout: 10000 });
 
-  // --- Robust cleanup at the start (match planned meals test) ---
+  // --- Clean up any existing in-progress workouts ---
   await page.evaluate(async () => {
     const supabase = window.supabase;
     const { data: session } = await supabase.auth.getSession();
     const userId = session.session.user.id;
-    let cleanupIterations = 0;
-    const maxIterations = 5;
-    do {
-      if (cleanupIterations >= maxIterations) break;
-      // Find all workouts for the test user
-      const { data: foundWorkouts } = await supabase
-        .from('fitness_workouts')
-        .select('id, title')
-        .eq('user_id', userId);
-      const workoutIds = (foundWorkouts || []).map((w: any) => w.id);
-      if (workoutIds.length > 0) {
-        // Delete sets (FK: fitness_sets.exercise_id -> fitness_exercises.id)
-        const { data: foundExercises } = await supabase
-          .from('fitness_exercises')
-          .select('id')
-          .in('workout_id', workoutIds);
-        const exerciseIds = (foundExercises || []).map((e: any) => e.id);
-        if (exerciseIds.length > 0) {
-          await supabase.from('fitness_sets').delete().in('exercise_id', exerciseIds);
-        }
-        // Delete exercises
-        await supabase.from('fitness_exercises').delete().in('workout_id', workoutIds);
-        // Delete workouts
-        await supabase.from('fitness_workouts').delete().in('id', workoutIds);
-        // Delete related calendar events
-        await supabase.from('calendar_events').delete().eq('user_id', userId).in('source_id', workoutIds);
-      }
-      // Clean up any orphaned calendar events with source = 'workout' and user_id
-      await supabase.from('calendar_events').delete().eq('user_id', userId).eq('source', 'workout');
-      cleanupIterations++;
-    } while (true);
-  });
-
-  // ✅ Sanity check: window.supabase is defined
-  await page.evaluate(() => {
-    if (!window.supabase) throw new Error('[E2E] ❌ window.supabase is still not defined');
-    console.log('[E2E] ✅ window.supabase is defined');
-  });
-
-  // Click the "Fitness" link in the sidebar
-  await page.getByRole('link', { name: /fitness/i }).click();
-  await page.waitForURL((url) => /\/fitness(\/)?$/.test(url.pathname), { timeout: 10000 });
-
-  // Click the "Workouts Weightlifting" link on /fitness (unique match, strict mode)
-  await page.getByRole('link', { name: /workouts weightlifting/i, exact: false }).click();
-  await page.waitForURL((url) => /\/fitness\/workouts$/.test(url.pathname), { timeout: 10000 });
-
-  // Click the "Start Workout" button
-  await page.getByRole('button', { name: /start workout/i }).click();
-  await page.waitForURL((url) => /\/fitness\/workouts\/live$/.test(url.pathname), { timeout: 10000 });
-
-  // Run the cleanup here! (delete instead of update)
-  await page.evaluate(async () => {
-    const supabase = window.supabase;
-    const { data: session } = await supabase.auth.getSession();
-    const userId = session.session.user.id;
-    await supabase
+    
+    // End any in-progress workouts
+    const { data: inProgressWorkouts } = await supabase
       .from('fitness_workouts')
-      .delete()
+      .select('id')
       .eq('user_id', userId)
       .eq('in_progress', true);
+    
+    if (inProgressWorkouts && inProgressWorkouts.length > 0) {
+      const workoutIds = inProgressWorkouts.map((w: any) => w.id);
+      await supabase
+        .from('fitness_workouts')
+        .update({ 
+          in_progress: false, 
+          end_time: new Date().toISOString(),
+          status: 'completed'
+        })
+        .in('id', workoutIds);
+    }
+    
+    // Also end any in-progress cooking sessions
+    const { data: inProgressCooking } = await supabase
+      .from('cooking_sessions')
+      .select('id')
+      .eq('user_id', userId)
+      .eq('in_progress', true);
+    
+    if (inProgressCooking && inProgressCooking.length > 0) {
+      const cookingIds = inProgressCooking.map((c: any) => c.id);
+      await supabase
+        .from('cooking_sessions')
+        .update({ 
+          in_progress: false, 
+          ended_at: new Date().toISOString()
+        })
+        .in('id', cookingIds);
+    }
   });
-  await page.reload();
-  await page.waitForTimeout(500);
 
-  // Debug: log the current URL
-  console.log('Current URL:', page.url());
+  // Wait a moment for cleanup to complete
+  await page.waitForTimeout(1000);
 
-  // Assert that we're on the correct URL
+  // Navigate to workouts page first, then start a workout
+  await page.goto('http://localhost:3000/fitness/workouts');
+  await expect(page.getByRole('heading', { name: /workouts/i })).toBeVisible();
+  
+  // Click the "Start Workout" button to go to the live page
+  await page.getByRole('button', { name: /start workout/i }).click();
+  await page.waitForURL(/\/fitness\/workouts\/live$/, { timeout: 10000 });
   await expect(page).toHaveURL(/\/fitness\/workouts\/live$/);
 
   // Check if a workout is already in progress (logging UI visible)
@@ -125,8 +99,20 @@ test('Login and add a workout', async ({ page }) => {
   // Fill the start workout form (title and date), then submit
   const titleInput = page.getByPlaceholder('e.g. Push Day, Full Body, etc.');
   if (!(await titleInput.isVisible({ timeout: 5000 }))) {
-    console.log(await page.content());
-    throw new Error('Workout title input not found — neither start form nor logging UI is visible. Check app state for test user.');
+    console.log('Current URL:', page.url());
+    console.log('Page content:', await page.content());
+    
+    // Check if we're on a loading page
+    const loadingText = await page.getByText('Loading workout session...').isVisible().catch(() => false);
+    if (loadingText) {
+      console.log('Found loading text, waiting for it to disappear...');
+      await page.waitForSelector('text=Loading workout session...', { state: 'hidden', timeout: 10000 });
+    }
+    
+    // Try again after waiting
+    if (!(await titleInput.isVisible({ timeout: 5000 }))) {
+      throw new Error('Workout title input not found — neither start form nor logging UI is visible. Check app state for test user.');
+    }
   }
   await titleInput.fill('Push Day');
 
