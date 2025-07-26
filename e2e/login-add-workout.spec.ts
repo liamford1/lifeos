@@ -276,13 +276,14 @@ test('Login and add a workout', async ({ page }) => {
   const saveButton = page.getByRole('button', { name: /update workout/i });
   await expect(saveButton).toBeVisible();
   await saveButton.click();
-  // Wait for navigation or confirmation
-  await page.waitForLoadState('networkidle');
+  // Wait for navigation to workouts list page
+  await page.waitForURL(/\/fitness\/workouts$/, { timeout: 10000 });
 
-  // 8. Confirm the updated workout shows new title and notes
+  // 8. Confirm we're on the workouts list page and the updated workout shows new title
+  await expect(page.getByRole('heading', { name: /workouts/i })).toBeVisible();
   await expect(page.getByText(newTitle)).toBeVisible();
   await expect(page.getByText(newNotes)).toBeVisible();
-  // Note: Exercises are not displayed in detail format on the edit page
+  // Note: Exercises are not displayed in detail format on the list page
 
   // 9. Navigate back to workout detail page to verify changes
   await page.goto('http://localhost:3000/fitness/workouts');
