@@ -10,12 +10,14 @@ import { useUser } from '@/context/UserContext';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import Button from '@/components/Button';
 import { useWorkoutSession } from '@/context/WorkoutSessionContext';
+import { useCardioSession } from '@/context/CardioSessionContext';
 import { useCookingSession } from '@/context/CookingSessionContext';
 import Image from 'next/image';
 
 export default function AppBar() {
   const { user, loading, session } = useUser();
   const { activeWorkoutId } = useWorkoutSession();
+  const { activeCardioId } = useCardioSession();
   const { mealId, currentStep, instructions, loading: cookingSessionLoading } = useCookingSession();
   const [profile, setProfile] = useState(null);
   const router = useRouter();
@@ -77,6 +79,18 @@ export default function AppBar() {
             aria-label="Workout In Progress"
           >
             Workout In Progress
+          </Button>
+        )}
+        {/* Cardio in progress button */}
+        {activeCardioId && (
+          <Button
+            onClick={() => router.push('/fitness/cardio/live')}
+            variant="success"
+            size="sm"
+            className="flex items-center gap-1"
+            aria-label="Cardio In Progress"
+          >
+            Cardio In Progress
           </Button>
         )}
         {/* Cooking in progress indicator */}

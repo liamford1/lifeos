@@ -84,6 +84,19 @@ module.exports = async () => {
     // console.log('Cleared in-progress workouts for test user.'); // Removed console.log
   }
 
+  // End all in-progress cardio sessions for the test user
+  const { error: cardioUpdateError } = await supabase
+    .from('fitness_cardio')
+    .update({ in_progress: false, end_time: new Date().toISOString() })
+    .eq('user_id', user.id)
+    .eq('in_progress', true);
+
+  if (cardioUpdateError) {
+    // console.warn('Error updating cardio sessions:', cardioUpdateError);
+  } else {
+    // console.log('Cleared in-progress cardio sessions for test user.');
+  }
+
   // Return the user id for Playwright
   return user.id;
 }; 
