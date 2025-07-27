@@ -31,16 +31,24 @@ test('Complete pantry workflow with single item', async ({ page }) => {
     console.log('[E2E] ✅ window.supabase is defined');
   });
 
-  // Clean up any existing "Organic Quinoa" items from previous test runs
+  // --- Robust cleanup at the start ---
   await page.evaluate(async () => {
     const supabase = window.supabase;
     const { data: session } = await supabase.auth.getSession();
     const userId = session.session.user.id;
-    await supabase
-      .from('food_items')
-      .delete()
-      .eq('user_id', userId)
-      .eq('name', 'Organic Quinoa');
+    
+    const maxIterations = 5;
+    let cleanupIterations = 0;
+    
+    while (cleanupIterations < maxIterations) {
+      await supabase
+        .from('food_items')
+        .delete()
+        .eq('user_id', userId)
+        .eq('name', 'Organic Quinoa');
+      
+      cleanupIterations++;
+    }
   });
 
   // Click the "Food" link in the sidebar (case-sensitive match)
@@ -138,4 +146,35 @@ test('Complete pantry workflow with single item', async ({ page }) => {
   // Verify the item is no longer visible after reload
   await expect(page.getByText('Organic Quinoa')).not.toBeVisible();
   await expect(page.getByText('2 lbs')).not.toBeVisible();
+
+  // --- Robust cleanup at the end ---
+  await page.evaluate(async () => {
+    const supabase = window.supabase;
+    const { data: session } = await supabase.auth.getSession();
+    const userId = session.session.user.id;
+    
+    const maxIterations = 5;
+    let cleanupIterations = 0;
+    
+    while (cleanupIterations < maxIterations) {
+      await supabase
+        .from('food_items')
+        .delete()
+        .eq('user_id', userId)
+        .eq('name', 'Organic Quinoa');
+      
+      cleanupIterations++;
+    }
+    
+    // Verify cleanup was successful
+    const { data: remainingItems } = await supabase
+      .from('food_items')
+      .select('id')
+      .eq('user_id', userId)
+      .eq('name', 'Organic Quinoa');
+    
+    if (remainingItems && remainingItems.length > 0) {
+      console.log(`Warning: ${remainingItems.length} test pantry items still present after cleanup, but continuing with test`);
+    }
+  });
 }); 

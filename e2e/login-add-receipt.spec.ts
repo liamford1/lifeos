@@ -31,37 +31,44 @@ test('Complete receipt workflow with multiple items', async ({ page }) => {
     console.log('[E2E] ✅ window.supabase is defined');
   });
 
-  // Clean up any existing test receipts and items from previous test runs
+  // --- Robust cleanup at the start ---
   await page.evaluate(async () => {
     const supabase = window.supabase;
     const { data: session } = await supabase.auth.getSession();
     const userId = session.session.user.id;
     
-    // Delete test food items first (due to foreign key constraints)
-    await supabase
-      .from('food_items')
-      .delete()
-      .eq('user_id', userId)
-      .in('name', ['Test Milk', 'Test Eggs', 'Test Bread']);
+    const maxIterations = 5;
+    let cleanupIterations = 0;
     
-    // Delete test receipt items
-    const { data: receipts } = await supabase
-      .from('receipts')
-      .select('id')
-      .eq('user_id', userId)
-      .eq('store_name', 'Test Grocery Store');
-    
-    if (receipts && receipts.length > 0) {
-      const receiptIds = receipts.map((r: { id: string }) => r.id);
+    while (cleanupIterations < maxIterations) {
+      // Delete test food items first (due to foreign key constraints)
       await supabase
-        .from('receipt_items')
+        .from('food_items')
         .delete()
-        .in('receipt_id', receiptIds);
+        .eq('user_id', userId)
+        .in('name', ['Test Milk', 'Test Eggs', 'Test Bread']);
       
-      await supabase
+      // Delete test receipt items and receipts
+      const { data: receipts } = await supabase
         .from('receipts')
-        .delete()
-        .in('id', receiptIds);
+        .select('id')
+        .eq('user_id', userId)
+        .eq('store_name', 'Test Grocery Store');
+      
+      if (receipts && receipts.length > 0) {
+        const receiptIds = receipts.map((r: { id: string }) => r.id);
+        await supabase
+          .from('receipt_items')
+          .delete()
+          .in('receipt_id', receiptIds);
+        
+        await supabase
+          .from('receipts')
+          .delete()
+          .in('id', receiptIds);
+      }
+      
+      cleanupIterations++;
     }
   });
 
@@ -197,37 +204,65 @@ test('Complete receipt workflow with multiple items', async ({ page }) => {
   await expect(page.getByText('Test Eggs').first()).toBeVisible();
   await expect(page.getByText('Test Bread').first()).toBeVisible();
 
-  // Clean up test data at the end
+  // --- Robust cleanup at the end ---
   await page.evaluate(async () => {
     const supabase = window.supabase;
     const { data: session } = await supabase.auth.getSession();
     const userId = session.session.user.id;
     
-    // Delete test food items
-    await supabase
+    const maxIterations = 5;
+    let cleanupIterations = 0;
+    
+    while (cleanupIterations < maxIterations) {
+      // Delete test food items first (due to foreign key constraints)
+      await supabase
+        .from('food_items')
+        .delete()
+        .eq('user_id', userId)
+        .in('name', ['Test Milk', 'Test Eggs', 'Test Bread']);
+      
+      // Delete test receipt items and receipts
+      const { data: receipts } = await supabase
+        .from('receipts')
+        .select('id')
+        .eq('user_id', userId)
+        .eq('store_name', 'Test Grocery Store');
+      
+      if (receipts && receipts.length > 0) {
+        const receiptIds = receipts.map((r: { id: string }) => r.id);
+        await supabase
+          .from('receipt_items')
+          .delete()
+          .in('receipt_id', receiptIds);
+        
+        await supabase
+          .from('receipts')
+          .delete()
+          .in('id', receiptIds);
+      }
+      
+      cleanupIterations++;
+    }
+    
+    // Verify cleanup was successful
+    const { data: remainingFoodItems } = await supabase
       .from('food_items')
-      .delete()
+      .select('id')
       .eq('user_id', userId)
       .in('name', ['Test Milk', 'Test Eggs', 'Test Bread']);
     
-    // Delete test receipt items and receipts
-    const { data: receipts } = await supabase
+    const { data: remainingReceipts } = await supabase
       .from('receipts')
       .select('id')
       .eq('user_id', userId)
       .eq('store_name', 'Test Grocery Store');
     
-    if (receipts && receipts.length > 0) {
-      const receiptIds = receipts.map((r: { id: string }) => r.id);
-      await supabase
-        .from('receipt_items')
-        .delete()
-        .in('receipt_id', receiptIds);
-      
-      await supabase
-        .from('receipts')
-        .delete()
-        .in('id', receiptIds);
+    if (remainingFoodItems && remainingFoodItems.length > 0) {
+      console.log(`Warning: ${remainingFoodItems.length} test food items still present after cleanup, but continuing with test`);
+    }
+    
+    if (remainingReceipts && remainingReceipts.length > 0) {
+      console.log(`Warning: ${remainingReceipts.length} test receipts still present after cleanup, but continuing with test`);
     }
   });
 }); 

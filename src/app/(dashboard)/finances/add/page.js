@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
 import { useUser } from '@/context/UserContext';
+import { useRouter } from 'next/navigation';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { supabase } from '@/lib/supabaseClient';
 import BackButton from '@/components/BackButton';
@@ -10,11 +10,13 @@ import Button from '@/components/Button';
 import { CALENDAR_SOURCES } from '@/lib/calendarUtils';
 import { useToast } from '@/components/Toast';
 import { createCalendarEventForEntity } from '@/lib/calendarSync';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export default function AddExpensePage() {
   const { user, loading } = useUser();
   const router = useRouter();
   const { showSuccess, showError } = useToast();
+  const queryClient = useQueryClient();
   const [formData, setFormData] = useState({
     name: '',
     amount: '',
@@ -35,43 +37,67 @@ export default function AddExpensePage() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // React Query mutation for creating expenses
+  const createExpenseMutation = useMutation({
+    mutationFn: async (expenseData) => {
+      if (!user) {
+        throw new Error('Not logged in');
+      }
+
+      const { data, error } = await supabase.from('expenses').insert([
+        {
+          ...expenseData,
+          amount: parseFloat(expenseData.amount),
+          user_id: user.id,
+        },
+      ]).select().single();
+
+      if (error) {
+        throw new Error('Error adding expense.');
+      }
+
+      // Create calendar event for the expense
+      const calendarError = await createCalendarEventForEntity(CALENDAR_SOURCES.EXPENSE, {
+        id: data.id,
+        user_id: user.id,
+        name: expenseData.name,
+        amount: expenseData.amount,
+        date: expenseData.date,
+        notes: expenseData.notes,
+      });
+
+      if (calendarError) {
+        throw new Error('Calendar event creation failed.');
+      }
+
+      return data;
+    },
+    onSuccess: (data) => {
+      showSuccess('Expense added successfully!');
+      
+      // Invalidate calendar events query to trigger a refresh
+      queryClient.invalidateQueries({ queryKey: ["events", user?.id] });
+      
+      // Reset form
+      setFormData({
+        name: '',
+        amount: '',
+        category: '',
+        store: '',
+        payment_method: '',
+        date: '',
+      });
+    },
+    onError: (error) => {
+      showError(error.message);
+    }
+  });
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!user) return;
-    const user_id = user.id;
-    const { data, error } = await supabase.from('expenses').insert([
-      {
-        ...formData,
-        amount: parseFloat(formData.amount),
-        user_id,
-      },
-    ]).select().single();
-    if (error) {
-      showError('Error adding expense.');
-      return;
-    }
-    // Create calendar event for the expense
-    const calendarError = await createCalendarEventForEntity(CALENDAR_SOURCES.EXPENSE, {
-      id: data.id,
-      user_id: user_id,
-      name: formData.name,
-      amount: formData.amount,
-      date: formData.date,
-      notes: formData.notes,
-    });
-    if (calendarError) {
-      showError('Calendar event creation failed.');
-    } else {
-      showSuccess('Expense added successfully!');
-    }
-    setFormData({
-      name: '',
-      amount: '',
-      category: '',
-      store: '',
-      payment_method: '',
-      date: '',
-    });
+    
+    // Execute the mutation
+    createExpenseMutation.mutate(formData);
   };
 
   if (loading) return <LoadingSpinner />;
@@ -95,8 +121,13 @@ export default function AddExpensePage() {
         <input id="expense-payment-method" name="payment_method" value={formData.payment_method} onChange={handleChange} placeholder="Payment Method" className="w-full p-2 border rounded" aria-label="Payment Method" />
         <label htmlFor="expense-date" className="sr-only">Date</label>
         <input id="expense-date" name="date" type="date" value={formData.date} onChange={handleChange} className="w-full p-2 border rounded" required />
-        <Button type="submit" variant="primary" className="w-full">
-          Add Expense
+        <Button 
+          type="submit" 
+          variant="primary" 
+          className="w-full"
+          disabled={createExpenseMutation.isPending}
+        >
+          {createExpenseMutation.isPending ? 'Adding...' : 'Add Expense'}
         </Button>
       </form>
     </div>

@@ -32,30 +32,17 @@ test('Login and add a workout', async ({ page }) => {
   await page.getByRole('button', { name: /log in/i }).click();
   await expect(page.locator('text=Planner')).toBeVisible({ timeout: 10000 });
 
-  // --- Clean up any existing in-progress workouts ---
+  // --- Clean up any existing workouts and sessions ---
   await page.evaluate(async () => {
     const supabase = window.supabase;
     const { data: session } = await supabase.auth.getSession();
     const userId = session.session.user.id;
     
-    // End any in-progress workouts
-    const { data: inProgressWorkouts } = await supabase
+    // Delete all workouts for the test user (both in-progress and completed)
+    await supabase
       .from('fitness_workouts')
-      .select('id')
-      .eq('user_id', userId)
-      .eq('in_progress', true);
-    
-    if (inProgressWorkouts && inProgressWorkouts.length > 0) {
-      const workoutIds = inProgressWorkouts.map((w: any) => w.id);
-      await supabase
-        .from('fitness_workouts')
-        .update({ 
-          in_progress: false, 
-          end_time: new Date().toISOString(),
-          status: 'completed'
-        })
-        .in('id', workoutIds);
-    }
+      .delete()
+      .eq('user_id', userId);
     
     // Also end any in-progress cooking sessions
     const { data: inProgressCooking } = await supabase
@@ -114,7 +101,8 @@ test('Login and add a workout', async ({ page }) => {
       throw new Error('Workout title input not found — neither start form nor logging UI is visible. Check app state for test user.');
     }
   }
-  await titleInput.fill('Push Day');
+  const uniqueTitle = `Push Day ${Date.now()}`;
+  await titleInput.fill(uniqueTitle);
 
   // Optionally fill the date input if present
   const dateInput = await page.$('input[type="date"]');
@@ -128,7 +116,7 @@ test('Login and add a workout', async ({ page }) => {
   await page.waitForLoadState('networkidle');
 
   // Assert for either the new workout or the empty state
-  const workoutVisible = await page.getByText('Push Day').isVisible().catch(() => false);
+  const workoutVisible = await page.getByText(uniqueTitle).isVisible().catch(() => false);
   const emptyStateVisible = await page.getByText(/no entries yet/i).isVisible().catch(() => false);
   expect(workoutVisible || emptyStateVisible).toBe(true);
 
@@ -151,12 +139,12 @@ test('Login and add a workout', async ({ page }) => {
   await page.waitForURL((url) => /\/fitness\/workouts\/live$/.test(url.pathname), { timeout: 10000 });
   // Confirm the workout in progress UI is still present
   await expect(page.getByRole('heading', { name: /workout in progress/i })).toBeVisible();
-  await expect(page.getByText('Push Day')).toBeVisible();
+  await expect(page.getByText(uniqueTitle)).toBeVisible();
 
   // 2. Reload the page and confirm session state persists
   await page.reload();
   await expect(page.getByRole('heading', { name: /workout in progress/i })).toBeVisible();
-  await expect(page.getByText('Push Day')).toBeVisible();
+  await expect(page.getByText(uniqueTitle)).toBeVisible();
 
   // 3. Add an exercise with a name
   const exerciseName = `Bench Press ${Math.floor(Math.random() * 10000)}`;
@@ -187,7 +175,7 @@ test('Login and add a workout', async ({ page }) => {
   // 7. Confirm workout status is completed in the list
   await expect(page.getByRole('heading', { name: /workouts/i })).toBeVisible();
   // Find the workout in the list by title
-  const workoutListItem = page.getByText('Push Day').locator('..');
+  const workoutListItem = page.getByText(uniqueTitle).locator('..');
   await expect(workoutListItem).toBeVisible();
   // Click to view workout detail
   await workoutListItem.click();
@@ -208,7 +196,7 @@ test('Login and add a workout', async ({ page }) => {
   await expect(page.getByPlaceholder('Workout Title')).toBeVisible();
 
   // 3. Modify the workout title and notes
-  const newTitle = 'Push Day Edited';
+  const newTitle = `${uniqueTitle} Edited`;
   const newNotes = 'Edited notes for workout';
   const editTitleInput = page.getByPlaceholder('Workout Title');
   await editTitleInput.fill(newTitle);
@@ -304,16 +292,16 @@ test('Login and add a workout', async ({ page }) => {
   await page.goto('http://localhost:3000/fitness/workouts');
   await expect(page.getByRole('heading', { name: /workouts/i })).toBeVisible();
   // Locate the list item or div that contains both the workout title and the delete button
-  const workoutCard = page.locator('li, div').filter({ hasText: 'Push Day' }).first();
+  const workoutCard = page.locator('li, div').filter({ hasText: uniqueTitle }).first();
   // Ensure it's visible
   await expect(workoutCard).toBeVisible();
   // Locate and click the delete button inside it
   const deleteButton = workoutCard.getByRole('button', { name: /delete/i });
   await expect(deleteButton).toBeVisible();
   await deleteButton.click();
-  // Reload and confirm that "Push Day" no longer appears
+  // Reload and confirm that the workout no longer appears
   await page.reload();
-  await expect(page.getByText('Push Day')).not.toBeVisible();
+  await expect(page.getByText(uniqueTitle)).not.toBeVisible();
 
   // --- End expanded test ---
 
@@ -358,7 +346,7 @@ test('Login and add a workout', async ({ page }) => {
   // Optionally, reload and confirm no test workouts remain
   await page.goto('http://localhost:3000/fitness/workouts');
   await expect(page.getByRole('heading', { name: /workouts/i })).toBeVisible();
-  const testWorkoutLinks = await page.locator('a', { hasText: 'Push Day' }).count();
+  const testWorkoutLinks = await page.locator('a', { hasText: uniqueTitle }).count();
   if (testWorkoutLinks > 0) {
     console.log(`Warning: ${testWorkoutLinks} test workouts still present after cleanup, but continuing with test`);
   }
