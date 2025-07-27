@@ -119,9 +119,9 @@ export default function SportsDashboard() {
                 {s.distance_miles && ` — 📏 ${s.distance_miles} mi`}
               </div>
               {s.location && <div className="text-sm text-base">📍 {s.location}</div>}
-              {s.notes && (
+              {s.performance_notes && (
                 <div className="text-sm text-base mt-1">
-                  {s.notes}
+                  {s.performance_notes}
                 </div>
               )}
 
