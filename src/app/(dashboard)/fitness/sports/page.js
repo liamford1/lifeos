@@ -12,10 +12,12 @@ const Goal = dynamic(() => import("lucide-react/dist/esm/icons/goal"), { ssr: fa
 import SharedDeleteButton from '@/components/SharedDeleteButton';
 import EditButton from '@/components/EditButton';
 import { useSportsSessions } from '@/lib/hooks/useSportsSessions';
+import { useSportsSession } from '@/context/SportsSessionContext';
 
 export default function SportsDashboard() {
   const { user, loading } = useUser();
   const router = useRouter();
+  const { activeSportsId } = useSportsSession();
   const [sessions, setSessions] = useState([]);
   const [sessionsLoading, setSessionsLoading] = useState(true);
   const { fetchSportsSessions, deleteSportsSession } = useSportsSessions();
@@ -56,9 +58,9 @@ export default function SportsDashboard() {
     }
   };
 
-  const handleAddSport = () => {
+  const handleStartActivity = () => {
     if (!user) return router.push('/auth');
-    router.push('/fitness/sports/add');
+    router.push('/fitness/sports/live');
   };
 
   return (
@@ -71,13 +73,23 @@ export default function SportsDashboard() {
       <p className="text-base">Track your sports activities and games.</p>
 
       <div className="flex gap-4 mb-4">
-        <Button
-          variant="primary"
-          onClick={handleAddSport}
-          data-testid="add-sport-button"
-        >
-          Add Sports Session
-        </Button>
+        {activeSportsId ? (
+          <Button
+            variant="success"
+            onClick={handleStartActivity}
+            data-testid="sports-in-progress-button"
+          >
+            Continue Activity
+          </Button>
+        ) : (
+          <Button
+            variant="primary"
+            onClick={handleStartActivity}
+            data-testid="start-activity-button"
+          >
+            Start Activity
+          </Button>
+        )}
       </div>
 
       <h2 className="text-xl font-semibold mb-2">
@@ -107,9 +119,9 @@ export default function SportsDashboard() {
                 {s.distance_miles && ` — 📏 ${s.distance_miles} mi`}
               </div>
               {s.location && <div className="text-sm text-base">📍 {s.location}</div>}
-              {s.notes && (
+              {s.performance_notes && (
                 <div className="text-sm text-base mt-1">
-                  {s.notes}
+                  {s.performance_notes}
                 </div>
               )}
 

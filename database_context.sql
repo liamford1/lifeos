@@ -103,6 +103,7 @@ CREATE TABLE public.fitness_sports (
   status text DEFAULT 'completed'::text CHECK (status = ANY (ARRAY['planned'::text, 'completed'::text])),
   start_time timestamp with time zone,
   end_time timestamp with time zone,
+  in_progress boolean DEFAULT false,
   CONSTRAINT fitness_sports_pkey PRIMARY KEY (id),
   CONSTRAINT fitness_sports_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id)
 );

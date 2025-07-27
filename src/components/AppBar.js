@@ -11,6 +11,7 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import Button from '@/components/Button';
 import { useWorkoutSession } from '@/context/WorkoutSessionContext';
 import { useCardioSession } from '@/context/CardioSessionContext';
+import { useSportsSession } from '@/context/SportsSessionContext';
 import { useCookingSession } from '@/context/CookingSessionContext';
 import Image from 'next/image';
 
@@ -18,6 +19,7 @@ export default function AppBar() {
   const { user, loading, session } = useUser();
   const { activeWorkoutId } = useWorkoutSession();
   const { activeCardioId } = useCardioSession();
+  const { activeSportsId } = useSportsSession();
   const { mealId, currentStep, instructions, loading: cookingSessionLoading } = useCookingSession();
   const [profile, setProfile] = useState(null);
   const router = useRouter();
@@ -91,6 +93,18 @@ export default function AppBar() {
             aria-label="Cardio In Progress"
           >
             Cardio In Progress
+          </Button>
+        )}
+        {/* Sports in progress button */}
+        {activeSportsId && (
+          <Button
+            onClick={() => router.push('/fitness/sports/live')}
+            variant="success"
+            size="sm"
+            className="flex items-center gap-1"
+            aria-label="Sports In Progress"
+          >
+            Sports In Progress
           </Button>
         )}
         {/* Cooking in progress indicator */}
