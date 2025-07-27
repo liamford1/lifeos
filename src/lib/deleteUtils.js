@@ -96,11 +96,14 @@ export const deleteWorkoutCascade = async ({ workoutId, user_id }) => {
 export const deleteEntityWithCalendarEvent = async ({ table, id, user_id, source }) => {
   try {
     // First, delete the calendar event if it exists
+    // Ensure id is a string for the query
+    const sourceId = String(id);
+    
     const { error: calendarError } = await supabase
       .from('calendar_events')
       .delete()
       .eq('source', source)
-      .eq('source_id', id)
+      .eq('source_id', sourceId)
       .eq('user_id', user_id);
 
     if (calendarError) {
@@ -111,10 +114,13 @@ export const deleteEntityWithCalendarEvent = async ({ table, id, user_id, source
     }
 
     // Then, delete the entity from the specified table
+    // Ensure id is a string for the query
+    const entityId = String(id);
+    
     const { error: entityError } = await supabase
       .from(table)
       .delete()
-      .eq('id', id)
+      .eq('id', entityId)
       .eq('user_id', user_id);
 
     if (entityError) {

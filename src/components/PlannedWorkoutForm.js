@@ -13,6 +13,7 @@ import { useToast } from '@/components/Toast'
 import { createCalendarEventForEntity } from '@/lib/calendarSync';
 import { z } from 'zod'
 import { mapZodErrors } from '@/lib/validationHelpers'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 // Zod schema for planned workout form
 const plannedWorkoutSchema = z.object({
@@ -25,89 +26,117 @@ const plannedWorkoutSchema = z.object({
 
 export default function PlannedWorkoutForm({ onSuccess }) {
   const { showSuccess, showError } = useToast();
+  const queryClient = useQueryClient();
   const [type, setType] = useState('workout') // workout | cardio | sports
   const [title, setTitle] = useState('')
   const [startTime, setStartTime] = useState('')
   const [endTime, setEndTime] = useState('')
   const [notes, setNotes] = useState('')
-  const [loading, setLoading] = useState(false)
   const [fieldErrors, setFieldErrors] = useState({})
+
+  // React Query mutation for creating planned workouts
+  const createPlannedWorkoutMutation = useMutation({
+    mutationFn: async (formData) => {
+      const { data: userData, error: authError } = await supabase.auth.getUser()
+      const userId = userData?.user?.id
+
+      if (!userId) {
+        throw new Error('Not logged in.')
+      }
+
+      const table = formData.type === 'workout' ? 'fitness_workouts'
+                  : formData.type === 'cardio' ? 'fitness_cardio'
+                  : 'fitness_sports'
+
+      // Ensure required fields are not empty
+      if (!formData.title || formData.title.trim() === '') {
+        throw new Error('Activity type is required');
+      }
+
+      const insertData = {
+          user_id: userId,
+          notes: formData.notes,
+          status: 'planned',
+          ...(formData.type === 'workout' && {
+              title: formData.title,
+              date: formData.startTime ? formData.startTime.split('T')[0] : new Date().toISOString().split('T')[0],
+              start_time: formData.startTime || null,
+              end_time: formData.endTime || null
+          }),
+          ...(formData.type !== 'workout' && {
+              activity_type: formData.title.trim(),
+              date: formData.startTime ? formData.startTime.split('T')[0] : new Date().toISOString().split('T')[0],
+              start_time: formData.startTime || null,
+              end_time: formData.endTime || null
+          }),
+      }
+
+         
+
+      const { data, error } = await supabase
+        .from(table)
+        .insert(insertData)
+        .select()
+        .single()
+
+      if (error) {
+        throw new Error(`Failed to save planned workout: ${error.message}`)
+      }
+
+      // Map table to source for calendar events
+      const source = formData.type === 'workout' ? CALENDAR_SOURCES.WORKOUT 
+                   : formData.type === 'cardio' ? CALENDAR_SOURCES.CARDIO 
+                   : CALENDAR_SOURCES.SPORT
+
+      const calendarError = await createCalendarEventForEntity(source, {
+        id: data.id,
+        user_id: userId,
+        title: formData.title,
+        activity_type: formData.type === 'cardio' || formData.type === 'sports' ? formData.title : undefined,
+        date: formData.startTime,
+        notes: formData.notes,
+        end_time: formData.endTime && formData.endTime.trim() !== '' ? formData.endTime : null,
+      });
+
+      if (calendarError) {
+        throw new Error('Failed to create calendar event.')
+      }
+
+      return { data, userId }
+    },
+    onSuccess: (data, variables) => {
+      showSuccess('Planned workout created successfully!');
+      
+      // Invalidate calendar events query to trigger a refresh
+      queryClient.invalidateQueries({ queryKey: ["events", data.userId] });
+      
+      // Reset form
+      setTitle('');
+      setStartTime('');
+      setEndTime('');
+      setNotes('');
+      setFieldErrors({});
+      
+      onSuccess?.();
+    },
+    onError: (error) => {
+      showError(error.message);
+      setFieldErrors({});
+    }
+  });
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    setLoading(true)
-    setFieldErrors({})
 
     // Zod validation
     const result = plannedWorkoutSchema.safeParse({ type, title, startTime, endTime, notes })
     if (!result.success) {
       setFieldErrors(mapZodErrors(result.error))
-      setLoading(false)
       return
     }
 
-    const { data: userData, error: authError } = await supabase.auth.getUser()
-    const userId = userData?.user?.id
-
-    if (!userId) {
-      showError('Not logged in.')
-      setLoading(false)
-      return
-    }
-
-    const table = type === 'workout' ? 'fitness_workouts'
-                : type === 'cardio' ? 'fitness_cardio'
-                : 'fitness_sports'
-
-    const insertData = {
-        user_id: userId,
-        notes,
-        ...(type === 'workout' && {
-            title,
-            date: startTime ? startTime.split('T')[0] : null
-        }),
-        ...(type !== 'workout' && {
-            activity_type: title,
-            date: startTime ? startTime.split('T')[0] : null
-        }),
-    }         
-
-    const { data, error } = await supabase
-      .from(table)
-      .insert(insertData)
-      .select()
-      .single()
-
-    if (error) {
-      showError(`Failed to save planned workout: ${error.message}`)
-      setLoading(false)
-      return
-    }
-
-    const calendarTitle = `Planned ${type.charAt(0).toUpperCase() + type.slice(1)}: ${title}`
-
-    // Map table to source for calendar events
-    const source = type === 'workout' ? CALENDAR_SOURCES.WORKOUT 
-                 : type === 'cardio' ? CALENDAR_SOURCES.CARDIO 
-                 : CALENDAR_SOURCES.SPORT
-
-    const calendarError = await createCalendarEventForEntity(source, {
-      id: data.id,
-      user_id: userId,
-      title,
-      activity_type: type === 'cardio' ? title : undefined,
-      date: startTime,
-      notes,
-      end_time: endTime || null,
-    });
-    if (calendarError) {
-      showError('Failed to create calendar event.');
-    } else {
-      showSuccess('Planned workout created successfully!');
-    }
-
-    setLoading(false)
-    onSuccess?.()
+    // Execute the mutation
+    createPlannedWorkoutMutation.mutate({ type, title, startTime, endTime, notes })
   }
 
   return (
@@ -130,6 +159,7 @@ export default function PlannedWorkoutForm({ onSuccess }) {
           type="text"
           value={title}
           onChange={e => setTitle(e.target.value)}
+          placeholder={type === 'workout' ? 'e.g., Upper Body, Leg Day' : 'e.g., Running, Cycling'}
           required
         />
         {fieldErrors.title && <div className="text-red-400 text-xs mt-1">{fieldErrors.title}</div>}
@@ -147,7 +177,7 @@ export default function PlannedWorkoutForm({ onSuccess }) {
       </div>
 
       <div>
-        <FormLabel>End Time</FormLabel>
+        <FormLabel>End Time (Optional)</FormLabel>
         <FormInput
           type="datetime-local"
           value={endTime}
@@ -157,17 +187,23 @@ export default function PlannedWorkoutForm({ onSuccess }) {
       </div>
 
       <div>
-        <FormLabel>Notes (optional)</FormLabel>
+        <FormLabel>Notes (Optional)</FormLabel>
         <FormTextarea
           value={notes}
           onChange={e => setNotes(e.target.value)}
+          placeholder="Any additional notes about this planned workout..."
           rows={3}
         />
         {fieldErrors.notes && <div className="text-red-400 text-xs mt-1">{fieldErrors.notes}</div>}
       </div>
 
-      <Button type="submit" className="mt-2">
-        {loading ? 'Saving...' : 'Save Planned Activity'}
+      <Button
+        type="submit"
+        variant="primary"
+        disabled={createPlannedWorkoutMutation.isPending}
+        className="w-full"
+      >
+        {createPlannedWorkoutMutation.isPending ? 'Saving...' : 'Save Planned Workout'}
       </Button>
     </form>
   )

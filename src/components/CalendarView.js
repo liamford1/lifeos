@@ -4,8 +4,8 @@ import React, { useState } from 'react';
 import { useUser } from '@/context/UserContext';
 import Calendar from "@/components/client/CalendarClient";
 import 'react-calendar/dist/Calendar.css';
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { deleteEntityWithCalendarEvent } from '@/lib/deleteUtils';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { deleteEntityWithCalendarEvent, deleteWorkoutCascade } from '@/lib/deleteUtils';
 import { useRouter } from 'next/navigation';
 import dayjs from 'dayjs';
 import { CALENDAR_SOURCES, getCalendarEventRoute } from '@/lib/calendarUtils';
@@ -16,9 +16,11 @@ import { useToast } from '@/components/Toast';
 import { navigateToSource } from '@/lib/navigateToSource';
 import { MdOutlineCalendarToday } from 'react-icons/md';
 import SharedDeleteButton from '@/components/SharedDeleteButton';
+import { supabase } from '@/lib/supabaseClient';
 
 export default function CalendarView() {
   const { showSuccess, showError } = useToast();
+  const queryClient = useQueryClient();
   const [selectedDate, setSelectedDate] = useState(new Date());
   // Remove local events state, use eventsQuery.data
   const { user, loading } = useUser();
@@ -61,25 +63,25 @@ export default function CalendarView() {
       end_time: newEvent.end_time ? `${dateStr}T${newEvent.end_time}` : null,
     };
 
-    await fetch("/api/calendar/insert", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ event: payload }),
-    });
+    try {
+      const response = await fetch("/api/calendar/insert", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ event: payload }),
+      });
 
-    if (error) {
+      if (!response.ok) {
+        showError('Failed to add event.');
+      } else {
+        setShowAddModal(false);
+        setNewEvent({ title: '', start_time: '', end_time: '', description: '' });
+        
+        // Invalidate the events query to refresh the data
+        queryClient.invalidateQueries({ queryKey: ["events", user?.id] });
+        showSuccess('Event added successfully!');
+      }
+    } catch (error) {
       showError('Failed to add event.');
-    } else {
-      setShowAddModal(false);
-      setNewEvent({ title: '', start_time: '', end_time: '', description: '' });
-
-      const { data } = await supabase
-        .from('calendar_events')
-        .select('*')
-        .eq('user_id', user.id);
-
-      setEvents(data || []);
-      showSuccess('Event added successfully!');
     }
   };
 
@@ -89,19 +91,21 @@ export default function CalendarView() {
   
     if (!event.source || !event.source_id) {
       // If no source entity, just delete the calendar event
-      await fetch("/api/calendar/delete", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: event.id }),
-      });
-      
-      if (error) {
-        showError('Could not delete event.');
-      } else {
-        setEvents((prev) => {
-          const filtered = prev.filter((ev) => ev.id !== event.id);
-          return filtered;
+      try {
+        const response = await fetch("/api/calendar/delete", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: event.id }),
         });
+        
+        if (!response.ok) {
+          showError('Could not delete event.');
+        } else {
+          // Invalidate the events query to refresh the data
+          queryClient.invalidateQueries({ queryKey: ["events", user?.id] });
+        }
+      } catch (error) {
+        showError('Could not delete event.');
       }
       return;
     }
@@ -128,21 +132,30 @@ export default function CalendarView() {
       return;
     }
   
-    // Call deleteEntityWithCalendarEvent with correct params
-    const error = await deleteEntityWithCalendarEvent({
-      table: sourceTable,
-      id: event.source_id,
-      user_id: user_id,
-      source: event.source,
-    });
+
+
+    // For workouts, use the cascade deletion function
+    let error = null;
+    if (event.source === CALENDAR_SOURCES.WORKOUT) {
+      error = await deleteWorkoutCascade({
+        workoutId: event.source_id,
+        user_id: user_id,
+      });
+    } else {
+      // Call deleteEntityWithCalendarEvent with correct params for other entities
+      error = await deleteEntityWithCalendarEvent({
+        table: sourceTable,
+        id: event.source_id,
+        user_id: user_id,
+        source: event.source,
+      });
+    }
   
     if (error) {
       showError('Could not fully delete event.');
     } else {
-      setEvents((prev) => {
-        const filtered = prev.filter((ev) => ev.id !== event.id);
-        return filtered;
-      });
+      // Invalidate the events query to refresh the data
+      queryClient.invalidateQueries({ queryKey: ["events", user?.id] });
       showSuccess('Event deleted successfully!');
     }
   };  
@@ -171,13 +184,15 @@ export default function CalendarView() {
                 <div className="space-y-1 overflow-hidden w-full h-full max-w-full relative">
                   {eventsOnThisDay.slice(0, 2).map((event) => {
                     const { colorClass, Icon } = getEventStyle(event.source);
-                    // Make meal, planned_meal, expense, and workout events clickable
-                    const isMealPlannedMealExpenseOrWorkout =
+                    // Make meal, planned_meal, expense, workout, cardio, and sport events clickable
+                    const isClickableEvent =
                       event.source === CALENDAR_SOURCES.MEAL ||
                       event.source === CALENDAR_SOURCES.PLANNED_MEAL ||
                       event.source === CALENDAR_SOURCES.EXPENSE ||
-                      event.source === CALENDAR_SOURCES.WORKOUT;
-                    const eventDivProps = isMealPlannedMealExpenseOrWorkout
+                      event.source === CALENDAR_SOURCES.WORKOUT ||
+                      event.source === CALENDAR_SOURCES.CARDIO ||
+                      event.source === CALENDAR_SOURCES.SPORT;
+                                          const eventDivProps = isClickableEvent
                       ? {
                           role: 'button',
                           tabIndex: 0,
@@ -196,6 +211,10 @@ export default function CalendarView() {
                               router.push(`/finances/expenses/${event.source_id}`);
                             } else if (event.source === CALENDAR_SOURCES.WORKOUT) {
                               router.push(`/fitness/workouts/${String(event.source_id)}`);
+                            } else if (event.source === CALENDAR_SOURCES.CARDIO) {
+                              router.push(`/fitness/cardio/${String(event.source_id)}`);
+                            } else if (event.source === CALENDAR_SOURCES.SPORT) {
+                              router.push(`/fitness/sports/${String(event.source_id)}`);
                             }
                           },
                           onKeyDown: (e) => {
@@ -214,6 +233,10 @@ export default function CalendarView() {
                                 router.push(`/finances/expenses/${event.source_id}`);
                               } else if (event.source === CALENDAR_SOURCES.WORKOUT) {
                                 router.push(`/fitness/workouts/${event.source_id}`);
+                              } else if (event.source === CALENDAR_SOURCES.CARDIO) {
+                                router.push(`/fitness/cardio/${event.source_id}`);
+                              } else if (event.source === CALENDAR_SOURCES.SPORT) {
+                                router.push(`/fitness/sports/${event.source_id}`);
                               }
                             }
                           },

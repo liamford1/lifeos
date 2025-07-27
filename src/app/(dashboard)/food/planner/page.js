@@ -14,9 +14,11 @@ const CalendarCheck = dynamic(() => import("lucide-react/dist/esm/icons/calendar
 import { createCalendarEventForEntity } from '@/lib/calendarSync';
 import { deleteCalendarEventForEntity } from '@/lib/calendarSync';
 import { useUser } from '@/context/UserContext';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export default function MealPlannerPage() {
   const { showSuccess, showError } = useToast();
+  const queryClient = useQueryClient();
   const [meals, setMeals] = useState([])
   const [plannedMeals, setPlannedMeals] = useState([])
   const [selectedMealId, setSelectedMealId] = useState('')
@@ -80,23 +82,88 @@ export default function MealPlannerPage() {
 
   const isLoading = userLoading || mealsLoading || plannedMealsLoading;
 
-  const addCalendarEvent = async ({ userId, title, startTime, source, sourceId }) => {
-    const { error } = await supabase
-      .from('calendar_events')
-      .insert([
-        {
-          user_id: userId,
-          title,
-          start_time: startTime,
-          source,
-          source_id: sourceId,
-        },
-      ])
+  // React Query mutation for planning meals
+  const planMealMutation = useMutation({
+    mutationFn: async (formData) => {
+      if (!user) {
+        throw new Error('Not logged in');
+      }
 
-    if (error) {
-      showError('Error adding calendar event:', error.message)
+      const { data: insertData, error } = await supabase
+        .from('planned_meals')
+        .insert([
+          {
+            user_id: user.id,
+            meal_id: formData.selectedMealId,
+            planned_date: formData.plannedDate,
+            meal_time: formData.mealTime,
+          },
+        ])
+        .select()
+        .single()
+
+      if (error) {
+        throw new Error(`Error: ${error.message}`)
+      }
+
+      // Add calendar event for the planned meal
+      const mealName = meals.find(m => m.id === formData.selectedMealId)?.name || '';
+      const calendarError = await createCalendarEventForEntity(CALENDAR_SOURCES.PLANNED_MEAL, {
+        id: insertData.id,
+        user_id: user.id,
+        meal_name: mealName,
+        meal_time: formData.mealTime,
+        planned_date: formData.plannedDate,
+      });
+
+      if (calendarError) {
+        throw new Error('Failed to create calendar event');
+      }
+
+      return { insertData, mealName };
+    },
+    onSuccess: (data, variables) => {
+      showSuccess('Meal planned successfully!');
+      
+      // Invalidate calendar events query to trigger a refresh
+      queryClient.invalidateQueries({ queryKey: ["events", user?.id] });
+      
+      // Reset form
+      setSelectedMealId('');
+      setPlannedDate('');
+      setMealTime('dinner');
+      setMessage('');
+
+      // Refetch planned meals
+      setPlannedMealsLoading(true);
+      supabase
+        .from('planned_meals')
+        .select(`
+          *,
+          meals (
+            name
+          )
+        `)
+        .order('planned_date')
+        .then(({ data: plannedData, error: plannedError }) => {
+          if (plannedError) {
+            showError('Error fetching planned meals:', plannedError.message);
+            setPlannedMeals([]);
+          } else {
+            setPlannedMeals(plannedData);
+          }
+          setPlannedMealsLoading(false);
+        })
+        .catch((err) => {
+          showError('Error fetching planned meals:', err.message || String(err));
+          setPlannedMeals([]);
+          setPlannedMealsLoading(false);
+        });
+    },
+    onError: (error) => {
+      setMessage(error.message);
     }
-  }
+  });
 
   const handlePlanMeal = async () => {
     setMessage('')
@@ -105,66 +172,8 @@ export default function MealPlannerPage() {
       return
     }
 
-    if (!user) {
-      setMessage('Error: not logged in');
-      return;
-    }
-
-    const { data: insertData, error } = await supabase
-      .from('planned_meals')
-      .insert([
-        {
-          user_id: user.id,
-          meal_id: selectedMealId,
-          planned_date: plannedDate,
-          meal_time: mealTime,
-        },
-      ])
-      .select()
-      .single()
-
-    if (error) {
-      setMessage(`Error: ${error.message}`)
-    } else {
-      showSuccess('Meal planned successfully!')
-      setSelectedMealId('')
-      setPlannedDate('')
-      setMealTime('dinner')
-
-      // Add calendar event for the planned meal
-      await addCalendarEvent({
-        userId: user.id,
-        title: `${mealTime.charAt(0).toUpperCase() + mealTime.slice(1)}: ${meals.find(m => m.id === selectedMealId)?.name || ''}`,
-        startTime: plannedDate,
-        source: CALENDAR_SOURCES.PLANNED_MEAL,
-        sourceId: insertData.id,
-      });
-
-      // Refetch planned meals only
-      setPlannedMealsLoading(true);
-      try {
-        const { data: plannedData, error: plannedError } = await supabase
-          .from('planned_meals')
-          .select(`
-            *,
-            meals (
-              name
-            )
-          `)
-          .order('planned_date');
-        if (plannedError) {
-          showError('Error fetching planned meals:', plannedError.message);
-          setPlannedMeals([]);
-        } else {
-          setPlannedMeals(plannedData);
-        }
-      } catch (err) {
-        showError('Error fetching planned meals:', err.message || String(err));
-        setPlannedMeals([]);
-      } finally {
-        setPlannedMealsLoading(false);
-      }
-    }
+    // Execute the mutation
+    planMealMutation.mutate({ selectedMealId, plannedDate, mealTime });
   }
 
   const handleDelete = async (id) => {
@@ -276,8 +285,9 @@ export default function MealPlannerPage() {
       <Button
         onClick={handlePlanMeal}
         variant="primary"
+        disabled={planMealMutation.isPending}
       >
-        Plan Meal
+        {planMealMutation.isPending ? 'Planning...' : 'Plan Meal'}
       </Button>
 
       {message && <p className="mt-4 text-sm text-green-400">{message}</p>}
