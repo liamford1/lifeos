@@ -27,11 +27,19 @@ export const createCalendarEventForEntity = async (type, entity) => {
       case CALENDAR_SOURCES.WORKOUT:
         title = `Workout: ${entity.title}`;
         start_time = entity.date ? new Date(entity.date).toISOString() : new Date().toISOString();
+        end_time = entity.end_time ? new Date(entity.end_time).toISOString() : null;
         description = entity.notes || '';
         break;
       case CALENDAR_SOURCES.CARDIO:
         title = `Cardio: ${entity.activity_type}`;
         start_time = entity.date ? new Date(entity.date).toISOString() : new Date().toISOString();
+        end_time = entity.end_time ? new Date(entity.end_time).toISOString() : null;
+        description = entity.notes || '';
+        break;
+      case CALENDAR_SOURCES.SPORT:
+        title = `Sport: ${entity.activity_type}`;
+        start_time = entity.date ? new Date(entity.date).toISOString() : new Date().toISOString();
+        end_time = entity.end_time ? new Date(entity.end_time).toISOString() : null;
         description = entity.notes || '';
         break;
       case CALENDAR_SOURCES.EXPENSE:

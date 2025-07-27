@@ -48,18 +48,30 @@ export default function PlannedWorkoutForm({ onSuccess }) {
                   : formData.type === 'cardio' ? 'fitness_cardio'
                   : 'fitness_sports'
 
+      // Ensure required fields are not empty
+      if (!formData.title || formData.title.trim() === '') {
+        throw new Error('Activity type is required');
+      }
+
       const insertData = {
           user_id: userId,
           notes: formData.notes,
+          status: 'planned',
           ...(formData.type === 'workout' && {
               title: formData.title,
-              date: formData.startTime ? formData.startTime.split('T')[0] : null
+              date: formData.startTime ? formData.startTime.split('T')[0] : new Date().toISOString().split('T')[0],
+              start_time: formData.startTime || null,
+              end_time: formData.endTime || null
           }),
           ...(formData.type !== 'workout' && {
-              activity_type: formData.title,
-              date: formData.startTime ? formData.startTime.split('T')[0] : null
+              activity_type: formData.title.trim(),
+              date: formData.startTime ? formData.startTime.split('T')[0] : new Date().toISOString().split('T')[0],
+              start_time: formData.startTime || null,
+              end_time: formData.endTime || null
           }),
-      }         
+      }
+
+         
 
       const { data, error } = await supabase
         .from(table)
@@ -80,10 +92,10 @@ export default function PlannedWorkoutForm({ onSuccess }) {
         id: data.id,
         user_id: userId,
         title: formData.title,
-        activity_type: formData.type === 'cardio' ? formData.title : undefined,
+        activity_type: formData.type === 'cardio' || formData.type === 'sports' ? formData.title : undefined,
         date: formData.startTime,
         notes: formData.notes,
-        end_time: formData.endTime || null,
+        end_time: formData.endTime && formData.endTime.trim() !== '' ? formData.endTime : null,
       });
 
       if (calendarError) {
