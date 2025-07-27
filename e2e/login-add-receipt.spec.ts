@@ -175,10 +175,36 @@ test('Complete receipt workflow with multiple items', async ({ page }) => {
   // Wait for the pantry page to load
   await expect(page.getByRole('heading', { name: 'Your Pantry' })).toBeVisible();
 
+  // Wait for inventory to load and check if items exist
+  await page.waitForLoadState('networkidle');
+  
+  // Debug: Check what items are actually in the database
+  const debugItems = await page.evaluate(async () => {
+    const supabase = window.supabase;
+    const { data: session } = await supabase.auth.getSession();
+    const userId = session.session.user.id;
+    
+    const { data: items, error } = await supabase
+      .from('food_items')
+      .select('*')
+      .eq('user_id', userId)
+      .in('name', ['Test Milk', 'Test Eggs', 'Test Bread']);
+    
+    console.log('[E2E] Debug - Items in database:', items);
+    console.log('[E2E] Debug - Error if any:', error);
+    return items;
+  });
+  
+  console.log('[E2E] Debug - Items found in database:', debugItems);
+
+  // Wait a bit more for any async operations to complete
+  await page.waitForTimeout(2000);
+
   // Verify that all three items from the receipt appear in the pantry
-  await expect(page.getByText('Test Milk').first()).toBeVisible();
-  await expect(page.getByText('Test Eggs').first()).toBeVisible();
-  await expect(page.getByText('Test Bread').first()).toBeVisible();
+  // Use a more specific selector that matches the pantry page structure
+  await expect(page.locator('li').filter({ hasText: 'Test Milk' }).first()).toBeVisible({ timeout: 10000 });
+  await expect(page.locator('li').filter({ hasText: 'Test Eggs' }).first()).toBeVisible({ timeout: 10000 });
+  await expect(page.locator('li').filter({ hasText: 'Test Bread' }).first()).toBeVisible({ timeout: 10000 });
 
   // Verify quantities in pantry
   await expect(page.getByText('2 gallons').first()).toBeVisible();
@@ -199,10 +225,16 @@ test('Complete receipt workflow with multiple items', async ({ page }) => {
   await page.reload();
   await page.waitForLoadState('networkidle');
 
+  // Wait for the pantry page to load again
+  await expect(page.getByRole('heading', { name: 'Your Pantry' })).toBeVisible();
+
+  // Wait a bit more for any async operations to complete
+  await page.waitForTimeout(2000);
+
   // Verify the items are still visible after reload
-  await expect(page.getByText('Test Milk').first()).toBeVisible();
-  await expect(page.getByText('Test Eggs').first()).toBeVisible();
-  await expect(page.getByText('Test Bread').first()).toBeVisible();
+  await expect(page.locator('li').filter({ hasText: 'Test Milk' }).first()).toBeVisible({ timeout: 10000 });
+  await expect(page.locator('li').filter({ hasText: 'Test Eggs' }).first()).toBeVisible({ timeout: 10000 });
+  await expect(page.locator('li').filter({ hasText: 'Test Bread' }).first()).toBeVisible({ timeout: 10000 });
 
   // --- Robust cleanup at the end ---
   await page.evaluate(async () => {
