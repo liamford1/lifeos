@@ -1,67 +1,64 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { supabase } from '@/lib/supabaseClient';
-import { deleteEntityWithCalendarEvent } from '@/lib/deleteUtils';
 import BackButton from '@/components/BackButton';
 import Button from '@/components/Button';
+import { useUser } from '@/context/UserContext';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import { useToast } from '@/components/Toast';
+import { MdOutlineCalendarToday } from 'react-icons/md';
 import dynamic from "next/dynamic";
 const Goal = dynamic(() => import("lucide-react/dist/esm/icons/goal"), { ssr: false });
+import SharedDeleteButton from '@/components/SharedDeleteButton';
+import EditButton from '@/components/EditButton';
+import { useSportsSessions } from '@/lib/hooks/useSportsSessions';
 
 export default function SportsDashboard() {
-  const { showSuccess, showError } = useToast();
+  const { user, loading } = useUser();
+  const router = useRouter();
   const [sessions, setSessions] = useState([]);
   const [sessionsLoading, setSessionsLoading] = useState(true);
-  const router = useRouter();
+  const { fetchSportsSessions, deleteSportsSession } = useSportsSessions();
+  // Memoize fetchSportsSessions to avoid unnecessary effect reruns
+  const memoizedFetchSportsSessions = useCallback(fetchSportsSessions, []);
 
   useEffect(() => {
-    const fetchSessions = async () => {
-      setSessionsLoading(true);
-      const { data, error } = await supabase
-        .from('fitness_sports')
-        .select('*')
-        .order('date', { ascending: false });
+    if (!loading && !user) {
+      router.push('/auth');
+    }
+  }, [loading, user, router]);
 
-      if (error) {
-        showError('Failed to fetch sports sessions.');
-      } else {
-        setSessions(data);
+  useEffect(() => {
+    let isMounted = true;
+    async function loadSessions() {
+      if (!user) {
+        if (isMounted) setSessionsLoading(false);
+        return;
       }
-      setSessionsLoading(false);
-    };
-
-    fetchSessions();
-  }, [showError]);
+      setSessionsLoading(true);
+      const data = await memoizedFetchSportsSessions(user.id);
+      if (isMounted) {
+        setSessions(data || []);
+        setSessionsLoading(false);
+      }
+    }
+    loadSessions();
+    return () => { isMounted = false; };
+  }, [user, memoizedFetchSportsSessions]);
 
   const handleDelete = async (id) => {
     const confirm = window.confirm('Delete this session?');
     if (!confirm) return;
-
-    const user = await supabase.auth.getUser();
-    const user_id = user?.data?.user?.id;
-    
-    if (!user_id) {
-      showError('You must be logged in.');
-      return;
-    }
-
-    const error = await deleteEntityWithCalendarEvent({
-      table: 'fitness_sports',
-      id: id,
-      user_id: user_id,
-      source: 'sports',
-    });
-
-    if (error) {
-      showError('Failed to delete session.');
-    } else {
+    if (!user) return;
+    const success = await deleteSportsSession(id, user.id);
+    if (success) {
       setSessions((prev) => prev.filter((s) => s.id !== id));
-      showSuccess('Sport session deleted successfully!');
     }
+  };
+
+  const handleAddSport = () => {
+    if (!user) return router.push('/auth');
+    router.push('/fitness/sports/add');
   };
 
   return (
@@ -73,12 +70,26 @@ export default function SportsDashboard() {
       </h1>
       <p className="text-base">Track your sports activities and games.</p>
 
-      <Link href="/fitness/sports/add" className="text-blue-600 underline mb-6 inline-block">
-        ➕ Add Sports Session
-      </Link>
+      <div className="flex gap-4 mb-4">
+        <Button
+          variant="primary"
+          onClick={handleAddSport}
+          data-testid="add-sport-button"
+        >
+          Add Sports Session
+        </Button>
+      </div>
 
-      {sessionsLoading ? (
+      <h2 className="text-xl font-semibold mb-2">
+        <MdOutlineCalendarToday className="inline w-5 h-5 text-base align-text-bottom mr-2" />
+        Sports History
+      </h2>
+
+      {/* Simplified loading logic */}
+      {(loading || sessionsLoading) ? (
         <LoadingSpinner />
+      ) : !user ? (
+        null
       ) : sessions.length === 0 ? (
         <p className="text-muted-foreground text-sm">No entries yet. Add one above ⬆️</p>
       ) : (
@@ -103,26 +114,21 @@ export default function SportsDashboard() {
               )}
 
               <div className="flex gap-4 mt-2 text-sm">
-                <Button
+                <EditButton
                   onClick={(e) => {
                     e.stopPropagation();
-                    router.push(`/fitness/sports/${s.id}?edit=true`);
+                    router.push(`/fitness/sports/${s.id}/edit`);
                   }}
-                  variant="link"
+                />
+                <SharedDeleteButton
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDelete(s.id);
+                  }}
                   size="sm"
-                  className="text-blue-500 hover:text-blue-700"
-                >
-                  ✏️ Edit
-                </Button>
-                <Button
-                  variant="danger"
-                  size="sm"
-                  onClick={() => handleDelete(s.id)}
                   aria-label="Delete sport entry"
-                  loading={false} // Placeholder for loading state if needed, currently not used in this component
-                >
-                  🗑️ Delete
-                </Button>
+                  label="Delete"
+                />
               </div>
             </li>
           ))}
