@@ -9,6 +9,8 @@ import FormInput from '@/components/FormInput';
 import FormTextarea from '@/components/FormTextarea';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/components/Toast';
+import { updateCalendarEventForCompletedEntity, cleanupPlannedSessionOnCompletion } from '@/lib/calendarSync';
+import { CALENDAR_SOURCES } from '@/lib/calendarUtils';
 
 export default function LiveCardioPage() {
   const { user, loading: userLoading } = useUser();
@@ -25,9 +27,32 @@ export default function LiveCardioPage() {
   const [notes, setNotes] = useState('');
   const [location, setLocation] = useState('');
   const [formError, setFormError] = useState('');
+  const [plannedId, setPlannedId] = useState(null);
 
   const router = useRouter();
   const { showSuccess, showError } = useToast();
+
+  // Handle URL parameters for pre-filled data from planned events
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const plannedIdParam = urlParams.get('plannedId');
+      const titleParam = urlParams.get('title');
+      const notesParam = urlParams.get('notes');
+      
+      if (plannedIdParam) {
+        setPlannedId(plannedIdParam);
+      }
+      
+      if (titleParam) {
+        setActivityType(decodeURIComponent(titleParam));
+      }
+      
+      if (notesParam) {
+        setNotes(decodeURIComponent(notesParam));
+      }
+    }
+  }, []);
 
   // Show loading while cardio session is loading
   if (cardioLoading) {
@@ -66,24 +91,51 @@ export default function LiveCardioPage() {
       
       const now = new Date();
       const today = now.toISOString().split('T')[0];
-      const { data, error } = await supabase
-        .from('fitness_cardio')
-        .insert({
-          user_id: user.id,
-          activity_type: activityType.trim(),
-          notes: notes.trim(),
-          location: location.trim(),
-          in_progress: true,
-          start_time: now.toISOString(),
-          date: today,
-        })
-        .select()
-        .single();
-      setCreating(false);
-      if (!error && data) {
-        await refreshCardio();
+      let cardioData = {
+        user_id: user.id,
+        activity_type: activityType.trim(),
+        notes: notes.trim(),
+        location: location.trim(),
+        in_progress: true,
+        start_time: now.toISOString(),
+        date: today,
+      };
+
+      // If this is from a planned event, update the planned entry instead of creating new
+      if (plannedId) {
+        const { data, error } = await supabase
+          .from('fitness_cardio')
+          .update({
+            ...cardioData,
+            status: 'completed' // Mark as completed since we're starting it
+          })
+          .eq('id', plannedId)
+          .eq('user_id', user.id)
+          .select()
+          .single();
+        
+        setCreating(false);
+        if (!error && data) {
+          // Clean up the calendar event since it's no longer planned
+          await updateCalendarEventForCompletedEntity(CALENDAR_SOURCES.CARDIO, plannedId);
+          await refreshCardio();
+        } else {
+          setFormError(error?.message || 'Failed to start planned cardio session');
+        }
       } else {
-        setFormError(error?.message || 'Failed to start cardio session');
+        // Create new cardio session
+        const { data, error } = await supabase
+          .from('fitness_cardio')
+          .insert(cardioData)
+          .select()
+          .single();
+        
+        setCreating(false);
+        if (!error && data) {
+          await refreshCardio();
+        } else {
+          setFormError(error?.message || 'Failed to start cardio session');
+        }
       }
     };
     return (
@@ -152,18 +204,29 @@ export default function LiveCardioPage() {
     const endTime = new Date();
     const durationMinutes = Math.round((endTime - startTime) / (1000 * 60));
     
+    // Update the cardio session to mark it as completed
     const { error } = await supabase
       .from('fitness_cardio')
       .update({ 
         in_progress: false, 
         end_time: endTime.toISOString(),
-        duration_minutes: durationMinutes
+        duration_minutes: durationMinutes,
+        status: 'completed' // Ensure it's marked as completed
       })
       .eq('id', activeCardioId);
     
     if (error) {
       showError('Failed to end cardio session.');
       return;
+    }
+
+    // Clean up any planned session data (calendar events, etc.)
+    if (user?.id) {
+      const cleanupError = await cleanupPlannedSessionOnCompletion('cardio', activeCardioId, user.id);
+      if (cleanupError) {
+        console.error('Error cleaning up planned session:', cleanupError);
+        // Don't fail the cardio end if cleanup fails
+      }
     }
     
     // Clear session state in context immediately
