@@ -33,37 +33,28 @@ export function CookingSessionProvider({ children }) {
       .eq('user_id', user.id)
       .eq('in_progress', true)
       .order('started_at', { ascending: false })
-      .limit(1)
-      .maybeSingle();
-    if (!error && data) {
-      setMealId(data.meal_id);
-      setSessionId(data.id);
-      setStartedAt(data.started_at);
-      setCurrentStep(typeof data.current_step === 'number' ? data.current_step : 1);
-      // Optionally fetch instructions from the meal
-      const mealRes = await supabase
-        .from('meals')
-        .select('instructions')
-        .eq('id', data.meal_id)
-        .single();
-      if (mealRes.data && mealRes.data.instructions) {
-        setInstructions(Array.isArray(mealRes.data.instructions)
-          ? mealRes.data.instructions
-          : (typeof mealRes.data.instructions === 'string' && mealRes.data.instructions.trim()
-            ? mealRes.data.instructions.split('\n').map(s => s.trim()).filter(Boolean)
-            : []));
-      } else {
-        setInstructions([]);
-      }
+      .limit(1);
+
+    if (error) {
+      console.error('Error fetching active session:', error);
+    }
+
+    if (data && data.length > 0) {
+      const session = data[0];
+      setMealId(session.meal_id);
+      setSessionId(session.id);
+      setStartedAt(session.started_at);
+      setCurrentStep(session.current_step || 1);
+      setInstructions(session.instructions || []);
     } else {
       setMealId(null);
+      setCurrentStep(0);
+      setInstructions([]);
       setSessionId(null);
       setStartedAt(null);
-      setInstructions([]);
-      setCurrentStep(1);
     }
     setLoading(false);
-  }, [user]);
+  }, [user, supabase]);
 
   useEffect(() => {
     if (!userLoading) {
@@ -103,10 +94,8 @@ export function CookingSessionProvider({ children }) {
   // Update currentStep in DB when it changes and session is active
   useEffect(() => {
     if (!sessionId || typeof currentStep !== 'number') {
-      console.log('[CookingSession] Skipping DB update:', { sessionId, currentStep });
       return;
     }
-    console.log('[CookingSession] Updating current_step in DB:', { sessionId, currentStep });
     supabase
       .from('cooking_sessions')
       .update({ current_step: currentStep })
@@ -134,7 +123,9 @@ export function CookingSessionProvider({ children }) {
   }, []);
 
   const endCooking = useCallback(async () => {
-    if (!user || !sessionId || !mealId) return;
+    if (!user || !sessionId || !mealId) {
+      return;
+    }
     // End the cooking session in the DB
     await supabase
       .from('cooking_sessions')
@@ -177,7 +168,9 @@ export function CookingSessionProvider({ children }) {
   }, [user, sessionId, mealId, fetchActiveSession]);
 
   const cancelCooking = useCallback(async () => {
-    if (!user || !sessionId) return;
+    if (!user || !sessionId) {
+      return;
+    }
     await supabase
       .from('cooking_sessions')
       .update({ in_progress: false, ended_at: new Date().toISOString(), current_step: 1 })
