@@ -170,6 +170,14 @@ test('Meal planning workflow: plan and verify meal', async ({ page }) => {
 
   // Clean up: delete the planned meal
   await page.goto('http://localhost:3000/food/planner');
+  await expect(page.getByRole('heading', { name: /upcoming planned meals/i })).toBeVisible({ timeout: 10000 });
+  
+  // Debug: Check what planned meals are visible
+  const allPlannedMealCards = page.getByTestId(/planned-meal-card-/);
+  const cardCount = await allPlannedMealCards.count();
+  console.log(`[E2E] Found ${cardCount} planned meal cards`);
+  
+  // Look for the specific meal card
   const plannedMealCardForDelete = page.getByTestId(/planned-meal-card-/).filter({ hasText: testMealName }).first();
   await expect(plannedMealCardForDelete).toBeVisible({ timeout: 10000 });
   const deleteButton = plannedMealCardForDelete.getByRole('button', { name: /delete/i });

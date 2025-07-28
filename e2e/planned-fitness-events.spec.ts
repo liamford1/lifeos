@@ -659,44 +659,66 @@ test('Planned Fitness Events - Complete Flow', async ({ page }) => {
 
   // ✅ Final verification: Check database state (simplified)
   const finalState = await page.evaluate(async () => {
-    const supabase = window.supabase;
-    const { data: session } = await supabase.auth.getSession();
-    const userId = session.session.user.id;
-    
-    // Quick count check for each table
-    const { count: workoutCount } = await supabase
-      .from('fitness_workouts')
-      .select('*', { count: 'exact', head: true })
-      .eq('user_id', userId)
-      .eq('title', 'Test Planned Workout')
-      .eq('status', 'planned');
-    
-    const { count: cardioCount } = await supabase
-      .from('fitness_cardio')
-      .select('*', { count: 'exact', head: true })
-      .eq('user_id', userId)
-      .eq('activity_type', 'Test Planned Cardio')
-      .eq('status', 'planned');
-    
-    const { count: sportsCount } = await supabase
-      .from('fitness_sports')
-      .select('*', { count: 'exact', head: true })
-      .eq('user_id', userId)
-      .eq('activity_type', 'Test Planned Sports')
-      .eq('status', 'planned');
-    
-    const { count: calendarCount } = await supabase
-      .from('calendar_events')
-      .select('*', { count: 'exact', head: true })
-      .eq('user_id', userId)
-      .in('title', ['Workout: Test Planned Workout', 'Cardio: Test Planned Cardio', 'Sport: Test Planned Sports']);
-    
-    return {
-      workoutCount: workoutCount || 0,
-      cardioCount: cardioCount || 0,
-      sportsCount: sportsCount || 0,
-      calendarCount: calendarCount || 0
-    };
+    try {
+      const supabase = window.supabase;
+      const { data: session } = await supabase.auth.getSession();
+      const userId = session.session.user.id;
+      
+      // Quick count check for each table with timeout handling
+      const workoutResult = await Promise.race([
+        supabase
+          .from('fitness_workouts')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', userId)
+          .eq('title', 'Test Planned Workout')
+          .eq('status', 'planned'),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Workout query timeout')), 5000))
+      ]);
+      
+      const cardioResult = await Promise.race([
+        supabase
+          .from('fitness_cardio')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', userId)
+          .eq('activity_type', 'Test Planned Cardio')
+          .eq('status', 'planned'),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Cardio query timeout')), 5000))
+      ]);
+      
+      const sportsResult = await Promise.race([
+        supabase
+          .from('fitness_sports')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', userId)
+          .eq('activity_type', 'Test Planned Sports')
+          .eq('status', 'planned'),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Sports query timeout')), 5000))
+      ]);
+      
+      const calendarResult = await Promise.race([
+        supabase
+          .from('calendar_events')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', userId)
+          .in('title', ['Workout: Test Planned Workout', 'Cardio: Test Planned Cardio', 'Sport: Test Planned Sports']),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Calendar query timeout')), 5000))
+      ]);
+      
+      return {
+        workoutCount: workoutResult.count || 0,
+        cardioCount: cardioResult.count || 0,
+        sportsCount: sportsResult.count || 0,
+        calendarCount: calendarResult.count || 0
+      };
+    } catch (error) {
+      console.error('Database verification error:', error);
+      return {
+        workoutCount: 0,
+        cardioCount: 0,
+        sportsCount: 0,
+        calendarCount: 0
+      };
+    }
   });
 
   // Verify database state
