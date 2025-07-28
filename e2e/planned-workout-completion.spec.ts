@@ -306,8 +306,8 @@ test.describe('Planned Workout Completion Flow', () => {
     } else {
       // We navigated directly, should have 2 workouts (1 planned + 1 completed) and 1 calendar event
       expect(finalDatabaseState.workouts.length).toBe(2);
-      const plannedWorkout = finalDatabaseState.workouts.find(w => w.status === 'planned');
-      const completedWorkout = finalDatabaseState.workouts.find(w => w.status === 'completed');
+      const plannedWorkout = finalDatabaseState.workouts.find((w: any) => w.status === 'planned');
+      const completedWorkout = finalDatabaseState.workouts.find((w: any) => w.status === 'completed');
       expect(plannedWorkout).toBeTruthy();
       expect(completedWorkout).toBeTruthy();
       expect(completedWorkout.in_progress).toBe(false);
