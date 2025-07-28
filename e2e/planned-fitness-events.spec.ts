@@ -910,7 +910,7 @@ test('Calendar Click Behavior for Planned Fitness Events', async ({ page }) => {
       
       // Navigate directly to the live workout page instead
       await page.goto('http://localhost:3000/fitness/workouts/live');
-      await expect(page.getByRole('heading', { name: /start a new workout/i })).toBeVisible({ timeout: 10000 });
+      await expect(page.getByRole('heading', { name: /Start a New Workout/i })).toBeVisible({ timeout: 10000 });
     } else {
       // If no calendar event exists, fail the test
       throw new Error('Calendar event not found in database');
@@ -922,7 +922,7 @@ test('Calendar Click Behavior for Planned Fitness Events', async ({ page }) => {
 
   // Verify we're redirected to the live workout page with pre-filled data
   await page.waitForLoadState('networkidle');
-  await expect(page.getByRole('heading', { name: /start a new workout/i })).toBeVisible({ timeout: 10000 });
+  await expect(page.getByRole('heading', { name: /Start a New Workout/i })).toBeVisible({ timeout: 10000 });
   
   // Check if we navigated directly (no pre-filled data) or via calendar click (pre-filled data)
   const currentUrl = page.url();
@@ -1081,7 +1081,7 @@ test('Event List Click Behavior for Planned Fitness Events', async ({ page }) =>
 
   // Verify we're redirected to the live workout page with pre-filled data
   await page.waitForLoadState('networkidle');
-  await expect(page.getByRole('heading', { name: /start a new workout/i })).toBeVisible({ timeout: 10000 });
+  await expect(page.getByRole('heading', { name: /Start a New Workout/i })).toBeVisible({ timeout: 10000 });
   
   // Check that the form is pre-filled with the planned data
   await expect(page.locator('input[value="Test Event List Workout"]')).toBeVisible();
@@ -1236,7 +1236,7 @@ test('Planned Session Cleanup After Completion', async ({ page }) => {
       
       // Navigate directly to the live workout page instead
       await page.goto('http://localhost:3000/fitness/workouts/live');
-      await expect(page.getByRole('heading', { name: /start a new workout/i })).toBeVisible({ timeout: 10000 });
+      await expect(page.getByRole('heading', { name: /Start a New Workout/i })).toBeVisible({ timeout: 10000 });
     } else {
       // If no calendar event exists, fail the test
       throw new Error('Calendar event not found in database');
@@ -1248,7 +1248,7 @@ test('Planned Session Cleanup After Completion', async ({ page }) => {
 
   // Verify we're redirected to the live workout page with pre-filled data
   await page.waitForLoadState('networkidle');
-  await expect(page.getByRole('heading', { name: /start a new workout/i })).toBeVisible({ timeout: 10000 });
+  await expect(page.getByRole('heading', { name: /Start a New Workout/i })).toBeVisible({ timeout: 10000 });
   
   // Check if we navigated directly (no pre-filled data) or via calendar click (pre-filled data)
   const currentUrl = page.url();

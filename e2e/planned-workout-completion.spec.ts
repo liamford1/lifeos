@@ -257,16 +257,20 @@ test.describe('Planned Workout Completion Flow', () => {
       expect(remainingCalendarEvents.length).toBe(1); // Should still exist
     }
 
-    // Step 14: Verify the event is gone visually from calendar
-    await page.goto('http://localhost:3000/');
-    await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(2000);
+    // Step 14: Verify the event is gone visually from calendar (only if we came from calendar click)
+    if (currentUrl.includes('plannedId=')) {
+      await page.goto('http://localhost:3000/');
+      await page.waitForLoadState('networkidle');
+      await page.waitForTimeout(2000);
 
-    // The planned event should no longer be visible in calendar
-    const workoutEventAfter = page.getByTestId(/calendar-event-/)
-      .filter({ hasText: uniqueTitle });
-    
-    await expect(workoutEventAfter).not.toBeVisible({ timeout: 10000 });
+      // The planned event should no longer be visible in calendar
+      const workoutEventAfter = page.getByTestId(/calendar-event-/)
+        .filter({ hasText: uniqueTitle });
+      
+      await expect(workoutEventAfter).not.toBeVisible({ timeout: 10000 });
+    } else {
+      console.log('[E2E] Skipping calendar event cleanup check since we navigated directly');
+    }
 
     // Step 15: Final verification - check database state
     const finalDatabaseState = await page.evaluate(async (title) => {

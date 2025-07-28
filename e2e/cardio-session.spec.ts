@@ -77,7 +77,7 @@ test('Complete Cardio Session Lifecycle', async ({ page }) => {
   await expect(page).toHaveURL(/\/fitness\/cardio\/live$/);
 
   // Check that the start form is visible (no active session)
-  await expect(page.getByRole('heading', { name: /start a new cardio session/i })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Start a New Cardio Session/i })).toBeVisible();
 
   // Fill in the cardio session form with test data
   const location = 'Test Park';
