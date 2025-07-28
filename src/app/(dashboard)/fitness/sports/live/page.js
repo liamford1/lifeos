@@ -9,6 +9,8 @@ import FormInput from '@/components/FormInput';
 import FormTextarea from '@/components/FormTextarea';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/components/Toast';
+import { updateCalendarEventForCompletedEntity, cleanupPlannedSessionOnCompletion } from '@/lib/calendarSync';
+import { CALENDAR_SOURCES } from '@/lib/calendarUtils';
 
 export default function LiveSportsPage() {
   const { user, loading: userLoading } = useUser();
@@ -25,9 +27,32 @@ export default function LiveSportsPage() {
   const [performanceNotes, setPerformanceNotes] = useState('');
   const [location, setLocation] = useState('');
   const [formError, setFormError] = useState('');
+  const [plannedId, setPlannedId] = useState(null);
 
   const router = useRouter();
   const { showSuccess, showError } = useToast();
+
+  // Handle URL parameters for pre-filled data from planned events
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const plannedIdParam = urlParams.get('plannedId');
+      const titleParam = urlParams.get('title');
+      const notesParam = urlParams.get('notes');
+      
+      if (plannedIdParam) {
+        setPlannedId(plannedIdParam);
+      }
+      
+      if (titleParam) {
+        setActivityType(decodeURIComponent(titleParam));
+      }
+      
+      if (notesParam) {
+        setPerformanceNotes(decodeURIComponent(notesParam));
+      }
+    }
+  }, []);
 
   // Show loading while sports session is loading
   if (sportsLoading) {
@@ -66,24 +91,51 @@ export default function LiveSportsPage() {
       
       const now = new Date();
       const today = now.toISOString().split('T')[0];
-      const { data, error } = await supabase
-        .from('fitness_sports')
-        .insert({
-          user_id: user.id,
-          activity_type: activityType.trim(),
-          performance_notes: performanceNotes.trim(),
-          location: location.trim(),
-          in_progress: true,
-          start_time: now.toISOString(),
-          date: today,
-        })
-        .select()
-        .single();
-      setCreating(false);
-      if (!error && data) {
-        await refreshSports();
+      let sportsData = {
+        user_id: user.id,
+        activity_type: activityType.trim(),
+        performance_notes: performanceNotes.trim(),
+        location: location.trim(),
+        in_progress: true,
+        start_time: now.toISOString(),
+        date: today,
+      };
+
+      // If this is from a planned event, update the planned entry instead of creating new
+      if (plannedId) {
+        const { data, error } = await supabase
+          .from('fitness_sports')
+          .update({
+            ...sportsData,
+            status: 'completed' // Mark as completed since we're starting it
+          })
+          .eq('id', plannedId)
+          .eq('user_id', user.id)
+          .select()
+          .single();
+        
+        setCreating(false);
+        if (!error && data) {
+          // Clean up the calendar event since it's no longer planned
+          await updateCalendarEventForCompletedEntity(CALENDAR_SOURCES.SPORT, plannedId);
+          await refreshSports();
+        } else {
+          setFormError(error?.message || 'Failed to start planned sports session');
+        }
       } else {
-        setFormError(error?.message || 'Failed to start sports session');
+        // Create new sports session
+        const { data, error } = await supabase
+          .from('fitness_sports')
+          .insert(sportsData)
+          .select()
+          .single();
+        
+        setCreating(false);
+        if (!error && data) {
+          await refreshSports();
+        } else {
+          setFormError(error?.message || 'Failed to start sports session');
+        }
       }
     };
     return (
@@ -152,18 +204,29 @@ export default function LiveSportsPage() {
     const endTime = new Date();
     const durationMinutes = Math.round((endTime - startTime) / (1000 * 60));
     
+    // Update the sports session to mark it as completed
     const { error } = await supabase
       .from('fitness_sports')
       .update({ 
         in_progress: false, 
         end_time: endTime.toISOString(),
-        duration_minutes: durationMinutes
+        duration_minutes: durationMinutes,
+        status: 'completed' // Ensure it's marked as completed
       })
       .eq('id', activeSportsId);
     
     if (error) {
       showError('Failed to end sports session.');
       return;
+    }
+
+    // Clean up any planned session data (calendar events, etc.)
+    if (user?.id) {
+      const cleanupError = await cleanupPlannedSessionOnCompletion('sport', activeSportsId, user.id);
+      if (cleanupError) {
+        console.error('Error cleaning up planned session:', cleanupError);
+        // Don't fail the sports end if cleanup fails
+      }
     }
     
     // Clear session state in context immediately

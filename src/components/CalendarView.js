@@ -85,6 +85,68 @@ export default function CalendarView() {
     }
   };
 
+  const handleFitnessEventClick = async (event, type) => {
+    try {
+      // Determine the table name based on type
+      const tableMap = {
+        'workout': 'fitness_workouts',
+        'cardio': 'fitness_cardio', 
+        'sport': 'fitness_sports'
+      };
+      const table = tableMap[type];
+      
+      if (!table) {
+        showError('Unknown fitness event type.');
+        return;
+      }
+
+      // Fetch the source entity to check its status
+      const { data: sourceEntity, error } = await supabase
+        .from(table)
+        .select('*')
+        .eq('id', event.source_id)
+        .single();
+
+      if (error) {
+        showError('Could not fetch event details.');
+        return;
+      }
+
+      // If it's a planned event, route to live session with pre-filled data
+      if (sourceEntity.status === 'planned') {
+        const routeMap = {
+          'workout': '/fitness/workouts/live',
+          'cardio': '/fitness/cardio/live',
+          'sport': '/fitness/sports/live'
+        };
+        const baseRoute = routeMap[type];
+        
+        // Create URL parameters with pre-filled data
+        const params = new URLSearchParams({
+          plannedId: event.source_id,
+          title: sourceEntity.title || sourceEntity.activity_type || '',
+          notes: sourceEntity.notes || sourceEntity.performance_notes || '',
+          date: sourceEntity.date || '',
+          startTime: sourceEntity.start_time || '',
+          endTime: sourceEntity.end_time || ''
+        });
+        
+        router.push(`${baseRoute}?${params.toString()}`);
+      } else {
+        // If it's completed/in-progress, route to the overview page
+        const routeMap = {
+          'workout': `/fitness/workouts/${event.source_id}`,
+          'cardio': `/fitness/cardio/${event.source_id}`,
+          'sport': `/fitness/sports/${event.source_id}`
+        };
+        router.push(routeMap[type]);
+      }
+    } catch (error) {
+      console.error('Error handling fitness event click:', error);
+      showError('Could not process event click.');
+    }
+  };
+
   const handleDeleteEvent = async (event) => {
     const confirm = window.confirm('Delete this event? This will also remove the linked workout/cardio/sports entry if one exists.');
     if (!confirm) return;
@@ -210,11 +272,14 @@ export default function CalendarView() {
                             } else if (event.source === CALENDAR_SOURCES.EXPENSE) {
                               router.push(`/finances/expenses/${event.source_id}`);
                             } else if (event.source === CALENDAR_SOURCES.WORKOUT) {
-                              router.push(`/fitness/workouts/${String(event.source_id)}`);
+                              // Check if this is a planned workout and route to live session
+                              handleFitnessEventClick(event, 'workout');
                             } else if (event.source === CALENDAR_SOURCES.CARDIO) {
-                              router.push(`/fitness/cardio/${String(event.source_id)}`);
+                              // Check if this is a planned cardio and route to live session
+                              handleFitnessEventClick(event, 'cardio');
                             } else if (event.source === CALENDAR_SOURCES.SPORT) {
-                              router.push(`/fitness/sports/${String(event.source_id)}`);
+                              // Check if this is a planned sport and route to live session
+                              handleFitnessEventClick(event, 'sport');
                             }
                           },
                           onKeyDown: (e) => {
@@ -232,11 +297,14 @@ export default function CalendarView() {
                               } else if (event.source === CALENDAR_SOURCES.EXPENSE) {
                                 router.push(`/finances/expenses/${event.source_id}`);
                               } else if (event.source === CALENDAR_SOURCES.WORKOUT) {
-                                router.push(`/fitness/workouts/${event.source_id}`);
+                                // Check if this is a planned workout and route to live session
+                                handleFitnessEventClick(event, 'workout');
                               } else if (event.source === CALENDAR_SOURCES.CARDIO) {
-                                router.push(`/fitness/cardio/${event.source_id}`);
+                                // Check if this is a planned cardio and route to live session
+                                handleFitnessEventClick(event, 'cardio');
                               } else if (event.source === CALENDAR_SOURCES.SPORT) {
-                                router.push(`/fitness/sports/${event.source_id}`);
+                                // Check if this is a planned sport and route to live session
+                                handleFitnessEventClick(event, 'sport');
                               }
                             }
                           },
@@ -293,11 +361,43 @@ export default function CalendarView() {
               return (
                 <li
                   key={event.id}
-                  className={`p-3 rounded hover:opacity-80 ${colorClass}`}
+                  className={`p-3 rounded hover:opacity-80 ${colorClass} cursor-pointer`}
+                  role="button"
+                  tabIndex={0}
                   onClick={() => {
                     if (!event.source || !event.source_id) return;
-                    const route = getCalendarEventRoute(event.source, event.source_id);
-                    router.push(route);
+                    
+                    // Use the same logic as calendar tile clicks for fitness events
+                    if (event.source === CALENDAR_SOURCES.WORKOUT) {
+                      handleFitnessEventClick(event, 'workout');
+                    } else if (event.source === CALENDAR_SOURCES.CARDIO) {
+                      handleFitnessEventClick(event, 'cardio');
+                    } else if (event.source === CALENDAR_SOURCES.SPORT) {
+                      handleFitnessEventClick(event, 'sport');
+                    } else {
+                      // For non-fitness events, use the existing route logic
+                      const route = getCalendarEventRoute(event.source, event.source_id);
+                      router.push(route);
+                    }
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      if (!event.source || !event.source_id) return;
+                      
+                      // Use the same logic as calendar tile clicks for fitness events
+                      if (event.source === CALENDAR_SOURCES.WORKOUT) {
+                        handleFitnessEventClick(event, 'workout');
+                      } else if (event.source === CALENDAR_SOURCES.CARDIO) {
+                        handleFitnessEventClick(event, 'cardio');
+                      } else if (event.source === CALENDAR_SOURCES.SPORT) {
+                        handleFitnessEventClick(event, 'sport');
+                      } else {
+                        // For non-fitness events, use the existing route logic
+                        const route = getCalendarEventRoute(event.source, event.source_id);
+                        router.push(route);
+                      }
+                    }
                   }}
                 >
                   <div className="flex justify-between items-center">
