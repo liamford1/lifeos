@@ -138,7 +138,7 @@ test.describe('Planned Workout Completion Flow', () => {
         
         // Navigate directly to the live workout page instead
         await page.goto('http://localhost:3000/fitness/workouts/live');
-        await expect(page.getByRole('heading', { name: /start a new workout/i })).toBeVisible({ timeout: 10000 });
+        await expect(page.getByRole('heading', { name: /Start a New Workout/i })).toBeVisible({ timeout: 10000 });
       } else {
         // If no calendar event exists, fail the test
         throw new Error('Calendar event not found in database');
@@ -150,7 +150,7 @@ test.describe('Planned Workout Completion Flow', () => {
 
     // Step 5: Verify the Start Workout screen loads with pre-filled title
     await page.waitForLoadState('networkidle');
-    await expect(page.getByRole('heading', { name: /start a new workout/i })).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole('heading', { name: /Start a New Workout/i })).toBeVisible({ timeout: 10000 });
     
     // Check if we navigated directly (no pre-filled data) or via calendar click (pre-filled data)
     const currentUrl = page.url();
@@ -395,7 +395,7 @@ test.describe('Planned Workout Completion Flow', () => {
     // Step 3: Since the event is for today, the event list should already be visible
     // Find and click the planned workout in the event list
     const eventListItem = page.locator('li')
-      .filter({ hasText: uniqueTitle })
+      .filter({ hasText: testData.calendarEventTitle })
       .first();
     
     await expect(eventListItem).toBeVisible({ timeout: 10000 });
@@ -403,7 +403,7 @@ test.describe('Planned Workout Completion Flow', () => {
 
     // Step 4: Verify the Start Workout screen loads with pre-filled title
     await page.waitForLoadState('networkidle');
-    await expect(page.getByRole('heading', { name: /start a new workout/i })).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole('heading', { name: /Start a New Workout/i })).toBeVisible({ timeout: 10000 });
     
     // Check that the form is pre-filled with the planned data
     await expect(page.locator('input[value="' + uniqueTitle + '"]')).toBeVisible();
