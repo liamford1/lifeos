@@ -45,6 +45,8 @@ function todayDateTimePlusThree() {
 declare global {
   interface Window {
     supabase: any;
+    consoleErrors: string[];
+    networkErrors: Event[];
   }
 }
 
@@ -155,13 +157,13 @@ test('Planned Fitness Events - Complete Flow', async ({ page }) => {
     // Capture console errors
     const originalError = console.error;
     console.error = (...args) => {
-      window.consoleErrors.push(args);
+      window.consoleErrors.push(args.join(' '));
       originalError.apply(console, args);
     };
     
     // Capture network errors
     window.addEventListener('error', (event) => {
-      if (event.target && event.target.tagName === 'SCRIPT') {
+      if (event.target && (event.target as Element).tagName === 'SCRIPT') {
         window.networkErrors.push(event);
       }
     });
@@ -511,7 +513,8 @@ test('Planned Fitness Events - Complete Flow', async ({ page }) => {
     // Wait for calendar to load
     await page.waitForTimeout(2000);
   } catch (error) {
-    console.log('[E2E] Error navigating to home page:', error.message);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.log('[E2E] Error navigating to home page:', errorMessage);
     // Skip navigation and proceed with database verification
     console.log('[E2E] Skipping UI verification, proceeding with database check');
   }
@@ -582,7 +585,8 @@ test('Planned Fitness Events - Complete Flow', async ({ page }) => {
       }
     } catch (error) {
       verificationRetryCount++;
-      console.log(`[E2E] Error during verification, retry ${verificationRetryCount}/${maxVerificationRetries}:`, error.message);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      console.log(`[E2E] Error during verification, retry ${verificationRetryCount}/${maxVerificationRetries}:`, errorMessage);
       await page.waitForTimeout(500); // Reduced wait time
     }
   }
@@ -648,7 +652,8 @@ test('Planned Fitness Events - Complete Flow', async ({ page }) => {
       }
     }
   } catch (error) {
-    console.log('[E2E] Final verification failed:', error.message);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.log('[E2E] Final verification failed:', errorMessage);
     throw error;
   }
 
