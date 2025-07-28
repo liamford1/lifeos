@@ -222,6 +222,39 @@ export default function CalendarView() {
     }
   };  
 
+  const handlePlannedMealClick = async (event) => {
+    try {
+      console.log('[DEBUG] handlePlannedMealClick called with event:', event);
+      
+      const { data: plannedMeal, error } = await supabase
+        .from('planned_meals')
+        .select('meal_id')
+        .eq('id', event.source_id)
+        .single();
+
+      console.log('[DEBUG] Planned meal query result:', { plannedMeal, error });
+
+      if (error) {
+        console.error('[DEBUG] Error fetching planned meal:', error);
+        showError('Could not fetch planned meal details.');
+        return;
+      }
+
+      console.log('[DEBUG] Planned meal found:', plannedMeal);
+
+      if (plannedMeal && plannedMeal.meal_id) {
+        console.log('[DEBUG] Navigating to cook page with meal_id:', plannedMeal.meal_id);
+        router.push(`/food/meals/${plannedMeal.meal_id}/cook`);
+      } else {
+        console.log('[DEBUG] No meal_id found, navigating to planner page');
+        router.push(`/food/planner/${event.source_id}`);
+      }
+    } catch (error) {
+      console.error('[DEBUG] Error handling planned meal click:', error);
+      showError('Could not process planned meal click.');
+    }
+  };
+
   return (
     <div className="relative w-full p-6 bg-surface text-white rounded shadow">
       <h2 className="text-xl font-semibold mb-4">
@@ -263,12 +296,8 @@ export default function CalendarView() {
                             if (event.source === CALENDAR_SOURCES.MEAL) {
                               router.push(`/food/meals/${event.source_id}/cook`);
                             } else if (event.source === CALENDAR_SOURCES.PLANNED_MEAL) {
-                              const plannedMeal = events.find(ev => ev.source === CALENDAR_SOURCES.PLANNED_MEAL && ev.id === event.id);
-                              if (plannedMeal && plannedMeal.meal_id) {
-                                router.push(`/food/meals/${plannedMeal.meal_id}/cook`);
-                              } else {
-                                router.push(`/food/planner/${event.source_id}`);
-                              }
+                              // For planned meals, we need to fetch the meal_id from the planned_meals table
+                              handlePlannedMealClick(event);
                             } else if (event.source === CALENDAR_SOURCES.EXPENSE) {
                               router.push(`/finances/expenses/${event.source_id}`);
                             } else if (event.source === CALENDAR_SOURCES.WORKOUT) {
@@ -288,12 +317,8 @@ export default function CalendarView() {
                               if (event.source === CALENDAR_SOURCES.MEAL) {
                                 router.push(`/food/meals/${event.source_id}/cook`);
                               } else if (event.source === CALENDAR_SOURCES.PLANNED_MEAL) {
-                                const plannedMeal = events.find(ev => ev.source === CALENDAR_SOURCES.PLANNED_MEAL && ev.id === event.id);
-                                if (plannedMeal && plannedMeal.meal_id) {
-                                  router.push(`/food/meals/${plannedMeal.meal_id}/cook`);
-                                } else {
-                                  router.push(`/food/planner/${event.source_id}`);
-                                }
+                                // For planned meals, we need to fetch the meal_id from the planned_meals table
+                                handlePlannedMealClick(event);
                               } else if (event.source === CALENDAR_SOURCES.EXPENSE) {
                                 router.push(`/finances/expenses/${event.source_id}`);
                               } else if (event.source === CALENDAR_SOURCES.WORKOUT) {
@@ -377,12 +402,8 @@ export default function CalendarView() {
                     } else if (event.source === CALENDAR_SOURCES.MEAL) {
                       router.push(`/food/meals/${event.source_id}/cook`);
                     } else if (event.source === CALENDAR_SOURCES.PLANNED_MEAL) {
-                      const plannedMeal = events.find(ev => ev.source === CALENDAR_SOURCES.PLANNED_MEAL && ev.id === event.id);
-                      if (plannedMeal && plannedMeal.meal_id) {
-                        router.push(`/food/meals/${plannedMeal.meal_id}/cook`);
-                      } else {
-                        router.push(`/food/planner/${event.source_id}`);
-                      }
+                      // For planned meals, we need to fetch the meal_id from the planned_meals table
+                      handlePlannedMealClick(event);
                     } else {
                       // For other events, use the existing route logic
                       const route = getCalendarEventRoute(event.source, event.source_id);
@@ -404,12 +425,8 @@ export default function CalendarView() {
                       } else if (event.source === CALENDAR_SOURCES.MEAL) {
                         router.push(`/food/meals/${event.source_id}/cook`);
                       } else if (event.source === CALENDAR_SOURCES.PLANNED_MEAL) {
-                        const plannedMeal = events.find(ev => ev.source === CALENDAR_SOURCES.PLANNED_MEAL && ev.id === event.id);
-                        if (plannedMeal && plannedMeal.meal_id) {
-                          router.push(`/food/meals/${plannedMeal.meal_id}/cook`);
-                        } else {
-                          router.push(`/food/planner/${event.source_id}`);
-                        }
+                        // For planned meals, we need to fetch the meal_id from the planned_meals table
+                        handlePlannedMealClick(event);
                       } else {
                         // For other events, use the existing route logic
                         const route = getCalendarEventRoute(event.source, event.source_id);
