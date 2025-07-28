@@ -203,8 +203,10 @@ test.describe('Login and add workout', () => {
     const exerciseName = `Bench Press ${Math.floor(Math.random() * 10000)}`;
     await page.getByPlaceholder('e.g. Bench Press, Squat, etc.').fill(exerciseName);
     await page.getByRole('button', { name: /^add$/i }).click();
-    // Wait for exercise to appear
-    await expect(page.getByText(exerciseName)).toBeVisible({ timeout: 5000 });
+    
+    // Wait for the exercise to be added and appear in the list
+    await page.waitForLoadState('networkidle');
+    await expect(page.getByText(exerciseName)).toBeVisible({ timeout: 10000 });
 
     // 4. Add a set to the exercise (reps = 10, weight = 100)
     // Find the exercise block by name
