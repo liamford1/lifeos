@@ -372,7 +372,8 @@ test('Complete Cardio Session Lifecycle', async ({ page }) => {
   await expect(page.getByText(location)).toBeVisible();
 
   // Find and click the delete button for the session
-  const cardioCard = page.locator('li, div').filter({ hasText: newActivityType }).first();
+  // Use a more specific selector to avoid multiple matches
+  const cardioCard = page.locator('li, div').filter({ hasText: newActivityType }).filter({ hasText: newDuration }).first();
   await expect(cardioCard).toBeVisible();
   const deleteButton = cardioCard.getByRole('button', { name: /delete/i });
   await expect(deleteButton).toBeVisible();
