@@ -12,6 +12,7 @@ import Button from '@/components/Button';
 import { useToast } from '@/components/Toast';
 import { deleteCalendarEventForEntity } from '@/lib/calendarSync';
 import SharedDeleteButton from '@/components/SharedDeleteButton';
+import EditButton from '@/components/EditButton';
 
 export default function FinancesOverview() {
   const { user, loading } = useUser();
@@ -70,9 +71,13 @@ export default function FinancesOverview() {
       <BackButton />
       <h1 className="text-2xl font-bold">Expenses Overview</h1>
       <p className="text-base">Track and manage your expense records.</p>
-      <Link href="/finances/add" className="text-blue-600 underline mb-4 inline-block">
-        ➕ Add New Expense
-      </Link>
+      <div className="flex gap-4 mb-4">
+        <Link href="/finances/add">
+          <Button variant="primary" data-testid="add-expense-button">
+            ➕ Add New Expense
+          </Button>
+        </Link>
+      </div>
       {expensesLoading ? (
         <LoadingSpinner />
       ) : expenses.length === 0 ? (
@@ -88,9 +93,13 @@ export default function FinancesOverview() {
                 <Link href={`/finances/expenses/${exp.id}`}>
                   <Button variant="secondary" size="sm">View</Button>
                 </Link>
-                <Link href={`/finances/expenses/${exp.id}/edit`}>
-                  <Button variant="primary" size="sm">Edit</Button>
-                </Link>
+                <EditButton
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    router.push(`/finances/expenses/${exp.id}/edit`);
+                  }}
+                  size="sm"
+                />
                 <SharedDeleteButton
                   size="sm"
                   onClick={() => handleDelete(exp.id)}
