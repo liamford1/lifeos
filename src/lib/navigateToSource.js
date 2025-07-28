@@ -9,7 +9,7 @@ export function navigateToSource(source, sourceId, router) {
   let path = null;
   switch (source) {
     case 'meal':
-      path = `/food/meals/${sourceId}`;
+      path = `/food/meals/${sourceId}/cook`;
       break;
     case 'cardio':
       path = `/fitness/cardio/${sourceId}`;

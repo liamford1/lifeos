@@ -261,11 +261,11 @@ export default function CalendarView() {
                           onClick: (e) => {
                             e.stopPropagation();
                             if (event.source === CALENDAR_SOURCES.MEAL) {
-                              router.push(`/food/meals/${event.source_id}`);
+                              router.push(`/food/meals/${event.source_id}/cook`);
                             } else if (event.source === CALENDAR_SOURCES.PLANNED_MEAL) {
                               const plannedMeal = events.find(ev => ev.source === CALENDAR_SOURCES.PLANNED_MEAL && ev.id === event.id);
                               if (plannedMeal && plannedMeal.meal_id) {
-                                router.push(`/food/meals/${plannedMeal.meal_id}`);
+                                router.push(`/food/meals/${plannedMeal.meal_id}/cook`);
                               } else {
                                 router.push(`/food/planner/${event.source_id}`);
                               }
@@ -286,11 +286,11 @@ export default function CalendarView() {
                             if (e.key === 'Enter' || e.key === ' ') {
                               e.stopPropagation();
                               if (event.source === CALENDAR_SOURCES.MEAL) {
-                                router.push(`/food/meals/${event.source_id}`);
+                                router.push(`/food/meals/${event.source_id}/cook`);
                               } else if (event.source === CALENDAR_SOURCES.PLANNED_MEAL) {
                                 const plannedMeal = events.find(ev => ev.source === CALENDAR_SOURCES.PLANNED_MEAL && ev.id === event.id);
                                 if (plannedMeal && plannedMeal.meal_id) {
-                                  router.push(`/food/meals/${plannedMeal.meal_id}`);
+                                  router.push(`/food/meals/${plannedMeal.meal_id}/cook`);
                                 } else {
                                   router.push(`/food/planner/${event.source_id}`);
                                 }
@@ -374,8 +374,17 @@ export default function CalendarView() {
                       handleFitnessEventClick(event, 'cardio');
                     } else if (event.source === CALENDAR_SOURCES.SPORT) {
                       handleFitnessEventClick(event, 'sport');
+                    } else if (event.source === CALENDAR_SOURCES.MEAL) {
+                      router.push(`/food/meals/${event.source_id}/cook`);
+                    } else if (event.source === CALENDAR_SOURCES.PLANNED_MEAL) {
+                      const plannedMeal = events.find(ev => ev.source === CALENDAR_SOURCES.PLANNED_MEAL && ev.id === event.id);
+                      if (plannedMeal && plannedMeal.meal_id) {
+                        router.push(`/food/meals/${plannedMeal.meal_id}/cook`);
+                      } else {
+                        router.push(`/food/planner/${event.source_id}`);
+                      }
                     } else {
-                      // For non-fitness events, use the existing route logic
+                      // For other events, use the existing route logic
                       const route = getCalendarEventRoute(event.source, event.source_id);
                       router.push(route);
                     }
@@ -392,8 +401,17 @@ export default function CalendarView() {
                         handleFitnessEventClick(event, 'cardio');
                       } else if (event.source === CALENDAR_SOURCES.SPORT) {
                         handleFitnessEventClick(event, 'sport');
+                      } else if (event.source === CALENDAR_SOURCES.MEAL) {
+                        router.push(`/food/meals/${event.source_id}/cook`);
+                      } else if (event.source === CALENDAR_SOURCES.PLANNED_MEAL) {
+                        const plannedMeal = events.find(ev => ev.source === CALENDAR_SOURCES.PLANNED_MEAL && ev.id === event.id);
+                        if (plannedMeal && plannedMeal.meal_id) {
+                          router.push(`/food/meals/${plannedMeal.meal_id}/cook`);
+                        } else {
+                          router.push(`/food/planner/${event.source_id}`);
+                        }
                       } else {
-                        // For non-fitness events, use the existing route logic
+                        // For other events, use the existing route logic
                         const route = getCalendarEventRoute(event.source, event.source_id);
                         router.push(route);
                       }
