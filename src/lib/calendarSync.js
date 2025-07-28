@@ -40,7 +40,7 @@ export const createCalendarEventForEntity = async (type, entity) => {
         title = `Sport: ${entity.activity_type}`;
         start_time = entity.date ? new Date(entity.date).toISOString() : new Date().toISOString();
         end_time = entity.end_time ? new Date(entity.end_time).toISOString() : null;
-        description = entity.notes || '';
+        description = entity.performance_notes || entity.notes || '';
         break;
       case CALENDAR_SOURCES.EXPENSE:
         title = `Expense: ${entity.name} - $${entity.amount}`;

@@ -55,19 +55,27 @@ export default function PlannedWorkoutForm({ onSuccess }) {
 
       const insertData = {
           user_id: userId,
-          notes: formData.notes,
           status: 'planned',
           ...(formData.type === 'workout' && {
               title: formData.title,
               date: formData.startTime ? formData.startTime.split('T')[0] : new Date().toISOString().split('T')[0],
               start_time: formData.startTime || null,
-              end_time: formData.endTime || null
+              end_time: formData.endTime || null,
+              notes: formData.notes
           }),
-          ...(formData.type !== 'workout' && {
+          ...(formData.type === 'cardio' && {
               activity_type: formData.title.trim(),
               date: formData.startTime ? formData.startTime.split('T')[0] : new Date().toISOString().split('T')[0],
               start_time: formData.startTime || null,
-              end_time: formData.endTime || null
+              end_time: formData.endTime || null,
+              notes: formData.notes
+          }),
+          ...(formData.type === 'sports' && {
+              activity_type: formData.title.trim(),
+              date: formData.startTime ? formData.startTime.split('T')[0] : new Date().toISOString().split('T')[0],
+              start_time: formData.startTime || null,
+              end_time: formData.endTime || null,
+              performance_notes: formData.notes
           }),
       }
 
@@ -94,7 +102,8 @@ export default function PlannedWorkoutForm({ onSuccess }) {
         title: formData.title,
         activity_type: formData.type === 'cardio' || formData.type === 'sports' ? formData.title : undefined,
         date: formData.startTime,
-        notes: formData.notes,
+        notes: formData.type === 'sports' ? undefined : formData.notes,
+        performance_notes: formData.type === 'sports' ? formData.notes : undefined,
         end_time: formData.endTime && formData.endTime.trim() !== '' ? formData.endTime : null,
       });
 

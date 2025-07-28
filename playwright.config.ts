@@ -4,6 +4,7 @@ import { defineConfig, devices } from '@playwright/test';
 const config = {
   testDir: 'e2e',
   timeout: 30 * 1000,
+  workers: 1, // Use single worker to prevent race conditions
   use: {
     baseURL: 'http://localhost:3000',
     browserName: 'chromium',

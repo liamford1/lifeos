@@ -1,9 +1,19 @@
 /// <reference types="@playwright/test" />
 import { test, expect } from '@playwright/test';
+import { 
+  generateUniqueMealName, 
+  cleanupTestMeal, 
+  cleanupTestDataBeforeTest,
+  waitForDatabaseOperation 
+} from './test-utils';
 
 // Meal planning workflow: login, create meal, plan meal, verify in planner and calendar, cleanup
 
 test('Meal planning workflow: plan and verify meal', async ({ page }) => {
+  // Generate unique test data
+  const testMealName = generateUniqueMealName('Test Planned Meal');
+  const testId = `planned_meal_${Date.now()}`;
+  
   // Capture browser console logs
   page.on('console', msg => {
     console.log(`[BROWSER LOG] ${msg.type()}: ${msg.text()}`);
@@ -27,61 +37,9 @@ test('Meal planning workflow: plan and verify meal', async ({ page }) => {
   // Wait for dashboard to load by checking for visible text "Planner"
   await expect(page.locator('text=Planner')).toBeVisible({ timeout: 10000 });
 
-  // Clean up any existing test meals, planned meals, and calendar events from previous test runs
-  await page.evaluate(async () => {
-    const supabase = window.supabase;
-    const { data: session } = await supabase.auth.getSession();
-    const userId = session.session.user.id;
-    let cleanupIterations = 0;
-    const maxIterations = 5;
-    do {
-      if (cleanupIterations >= maxIterations) break;
-      // Find all test meals with name starting with 'Test Planned Meal'
-      const { data: foundMeals } = await supabase
-        .from('meals')
-        .select('id, name')
-        .eq('user_id', userId);
-      const testMeals = (foundMeals || []).filter((m: any) => m.name && m.name.startsWith('Test Planned Meal'));
-      const mealIds = testMeals.map((m: any) => m.id);
-      if (mealIds.length > 0) {
-        // Delete planned_meals first (FK constraint)
-        await supabase.from('planned_meals').delete().in('meal_id', mealIds);
-        // Delete meal_ingredients
-        await supabase.from('meal_ingredients').delete().in('meal_id', mealIds);
-        // Delete cooked_meals
-        await supabase.from('cooked_meals').delete().in('meal_id', mealIds);
-        // Delete cooking_sessions
-        await supabase.from('cooking_sessions').delete().in('meal_id', mealIds);
-        // Delete meals
-        await supabase.from('meals').delete().in('id', mealIds);
-      }
-      // Find all test planned meals (in case orphaned)
-      const { data: foundPlanned } = await supabase
-        .from('planned_meals')
-        .select('id')
-        .eq('user_id', userId);
-      const testPlannedMeals = (foundPlanned || []);
-      if (testPlannedMeals.length > 0) {
-        const plannedIds = testPlannedMeals.map((p: any) => p.id);
-        await supabase.from('planned_meals').delete().in('id', plannedIds);
-      }
-      // Clean up calendar events with title starting with 'Dinner: Test Planned Meal'
-      const { data: events } = await supabase
-        .from('calendar_events')
-        .select('id, title')
-        .eq('user_id', userId);
-      const testEvents = (events || []).filter((e: any) => e.title && e.title.startsWith('Dinner: Test Planned Meal'));
-      if (testEvents.length > 0) {
-        const eventIds = testEvents.map((e: any) => e.id);
-        await supabase.from('calendar_events').delete().in('id', eventIds);
-      }
-      cleanupIterations++;
-    } while (true);
-  });
-
-  // Generate a unique meal name for this test run
-  const uniqueSuffix = Math.random().toString(36).substring(2, 8);
-  const testMealName = `Test Planned Meal ${uniqueSuffix}`;
+  // Clean up any leftover test data from previous runs
+  await cleanupTestDataBeforeTest(page, testId);
+  await waitForDatabaseOperation(page, 1000);
 
   // Create a new meal
   await page.goto('http://localhost:3000/food/addmeal');
@@ -133,9 +91,37 @@ test('Meal planning workflow: plan and verify meal', async ({ page }) => {
 
   // Verify in calendar view and click the event
   await page.goto('http://localhost:3000/');
+  
+  // Wait for calendar to load
+  await page.waitForLoadState('networkidle');
+  await page.waitForTimeout(2000);
+  
+  // Look for the calendar event with the correct title format
   const event = page.getByTestId(/calendar-event-/)
     .filter({ hasText: `Dinner: ${testMealName}` })
     .first();
+  
+  // Debug: Check if the event exists
+  const eventExists = await event.isVisible().catch(() => false);
+  if (!eventExists) {
+    console.log('[E2E] Calendar event not found, checking database...');
+    const calendarEvents = await page.evaluate(async (mealName) => {
+      const supabase = window.supabase;
+      const { data: session } = await supabase.auth.getSession();
+      const userId = session.session.user.id;
+      
+      const { data: events } = await supabase
+        .from('calendar_events')
+        .select('*')
+        .eq('user_id', userId)
+        .ilike('title', `%${mealName}%`);
+      
+      return events;
+    }, testMealName);
+    
+    console.log('[E2E] Calendar events found:', calendarEvents);
+  }
+  
   await expect(event).toBeVisible({ timeout: 10000 });
   await event.scrollIntoViewIfNeeded();
   await event.click();
@@ -163,11 +149,18 @@ test('Meal planning workflow: plan and verify meal', async ({ page }) => {
 
   // Delete the meal
   await page.goto('http://localhost:3000/food/meals');
-  const testMealCard = page.locator('a', { hasText: /Test Planned Meal/ }).first();
+  
+  // Find the specific meal by its exact name
+  const testMealCard = page.locator('a', { hasText: testMealName }).first();
   await expect(testMealCard).toBeVisible({ timeout: 10000 });
-  const mealDeleteButton = testMealCard.locator('xpath=..').locator('button', { hasText: /delete/i });
+  
+  // Get the parent container and find the delete button
+  const mealContainer = testMealCard.locator('xpath=..');
+  const mealDeleteButton = mealContainer.locator('button', { hasText: /delete/i });
   await expect(mealDeleteButton).toBeVisible({ timeout: 5000 });
   await mealDeleteButton.click();
+  
+  // Wait for the meal to be deleted
   await expect(testMealCard).not.toBeVisible({ timeout: 10000 });
 
   // Reload and confirm neither appear in planner, calendar, or meal list
@@ -178,20 +171,8 @@ test('Meal planning workflow: plan and verify meal', async ({ page }) => {
   await expect(page.getByRole('heading', { name: /meals/i })).toBeVisible({ timeout: 10000 });
   // No global getByText('Test Planned Meal') assertion here
 
-  // Clean up calendar events for planned meals (by unique title, any date)
-  await page.evaluate(async (eventTitle: string) => {
-    const supabase = window.supabase;
-    const { data: session } = await supabase.auth.getSession();
-    const userId = session.session.user.id;
-    // Delete all calendar events for this user and title (any date)
-    const { data: events } = await supabase
-      .from('calendar_events')
-      .select('id')
-      .eq('user_id', userId)
-      .eq('title', eventTitle);
-    if (events && events.length > 0) {
-      const eventIds = events.map((e: any) => e.id);
-      await supabase.from('calendar_events').delete().in('id', eventIds);
-    }
-  }, `Dinner: ${testMealName}`);
+  // Clean up test data
+  await cleanupTestMeal(page, testMealName);
+  
+  await waitForDatabaseOperation(page, 500);
 }); 
