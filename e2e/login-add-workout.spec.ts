@@ -27,14 +27,7 @@ test.describe('Login and add workout', () => {
     const testId = Date.now().toString();
     
     // Capture browser console logs
-    page.on('console', msg => {
-      console.log(`[BROWSER LOG] ${msg.type()}: ${msg.text()}`);
-    });
-
-    // Log 406 responses
-    page.on('response', res => {
-      if (res.status() === 406) console.log('406:', res.url());
-    });
+    
 
     // Go to /auth and login
     await page.goto('http://localhost:3000/auth');
@@ -66,13 +59,12 @@ test.describe('Login and add workout', () => {
     // Fill the start workout form (title and date), then submit
     const titleInput = page.getByPlaceholder('e.g. Push Day, Full Body, etc.');
     if (!(await titleInput.isVisible({ timeout: 5000 }))) {
-      console.log('Current URL:', page.url());
-      console.log('Page content:', await page.content());
+      
       
       // Check if we're on a loading page
       const loadingText = await page.getByText('Loading workout session...').isVisible().catch(() => false);
       if (loadingText) {
-        console.log('Found loading text, waiting for it to disappear...');
+
         await page.waitForSelector('text=Loading workout session...', { state: 'hidden', timeout: 10000 });
       }
       
@@ -116,7 +108,7 @@ test.describe('Login and add workout', () => {
       return workouts?.[0] || null;
     }, uniqueTitle);
 
-    console.log('[E2E] Workout created:', workoutCreated);
+
 
     // Assert for either the new workout or the empty state
     const workoutVisible = await page.getByText(uniqueTitle).isVisible().catch(() => false);
@@ -160,8 +152,6 @@ test.describe('Login and add workout', () => {
     
     // If none of the expected elements are visible, check the database state
     if (!workoutInProgress && !workoutInProgressExact && !loggingText && !workoutTitle) {
-      console.log('[E2E] Workout session not visible in UI, checking database state...');
-      
       const workoutState = await page.evaluate(async (title) => {
         const supabase = window.supabase;
         const { data: session } = await supabase.auth.getSession();
@@ -176,17 +166,12 @@ test.describe('Login and add workout', () => {
           .order('created_at', { ascending: false })
           .limit(1);
         
-        console.log('[E2E] Workout state in database:', workouts);
         return workouts?.[0] || null;
       }, uniqueTitle);
       
-      console.log('[E2E] Workout state after reload:', workoutState);
-      
       if (workoutState) {
-        console.log('[E2E] Workout exists in database but not in UI - this might be a UI issue');
         // Continue with the test since the workout exists in the database
       } else {
-        console.log('[E2E] No workout found in database - session was not persisted');
         throw new Error('Workout session was not persisted after page reload');
       }
     } else {

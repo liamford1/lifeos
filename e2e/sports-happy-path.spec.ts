@@ -27,14 +27,7 @@ test.describe('Sports happy path', () => {
     const testId = Date.now().toString();
     
     // Capture browser console logs
-    page.on('console', msg => {
-      console.log(`[BROWSER LOG] ${msg.type()}: ${msg.text()}`);
-    });
-
-    // Log 406 responses
-    page.on('response', res => {
-      if (res.status() === 406) console.log('406:', res.url());
-    });
+    
 
     // Go to /auth
     await page.goto('http://localhost:3000/auth');
@@ -55,7 +48,7 @@ test.describe('Sports happy path', () => {
     // ✅ Sanity check: window.supabase is defined
     await page.evaluate(() => {
       if (!window.supabase) throw new Error('[E2E] ❌ window.supabase is still not defined');
-      console.log('[E2E] ✅ window.supabase is defined');
+  
     });
 
     // Navigate to Fitness section
@@ -116,11 +109,8 @@ test.describe('Sports happy path', () => {
         .order('created_at', { ascending: false })
         .limit(1);
       
-      console.log('[E2E] Sports session created in database:', sportsSessions);
       return sportsSessions?.[0] || null;
     }, activityType);
-
-    console.log('[E2E] Sports session created:', sessionCreated);
 
     // Verify the session is now active
     await expect(page.getByRole('heading', { name: /sports session in progress/i })).toBeVisible();
@@ -163,8 +153,6 @@ test.describe('Sports happy path', () => {
     
     // If none of the expected elements are visible, check the database state
     if (!sportsInProgress && !loggingText && !activityTypeText) {
-      console.log('[E2E] Sports session not visible in UI, checking database state...');
-      
       const sportsState = await page.evaluate(async (type) => {
         const supabase = window.supabase;
         const { data: session } = await supabase.auth.getSession();
@@ -179,17 +167,12 @@ test.describe('Sports happy path', () => {
           .order('created_at', { ascending: false })
           .limit(1);
         
-        console.log('[E2E] Sports session state in database:', sportsSessions);
         return sportsSessions?.[0] || null;
       }, activityType);
       
-      console.log('[E2E] Sports session state after reload:', sportsState);
-      
       if (sportsState) {
-        console.log('[E2E] Sports session exists in database but not in UI - this might be a UI issue');
         // Continue with the test since the sports session exists in the database
       } else {
-        console.log('[E2E] No sports session found in database - session was not persisted');
         throw new Error('Sports session was not persisted after page reload');
       }
     } else {

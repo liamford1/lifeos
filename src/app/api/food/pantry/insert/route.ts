@@ -4,7 +4,6 @@ import { insertPantryItem } from "@/lib/api/food";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    console.log('API received payload:', body);
     await insertPantryItem(body);
     return NextResponse.json({ success: true });
   } catch (err: any) {

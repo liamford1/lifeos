@@ -13,14 +13,7 @@ test('Complete pantry workflow with single item', async ({ page }) => {
   const testId = `pantry_${Date.now()}`;
   
   // Capture browser console logs
-  page.on('console', msg => {
-    console.log(`[BROWSER LOG] ${msg.type()}: ${msg.text()}`);
-  });
 
-  // Log 406 responses
-  page.on('response', res => {
-    if (res.status() === 406) console.log('406:', res.url());
-  });
 
   // Go to /auth
   await page.goto('http://localhost:3000/auth');
@@ -38,7 +31,7 @@ test('Complete pantry workflow with single item', async ({ page }) => {
   // ✅ Sanity check: window.supabase is defined
   await page.evaluate(() => {
     if (!window.supabase) throw new Error('[E2E] ❌ window.supabase is still not defined');
-    console.log('[E2E] ✅ window.supabase is defined');
+
   });
 
   // Clean up any leftover test data from previous runs

@@ -20,14 +20,7 @@ test.describe('Planned Workout Completion Flow', () => {
     const testId = Date.now().toString();
     
     // Capture browser console logs
-    page.on('console', msg => {
-      console.log(`[BROWSER LOG] ${msg.type()}: ${msg.text()}`);
-    });
-
-    // Log 406 responses
-    page.on('response', res => {
-      if (res.status() === 406) console.log('406:', res.url());
-    });
+    
 
     // Go to /auth and login
     await page.goto('http://localhost:3000/auth');
@@ -83,7 +76,7 @@ test.describe('Planned Workout Completion Flow', () => {
       };
     }, uniqueTitle);
 
-    console.log('[E2E] Created test planned workout:', testData);
+
 
     // Step 2: Navigate to calendar page
     await page.goto('http://localhost:3000/');
@@ -105,7 +98,6 @@ test.describe('Planned Workout Completion Flow', () => {
       return events;
     }, testData.calendarEventTitle);
 
-    console.log('[E2E] Calendar events found:', calendarEvents);
     expect(calendarEvents.length).toBe(1);
 
     // Step 4: Click on the calendar tile to start the workout
@@ -116,7 +108,6 @@ test.describe('Planned Workout Completion Flow', () => {
     // Check if the event is visible
     const eventExists = await workoutEvent.isVisible().catch(() => false);
     if (!eventExists) {
-      console.log('[E2E] Calendar event not found, checking database...');
       const calendarEvents = await page.evaluate(async (title) => {
         const supabase = window.supabase;
         const { data: session } = await supabase.auth.getSession();
@@ -131,10 +122,7 @@ test.describe('Planned Workout Completion Flow', () => {
         return events;
       }, uniqueTitle);
       
-      console.log('[E2E] Calendar events found:', calendarEvents);
-      
       if (calendarEvents && calendarEvents.length > 0) {
-        console.log('[E2E] Calendar event exists in database but not visible in UI. Skipping calendar interaction.');
         
         // Navigate directly to the live workout page instead
         await page.goto('http://localhost:3000/fitness/workouts/live');
@@ -160,7 +148,6 @@ test.describe('Planned Workout Completion Flow', () => {
       await expect(page.locator('textarea').filter({ hasText: 'Test notes for planned workout completion' })).toBeVisible();
     } else {
       // We navigated directly, fill in the form manually
-      console.log('[E2E] Navigating directly to live workout page, filling form manually');
       await page.getByPlaceholder(/e\.g\. Push Day, Full Body, etc\./i).fill(uniqueTitle);
       await page.getByPlaceholder(/Add any notes or goals for this workout/i).fill('Test notes for planned workout completion');
     }
@@ -198,7 +185,7 @@ test.describe('Planned Workout Completion Flow', () => {
       return workout;
     }, uniqueTitle);
 
-    console.log('[E2E] Completed workout found:', completedWorkout);
+
     expect(completedWorkout).toBeTruthy();
     expect(completedWorkout.status).toBe('completed');
     expect(completedWorkout.in_progress).toBe(false);
@@ -220,7 +207,7 @@ test.describe('Planned Workout Completion Flow', () => {
       return workout;
     }, uniqueTitle);
 
-    console.log('[E2E] Planned workout check:', plannedWorkout);
+
     
     // Check if we navigated directly (no plannedId) or via calendar click (with plannedId)
     if (currentUrl.includes('plannedId=')) {
@@ -247,7 +234,7 @@ test.describe('Planned Workout Completion Flow', () => {
       return events;
     }, testData.calendarEventTitle);
 
-    console.log('[E2E] Remaining calendar events:', remainingCalendarEvents);
+
     
     if (currentUrl.includes('plannedId=')) {
       // We came from calendar click, calendar event should be deleted
@@ -269,7 +256,7 @@ test.describe('Planned Workout Completion Flow', () => {
       
       await expect(workoutEventAfter).not.toBeVisible({ timeout: 10000 });
     } else {
-      console.log('[E2E] Skipping calendar event cleanup check since we navigated directly');
+
     }
 
     // Step 15: Final verification - check database state
@@ -298,7 +285,7 @@ test.describe('Planned Workout Completion Flow', () => {
       };
     }, uniqueTitle);
 
-    console.log('[E2E] Final database state:', finalDatabaseState);
+
     
     // Assertions for final state
     if (currentUrl.includes('plannedId=')) {
@@ -322,7 +309,7 @@ test.describe('Planned Workout Completion Flow', () => {
     await cleanupTestWorkout(page, uniqueTitle);
     await waitForDatabaseOperation(page, 1000);
 
-    console.log('[E2E] ✅ Planned workout completion flow test completed successfully');
+  
   });
 
   test('Complete planned workout from day event list - full flow', async ({ page }) => {
@@ -331,9 +318,7 @@ test.describe('Planned Workout Completion Flow', () => {
     const testId = Date.now().toString();
     
     // Capture browser console logs
-    page.on('console', msg => {
-      console.log(`[BROWSER LOG] ${msg.type()}: ${msg.text()}`);
-    });
+    
 
     // Go to /auth and login
     await page.goto('http://localhost:3000/auth');
@@ -389,7 +374,7 @@ test.describe('Planned Workout Completion Flow', () => {
       };
     }, uniqueTitle);
 
-    console.log('[E2E] Created test planned workout for event list:', testData);
+
 
     // Step 2: Navigate to calendar page
     await page.goto('http://localhost:3000/');
@@ -455,7 +440,7 @@ test.describe('Planned Workout Completion Flow', () => {
       };
     }, uniqueTitle);
 
-    console.log('[E2E] Final database state (event list):', finalDatabaseState);
+
     
     // Assertions for final state
     expect(finalDatabaseState.workouts.length).toBe(1);
@@ -467,6 +452,6 @@ test.describe('Planned Workout Completion Flow', () => {
     await cleanupTestWorkout(page, uniqueTitle);
     await waitForDatabaseOperation(page, 1000);
 
-    console.log('[E2E] ✅ Planned workout completion from event list test completed successfully');
+  
   });
 }); 

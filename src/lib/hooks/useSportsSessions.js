@@ -12,7 +12,6 @@ export function useSportsSessions() {
       return null;
     }
     
-    console.log('Fetching sports sessions for user:', userId);
     const { data, error } = await supabase
       .from('fitness_sports')
       .select('*')
@@ -25,7 +24,6 @@ export function useSportsSessions() {
       return null;
     }
     
-    console.log('Fetched sports sessions:', data?.length || 0);
     return data;
   };
 

@@ -8,14 +8,10 @@ test.describe('Login and add meal', () => {
     const uniqueMealName = generateUniqueMealName('Test Chicken Parmesan');
     
     // Capture browser console logs
-    page.on('console', msg => {
-      console.log(`[BROWSER LOG] ${msg.type()}: ${msg.text()}`);
-    });
+    
 
     // Log 406 responses
-    page.on('response', res => {
-      if (res.status() === 406) console.log('406:', res.url());
-    });
+    
 
     // Go to /auth
     await page.goto('http://localhost:3000/auth');
@@ -184,9 +180,6 @@ test.describe('Login and add meal', () => {
     await expect(page.getByTestId('cooking-session-indicator')).toBeVisible();
     await expect(page.getByTestId('cooking-session-indicator')).toHaveText(/step 2 of 2/i);
 
-    // Extra debug: log before reload
-    console.log('[E2E] About to reload page to check session persistence');
-
     // Reload the page and verify the cooking session persists
     await page.reload();
     // Wait for the cooking session to restore after reload
@@ -194,12 +187,8 @@ test.describe('Login and add meal', () => {
     // Additional wait for the cooking session state to be fully restored
     await page.waitForTimeout(3000);
 
-    // Extra debug: log after reload
-    console.log('[E2E] Page reloaded, checking session state');
-
     // Check if we're still on the cook page and if the cooking session is active
     const currentUrl = page.url();
-    console.log('[E2E] Current URL after reload:', currentUrl);
 
          // Extract meal ID from the current URL for navigation
      const mealIdMatch = currentUrl.match(/\/food\/meals\/([^\/]+)/);
@@ -213,16 +202,12 @@ test.describe('Login and add meal', () => {
      }
 
     // First, check if the cooking session UI is visible (this is the primary check)
-    console.log('[E2E] Checking if cooking session UI is visible after reload');
     const cookingSessionVisible = await page.getByTestId('current-step').isVisible();
-    console.log('[E2E] Cooking session UI visible:', cookingSessionVisible);
 
     if (cookingSessionVisible) {
-      console.log('[E2E] Cooking session UI is visible, checking step content');
       // Verify the current step is still step 2
       await expect(page.getByTestId('current-step')).toHaveText('Coat with breadcrumbs and fry until golden.');
     } else {
-      console.log('[E2E] Cooking session UI not visible, checking DB state');
       // Check the database state as a fallback
       const cookingSessionState = await page.evaluate(async () => {
         const supabase = window.supabase;
@@ -237,30 +222,18 @@ test.describe('Login and add meal', () => {
           .order('created_at', { ascending: false })
           .limit(1);
         
-        console.log('[E2E] Cooking session state:', cookingSessions);
         return cookingSessions?.[0] || null;
       });
-      console.log('[E2E] Cooking session state after reload:', cookingSessionState);
       
       // If the cooking session is null, it means it was properly ended
       // This is expected behavior after clicking "Finish Cooking"
       if (!cookingSessionState) {
-        console.log('[E2E] Cooking session was properly ended - this is expected behavior');
-        
-        // Debug: Check what's actually on the page
-        const pageContent = await page.content();
-        console.log('[E2E] Page contains "Cook Meal":', pageContent.includes('Cook Meal'));
-        console.log('[E2E] Page contains "cook meal":', pageContent.includes('cook meal'));
-        console.log('[E2E] Page contains "Start Cooking":', pageContent.includes('Start Cooking'));
-        console.log('[E2E] Page contains "start cooking":', pageContent.includes('start cooking'));
         
         // Check if we're still on the cook page
         const currentUrl = page.url();
-        console.log('[E2E] Current URL when checking for cook button:', currentUrl);
         
                  // If we're not on the cook page, navigate back to it
          if (!currentUrl.includes('/cook')) {
-           console.log('[E2E] Not on cook page, navigating back...');
            await page.goto(`http://localhost:3000/food/meals/${mealId}/cook`);
            await page.waitForLoadState('domcontentloaded');
            await page.waitForTimeout(2000);
@@ -273,9 +246,6 @@ test.describe('Login and add meal', () => {
         // Check if either button is visible
         const cookButtonVisible = await cookButton.isVisible();
         const startButtonVisible = await startButton.isVisible();
-        
-        console.log('[E2E] Cook button visible:', cookButtonVisible);
-        console.log('[E2E] Start button visible:', startButtonVisible);
         
         // Verify we're back to the initial state - try both button names
         if (cookButtonVisible) {

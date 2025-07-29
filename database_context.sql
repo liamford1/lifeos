@@ -22,8 +22,8 @@ CREATE TABLE public.cooked_meals (
   cook_count integer DEFAULT 1,
   last_cooked_at timestamp with time zone DEFAULT now(),
   CONSTRAINT cooked_meals_pkey PRIMARY KEY (user_id, meal_id),
-  CONSTRAINT cooked_meals_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id),
-  CONSTRAINT cooked_meals_meal_id_fkey FOREIGN KEY (meal_id) REFERENCES public.meals(id)
+  CONSTRAINT cooked_meals_meal_id_fkey FOREIGN KEY (meal_id) REFERENCES public.meals(id),
+  CONSTRAINT cooked_meals_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id)
 );
 CREATE TABLE public.cooking_sessions (
   id uuid NOT NULL DEFAULT gen_random_uuid(),

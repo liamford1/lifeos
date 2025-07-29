@@ -103,8 +103,6 @@ export function CookingSessionProvider({ children }) {
       .then(({ data, error }) => {
         if (error) {
           console.error('[CookingSession] Failed to update current_step:', error);
-        } else {
-          console.log('[CookingSession] Successfully updated current_step to:', currentStep);
         }
       });
   }, [currentStep, sessionId]);

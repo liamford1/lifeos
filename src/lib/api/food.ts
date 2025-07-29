@@ -11,7 +11,6 @@ export async function insertPantryItem(item: {
   added_from?: string;
   added_at?: string;
 }) {
-  console.log('insertPantryItem called with:', item);
   
   try {
     // Try server-side first
@@ -21,15 +20,12 @@ export async function insertPantryItem(item: {
       console.error('Server-side Supabase error:', error);
       throw error;
     }
-    console.log('Pantry item inserted successfully via server-side');
   } catch (serverError) {
-    console.log('Server-side failed, trying client-side:', serverError);
     // Fallback to client-side
     const { error } = await clientSupabase.from("food_items").insert(item);
     if (error) {
       console.error('Client-side Supabase error:', error);
       throw error;
     }
-    console.log('Pantry item inserted successfully via client-side');
   }
 } 

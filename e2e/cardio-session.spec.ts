@@ -26,14 +26,7 @@ test('Complete Cardio Session Lifecycle', async ({ page }) => {
   const testId = `cardio_${Date.now()}`;
   
   // Capture browser console logs
-  page.on('console', msg => {
-    console.log(`[BROWSER LOG] ${msg.type()}: ${msg.text()}`);
-  });
 
-  // Log 406 responses
-  page.on('response', res => {
-    if (res.status() === 406) console.log('406:', res.url());
-  });
 
   // Go to /auth
   await page.goto('http://localhost:3000/auth');
@@ -55,7 +48,7 @@ test('Complete Cardio Session Lifecycle', async ({ page }) => {
   // ✅ Sanity check: window.supabase is defined
   await page.evaluate(() => {
     if (!window.supabase) throw new Error('[E2E] ❌ window.supabase is still not defined');
-    console.log('[E2E] ✅ window.supabase is defined');
+
   });
 
   // Navigate to Fitness section
@@ -134,8 +127,6 @@ test('Complete Cardio Session Lifecycle', async ({ page }) => {
   
   // If none of the expected elements are visible, check the database state
   if (!cardioInProgress && !loggingText && !activityTypeText) {
-    console.log('[E2E] Cardio session not visible in UI, checking database state...');
-    
     const cardioState = await page.evaluate(async (type) => {
       const supabase = window.supabase;
       const { data: session } = await supabase.auth.getSession();
@@ -150,17 +141,12 @@ test('Complete Cardio Session Lifecycle', async ({ page }) => {
         .order('created_at', { ascending: false })
         .limit(1);
       
-      console.log('[E2E] Cardio session state in database:', cardioSessions);
       return cardioSessions?.[0] || null;
     }, activityType);
     
-    console.log('[E2E] Cardio session state after reload:', cardioState);
-    
     if (cardioState) {
-      console.log('[E2E] Cardio session exists in database but not in UI - this might be a UI issue');
       // Continue with the test since the cardio session exists in the database
     } else {
-      console.log('[E2E] No cardio session found in database - session was not persisted');
       throw new Error('Cardio session was not persisted after page reload');
     }
   } else {
@@ -284,14 +270,14 @@ test('Complete Cardio Session Lifecycle', async ({ page }) => {
   }, activityType);
   
   expect(sessionId).toBeTruthy();
-  console.log('[E2E] Cardio session ID:', sessionId);
+  
   
   // Try clicking on the list item first
   const cardioListItem = page.locator('li').filter({ hasText: activityType }).first();
   await expect(cardioListItem).toBeVisible();
   
   // Debug: log the current URL before clicking
-  console.log('[E2E] Current URL before clicking cardio session:', page.url());
+  
   
   // Click on the list item
   await cardioListItem.click();
@@ -299,16 +285,14 @@ test('Complete Cardio Session Lifecycle', async ({ page }) => {
   // Wait for navigation to the details page with a reasonable timeout
   try {
     await page.waitForURL(/\/fitness\/cardio\/[\w-]+$/, { timeout: 10000 });
-    console.log('[E2E] Successfully navigated via click');
-  } catch (error) {
-    console.log('[E2E] Click navigation failed, trying direct navigation');
+        } catch (error) {
     // Fallback: navigate directly to the details page
     await page.goto(`http://localhost:3000/fitness/cardio/${sessionId}`);
     await page.waitForURL(/\/fitness\/cardio\/[\w-]+$/, { timeout: 10000 });
   }
   
   // Debug: log the URL after navigation
-  console.log('[E2E] URL after navigation:', page.url());
+  
 
   // Verify we're on the details page and content is visible
   await expect(page.getByRole('heading', { name: activityType })).toBeVisible();
@@ -401,5 +385,5 @@ test('Complete Cardio Session Lifecycle', async ({ page }) => {
   
   await waitForDatabaseOperation(page, 500);
 
-  console.log('[E2E] ✅ Complete cardio session lifecycle test completed successfully');
+
 }); 

@@ -261,33 +261,23 @@ export default function CalendarView() {
 
   const handlePlannedMealClick = async (event) => {
     try {
-      console.log('[DEBUG] handlePlannedMealClick called with event:', event);
-      
       const { data: plannedMeal, error } = await supabase
         .from('planned_meals')
         .select('meal_id')
         .eq('id', event.source_id)
         .single();
 
-      console.log('[DEBUG] Planned meal query result:', { plannedMeal, error });
-
       if (error) {
-        console.error('[DEBUG] Error fetching planned meal:', error);
         showError('Could not fetch planned meal details.');
         return;
       }
 
-      console.log('[DEBUG] Planned meal found:', plannedMeal);
-
       if (plannedMeal && plannedMeal.meal_id) {
-        console.log('[DEBUG] Navigating to cook page with meal_id:', plannedMeal.meal_id);
         router.push(`/food/meals/${plannedMeal.meal_id}/cook`);
       } else {
-        console.log('[DEBUG] No meal_id found, navigating to planner page');
         router.push(`/food/planner/${event.source_id}`);
       }
     } catch (error) {
-      console.error('[DEBUG] Error handling planned meal click:', error);
       showError('Could not process planned meal click.');
     }
   };

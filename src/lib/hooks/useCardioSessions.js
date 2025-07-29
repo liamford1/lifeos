@@ -12,7 +12,6 @@ export function useCardioSessions() {
       return null;
     }
     
-    console.log('Fetching cardio sessions for user:', userId);
     const { data, error } = await supabase
       .from('fitness_cardio')
       .select('*')
@@ -26,7 +25,6 @@ export function useCardioSessions() {
       return null;
     }
     
-    console.log('Fetched cardio sessions:', data?.length || 0);
     return data;
   };
 

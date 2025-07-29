@@ -50,15 +50,7 @@ export const checkAndFixCalendarEvents = async () => {
           if (process.env.NODE_ENV !== "production") {
             console.error('❌ Error updating event', update.id, ':', updateError)
           }
-        } else {
-          if (process.env.NODE_ENV !== "production") {
-            console.log('✅ Updated event', update.id, 'to source:', update.source)
-          }
         }
-      }
-    } else {
-      if (process.env.NODE_ENV !== "production") {
-        console.log('✅ No events need updating')
       }
     }
 
@@ -91,10 +83,6 @@ export const checkSourceTypes = async () => {
       sourceCounts[event.source] = (sourceCounts[event.source] || 0) + 1
     })
 
-    if (process.env.NODE_ENV !== "production") {
-      console.log('📊 Source type counts:', sourceCounts)
-    }
-    
     // Show some examples of each source type
     const examples = {}
     events.forEach(event => {
@@ -105,10 +93,6 @@ export const checkSourceTypes = async () => {
         examples[event.source].push(event.title)
       }
     })
-
-    if (process.env.NODE_ENV !== "production") {
-      console.log('📋 Examples by source type:', examples)
-    }
 
   } catch (error) {
     if (process.env.NODE_ENV !== "production") {

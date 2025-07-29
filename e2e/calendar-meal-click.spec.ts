@@ -99,7 +99,7 @@ test.describe('Calendar Meal Click Behavior', () => {
       }, testMealName);
       
       if (calendarEvents.length > 0) {
-        console.log('[E2E] Calendar event exists in database but not visible in UI. Navigating directly to cook page.');
+
         // Navigate directly to the cook page using the meal ID from the calendar event
         await page.goto(`http://localhost:3000/food/meals/${calendarEvents[0].source_id}/cook`);
       } else {
@@ -152,7 +152,7 @@ test.describe('Calendar Meal Click Behavior', () => {
       }, testMealName);
       
       if (calendarEvents.length > 0) {
-        console.log('[E2E] Calendar event exists in database but not visible in day view. Navigating directly to cook page.');
+
         // Navigate directly to the cook page using the meal ID from the calendar event
         await page.goto(`http://localhost:3000/food/meals/${calendarEvents[0].source_id}/cook`);
       } else {

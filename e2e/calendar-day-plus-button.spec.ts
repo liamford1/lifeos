@@ -31,7 +31,7 @@ test.describe('Calendar Day Plus Button Functionality', () => {
     // Debug: Check if the button is rendered
     const allButtons = page.locator('button[aria-label="Add event for this day"]');
     const buttonCount = await allButtons.count();
-    console.log(`Found ${buttonCount} buttons with aria-label="Add event for this day"`);
+
     
     // Verify the "+" button appears (anywhere on the page)
     const plusButton = page.locator('button[aria-label="Add event for this day"]').first();
@@ -44,7 +44,7 @@ test.describe('Calendar Day Plus Button Functionality', () => {
     await expect(page.getByText('What would you like to plan?')).toBeVisible();
     // Check for the date text in the modal (using a more flexible approach)
     const dateText = await page.locator('div.text-sm.font-normal.opacity-75.mt-1').textContent();
-    console.log('Date text in modal:', dateText);
+
     await expect(page.locator('div.text-sm.font-normal.opacity-75.mt-1')).toBeVisible();
     
     // Verify all three options are present
@@ -134,7 +134,7 @@ test.describe('Calendar Day Plus Button Functionality', () => {
     // Initially, check if there's already a "+" button visible
     const plusButtons = page.locator('button[aria-label="Add event for this day"]');
     const initialCount = await plusButtons.count();
-    console.log(`Initial button count: ${initialCount}`);
+
     
     // If there's already a button, click on a different day to move it
     if (initialCount > 0) {
