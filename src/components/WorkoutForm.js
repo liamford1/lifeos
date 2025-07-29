@@ -66,7 +66,7 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
       originalSetIds.current = allSetIds;
     };
     fetchSets();
-  }, [exercises, router]);
+  }, [exercises]);
 
   useEffect(() => {
     if (Object.keys(setsByExercise).length > 0) {

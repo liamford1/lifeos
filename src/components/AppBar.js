@@ -40,7 +40,7 @@ export default function AppBar() {
       }
     };
     getProfile();
-  }, [user, loading, session]);
+  }, [user, loading, session?.access_token]);
 
   // Handle user logout and redirect
   const handleLogout = async () => {
