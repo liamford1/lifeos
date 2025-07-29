@@ -17,6 +17,7 @@ import { navigateToSource } from '@/lib/navigateToSource';
 import { MdOutlineCalendarToday } from 'react-icons/md';
 import SharedDeleteButton from '@/components/SharedDeleteButton';
 import { supabase } from '@/lib/supabaseClient';
+import { MdRestaurant, MdFitnessCenter, MdEvent } from 'react-icons/md';
 
 export default function CalendarView() {
   const { showSuccess, showError } = useToast();
@@ -25,6 +26,7 @@ export default function CalendarView() {
   // Remove local events state, use eventsQuery.data
   const { user, loading } = useUser();
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showSelectionModal, setShowSelectionModal] = useState(false);
   const [newEvent, setNewEvent] = useState({
     title: '',
     start_time: '',
@@ -82,6 +84,24 @@ export default function CalendarView() {
       }
     } catch (error) {
       showError('Failed to add event.');
+    }
+  };
+
+  const handlePlanningSelection = (type) => {
+    setShowSelectionModal(false);
+    
+    switch (type) {
+      case 'general':
+        setShowAddModal(true);
+        break;
+      case 'meal':
+        router.push('/food/planner');
+        break;
+      case 'workout':
+        router.push('/fitness/planner');
+        break;
+      default:
+        break;
     }
   };
 
@@ -360,7 +380,7 @@ export default function CalendarView() {
         </div>
         {/* Floating Add Button */}
         <Button
-          onClick={() => setShowAddModal(true)}
+          onClick={() => setShowSelectionModal(true)}
           aria-label="Add calendar event"
           variant="secondary"
           className="fixed bottom-8 right-8 z-50 w-14 h-14 rounded-full bg-card text-base shadow-lg flex items-center justify-center text-3xl hover:bg-panel transition-colors border border-border focus:outline-none focus:ring-2 focus:ring-primary"
@@ -455,6 +475,62 @@ export default function CalendarView() {
           </ul>
         )}
       </div>
+
+      {showSelectionModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-surface p-6 rounded-lg w-96">
+            <h3 className="text-lg font-semibold mb-4">What would you like to plan?</h3>
+            <div className="space-y-3">
+              <Button
+                onClick={() => handlePlanningSelection('general')}
+                variant="secondary"
+                className="w-full justify-start p-4 h-auto"
+              >
+                <div className="flex items-center gap-3">
+                  <MdEvent className="w-6 h-6" />
+                  <div className="text-left">
+                    <div className="font-semibold">General Event</div>
+                    <div className="text-sm opacity-75">Add a calendar event</div>
+                  </div>
+                </div>
+              </Button>
+              
+              <Button
+                onClick={() => handlePlanningSelection('meal')}
+                variant="secondary"
+                className="w-full justify-start p-4 h-auto"
+              >
+                <div className="flex items-center gap-3">
+                  <MdRestaurant className="w-6 h-6" />
+                  <div className="text-left">
+                    <div className="font-semibold">Meal</div>
+                    <div className="text-sm opacity-75">Plan a meal for a specific date</div>
+                  </div>
+                </div>
+              </Button>
+              
+              <Button
+                onClick={() => handlePlanningSelection('workout')}
+                variant="secondary"
+                className="w-full justify-start p-4 h-auto"
+              >
+                <div className="flex items-center gap-3">
+                  <MdFitnessCenter className="w-6 h-6" />
+                  <div className="text-left">
+                    <div className="font-semibold">Workout</div>
+                    <div className="text-sm opacity-75">Plan a fitness activity</div>
+                  </div>
+                </div>
+              </Button>
+            </div>
+            <div className="flex gap-2 mt-4">
+              <Button onClick={() => setShowSelectionModal(false)} variant="secondary" className="w-full">
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {showAddModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
