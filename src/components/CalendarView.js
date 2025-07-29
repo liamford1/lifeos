@@ -27,6 +27,7 @@ export default function CalendarView() {
   const { user, loading } = useUser();
   const [showAddModal, setShowAddModal] = useState(false);
   const [showSelectionModal, setShowSelectionModal] = useState(false);
+  const [showSelectionModalForDate, setShowSelectionModalForDate] = useState(null);
   const [newEvent, setNewEvent] = useState({
     title: '',
     start_time: '',
@@ -56,7 +57,9 @@ export default function CalendarView() {
   const handleAddEvent = async () => {
     if (!user || !newEvent.title || !newEvent.start_time) return;
 
-    const dateStr = dayjs(selectedDate).format('YYYY-MM-DD');
+    // Use the date from the selection modal if available, otherwise use selectedDate
+    const dateToUse = showSelectionModalForDate || selectedDate;
+    const dateStr = dayjs(dateToUse).format('YYYY-MM-DD');
     const payload = {
       user_id: user.id,
       title: newEvent.title,
@@ -77,6 +80,7 @@ export default function CalendarView() {
       } else {
         setShowAddModal(false);
         setNewEvent({ title: '', start_time: '', end_time: '', description: '' });
+        setShowSelectionModalForDate(null);
         
         // Invalidate the events query to refresh the data
         queryClient.invalidateQueries({ queryKey: ["events", user?.id] });
@@ -87,18 +91,31 @@ export default function CalendarView() {
     }
   };
 
-  const handlePlanningSelection = (type) => {
+  const handlePlanningSelection = (type, selectedDateForPlanning = null) => {
     setShowSelectionModal(false);
+    
+    // Use the provided date or fall back to the currently selected date
+    const dateToUse = selectedDateForPlanning || selectedDate;
+    const dateStr = dayjs(dateToUse).format('YYYY-MM-DD');
     
     switch (type) {
       case 'general':
+        // Pre-fill the start time with the selected date
+        setNewEvent({
+          ...newEvent,
+          start_time: '',
+          end_time: '',
+          description: '',
+        });
         setShowAddModal(true);
         break;
       case 'meal':
-        router.push('/food/planner');
+        // Navigate to food planner with the selected date
+        router.push(`/food/planner?date=${dateStr}`);
         break;
       case 'workout':
-        router.push('/fitness/planner');
+        // Navigate to fitness planner with the selected date
+        router.push(`/fitness/planner?date=${dateStr}`);
         break;
       default:
         break;
@@ -295,6 +312,8 @@ export default function CalendarView() {
                 dayjs(event.start_time).isSame(date, 'day')
               );
 
+              const isSelectedDay = dayjs(date).isSame(selectedDate, 'day');
+              
               return (
                 <div className="space-y-1 overflow-hidden w-full h-full max-w-full relative">
                   {eventsOnThisDay.slice(0, 2).map((event) => {
@@ -371,6 +390,20 @@ export default function CalendarView() {
                     <div className="text-[10px] text-base">
                       +{eventsOnThisDay.length - 2} more
                     </div>
+                  )}
+                  
+                  {/* Add button for selected day */}
+                  {isSelectedDay && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setShowSelectionModalForDate(date);
+                      }}
+                      className="absolute bottom-0 right-0 w-5 h-5 bg-primary text-white rounded-full text-xs flex items-center justify-center hover:bg-primary/80 transition-colors shadow-sm z-10"
+                      aria-label="Add event for this day"
+                    >
+                      +
+                    </button>
                   )}
                 </div>
               );
@@ -476,13 +509,20 @@ export default function CalendarView() {
         )}
       </div>
 
-      {showSelectionModal && (
+      {(showSelectionModal || showSelectionModalForDate) && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-surface p-6 rounded-lg w-96">
-            <h3 className="text-lg font-semibold mb-4">What would you like to plan?</h3>
+            <h3 className="text-lg font-semibold mb-4">
+              What would you like to plan?
+              {showSelectionModalForDate && (
+                <div className="text-sm font-normal opacity-75 mt-1">
+                  for {dayjs(showSelectionModalForDate).format('MMMM D, YYYY')}
+                </div>
+              )}
+            </h3>
             <div className="space-y-3">
               <Button
-                onClick={() => handlePlanningSelection('general')}
+                onClick={() => handlePlanningSelection('general', showSelectionModalForDate)}
                 variant="secondary"
                 className="w-full justify-start p-4 h-auto"
               >
@@ -496,7 +536,7 @@ export default function CalendarView() {
               </Button>
               
               <Button
-                onClick={() => handlePlanningSelection('meal')}
+                onClick={() => handlePlanningSelection('meal', showSelectionModalForDate)}
                 variant="secondary"
                 className="w-full justify-start p-4 h-auto"
               >
@@ -510,7 +550,7 @@ export default function CalendarView() {
               </Button>
               
               <Button
-                onClick={() => handlePlanningSelection('workout')}
+                onClick={() => handlePlanningSelection('workout', showSelectionModalForDate)}
                 variant="secondary"
                 className="w-full justify-start p-4 h-auto"
               >
@@ -524,7 +564,14 @@ export default function CalendarView() {
               </Button>
             </div>
             <div className="flex gap-2 mt-4">
-              <Button onClick={() => setShowSelectionModal(false)} variant="secondary" className="w-full">
+              <Button 
+                onClick={() => {
+                  setShowSelectionModal(false);
+                  setShowSelectionModalForDate(null);
+                }} 
+                variant="secondary" 
+                className="w-full"
+              >
                 Cancel
               </Button>
             </div>
@@ -568,7 +615,13 @@ export default function CalendarView() {
               <Button onClick={handleAddEvent} variant="primary">
                 Add Event
               </Button>
-              <Button onClick={() => setShowAddModal(false)} variant="secondary">
+              <Button 
+                onClick={() => {
+                  setShowAddModal(false);
+                  setShowSelectionModalForDate(null);
+                }} 
+                variant="secondary"
+              >
                 Cancel
               </Button>
             </div>
