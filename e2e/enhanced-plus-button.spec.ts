@@ -58,10 +58,10 @@ test.describe('Enhanced Plus Button Functionality', () => {
     await plusButton.click();
     
     // Click Meal option
-    await page.getByRole('button', { name: /Meal/ }).click();
+    await page.locator('button').filter({ hasText: 'Meal' }).filter({ hasText: 'Plan a meal for a specific date' }).click();
     
     // Verify navigation to food planner page
-    await page.waitForURL('/food/planner');
+    await page.waitForURL(/\/food\/planner/);
     await expect(page.getByText('Plan a Meal')).toBeVisible();
   });
 
@@ -73,10 +73,10 @@ test.describe('Enhanced Plus Button Functionality', () => {
     await plusButton.click();
     
     // Click Workout option
-    await page.getByRole('button', { name: /Workout/ }).click();
+    await page.locator('button').filter({ hasText: 'Workout' }).filter({ hasText: 'Plan a fitness activity' }).click();
     
     // Verify navigation to fitness planner page
-    await page.waitForURL('/fitness/planner');
+    await page.waitForURL(/\/fitness\/planner/);
     await expect(page.getByText('Planned Fitness Activities')).toBeVisible();
   });
 
