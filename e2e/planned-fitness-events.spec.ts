@@ -762,7 +762,7 @@ test('Planned Fitness Events - Complete Flow', async ({ page }) => {
         .in('title', ['Workout: Test Planned Workout', 'Cardio: Test Planned Cardio', 'Sport: Test Planned Sports']);
     });
   } catch (error) {
-    console.log('[E2E] Cleanup failed, but continuing:', error.message);
+    console.log('[E2E] Cleanup failed, but continuing:', (error as Error).message);
   }
 
   console.log('[E2E] ✅ Planned fitness events test completed successfully');
@@ -823,7 +823,7 @@ test('Calendar Click Behavior for Planned Fitness Events', async ({ page }) => {
         .eq('title', 'Workout: Test Calendar Workout');
     });
   } catch (error) {
-    console.log('[E2E] Initial cleanup failed, but continuing:', error.message);
+    console.log('[E2E] Initial cleanup failed, but continuing:', (error as Error).message);
   }
 
   // Create a planned workout directly in the database for testing
@@ -867,7 +867,7 @@ test('Calendar Click Behavior for Planned Fitness Events', async ({ page }) => {
       return { workoutId: workout.id };
     });
   } catch (error) {
-    console.log('[E2E] Test data creation failed:', error.message);
+    console.log('[E2E] Test data creation failed:', (error as Error).message);
     // Create a simple fallback
     testData = { workoutId: 'fallback-id' };
   }
@@ -895,7 +895,7 @@ test('Calendar Click Behavior for Planned Fitness Events', async ({ page }) => {
       return events;
     });
   } catch (error) {
-    console.log('[E2E] Calendar events query failed:', error.message);
+    console.log('[E2E] Calendar events query failed:', (error as Error).message);
     calendarEvents = [];
   }
   
