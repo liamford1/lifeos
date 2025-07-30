@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabaseClient';
 import { deleteEntityWithCalendarEvent, deleteWorkoutCascade } from '@/lib/utils/deleteUtils';
@@ -18,35 +18,79 @@ import SharedDeleteButton from '@/components/SharedDeleteButton';
 import EditButton from '@/components/EditButton';
 import { useWorkouts } from '@/lib/hooks/useWorkouts';
 
+// Skeleton component for workout items
+function WorkoutSkeleton() {
+  return (
+    <div className="border p-3 rounded shadow-sm animate-pulse">
+      <div className="h-6 bg-gray-700 rounded mb-2 w-3/4"></div>
+      <div className="h-4 bg-gray-700 rounded mb-2 w-1/4"></div>
+      <div className="h-4 bg-gray-700 rounded mb-2 w-1/2"></div>
+      <div className="flex gap-4 mt-2">
+        <div className="h-6 bg-gray-700 rounded w-16"></div>
+        <div className="h-6 bg-gray-700 rounded w-16"></div>
+      </div>
+    </div>
+  );
+}
+
 export default function WorkoutsDashboard() {
-  const { user, loading } = useUser();
+  const { user, loading: userLoading } = useUser();
   const router = useRouter();
   const [workouts, setWorkouts] = useState([]);
   const [workoutsLoading, setWorkoutsLoading] = useState(true);
+  const [hasInitialized, setHasInitialized] = useState(false);
   const { fetchWorkouts, deleteWorkout } = useWorkouts();
+  
   // Memoize fetchWorkouts to avoid unnecessary effect reruns
-  const memoizedFetchWorkouts = useCallback(fetchWorkouts, [fetchWorkouts]);
+  const memoizedFetchWorkouts = useCallback(fetchWorkouts, []);
+
+  // Memoize user ID to prevent unnecessary re-renders
+  const userId = useMemo(() => user?.id, [user?.id]);
 
   useEffect(() => {
-    if (!loading && !user) {
+    if (!userLoading && !user) {
       router.push('/auth');
     }
-  }, [loading, user, router]);
+  }, [userLoading, user, router]);
 
   useEffect(() => {
     let isMounted = true;
+    
     async function loadWorkouts() {
-      if (!user) return;
-      setWorkoutsLoading(true);
-      const data = await memoizedFetchWorkouts(user.id);
-      if (isMounted && data) {
-        setWorkouts(data);
+      if (!userId) {
+        if (isMounted) {
+          setWorkoutsLoading(false);
+          setHasInitialized(true);
+        }
+        return;
       }
-      if (isMounted) setWorkoutsLoading(false);
+      
+      if (isMounted) {
+        setWorkoutsLoading(true);
+      }
+      
+      try {
+        const data = await memoizedFetchWorkouts(userId);
+        if (isMounted) {
+          setWorkouts(data || []);
+          setWorkoutsLoading(false);
+          setHasInitialized(true);
+        }
+      } catch (error) {
+        console.error('Error loading workouts:', error);
+        if (isMounted) {
+          setWorkoutsLoading(false);
+          setHasInitialized(true);
+        }
+      }
     }
-    if (user) loadWorkouts();
-    return () => { isMounted = false; };
-  }, [user, memoizedFetchWorkouts]);
+    
+    loadWorkouts();
+    
+    return () => { 
+      isMounted = false; 
+    };
+  }, [userId, memoizedFetchWorkouts]);
 
   const handleDelete = async (id) => {
     const confirm = window.confirm('Delete this workout?');
@@ -57,12 +101,60 @@ export default function WorkoutsDashboard() {
     }
   };
 
-  const handleStartWorkout = async () => {
-    if (!user) return router.push('/auth');
-    // Instead of creating a workout here, just redirect to the live page
-    // where the user can create a workout with a custom title
-    router.push('/fitness/workouts/live');
-  };
+  // Determine what to render - memoized to prevent unnecessary re-renders
+  const content = useMemo(() => {
+    // Don't render anything until we've initialized
+    if (!hasInitialized) {
+      return Array.from({ length: 3 }).map((_, index) => (
+        <WorkoutSkeleton key={`skeleton-${index}`} />
+      ));
+    }
+    
+    if (workoutsLoading) {
+      return Array.from({ length: 3 }).map((_, index) => (
+        <WorkoutSkeleton key={`skeleton-${index}`} />
+      ));
+    }
+    
+    if (!user) {
+      return <div data-testid="workouts-no-user" />;
+    }
+    
+    if (workouts.length === 0) {
+      return (
+        <div className="border p-8 rounded shadow-sm text-center">
+          <p className="text-muted-foreground text-sm" data-testid="workouts-empty">
+            No entries yet. Add one above ⬆️
+          </p>
+        </div>
+      );
+    }
+    
+    return workouts.map((w) => (
+      <li key={w.id} className="border p-3 rounded shadow-sm">
+        <div
+          onClick={() => router.push(`/fitness/workouts/${w.id}`)}
+          className="cursor-pointer hover:underline"
+        >
+          <div className="font-semibold text-lg">{w.title}</div>
+          <div className="text-sm text-base">{w.date}</div>
+          {w.notes && <div className="text-sm text-base mt-1">{w.notes}</div>}
+        </div>
+
+        <div className="flex gap-4 mt-2 text-sm">
+          <EditButton
+            onClick={() => router.push(`/fitness/workouts/${w.id}/edit`)}
+          />
+          <SharedDeleteButton
+            onClick={() => handleDelete(w.id)}
+            size="sm"
+            aria-label="Delete workout"
+            label="Delete"
+          />
+        </div>
+      </li>
+    ));
+  }, [hasInitialized, workoutsLoading, user, workouts, router]);
 
   return (
     <div className="max-w-6xl mx-auto p-4 space-y-4">
@@ -73,56 +165,15 @@ export default function WorkoutsDashboard() {
       </h1>
       <p className="text-base">Track your weightlifting and strength training sessions.</p>
 
-      <div className="flex gap-4 mb-4">
-        <Button
-          variant="primary"
-          onClick={handleStartWorkout}
-          data-testid="add-workout-button"
-        >
-          Start Workout
-        </Button>
-      </div>
-
       <h2 className="text-xl font-semibold mb-2">
         <MdOutlineCalendarToday className="inline w-5 h-5 text-base align-text-bottom mr-2" />
         Workout History
       </h2>
 
-      {/* Simplified loading logic */}
-      {(loading || workoutsLoading) ? (
-        <LoadingSpinner data-testid="workouts-loading" />
-      ) : !user ? (
-        <div data-testid="workouts-no-user" />
-      ) : workouts.length === 0 ? (
-        <p className="text-muted-foreground text-sm" data-testid="workouts-empty">No entries yet. Add one above ⬆️</p>
-      ) : (
-        <ul className="space-y-3" data-testid="workout-list">
-          {workouts.map((w) => (
-            <li key={w.id} className="border p-3 rounded shadow-sm">
-              <div
-                onClick={() => router.push(`/fitness/workouts/${w.id}`)}
-                className="cursor-pointer hover:underline"
-              >
-                <div className="font-semibold text-lg">{w.title}</div>
-                <div className="text-sm text-base">{w.date}</div>
-                {w.notes && <div className="text-sm text-base mt-1">{w.notes}</div>}
-              </div>
-
-              <div className="flex gap-4 mt-2 text-sm">
-                <EditButton
-                  onClick={() => router.push(`/fitness/workouts/${w.id}/edit`)}
-                />
-                <SharedDeleteButton
-                  onClick={() => handleDelete(w.id)}
-                  size="sm"
-                  aria-label="Delete workout"
-                  label="Delete"
-                />
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
+      {/* Stable container with consistent height */}
+      <div className="space-y-3 min-h-[300px] relative" data-testid="workout-list">
+        {content}
+      </div>
     </div>
   );
 }

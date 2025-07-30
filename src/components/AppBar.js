@@ -17,9 +17,9 @@ import Image from 'next/image';
 
 export default function AppBar() {
   const { user, loading, session } = useUser();
-  const { activeWorkoutId } = useWorkoutSession();
-  const { activeCardioId } = useCardioSession();
-  const { activeSportsId } = useSportsSession();
+  const { activeWorkoutId, workoutData } = useWorkoutSession();
+  const { activeCardioId, cardioData } = useCardioSession();
+  const { activeSportsId, sportsData } = useSportsSession();
   const { mealId, currentStep, instructions, loading: cookingSessionLoading } = useCookingSession();
   const [profile, setProfile] = useState(null);
   const router = useRouter();
@@ -74,37 +74,37 @@ export default function AppBar() {
         {/* Workout in progress button */}
         {activeWorkoutId && (
           <Button
-            onClick={() => router.push('/fitness/workouts/live')}
+            onClick={() => router.push(`/fitness/workouts/${activeWorkoutId}/session`)}
             variant="success"
             size="sm"
             className="flex items-center gap-1"
             aria-label="Workout In Progress"
           >
-            Workout In Progress
+            Workout In Progress: {workoutData?.title || 'Workout'}
           </Button>
         )}
         {/* Cardio in progress button */}
         {activeCardioId && (
           <Button
-            onClick={() => router.push('/fitness/cardio/live')}
+            onClick={() => router.push(`/fitness/cardio/${activeCardioId}/session`)}
             variant="success"
             size="sm"
             className="flex items-center gap-1"
             aria-label="Cardio In Progress"
           >
-            Cardio In Progress
+            Cardio In Progress: {cardioData?.activity_type || 'Cardio'}
           </Button>
         )}
         {/* Sports in progress button */}
         {activeSportsId && (
           <Button
-            onClick={() => router.push('/fitness/sports/live')}
+            onClick={() => router.push(`/fitness/sports/${activeSportsId}/session`)}
             variant="success"
             size="sm"
             className="flex items-center gap-1"
             aria-label="Sports In Progress"
           >
-            Sports In Progress
+            Sports In Progress: {sportsData?.activity_type || 'Sports'}
           </Button>
         )}
         {/* Cooking in progress indicator */}
