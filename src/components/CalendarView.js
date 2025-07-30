@@ -280,6 +280,21 @@ export default function CalendarView() {
 
   const handlePlannedMealClick = async (event) => {
     try {
+      // Check if source_id looks like a valid UUID
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      
+      if (!uuidRegex.test(event.source_id)) {
+        console.warn('Invalid source_id for planned meal:', event.source_id);
+        // If source_id is not a valid UUID, try to extract date and navigate to planner
+        const dateMatch = event.source_id.match(/^(\d{4}-\d{2}-\d{2})/);
+        if (dateMatch) {
+          router.push(`/food/planner/${dateMatch[1]}`);
+        } else {
+          router.push('/food/planner');
+        }
+        return;
+      }
+
       const { data: plannedMeal, error } = await supabase
         .from('planned_meals')
         .select('meal_id')
@@ -287,6 +302,7 @@ export default function CalendarView() {
         .single();
 
       if (error) {
+        console.error('Error fetching planned meal:', error);
         handleError(new Error('Could not fetch planned meal details.'), { 
           customMessage: 'Could not fetch planned meal details.' 
         });
@@ -299,6 +315,7 @@ export default function CalendarView() {
         router.push(`/food/planner/${event.source_id}`);
       }
     } catch (error) {
+      console.error('Error in handlePlannedMealClick:', error);
       handleError(error, { 
         customMessage: 'Could not process planned meal click.' 
       });
@@ -407,16 +424,25 @@ export default function CalendarView() {
                   
                   {/* Add button for selected day */}
                   {isSelectedDay && (
-                    <button
+                    <div
                       onClick={(e) => {
                         e.stopPropagation();
                         setShowSelectionModalForDate(date);
                       }}
-                      className="absolute bottom-0 right-0 w-5 h-5 bg-primary text-white rounded-full text-xs flex items-center justify-center hover:bg-primary/80 transition-colors shadow-sm z-10"
+                      className="absolute bottom-0 right-0 w-5 h-5 bg-primary text-white rounded-full text-xs flex items-center justify-center hover:bg-primary/80 transition-colors shadow-sm z-10 cursor-pointer"
                       aria-label="Add event for this day"
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setShowSelectionModalForDate(date);
+                        }
+                      }}
                     >
                       +
-                    </button>
+                    </div>
                   )}
                 </div>
               );
