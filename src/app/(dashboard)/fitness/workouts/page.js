@@ -25,7 +25,7 @@ export default function WorkoutsDashboard() {
   const [workoutsLoading, setWorkoutsLoading] = useState(true);
   const { fetchWorkouts, deleteWorkout } = useWorkouts();
   // Memoize fetchWorkouts to avoid unnecessary effect reruns
-  const memoizedFetchWorkouts = useCallback(fetchWorkouts, []);
+  const memoizedFetchWorkouts = useCallback(fetchWorkouts, [fetchWorkouts]);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -39,8 +39,7 @@ export default function WorkoutsDashboard() {
       if (!user) return;
       setWorkoutsLoading(true);
       const data = await memoizedFetchWorkouts(user.id);
-      // Only update state if data is different
-      if (isMounted && data && JSON.stringify(data) !== JSON.stringify(workouts)) {
+      if (isMounted && data) {
         setWorkouts(data);
       }
       if (isMounted) setWorkoutsLoading(false);
@@ -91,13 +90,13 @@ export default function WorkoutsDashboard() {
 
       {/* Simplified loading logic */}
       {(loading || workoutsLoading) ? (
-        <LoadingSpinner />
+        <LoadingSpinner data-testid="workouts-loading" />
       ) : !user ? (
-        null
+        <div data-testid="workouts-no-user" />
       ) : workouts.length === 0 ? (
-        <p className="text-muted-foreground text-sm">No entries yet. Add one above ⬆️</p>
+        <p className="text-muted-foreground text-sm" data-testid="workouts-empty">No entries yet. Add one above ⬆️</p>
       ) : (
-        <ul className="space-y-3">
+        <ul className="space-y-3" data-testid="workout-list">
           {workouts.map((w) => (
             <li key={w.id} className="border p-3 rounded shadow-sm">
               <div

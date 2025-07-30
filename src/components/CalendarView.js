@@ -424,25 +424,17 @@ export default function CalendarView() {
                   
                   {/* Add button for selected day */}
                   {isSelectedDay && (
-                    <div
+                    <button
                       onClick={(e) => {
                         e.stopPropagation();
                         setShowSelectionModalForDate(date);
                       }}
                       className="absolute bottom-0 right-0 w-5 h-5 bg-primary text-white rounded-full text-xs flex items-center justify-center hover:bg-primary/80 transition-colors shadow-sm z-10 cursor-pointer"
                       aria-label="Add event for this day"
-                      role="button"
-                      tabIndex={0}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' || e.key === ' ') {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          setShowSelectionModalForDate(date);
-                        }
-                      }}
+                      type="button"
                     >
                       +
-                    </div>
+                    </button>
                   )}
                 </div>
               );

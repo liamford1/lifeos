@@ -54,7 +54,7 @@ export function CookingSessionProvider({ children }) {
       setStartedAt(null);
     }
     setLoading(false);
-  }, [user, supabase]);
+  }, [user]);
 
   useEffect(() => {
     if (!userLoading) {

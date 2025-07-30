@@ -71,27 +71,63 @@ module.exports = async () => {
     }
   }
 
-  // End all in-progress workouts for the test user
-  const { error: updateError } = await supabase
-    .from('fitness_workouts')
-    .update({ in_progress: false, end_time: new Date().toISOString() })
-    .eq('user_id', user.id)
-    .eq('in_progress', true);
+  // Clean up ALL test data for the test user to ensure fresh state
+  console.log('🧹 Cleaning up test data for user:', user.id);
+  
+  // Delete in order to respect foreign key constraints
+  const tablesToClean = [
+    'calendar_events',
+    'cooking_sessions', 
+    'cooked_meals',
+    'planned_meals',
+    'meal_ingredients',
+    'meals',
+    'receipt_items',
+    'receipts',
+    'food_items',
+    'fitness_sets',
+    'fitness_exercises',
+    'fitness_workouts',
+    'fitness_cardio',
+    'fitness_sports',
+    'expenses',
+    'scratchpad_entries'
+  ];
 
-  if (updateError) {
-    // Error updating workouts - silently continue
+  for (const table of tablesToClean) {
+    try {
+      const { error } = await supabase
+        .from(table)
+        .delete()
+        .eq('user_id', user.id);
+      
+      if (error) {
+        console.warn(`Warning: Could not clean up ${table}:`, error.message);
+      } else {
+        console.log(`✅ Cleaned up ${table}`);
+      }
+    } catch (err) {
+      console.warn(`Warning: Error cleaning up ${table}:`, err.message);
+    }
   }
 
-  // End all in-progress cardio sessions for the test user
-  const { error: cardioUpdateError } = await supabase
-    .from('fitness_cardio')
-    .update({ in_progress: false, end_time: new Date().toISOString() })
-    .eq('user_id', user.id)
-    .eq('in_progress', true);
-
-  if (cardioUpdateError) {
-    // Error updating cardio sessions - silently continue
+  // Clean up profile separately
+  try {
+    const { error } = await supabase
+      .from('profiles')
+      .delete()
+      .eq('user_id', user.id);
+    
+    if (error) {
+      console.warn('Warning: Could not clean up profiles:', error.message);
+    } else {
+      console.log('✅ Cleaned up profiles');
+    }
+  } catch (err) {
+    console.warn('Warning: Error cleaning up profiles:', err.message);
   }
+
+  console.log('🧹 Test data cleanup completed');
 
   // Return the user id for Playwright
   return user.id;

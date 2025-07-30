@@ -216,7 +216,7 @@ export default function FoodHome() {
               ) : (
                 <div className="text-center py-8 text-muted-foreground">
                   <ChefHat className="w-12 h-12 mx-auto mb-3 text-muted-foreground/50" />
-                  <p>You haven't cooked any meals yet.</p>
+                  <p>You haven&apos;t cooked any meals yet.</p>
                 </div>
               )}
             </div>
@@ -261,7 +261,7 @@ export default function FoodHome() {
               ) : (
                 <div className="text-center py-8 text-muted-foreground">
                   <Calendar className="w-12 h-12 mx-auto mb-3 text-muted-foreground/50" />
-                  <p>No meals planned. Let's fix that!</p>
+                  <p>No meals planned. Let&apos;s fix that!</p>
                 </div>
               )}
             </div>
@@ -289,7 +289,7 @@ export default function FoodHome() {
                     <CirclePlus className="w-4 h-4 text-green-600" />
                   </div>
                   <div>
-                    <h3 className="font-medium text-sm">Add Meal</h3>
+                    <h3 className="font-medium text-sm">Add a Meal</h3>
                     <p className="text-xs text-muted-foreground">Create new recipe</p>
                   </div>
                 </div>
@@ -349,7 +349,7 @@ export default function FoodHome() {
                     <Receipt className="w-4 h-4 text-red-600" />
                   </div>
                   <div>
-                    <h3 className="font-medium text-sm">Add Receipt</h3>
+                    <h3 className="font-medium text-sm">Add a Receipt</h3>
                     <p className="text-xs text-muted-foreground">Log a grocery receipt</p>
                   </div>
                 </div>
@@ -367,7 +367,7 @@ export default function FoodHome() {
             </h2>
             <div className="p-4 bg-gradient-to-br from-purple-500/10 to-purple-600/10 border border-purple-500/20 rounded-lg">
               <p className="text-sm text-muted-foreground mb-3">
-                Need help planning this week's dinners?
+                Need help planning this week&apos;s dinners?
               </p>
               <button
                 onClick={() => console.log('AI suggestion clicked')}

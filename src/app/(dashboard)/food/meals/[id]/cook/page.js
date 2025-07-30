@@ -52,7 +52,7 @@ export default function CookMealPage() {
   useEffect(() => {
     if (!meal) return;
     
-  }, [meal?.id, parsedInstructions, isCooking, cookingMealId, currentStep, cookingInstructions]);
+  }, [meal?.id, parsedInstructions, isCooking, cookingMealId, currentStep, cookingInstructions, meal]);
 
   // Handler for Cook Meal button
   const handleCookMeal = () => {

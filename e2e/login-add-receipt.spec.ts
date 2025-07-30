@@ -182,13 +182,12 @@ test.describe('Login and add receipt', () => {
 
     // Reload the pantry page to verify persistence
     await page.reload();
-    await page.waitForLoadState('networkidle');
-
+    
     // Wait for the pantry page to load again
     await expect(page.getByRole('heading', { name: 'Your Pantry' })).toBeVisible();
 
-    // Wait a bit more for any async operations to complete
-    await page.waitForTimeout(2000);
+    // Wait for inventory to load - use a more reliable approach
+    await page.waitForTimeout(3000);
 
     // Verify the items are still visible after reload
     await expect(page.locator('li').filter({ hasText: 'Test Milk' }).first()).toBeVisible({ timeout: 10000 });

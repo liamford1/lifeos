@@ -276,4 +276,94 @@ export async function verifyTestDataExists(page: Page, table: string, conditions
     
     return data && data.length > 0;
   }, { table, conditions });
+}
+
+/**
+ * Wait for user context to be ready and page to be fully loaded
+ * This ensures the authentication state is properly established before proceeding
+ */
+export async function waitForUserContext(page: Page, timeoutMs: number = 10000): Promise<void> {
+  const startTime = Date.now();
+  
+  while (Date.now() - startTime < timeoutMs) {
+    try {
+      // Check if user context is ready by verifying supabase auth
+      const userReady = await page.evaluate(async () => {
+        const supabase = window.supabase;
+        if (!supabase) return false;
+        
+        const { data: { session } } = await supabase.auth.getSession();
+        return !!session?.user?.id;
+      });
+      
+      if (userReady) {
+        console.log('[E2E] ✅ User context is ready');
+        return;
+      }
+    } catch (error) {
+      // Continue waiting if there's an error
+    }
+    
+    await page.waitForTimeout(100);
+  }
+  
+  throw new Error(`User context not ready within ${timeoutMs}ms`);
+}
+
+/**
+ * Wait for a specific page to be fully loaded with data
+ * This waits for either the data list, empty state, or loading state to be present
+ */
+export async function waitForPageReady(page: Page, pageType: 'workouts' | 'sports', timeoutMs: number = 10000): Promise<void> {
+  const startTime = Date.now();
+  
+  while (Date.now() - startTime < timeoutMs) {
+    try {
+      // Check for any of the expected states
+      const pageState = await page.evaluate((type) => {
+        const listSelector = `[data-testid="${type}-list"]`;
+        const loadingSelector = `[data-testid="${type}-loading"]`;
+        const emptySelector = `[data-testid="${type}-empty"]`;
+        const noUserSelector = `[data-testid="${type}-no-user"]`;
+        
+        const list = document.querySelector(listSelector);
+        const loading = document.querySelector(loadingSelector);
+        const empty = document.querySelector(emptySelector);
+        const noUser = document.querySelector(noUserSelector);
+        
+        return {
+          list: !!list,
+          loading: !!loading,
+          empty: !!empty,
+          noUser: !!noUser,
+          anyReady: !!(list || loading || empty || noUser)
+        };
+      }, pageType);
+      
+      if (pageState.anyReady) {
+        console.log(`[E2E] ✅ ${pageType} page is ready:`, pageState);
+        return;
+      }
+      
+      // Log the current state for debugging
+      if (Date.now() - startTime > 5000) { // Only log after 5 seconds to avoid spam
+        console.log(`[E2E] ⏳ ${pageType} page state:`, pageState);
+        
+        // Also log what's actually on the page
+        const pageContent = await page.evaluate(() => {
+          const body = document.body.textContent;
+          const h1s = Array.from(document.querySelectorAll('h1')).map(h => h.textContent);
+          const h2s = Array.from(document.querySelectorAll('h2')).map(h => h.textContent);
+          return { body: body?.substring(0, 200), h1s, h2s };
+        });
+        console.log(`[E2E] 📄 ${pageType} page content:`, pageContent);
+      }
+    } catch (error) {
+      console.log(`[E2E] ⚠️ Error checking ${pageType} page state:`, error);
+    }
+    
+    await page.waitForTimeout(100);
+  }
+  
+  throw new Error(`${pageType} page not ready within ${timeoutMs}ms`);
 } 
