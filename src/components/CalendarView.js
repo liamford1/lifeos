@@ -4,16 +4,15 @@ import React, { useState } from 'react';
 import { useUser } from '@/context/UserContext';
 import Calendar from "@/components/client/CalendarClient";
 import 'react-calendar/dist/Calendar.css';
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { deleteEntityWithCalendarEvent, deleteWorkoutCascade } from '@/lib/deleteUtils';
 import { useRouter } from 'next/navigation';
 import dayjs from 'dayjs';
 import { CALENDAR_SOURCES, getCalendarEventRoute } from '@/lib/calendarUtils';
 import { getEventStyle } from '@/lib/eventStyleMap';
 import Button from '@/components/Button';
-import LoadingSpinner from '@/components/LoadingSpinner';
+
 import { useToast } from '@/components/Toast';
-import { navigateToSource } from '@/lib/navigateToSource';
 import { MdOutlineCalendarToday } from 'react-icons/md';
 import SharedDeleteButton from '@/components/SharedDeleteButton';
 import { supabase } from '@/lib/supabaseClient';
@@ -24,7 +23,7 @@ export default function CalendarView() {
   const queryClient = useQueryClient();
   const [selectedDate, setSelectedDate] = useState(new Date());
   // Remove local events state, use eventsQuery.data
-  const { user, loading } = useUser();
+  const { user } = useUser();
   const [showAddModal, setShowAddModal] = useState(false);
   const [showSelectionModal, setShowSelectionModal] = useState(false);
   const [showSelectionModalForDate, setShowSelectionModalForDate] = useState(null);
@@ -34,7 +33,7 @@ export default function CalendarView() {
     end_time: '',
     description: '',
   });
-  const [isLoading, setIsLoading] = useState(false);
+
   const router = useRouter();
 
   // useQuery for events
@@ -418,9 +417,7 @@ export default function CalendarView() {
           Events on {dayjs(selectedDate).format('MMMM D, YYYY')}
         </h3>
 
-        {isLoading ? (
-          <LoadingSpinner />
-        ) : eventsForSelectedDate.length === 0 ? (
+        {eventsForSelectedDate.length === 0 ? (
           <p className="text-muted-foreground text-sm mt-2">No entries yet. Add one above ⬆️</p>
         ) : (
           <ul className="mt-2 space-y-2">

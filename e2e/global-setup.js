@@ -79,9 +79,7 @@ module.exports = async () => {
     .eq('in_progress', true);
 
   if (updateError) {
-    // console.warn('Error updating workouts:', updateError); // Removed console.warn
-  } else {
-    // console.log('Cleared in-progress workouts for test user.'); // Removed console.log
+    // Error updating workouts - silently continue
   }
 
   // End all in-progress cardio sessions for the test user
@@ -92,9 +90,7 @@ module.exports = async () => {
     .eq('in_progress', true);
 
   if (cardioUpdateError) {
-    // console.warn('Error updating cardio sessions:', cardioUpdateError);
-  } else {
-    // console.log('Cleared in-progress cardio sessions for test user.');
+    // Error updating cardio sessions - silently continue
   }
 
   // Return the user id for Playwright

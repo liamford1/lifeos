@@ -49,7 +49,7 @@ test.describe('Calendar Day Plus Button Functionality', () => {
     
     // Verify all three options are present
     await expect(page.getByRole('button', { name: /General Event/ })).toBeVisible();
-    await expect(page.getByRole('button', { name: /Meal/ })).toBeVisible();
+    await expect(page.getByRole('button', { name: /Plan a meal for/ })).toBeVisible();
     await expect(page.getByRole('button', { name: /Workout/ })).toBeVisible();
   });
 
@@ -99,7 +99,7 @@ test.describe('Calendar Day Plus Button Functionality', () => {
     await plusButton.click();
     
     // Click Meal option
-    await page.getByRole('button', { name: /Meal/ }).click();
+    await page.getByRole('button', { name: /Plan a meal for/ }).click();
     
     // Verify navigation to food planner with date parameter
     await page.waitForURL(/\/food\/planner\?date=/);

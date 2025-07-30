@@ -84,64 +84,73 @@ test('Planned Fitness Events - Complete Flow', async ({ page }) => {
   // Wait for dashboard to load by checking for visible text "Planner"
   await expect(page.locator('text=Planner')).toBeVisible({ timeout: 10000 });
 
-  // ✅ Step 1: Enhanced cleanup - Clear ALL test data before starting
-  await page.evaluate(async () => {
-    const supabase = window.supabase;
-    const { data: session } = await supabase.auth.getSession();
-    const userId = session.session.user.id;
-    
-    // Use the same iterative cleanup pattern as working tests
-    let cleanupIterations = 0;
-    const maxIterations = 5;
-    
-    do {
-      if (cleanupIterations >= maxIterations) break;
+  // ✅ Step 1: Optimized cleanup - Clear ALL test data before starting with timeout
+  await Promise.race([
+    page.evaluate(async () => {
+      const supabase = window.supabase;
+      const { data: session } = await supabase.auth.getSession();
+      const userId = session.session.user.id;
       
-      // Clean up ALL workouts for the test user (not just specific titles)
-      const { data: foundWorkouts } = await supabase
-        .from('fitness_workouts')
-        .select('id, title')
-        .eq('user_id', userId);
-      const workoutIds = (foundWorkouts || []).map((w: any) => w.id);
-      if (workoutIds.length > 0) {
-        await supabase.from('fitness_workouts').delete().in('id', workoutIds);
-        await supabase.from('calendar_events').delete().eq('user_id', userId).in('source_id', workoutIds);
-      }
+      // Use simplified cleanup pattern with parallel execution
+      let cleanupIterations = 0;
+      const maxIterations = 3; // Reduced from 5
       
-      // Clean up ALL cardio sessions for the test user
-      const { data: foundCardio } = await supabase
-        .from('fitness_cardio')
-        .select('id, activity_type')
-        .eq('user_id', userId);
-      const cardioIds = (foundCardio || []).map((c: any) => c.id);
-      if (cardioIds.length > 0) {
-        await supabase.from('fitness_cardio').delete().in('id', cardioIds);
-        await supabase.from('calendar_events').delete().eq('user_id', userId).in('source_id', cardioIds);
-      }
+      do {
+        if (cleanupIterations >= maxIterations) break;
+        
+        // Clean up ALL workouts for the test user (not just specific titles)
+        const { data: foundWorkouts } = await supabase
+          .from('fitness_workouts')
+          .select('id, title')
+          .eq('user_id', userId);
+        const workoutIds = (foundWorkouts || []).map((w: any) => w.id);
+        if (workoutIds.length > 0) {
+          await Promise.all([
+            supabase.from('fitness_workouts').delete().in('id', workoutIds),
+            supabase.from('calendar_events').delete().eq('user_id', userId).in('source_id', workoutIds)
+          ]);
+        }
+        
+        // Clean up ALL cardio sessions for the test user
+        const { data: foundCardio } = await supabase
+          .from('fitness_cardio')
+          .select('id, activity_type')
+          .eq('user_id', userId);
+        const cardioIds = (foundCardio || []).map((c: any) => c.id);
+        if (cardioIds.length > 0) {
+          await Promise.all([
+            supabase.from('fitness_cardio').delete().in('id', cardioIds),
+            supabase.from('calendar_events').delete().eq('user_id', userId).in('source_id', cardioIds)
+          ]);
+        }
+        
+        // Clean up ALL sports sessions for the test user
+        const { data: foundSports } = await supabase
+          .from('fitness_sports')
+          .select('id, activity_type')
+          .eq('user_id', userId);
+        const sportsIds = (foundSports || []).map((s: any) => s.id);
+        if (sportsIds.length > 0) {
+          await Promise.all([
+            supabase.from('fitness_sports').delete().in('id', sportsIds),
+            supabase.from('calendar_events').delete().eq('user_id', userId).in('source_id', sportsIds)
+          ]);
+        }
+        
+        // Clean up any orphaned calendar events for the user
+        await supabase.from('calendar_events').delete().eq('user_id', userId).in('source', ['workout', 'cardio', 'sport']);
+        
+        cleanupIterations++;
+        
+        // Reduced wait between iterations
+        await new Promise(resolve => setTimeout(resolve, 200));
+      } while (cleanupIterations < maxIterations);
       
-      // Clean up ALL sports sessions for the test user
-      const { data: foundSports } = await supabase
-        .from('fitness_sports')
-        .select('id, activity_type')
-        .eq('user_id', userId);
-      const sportsIds = (foundSports || []).map((s: any) => s.id);
-      if (sportsIds.length > 0) {
-        await supabase.from('fitness_sports').delete().in('id', sportsIds);
-        await supabase.from('calendar_events').delete().eq('user_id', userId).in('source_id', sportsIds);
-      }
-      
-      // Clean up any orphaned calendar events for the user
-      await supabase.from('calendar_events').delete().eq('user_id', userId).in('source', ['workout', 'cardio', 'sport']);
-      
-      cleanupIterations++;
-      
-      // Wait between iterations to allow database operations to settle
+      // Reduced additional wait
       await new Promise(resolve => setTimeout(resolve, 500));
-    } while (cleanupIterations < maxIterations);
-    
-    // Additional wait to ensure cleanup is complete
-    await new Promise(resolve => setTimeout(resolve, 1000));
-  });
+    }),
+    new Promise((_, reject) => setTimeout(() => reject(new Error('Initial cleanup timeout')), 8000))
+  ]);
 
   // ✅ Sanity check: window.supabase is defined
   await page.evaluate(() => {
@@ -220,14 +229,14 @@ test('Planned Fitness Events - Complete Flow', async ({ page }) => {
   await page.getByRole('button', { name: /save planned workout/i }).click();
   
   // Wait for form submission to complete - wait for the form to disappear or success message
-  await page.waitForTimeout(2000);
+  await page.waitForTimeout(1000);
   
   // Wait for the form to be hidden or success indicator
   try {
-    await page.waitForSelector('text=Type', { state: 'hidden', timeout: 5000 });
+    await page.waitForSelector('text=Type', { state: 'hidden', timeout: 3000 });
   } catch (e) {
     // If the form doesn't hide, wait a bit more
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(1000);
   }
   
   // Check for any error messages
@@ -308,14 +317,14 @@ test('Planned Fitness Events - Complete Flow', async ({ page }) => {
   await page.getByRole('button', { name: /save planned workout/i }).click();
   
   // Wait for form submission to complete
-  await page.waitForTimeout(2000);
+  await page.waitForTimeout(1000);
   
   // Wait for the form to be hidden or success indicator
   try {
-    await page.waitForSelector('text=Type', { state: 'hidden', timeout: 5000 });
+    await page.waitForSelector('text=Type', { state: 'hidden', timeout: 3000 });
   } catch (e) {
     // If the form doesn't hide, wait a bit more
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(1000);
   }
   
   // Verify the planned cardio was created in the database with retry logic
@@ -388,19 +397,19 @@ test('Planned Fitness Events - Complete Flow', async ({ page }) => {
   // Submit sports form with more robust waiting
   await page.getByRole('button', { name: /save planned workout/i }).click();
   
-  // Wait for form submission to complete with longer timeout
-  await page.waitForTimeout(3000);
+  // Wait for form submission to complete with shorter timeout
+  await page.waitForTimeout(2000);
   
   // Wait for the form to be hidden or success indicator
   try {
-    await page.waitForSelector('text=Type', { state: 'hidden', timeout: 10000 });
+    await page.waitForSelector('text=Type', { state: 'hidden', timeout: 5000 });
   } catch (e) {
     console.log('[E2E] Form did not hide, waiting longer...');
-    await page.waitForTimeout(3000);
+    await page.waitForTimeout(2000);
   }
   
   // Additional wait to ensure database operations complete
-  await page.waitForTimeout(2000);
+  await page.waitForTimeout(1000);
   
   // Check for any error messages
   const sportsErrorElements = await page.locator('.text-red-400, .text-red-500, [role="alert"]').count();
@@ -498,7 +507,7 @@ test('Planned Fitness Events - Complete Flow', async ({ page }) => {
   // ✅ Step 3: Verify the planned events appear on the /fitness/planner page
   
   // Wait for the calendar to refresh and show the events
-  await page.waitForTimeout(5000);
+  await page.waitForTimeout(3000);
   
   // ✅ Step 4: Verify that all three planned events appear on the home page calendar
   
@@ -547,7 +556,7 @@ test('Planned Fitness Events - Complete Flow', async ({ page }) => {
   // If no events are found, wait a bit more and try again
   if (eventCount === 0) {
     console.log('[E2E] No events found, waiting for React Query to refetch...');
-    await page.waitForTimeout(5000);
+    await page.waitForTimeout(3000);
     
     // Try to trigger a React Query refetch by clicking on today's date
     const todayCell = page.locator('.react-calendar__tile--now');
@@ -657,14 +666,14 @@ test('Planned Fitness Events - Complete Flow', async ({ page }) => {
     throw error;
   }
 
-  // ✅ Final verification: Check database state (simplified)
+  // ✅ Final verification: Check database state (simplified with shorter timeouts)
   const finalState = await page.evaluate(async () => {
     try {
       const supabase = window.supabase;
       const { data: session } = await supabase.auth.getSession();
       const userId = session.session.user.id;
       
-      // Quick count check for each table with timeout handling
+      // Quick count check for each table with shorter timeout handling
       const workoutResult = await Promise.race([
         supabase
           .from('fitness_workouts')
@@ -672,7 +681,7 @@ test('Planned Fitness Events - Complete Flow', async ({ page }) => {
           .eq('user_id', userId)
           .eq('title', 'Test Planned Workout')
           .eq('status', 'planned'),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('Workout query timeout')), 5000))
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Workout query timeout')), 2000))
       ]);
       
       const cardioResult = await Promise.race([
@@ -682,7 +691,7 @@ test('Planned Fitness Events - Complete Flow', async ({ page }) => {
           .eq('user_id', userId)
           .eq('activity_type', 'Test Planned Cardio')
           .eq('status', 'planned'),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('Cardio query timeout')), 5000))
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Cardio query timeout')), 2000))
       ]);
       
       const sportsResult = await Promise.race([
@@ -692,7 +701,7 @@ test('Planned Fitness Events - Complete Flow', async ({ page }) => {
           .eq('user_id', userId)
           .eq('activity_type', 'Test Planned Sports')
           .eq('status', 'planned'),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('Sports query timeout')), 5000))
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Sports query timeout')), 2000))
       ]);
       
       const calendarResult = await Promise.race([
@@ -701,7 +710,7 @@ test('Planned Fitness Events - Complete Flow', async ({ page }) => {
           .select('*', { count: 'exact', head: true })
           .eq('user_id', userId)
           .in('title', ['Workout: Test Planned Workout', 'Cardio: Test Planned Cardio', 'Sport: Test Planned Sports']),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('Calendar query timeout')), 5000))
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Calendar query timeout')), 2000))
       ]);
       
       return {
@@ -729,38 +738,43 @@ test('Planned Fitness Events - Complete Flow', async ({ page }) => {
   
   console.log('[E2E] Final database state:', finalState);
 
-  // ✅ Simplified cleanup at the end - just clean up test-specific data
+  // ✅ Simplified cleanup at the end - just clean up test-specific data with timeout
   try {
-    await page.evaluate(async () => {
-      const supabase = window.supabase;
-      const { data: session } = await supabase.auth.getSession();
-      const userId = session.session.user.id;
-      
-      // Clean up test-specific data only
-      await supabase
-        .from('fitness_workouts')
-        .delete()
-        .eq('user_id', userId)
-        .eq('title', 'Test Planned Workout');
-      
-      await supabase
-        .from('fitness_cardio')
-        .delete()
-        .eq('user_id', userId)
-        .eq('activity_type', 'Test Planned Cardio');
-      
-      await supabase
-        .from('fitness_sports')
-        .delete()
-        .eq('user_id', userId)
-        .eq('activity_type', 'Test Planned Sports');
-      
-      await supabase
-        .from('calendar_events')
-        .delete()
-        .eq('user_id', userId)
-        .in('title', ['Workout: Test Planned Workout', 'Cardio: Test Planned Cardio', 'Sport: Test Planned Sports']);
-    });
+    await Promise.race([
+      page.evaluate(async () => {
+        const supabase = window.supabase;
+        const { data: session } = await supabase.auth.getSession();
+        const userId = session.session.user.id;
+        
+        // Clean up test-specific data only with parallel execution
+        await Promise.all([
+          supabase
+            .from('fitness_workouts')
+            .delete()
+            .eq('user_id', userId)
+            .eq('title', 'Test Planned Workout'),
+          
+          supabase
+            .from('fitness_cardio')
+            .delete()
+            .eq('user_id', userId)
+            .eq('activity_type', 'Test Planned Cardio'),
+          
+          supabase
+            .from('fitness_sports')
+            .delete()
+            .eq('user_id', userId)
+            .eq('activity_type', 'Test Planned Sports'),
+          
+          supabase
+            .from('calendar_events')
+            .delete()
+            .eq('user_id', userId)
+            .in('title', ['Workout: Test Planned Workout', 'Cardio: Test Planned Cardio', 'Sport: Test Planned Sports'])
+        ]);
+      }),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('Cleanup timeout')), 5000))
+    ]);
   } catch (error) {
     console.log('[E2E] Cleanup failed, but continuing:', (error as Error).message);
   }
