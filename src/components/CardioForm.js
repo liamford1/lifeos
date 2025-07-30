@@ -5,16 +5,16 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/context/UserContext';
 import { z } from 'zod';
-import { mapZodErrors } from '@/lib/validationHelpers';
 import Button from '@/components/Button';
-import FormLabel from '@/components/FormLabel';
 import FormInput from '@/components/FormInput';
 import FormTextarea from '@/components/FormTextarea';
+import FormField from '@/components/FormField';
 import BackButton from '@/components/BackButton';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { useToast } from '@/components/Toast';
 import { supabase } from '@/lib/supabaseClient';
 import { CALENDAR_SOURCES, updateCalendarEventFromSource } from '@/lib/calendarUtils';
+import { useFormValidation } from '@/lib/hooks/useFormValidation';
 
 const cardioSchema = z.object({
   activity: z.string().min(1, 'Activity is required'),
@@ -40,34 +40,14 @@ export default function CardioForm({ initialData = null, isEdit = false }) {
   const [duration, setDuration] = useState(initialData?.duration_minutes || '');
   const [distance, setDistance] = useState(initialData?.distance_miles || '');
   const [notes, setNotes] = useState(initialData?.notes || '');
-  const [fieldErrors, setFieldErrors] = useState({});
-  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setFieldErrors({});
-
-    // Validate with Zod
-    const result = cardioSchema.safeParse({
-      activity,
-      date,
-      duration,
-      distance,
-      notes,
-    });
-    if (!result.success) {
-      setFieldErrors(mapZodErrors(result.error));
-      setLoading(false);
-      return;
-    }
-
+  const handleFormSubmit = async (formData) => {
     const cardioData = {
-      activity_type: activity,
-      date,
-      duration_minutes: parseInt(duration),
-      distance_miles: distance ? parseFloat(distance) : undefined,
-      notes,
+      activity_type: formData.activity,
+      date: formData.date,
+      duration_minutes: parseInt(formData.duration),
+      distance_miles: formData.distance ? parseFloat(formData.distance) : undefined,
+      notes: formData.notes,
     };
 
     try {
@@ -107,9 +87,25 @@ export default function CardioForm({ initialData = null, isEdit = false }) {
       }
     } catch (err) {
       showError(err.message || 'Failed to save cardio entry');
-    } finally {
-      setLoading(false);
     }
+  };
+
+  const {
+    fieldErrors,
+    isSubmitting,
+    handleSubmit,
+    getFieldError,
+  } = useFormValidation(cardioSchema, handleFormSubmit);
+
+  const onSubmitHandler = (e) => {
+    const formData = {
+      activity,
+      date,
+      duration,
+      distance,
+      notes,
+    };
+    handleSubmit(e, formData);
   };
 
   if (userLoading) return <LoadingSpinner />;
@@ -120,68 +116,84 @@ export default function CardioForm({ initialData = null, isEdit = false }) {
       <h1 className="text-2xl font-bold">{isEdit ? '✏️ Edit Cardio Session' : '🏃‍♂️ Add Cardio Session'}</h1>
       <p className="text-base">{isEdit ? 'Update your cardio session details.' : 'Log a new cardio activity.'}</p>
       
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <FormLabel>Activity Type</FormLabel>
+      <form onSubmit={onSubmitHandler} className="space-y-4">
+        <FormField 
+          label="Activity Type" 
+          error={getFieldError('activity')}
+          required
+        >
           <FormInput
             type="text"
             value={activity}
             onChange={(e) => setActivity(e.target.value)}
             placeholder="e.g., Running, Cycling, Swimming"
-            required
+            disabled={isSubmitting}
           />
-          {fieldErrors.activity && <div className="text-red-400 text-xs mt-1">{fieldErrors.activity}</div>}
-        </div>
+        </FormField>
 
-        <div>
-          <FormLabel>Date</FormLabel>
+        <FormField 
+          label="Date" 
+          error={getFieldError('date')}
+          required
+        >
           <FormInput
             type="date"
             value={date}
             onChange={(e) => setDate(e.target.value)}
-            required
+            disabled={isSubmitting}
           />
-          {fieldErrors.date && <div className="text-red-400 text-xs mt-1">{fieldErrors.date}</div>}
-        </div>
+        </FormField>
 
         <div className="grid grid-cols-2 gap-4">
-          <div>
-            <FormLabel>Duration (minutes)</FormLabel>
+          <FormField 
+            label="Duration (minutes)" 
+            error={getFieldError('duration')}
+            required
+          >
             <FormInput
               type="number"
               value={duration}
               onChange={(e) => setDuration(e.target.value)}
               placeholder="30"
-              required
+              disabled={isSubmitting}
             />
-            {fieldErrors.duration && <div className="text-red-400 text-xs mt-1">{fieldErrors.duration}</div>}
-          </div>
-          <div>
-            <FormLabel>Distance (miles)</FormLabel>
+          </FormField>
+          
+          <FormField 
+            label="Distance (miles)" 
+            error={getFieldError('distance')}
+          >
             <FormInput
               type="number"
               step="0.1"
               value={distance}
               onChange={(e) => setDistance(e.target.value)}
               placeholder="3.1"
+              disabled={isSubmitting}
             />
-            {fieldErrors.distance && <div className="text-red-400 text-xs mt-1">{fieldErrors.distance}</div>}
-          </div>
+          </FormField>
         </div>
 
-        <div>
-          <FormLabel>Notes</FormLabel>
+        <FormField 
+          label="Notes" 
+          error={getFieldError('notes')}
+        >
           <FormTextarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             rows={3}
             placeholder="How did it feel? Any observations?"
+            disabled={isSubmitting}
           />
-          {fieldErrors.notes && <div className="text-red-400 text-xs mt-1">{fieldErrors.notes}</div>}
-        </div>
+        </FormField>
 
-        <Button type="submit" variant="primary" className="w-full" disabled={loading}>
-          {loading ? <LoadingSpinner size={20} /> : (isEdit ? 'Update Cardio Session' : 'Save Cardio Activity')}
+        <Button 
+          type="submit" 
+          variant="primary" 
+          className="w-full" 
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? <LoadingSpinner size={20} /> : (isEdit ? 'Update Cardio Session' : 'Save Cardio Activity')}
         </Button>
       </form>
     </div>

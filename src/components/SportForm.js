@@ -2,10 +2,30 @@
 
 import React from 'react';
 import { useState } from 'react';
+import { z } from 'zod';
 import Button from '@/components/Button';
-import FormLabel from '@/components/FormLabel';
 import FormInput from '@/components/FormInput';
+import FormSelect from '@/components/FormSelect';
 import FormTextarea from '@/components/FormTextarea';
+import FormField from '@/components/FormField';
+import { useFormValidation } from '@/lib/hooks/useFormValidation';
+
+// Zod schema for sport form validation
+const sportSchema = z.object({
+  activity_type: z.string().min(1, 'Sport/Activity is required'),
+  date: z.string().min(1, 'Date is required'),
+  duration_minutes: z.union([
+    z.string().min(1, 'Duration is required'),
+    z.number()
+  ]),
+  intensity_level: z.string().min(1, 'Intensity level is required'),
+  location: z.string().optional(),
+  weather: z.string().optional(),
+  participants: z.string().optional(),
+  score: z.string().optional(),
+  performance_notes: z.string().optional(),
+  injuries_or_flags: z.string().optional(),
+});
 
 export default function SportForm({ initialData = {}, onSubmit }) {
   const [activityType, setActivityType] = useState(initialData.activity_type || '');
@@ -19,9 +39,25 @@ export default function SportForm({ initialData = {}, onSubmit }) {
   const [performanceNotes, setPerformanceNotes] = useState(initialData.performance_notes || '');
   const [flags, setFlags] = useState(initialData.injuries_or_flags || '');
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleFormSubmit = (formData) => {
     onSubmit({
+      ...formData,
+      calories_burned: null, // reserved for AI estimation
+    });
+    // TODO: Provide accurate start_time and end_time if available
+    // import { createCalendarEventForEntity } from '@/lib/calendarUtils';
+    // await createCalendarEventForEntity('sport', /* newEntry.id */, /* user.id */, /* start_time */, /* end_time */);
+  };
+
+  const {
+    fieldErrors,
+    isSubmitting,
+    handleSubmit,
+    getFieldError,
+  } = useFormValidation(sportSchema, handleFormSubmit);
+
+  const onSubmitHandler = (e) => {
+    const formData = {
       activity_type: activityType,
       date,
       duration_minutes: parseInt(duration),
@@ -32,127 +68,160 @@ export default function SportForm({ initialData = {}, onSubmit }) {
       score,
       performance_notes: performanceNotes,
       injuries_or_flags: flags,
-      calories_burned: null, // reserved for AI estimation
-    });
-    // TODO: Provide accurate start_time and end_time if available
-    // import { createCalendarEventForEntity } from '@/lib/calendarUtils';
-    // await createCalendarEventForEntity('sport', /* newEntry.id */, /* user.id */, /* start_time */, /* end_time */);
+    };
+    handleSubmit(e, formData);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        <FormLabel>Sport/Activity</FormLabel>
+    <form onSubmit={onSubmitHandler} className="space-y-4">
+      <FormField 
+        label="Sport/Activity" 
+        error={getFieldError('activity_type')}
+        required
+      >
         <FormInput
           type="text"
           value={activityType}
           onChange={(e) => setActivityType(e.target.value)}
           placeholder="e.g., Basketball, Tennis, Soccer"
-          required
+          disabled={isSubmitting}
         />
-      </div>
+      </FormField>
 
-      <div>
-        <FormLabel>Date</FormLabel>
+      <FormField 
+        label="Date" 
+        error={getFieldError('date')}
+        required
+      >
         <FormInput
           type="date"
           value={date}
           onChange={(e) => setDate(e.target.value)}
-          required
+          disabled={isSubmitting}
         />
-      </div>
+      </FormField>
 
       <div className="grid grid-cols-2 gap-4">
-        <div>
-          <FormLabel>Duration (minutes)</FormLabel>
+        <FormField 
+          label="Duration (minutes)" 
+          error={getFieldError('duration_minutes')}
+          required
+        >
           <FormInput
             type="number"
             value={duration}
             onChange={(e) => setDuration(e.target.value)}
             placeholder="60"
-            required
+            disabled={isSubmitting}
           />
-        </div>
-        <div>
-          <FormLabel>Intensity Level</FormLabel>
-          <select
+        </FormField>
+        
+        <FormField 
+          label="Intensity Level" 
+          error={getFieldError('intensity_level')}
+          required
+        >
+          <FormSelect
             value={intensity}
             onChange={(e) => setIntensity(e.target.value)}
-            className="w-full p-2 bg-surface rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            required
+            disabled={isSubmitting}
           >
             <option value="">Select intensity</option>
             <option value="low">Low</option>
             <option value="moderate">Moderate</option>
             <option value="high">High</option>
             <option value="very_high">Very High</option>
-          </select>
-        </div>
+          </FormSelect>
+        </FormField>
       </div>
 
-      <div>
-        <FormLabel>Location</FormLabel>
+      <FormField 
+        label="Location" 
+        error={getFieldError('location')}
+      >
         <FormInput
           type="text"
           value={location}
           onChange={(e) => setLocation(e.target.value)}
           placeholder="e.g., Local Gym, Park"
+          disabled={isSubmitting}
         />
-      </div>
+      </FormField>
 
       <div className="grid grid-cols-2 gap-4">
-        <div>
-          <FormLabel>Weather</FormLabel>
+        <FormField 
+          label="Weather" 
+          error={getFieldError('weather')}
+        >
           <FormInput
             type="text"
             value={weather}
             onChange={(e) => setWeather(e.target.value)}
             placeholder="e.g., Sunny, Rainy"
+            disabled={isSubmitting}
           />
-        </div>
-        <div>
-          <FormLabel>Participants</FormLabel>
+        </FormField>
+        
+        <FormField 
+          label="Participants" 
+          error={getFieldError('participants')}
+        >
           <FormInput
             type="text"
             value={participants}
             onChange={(e) => setParticipants(e.target.value)}
             placeholder="e.g., Team, Solo, 2v2"
+            disabled={isSubmitting}
           />
-        </div>
+        </FormField>
       </div>
 
-      <div>
-        <FormLabel>Score/Result</FormLabel>
+      <FormField 
+        label="Score/Result" 
+        error={getFieldError('score')}
+      >
         <FormInput
           type="text"
           value={score}
           onChange={(e) => setScore(e.target.value)}
           placeholder="e.g., Won 21-15, 3 sets"
+          disabled={isSubmitting}
         />
-      </div>
+      </FormField>
 
-      <div>
-        <FormLabel>Performance Notes</FormLabel>
+      <FormField 
+        label="Performance Notes" 
+        error={getFieldError('performance_notes')}
+      >
         <FormTextarea
           value={performanceNotes}
           onChange={(e) => setPerformanceNotes(e.target.value)}
           rows={3}
           placeholder="How did you perform? What went well?"
+          disabled={isSubmitting}
         />
-      </div>
+      </FormField>
 
-      <div>
-        <FormLabel>Injuries/Flags</FormLabel>
+      <FormField 
+        label="Injuries/Flags" 
+        error={getFieldError('injuries_or_flags')}
+      >
         <FormTextarea
           value={flags}
           onChange={(e) => setFlags(e.target.value)}
           rows={2}
           placeholder="Any injuries, pain, or concerns?"
+          disabled={isSubmitting}
         />
-      </div>
+      </FormField>
 
-      <Button type="submit" variant="primary" className="w-full">
-        Save Sport Activity
+      <Button 
+        type="submit" 
+        variant="primary" 
+        className="w-full"
+        disabled={isSubmitting}
+      >
+        {isSubmitting ? 'Saving...' : 'Save Sport Activity'}
       </Button>
     </form>
   );

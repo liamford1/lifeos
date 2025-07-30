@@ -7,6 +7,7 @@ import FormLabel from '@/components/FormLabel';
 import FormInput from '@/components/FormInput';
 import FormTextarea from '@/components/FormTextarea';
 import FormSection from '@/components/FormSection';
+import FormField from '@/components/FormField';
 import { z } from 'zod';
 import { mapZodErrors } from '@/lib/validationHelpers';
 
@@ -113,21 +114,24 @@ export default function MealForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-6" role="form">
       {/* Basic Info */}
-      <div>
-        <FormLabel>Meal Name</FormLabel>
+      <FormField 
+        label="Meal Name" 
+        error={fieldErrors.name}
+        required
+      >
         <FormInput
           type="text"
           value={mealName}
           onChange={(e) => setMealName(e.target.value)}
           placeholder="e.g. Chicken Alfredo"
           disabled={loading}
-          required
         />
-        {fieldErrors.name && <div className="text-red-400 text-xs mt-1">{fieldErrors.name}</div>}
-      </div>
+      </FormField>
 
-      <div>
-        <FormLabel>Description</FormLabel>
+      <FormField 
+        label="Description" 
+        error={fieldErrors.description}
+      >
         <FormTextarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
@@ -135,38 +139,38 @@ export default function MealForm({
           placeholder="Brief description"
           disabled={loading}
         />
-      </div>
+      </FormField>
 
       <div className="flex gap-4">
         <div className="flex-1">
-          <FormLabel htmlFor="prep-time">Prep Time (min)</FormLabel>
-          <FormInput
-            id="prep-time"
-            type="number"
-            value={prepTime}
-            onChange={(e) => setPrepTime(e.target.value)}
-            disabled={loading}
-          />
+          <FormField label="Prep Time (min)" error={fieldErrors.prep_time}>
+            <FormInput
+              type="number"
+              value={prepTime}
+              onChange={(e) => setPrepTime(e.target.value)}
+              disabled={loading}
+            />
+          </FormField>
         </div>
         <div className="flex-1">
-          <FormLabel htmlFor="cook-time">Cook Time (min)</FormLabel>
-          <FormInput
-            id="cook-time"
-            type="number"
-            value={cookTime}
-            onChange={(e) => setCookTime(e.target.value)}
-            disabled={loading}
-          />
+          <FormField label="Cook Time (min)" error={fieldErrors.cook_time}>
+            <FormInput
+              type="number"
+              value={cookTime}
+              onChange={(e) => setCookTime(e.target.value)}
+              disabled={loading}
+            />
+          </FormField>
         </div>
         <div className="flex-1">
-          <FormLabel htmlFor="servings">Servings</FormLabel>
-          <FormInput
-            id="servings"
-            type="number"
-            value={servings}
-            onChange={(e) => setServings(e.target.value)}
-            disabled={loading}
-          />
+          <FormField label="Servings" error={fieldErrors.servings}>
+            <FormInput
+              type="number"
+              value={servings}
+              onChange={(e) => setServings(e.target.value)}
+              disabled={loading}
+            />
+          </FormField>
         </div>
       </div>
 

@@ -4,16 +4,17 @@ import React from 'react'
 import { useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
 import Button from '@/components/Button'
-import FormLabel from '@/components/FormLabel'
 import FormInput from '@/components/FormInput'
+import FormSelect from '@/components/FormSelect'
 import FormTextarea from '@/components/FormTextarea'
+import FormField from '@/components/FormField'
 import dayjs from 'dayjs'
 import { CALENDAR_SOURCES } from '@/lib/calendarUtils'
 import { useToast } from '@/components/Toast'
 import { createCalendarEventForEntity } from '@/lib/calendarSync';
 import { z } from 'zod'
-import { mapZodErrors } from '@/lib/validationHelpers'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useFormValidation } from '@/lib/hooks/useFormValidation'
 
 // Zod schema for planned workout form
 const plannedWorkoutSchema = z.object({
@@ -32,7 +33,6 @@ export default function PlannedWorkoutForm({ onSuccess }) {
   const [startTime, setStartTime] = useState('')
   const [endTime, setEndTime] = useState('')
   const [notes, setNotes] = useState('')
-  const [fieldErrors, setFieldErrors] = useState({})
 
   // React Query mutation for creating planned workouts
   const createPlannedWorkoutMutation = useMutation({
@@ -79,8 +79,6 @@ export default function PlannedWorkoutForm({ onSuccess }) {
           }),
       }
 
-         
-
       const { data, error } = await supabase
         .from(table)
         .insert(insertData)
@@ -124,95 +122,108 @@ export default function PlannedWorkoutForm({ onSuccess }) {
       setStartTime('');
       setEndTime('');
       setNotes('');
-      setFieldErrors({});
       
       onSuccess?.();
     },
     onError: (error) => {
       showError(error.message);
-      setFieldErrors({});
     }
   });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-
-    // Zod validation
-    const result = plannedWorkoutSchema.safeParse({ type, title, startTime, endTime, notes })
-    if (!result.success) {
-      setFieldErrors(mapZodErrors(result.error))
-      return
-    }
-
+  const handleFormSubmit = (formData) => {
     // Execute the mutation
-    createPlannedWorkoutMutation.mutate({ type, title, startTime, endTime, notes })
-  }
+    createPlannedWorkoutMutation.mutate(formData);
+  };
+
+  const {
+    fieldErrors,
+    isSubmitting,
+    handleSubmit,
+    getFieldError,
+  } = useFormValidation(plannedWorkoutSchema, handleFormSubmit);
+
+  const onSubmitHandler = (e) => {
+    const formData = { type, title, startTime, endTime, notes };
+    handleSubmit(e, formData);
+  };
 
   return (
-    <form onSubmit={handleSubmit} className="mt-4 space-y-4 p-4 bg-surface rounded shadow">
-      <div>
-        <FormLabel>Type</FormLabel>
-        <select value={type} onChange={e => setType(e.target.value)} className="w-full p-2 bg-surface rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+    <form onSubmit={onSubmitHandler} className="mt-4 space-y-4 p-4 bg-surface rounded shadow">
+      <FormField 
+        label="Type" 
+        error={getFieldError('type')}
+        required
+      >
+        <FormSelect 
+          value={type} 
+          onChange={e => setType(e.target.value)}
+          disabled={isSubmitting}
+        >
           <option value="workout">Workout</option>
           <option value="cardio">Cardio</option>
           <option value="sports">Sports</option>
-        </select>
-        {fieldErrors.type && <div className="text-red-400 text-xs mt-1">{fieldErrors.type}</div>}
-      </div>
+        </FormSelect>
+      </FormField>
 
-      <div>
-        <FormLabel>
-          {type === 'workout' ? 'Title' : 'Activity Type'}
-        </FormLabel>
+      <FormField 
+        label={type === 'workout' ? 'Title' : 'Activity Type'}
+        error={getFieldError('title')}
+        required
+      >
         <FormInput
           type="text"
           value={title}
           onChange={e => setTitle(e.target.value)}
           placeholder={type === 'workout' ? 'e.g., Upper Body, Leg Day' : 'e.g., Running, Cycling'}
-          required
+          disabled={isSubmitting}
         />
-        {fieldErrors.title && <div className="text-red-400 text-xs mt-1">{fieldErrors.title}</div>}
-      </div>
+      </FormField>
 
-      <div>
-        <FormLabel>Start Time</FormLabel>
+      <FormField 
+        label="Start Time" 
+        error={getFieldError('startTime')}
+        required
+      >
         <FormInput
           type="datetime-local"
           value={startTime}
           onChange={e => setStartTime(e.target.value)}
-          required
+          disabled={isSubmitting}
         />
-        {fieldErrors.startTime && <div className="text-red-400 text-xs mt-1">{fieldErrors.startTime}</div>}
-      </div>
+      </FormField>
 
-      <div>
-        <FormLabel>End Time (Optional)</FormLabel>
+      <FormField 
+        label="End Time (Optional)" 
+        error={getFieldError('endTime')}
+      >
         <FormInput
           type="datetime-local"
           value={endTime}
           onChange={e => setEndTime(e.target.value)}
+          disabled={isSubmitting}
         />
-        {fieldErrors.endTime && <div className="text-red-400 text-xs mt-1">{fieldErrors.endTime}</div>}
-      </div>
+      </FormField>
 
-      <div>
-        <FormLabel>Notes (Optional)</FormLabel>
+      <FormField 
+        label="Notes (Optional)" 
+        error={getFieldError('notes')}
+      >
         <FormTextarea
           value={notes}
           onChange={e => setNotes(e.target.value)}
           placeholder="Any additional notes about this planned workout..."
           rows={3}
+          disabled={isSubmitting}
         />
-        {fieldErrors.notes && <div className="text-red-400 text-xs mt-1">{fieldErrors.notes}</div>}
-      </div>
+      </FormField>
 
       <Button
         type="submit"
         variant="primary"
-        disabled={createPlannedWorkoutMutation.isPending}
+        disabled={isSubmitting || createPlannedWorkoutMutation.isPending}
         className="w-full"
       >
-        {createPlannedWorkoutMutation.isPending ? 'Saving...' : 'Save Planned Workout'}
+        {isSubmitting || createPlannedWorkoutMutation.isPending ? 'Saving...' : 'Save Planned Workout'}
       </Button>
     </form>
   )
