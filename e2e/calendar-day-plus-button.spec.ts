@@ -50,7 +50,7 @@ test.describe('Calendar Day Plus Button Functionality', () => {
     // Verify all three options are present
     await expect(page.getByRole('button', { name: /General Event/ })).toBeVisible();
     await expect(page.getByRole('button', { name: /Plan a meal for/ })).toBeVisible();
-    await expect(page.getByRole('button', { name: /Workout/ })).toBeVisible();
+    await expect(page.locator('button').filter({ hasText: 'Workout' }).filter({ hasText: 'Plan a fitness activity' })).toBeVisible();
   });
 
   test('General Event option opens add event modal with pre-selected date', async ({ page }) => {
@@ -121,7 +121,7 @@ test.describe('Calendar Day Plus Button Functionality', () => {
     await plusButton.click();
     
     // Click Workout option
-    await page.getByRole('button', { name: /Workout/ }).click();
+    await page.locator('button').filter({ hasText: 'Workout' }).filter({ hasText: 'Plan a fitness activity' }).click();
     
     // Verify navigation to fitness planner with date parameter
     await page.waitForURL(/\/fitness\/planner\?date=/);
