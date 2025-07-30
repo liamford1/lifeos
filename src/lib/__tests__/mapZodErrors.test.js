@@ -1,4 +1,4 @@
-const { mapZodErrors } = require('../validationHelpers');
+const { mapZodErrors } = require('../utils/validationHelpers');
 
 describe('mapZodErrors', () => {
   it('maps a typical Zod error object with two fields', () => {

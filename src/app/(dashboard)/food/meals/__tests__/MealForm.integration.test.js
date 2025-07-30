@@ -1,6 +1,6 @@
 const React = require('react');
 const { render, screen, fireEvent, waitFor } = require('@testing-library/react');
-const MealForm = require('../../../../../components/MealForm').default;
+const MealForm = require('../../../../../components/forms/MealForm').default;
 
 // Mock Supabase client
 jest.mock('../../../../../lib/supabaseClient', () => ({
@@ -18,7 +18,7 @@ jest.mock('next/navigation', () => ({
 }));
 
 // Mock useToast
-jest.mock('../../../../../components/Toast', () => ({
+jest.mock('../../../../../components/client/Toast', () => ({
   useToast: () => ({ showSuccess: jest.fn(), showError: jest.fn() }),
 }));
 
