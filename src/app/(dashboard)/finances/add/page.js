@@ -3,12 +3,12 @@
 import { useState, useEffect } from 'react';
 import { useUser } from '@/context/UserContext';
 import { useRouter } from 'next/navigation';
-import LoadingSpinner from '@/components/LoadingSpinner';
+import LoadingSpinner from '@/components/shared/LoadingSpinner';
 import { supabase } from '@/lib/supabaseClient';
-import BackButton from '@/components/BackButton';
-import Button from '@/components/Button';
-import { CALENDAR_SOURCES } from '@/lib/calendarUtils';
-import { useToast } from '@/components/Toast';
+import BackButton from '@/components/shared/BackButton';
+import Button from '@/components/shared/Button';
+import { CALENDAR_SOURCES } from '@/lib/utils/calendarUtils';
+import { useToast } from '@/components/client/Toast';
 import { createCalendarEventForEntity } from '@/lib/calendarSync';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 

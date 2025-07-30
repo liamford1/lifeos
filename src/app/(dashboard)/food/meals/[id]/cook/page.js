@@ -2,11 +2,11 @@
 // src/app/(dashboard)/food/meals/[id]/cook/page.js
 import { useEffect, useRef, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import Button from '@/components/Button';
-import LoadingSpinner from '@/components/LoadingSpinner';
-import { useToast } from '@/components/Toast';
+import Button from '@/components/shared/Button';
+import LoadingSpinner from '@/components/shared/LoadingSpinner';
+import { useToast } from '@/components/client/Toast';
 import { useCookingSession } from '@/context/CookingSessionContext';
-import BackButton from '@/components/BackButton';
+import BackButton from '@/components/shared/BackButton';
 import SharedDeleteButton from '@/components/SharedDeleteButton';
 import { useMealQuery } from '@/lib/hooks/useMeals';
 import { useUser } from '@/context/UserContext';

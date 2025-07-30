@@ -3,11 +3,11 @@
 import React from 'react';
 import { useState } from 'react';
 import { z } from 'zod';
-import Button from '@/components/Button';
-import FormInput from '@/components/FormInput';
-import FormSelect from '@/components/FormSelect';
-import FormTextarea from '@/components/FormTextarea';
-import FormField from '@/components/FormField';
+import Button from '@/components/shared/Button';
+import FormInput from '@/components/shared/FormInput';
+import FormSelect from '@/components/shared/FormSelect';
+import FormTextarea from '@/components/shared/FormTextarea';
+import FormField from '@/components/shared/FormField';
 import { useFormValidation } from '@/lib/hooks/useFormValidation';
 
 // Zod schema for sport form validation
@@ -45,7 +45,7 @@ export default function SportForm({ initialData = {}, onSubmit }) {
       calories_burned: null, // reserved for AI estimation
     });
     // TODO: Provide accurate start_time and end_time if available
-    // import { createCalendarEventForEntity } from '@/lib/calendarUtils';
+    // import { createCalendarEventForEntity } from '@/lib/utils/calendarUtils';
     // await createCalendarEventForEntity('sport', /* newEntry.id */, /* user.id */, /* start_time */, /* end_time */);
   };
 

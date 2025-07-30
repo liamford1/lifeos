@@ -1,6 +1,6 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
-import { Button } from './Button';
+import { Button } from './shared/Button';
 
 export default function ThemeToggle() {
   const [isDark, setIsDark] = useState(false);

@@ -4,11 +4,11 @@ import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import { useUser } from '@/context/UserContext';
-import BackButton from "@/components/BackButton";
-import SportForm from "@/components/SportForm";
-import LoadingSpinner from "@/components/LoadingSpinner";
-import Button from "@/components/Button";
-import { useToast } from "@/components/Toast";
+import BackButton from "@/components/shared/BackButton";
+import SportForm from "@/components/forms/SportForm";
+import LoadingSpinner from "@/components/shared/LoadingSpinner";
+import Button from "@/components/shared/Button";
+import { useToast } from "@/components/client/Toast";
 import SharedDeleteButton from '@/components/SharedDeleteButton';
 
 export default function EditSportPage() {

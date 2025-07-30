@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import Button from './Button'; // Added import for Button
+import Button from '../shared/Button'; // Added import for Button
 
 // Create a context for the toast state
 const ToastContext = createContext();

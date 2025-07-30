@@ -3,11 +3,11 @@
 import { useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useUser } from '@/context/UserContext';
-import LoadingSpinner from '@/components/LoadingSpinner';
-import BackButton from '@/components/BackButton';
-import Button from '@/components/Button';
+import LoadingSpinner from '@/components/shared/LoadingSpinner';
+import BackButton from '@/components/shared/BackButton';
+import Button from '@/components/shared/Button';
 import Link from 'next/link';
-import { useToast } from '@/components/Toast';
+import { useToast } from '@/components/client/Toast';
 import { MdOutlineCalendarToday, MdOutlineStickyNote2 } from 'react-icons/md';
 import SharedDeleteButton from '@/components/SharedDeleteButton';
 import { useMealQuery, useMealIngredientsQuery, useDeleteMealMutation } from '@/lib/hooks/useMeals';

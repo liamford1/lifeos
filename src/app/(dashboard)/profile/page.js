@@ -3,12 +3,12 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/context/UserContext';
-import LoadingSpinner from '@/components/LoadingSpinner';
+import LoadingSpinner from '@/components/shared/LoadingSpinner';
 import { supabase } from '@/lib/supabaseClient';
-import BackButton from '@/components/BackButton';
-import Button from '@/components/Button';
-import { useToast } from '@/components/Toast';
-import AuthGuard from '@/components/AuthGuard';
+import BackButton from '@/components/shared/BackButton';
+import Button from '@/components/shared/Button';
+import { useToast } from '@/components/client/Toast';
+import AuthGuard from '@/components/client/AuthGuard';
 
 function ProfilePage(props) {
   const { user, loading } = useUser();

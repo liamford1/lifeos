@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useToast } from '@/components/Toast';
+import { useToast } from '@/components/client/Toast';
 
 /**
  * Centralized API error handling hook

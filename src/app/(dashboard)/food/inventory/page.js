@@ -3,13 +3,13 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/context/UserContext';
-import LoadingSpinner from '@/components/LoadingSpinner';
-import Button from '@/components/Button';
-import BackButton from '@/components/BackButton'
-import { useDeleteEntity } from '@/lib/useSupabaseCrud';
+import LoadingSpinner from '@/components/shared/LoadingSpinner';
+import Button from '@/components/shared/Button';
+import BackButton from '@/components/shared/BackButton'
+import { useDeleteEntity } from '@/lib/hooks/useSupabaseCrud';
 import dynamic from "next/dynamic";
 const Package = dynamic(() => import("lucide-react/dist/esm/icons/package"), { ssr: false });
-import ManualPantryItemModal from '@/components/ManualPantryItemModal';
+import ManualPantryItemModal from '@/components/forms/ManualPantryItemModal';
 import SharedDeleteButton from '@/components/SharedDeleteButton';
 
 export default function InventoryPage() {

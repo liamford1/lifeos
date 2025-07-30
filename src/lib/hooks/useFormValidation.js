@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { z } from 'zod';
-import { mapZodErrors } from '@/lib/validationHelpers';
+import { mapZodErrors } from '@/lib/utils/validationHelpers';
 
 /**
  * Custom hook for centralized form validation

@@ -4,10 +4,10 @@ import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
 import { useUser } from '@/context/UserContext';
-import BackButton from "@/components/BackButton";
-import LoadingSpinner from "@/components/LoadingSpinner";
-import Button from "@/components/Button";
-import { useToast } from "@/components/Toast";
+import BackButton from "@/components/shared/BackButton";
+import LoadingSpinner from "@/components/shared/LoadingSpinner";
+import Button from "@/components/shared/Button";
+import { useToast } from "@/components/client/Toast";
 import { MdOutlineCalendarToday } from 'react-icons/md';
 import SharedDeleteButton from '@/components/SharedDeleteButton';
 

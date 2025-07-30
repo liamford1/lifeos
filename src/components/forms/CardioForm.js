@@ -5,15 +5,15 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/context/UserContext';
 import { z } from 'zod';
-import Button from '@/components/Button';
-import FormInput from '@/components/FormInput';
-import FormTextarea from '@/components/FormTextarea';
-import FormField from '@/components/FormField';
-import BackButton from '@/components/BackButton';
-import LoadingSpinner from '@/components/LoadingSpinner';
+import Button from '@/components/shared/Button';
+import FormInput from '@/components/shared/FormInput';
+import FormTextarea from '@/components/shared/FormTextarea';
+import FormField from '@/components/shared/FormField';
+import BackButton from '@/components/shared/BackButton';
+import LoadingSpinner from '@/components/shared/LoadingSpinner';
 import { useApiError } from '@/lib/hooks/useApiError';
 import { supabase } from '@/lib/supabaseClient';
-import { CALENDAR_SOURCES, updateCalendarEventFromSource } from '@/lib/calendarUtils';
+import { CALENDAR_SOURCES, updateCalendarEventFromSource } from '@/lib/utils/calendarUtils';
 import { useFormValidation } from '@/lib/hooks/useFormValidation';
 
 const cardioSchema = z.object({

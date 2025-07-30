@@ -2,12 +2,12 @@
 
 import { useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import BackButton from '@/components/BackButton';
-import MealForm from '@/components/MealForm';
-import { CALENDAR_SOURCES, updateCalendarEvent, updateCalendarEventFromSource } from '@/lib/calendarUtils';
+import BackButton from '@/components/shared/BackButton';
+import MealForm from '@/components/forms/MealForm';
+import { CALENDAR_SOURCES, updateCalendarEvent, updateCalendarEventFromSource } from '@/lib/utils/calendarUtils';
 import { useUser } from '@/context/UserContext';
-import LoadingSpinner from '@/components/LoadingSpinner';
-import Button from '@/components/Button';
+import LoadingSpinner from '@/components/shared/LoadingSpinner';
+import Button from '@/components/shared/Button';
 import SharedDeleteButton from '@/components/SharedDeleteButton';
 import { useMealQuery, useMealIngredientsQuery, useUpdateMealMutation, useDeleteMealMutation } from '@/lib/hooks/useMeals';
 import { useApiError } from '@/lib/hooks/useApiError';

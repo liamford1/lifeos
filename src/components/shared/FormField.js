@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useId } from 'react';
 
 export default function FormField({ 

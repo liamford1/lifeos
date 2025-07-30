@@ -1,16 +1,16 @@
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
-import { useFetchEntity } from '@/lib/useSupabaseCrud';
-import BackButton from '@/components/BackButton';
+import { useFetchEntity } from '@/lib/hooks/useSupabaseCrud';
+import BackButton from '@/components/shared/BackButton';
 import { useUser } from '@/context/UserContext';
-import LoadingSpinner from '@/components/LoadingSpinner';
+import LoadingSpinner from '@/components/shared/LoadingSpinner';
 import { useEffect, useState, useCallback } from 'react';
-import { useToast } from '@/components/Toast';
+import { useToast } from '@/components/client/Toast';
 import { MdOutlineCalendarToday } from 'react-icons/md';
 import { supabase } from '@/lib/supabaseClient';
 import SharedDeleteButton from '@/components/SharedDeleteButton';
-import Button from '@/components/Button';
+import Button from '@/components/shared/Button';
 
 export default function WorkoutDetailPage() {
   const params = useParams();

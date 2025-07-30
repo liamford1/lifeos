@@ -2,10 +2,10 @@ import React from 'react';
 import { useState } from 'react';
 import { useMutation } from "@tanstack/react-query";
 import { useUser } from '@/context/UserContext';
-import FormInput from './FormInput';
-import FormLabel from './FormLabel';
-import Button from './Button';
-import SharedDeleteButton from './SharedDeleteButton';
+import FormInput from '../shared/FormInput';
+import FormLabel from '../shared/FormLabel';
+import Button from '../shared/Button';
+import SharedDeleteButton from '../SharedDeleteButton';
 
 export default function ManualPantryItemModal({ onClose, onAddSuccess }) {
   const { user } = useUser();

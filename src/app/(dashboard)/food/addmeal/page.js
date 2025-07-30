@@ -3,10 +3,10 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/context/UserContext';
-import LoadingSpinner from '@/components/LoadingSpinner';
-import BackButton from '@/components/BackButton';
-import MealForm from '@/components/MealForm';
-import { CALENDAR_SOURCES } from '@/lib/calendarUtils';
+import LoadingSpinner from '@/components/shared/LoadingSpinner';
+import BackButton from '@/components/shared/BackButton';
+import MealForm from '@/components/forms/MealForm';
+import { CALENDAR_SOURCES } from '@/lib/utils/calendarUtils';
 import { useApiError } from '@/lib/hooks/useApiError';
 import dynamic from "next/dynamic";
 const CirclePlus = dynamic(() => import("lucide-react/dist/esm/icons/circle-plus"), { ssr: false });

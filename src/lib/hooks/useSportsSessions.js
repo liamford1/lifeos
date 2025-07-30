@@ -1,6 +1,6 @@
 import { supabase } from '@/lib/supabaseClient';
 import { useApiError } from '@/lib/hooks/useApiError';
-import { deleteEntityWithCalendarEvent } from '@/lib/deleteUtils';
+import { deleteEntityWithCalendarEvent } from '@/lib/utils/deleteUtils';
 
 export function useSportsSessions() {
   const { handleError, handleSuccess } = useApiError();

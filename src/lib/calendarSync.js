@@ -1,5 +1,5 @@
 import { supabase } from './supabaseClient';
-import { CALENDAR_SOURCES } from './calendarUtils';
+import { CALENDAR_SOURCES } from './utils/calendarUtils';
 
 /**
  * Creates a calendar event for a given entity type and entity data.

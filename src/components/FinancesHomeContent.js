@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/context/UserContext';
-import LoadingSpinner from '@/components/LoadingSpinner';
-import BackButton from '@/components/BackButton';
+import LoadingSpinner from '@/components/shared/LoadingSpinner';
+import BackButton from '@/components/shared/BackButton';
 import Link from 'next/link';
 import dynamic from "next/dynamic";
 const Wallet = dynamic(() => import("lucide-react/dist/esm/icons/wallet"), { ssr: false });

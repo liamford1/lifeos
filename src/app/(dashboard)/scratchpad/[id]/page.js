@@ -3,11 +3,11 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
-import BackButton from "@/components/BackButton";
-import LoadingSpinner from "@/components/LoadingSpinner";
-import Button from "@/components/Button";
+import BackButton from "@/components/shared/BackButton";
+import LoadingSpinner from "@/components/shared/LoadingSpinner";
+import Button from "@/components/shared/Button";
 import Link from "next/link";
-import { useToast } from "@/components/Toast";
+import { useToast } from "@/components/client/Toast";
 
 export default function ScratchpadDetailPage() {
   const { id } = useParams();

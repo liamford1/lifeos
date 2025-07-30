@@ -2,14 +2,14 @@
 
 import React from 'react';
 import { useState, useEffect } from 'react';
-import Button from '@/components/Button';
-import FormLabel from '@/components/FormLabel';
-import FormInput from '@/components/FormInput';
-import FormTextarea from '@/components/FormTextarea';
-import FormSection from '@/components/FormSection';
-import FormField from '@/components/FormField';
+import Button from '@/components/shared/Button';
+import FormLabel from '@/components/shared/FormLabel';
+import FormInput from '@/components/shared/FormInput';
+import FormTextarea from '@/components/shared/FormTextarea';
+import FormSection from '@/components/shared/FormSection';
+import FormField from '@/components/shared/FormField';
 import { z } from 'zod';
-import { mapZodErrors } from '@/lib/validationHelpers';
+import { mapZodErrors } from '@/lib/utils/validationHelpers';
 
 // Zod schema for meal form
 const mealSchema = z.object({

@@ -3,11 +3,11 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
-import WorkoutForm from '@/components/WorkoutForm';
+import WorkoutForm from '@/components/forms/WorkoutForm';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/context/UserContext';
-import LoadingSpinner from '@/components/LoadingSpinner';
-import { CALENDAR_SOURCES, updateCalendarEventFromSource } from '@/lib/calendarUtils';
+import LoadingSpinner from '@/components/shared/LoadingSpinner';
+import { CALENDAR_SOURCES, updateCalendarEventFromSource } from '@/lib/utils/calendarUtils';
 
 export default function EditWorkoutPage() {
   const params = useParams();

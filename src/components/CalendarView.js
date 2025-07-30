@@ -5,12 +5,12 @@ import { useUser } from '@/context/UserContext';
 import Calendar from "@/components/client/CalendarClient";
 import 'react-calendar/dist/Calendar.css';
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { deleteEntityWithCalendarEvent, deleteWorkoutCascade } from '@/lib/deleteUtils';
+import { deleteEntityWithCalendarEvent, deleteWorkoutCascade } from '@/lib/utils/deleteUtils';
 import { useRouter } from 'next/navigation';
 import dayjs from 'dayjs';
-import { CALENDAR_SOURCES, getCalendarEventRoute } from '@/lib/calendarUtils';
-import { getEventStyle } from '@/lib/eventStyleMap';
-import Button from '@/components/Button';
+import { CALENDAR_SOURCES, getCalendarEventRoute } from '@/lib/utils/calendarUtils';
+import { getEventStyle } from '@/lib/utils/eventStyleMap';
+import Button from '@/components/shared/Button';
 
 import { useApiError } from '@/lib/hooks/useApiError';
 import { MdOutlineCalendarToday } from 'react-icons/md';

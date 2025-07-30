@@ -3,13 +3,13 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
-import BackButton from '@/components/BackButton';
-import LoadingSpinner from '@/components/LoadingSpinner';
+import BackButton from '@/components/shared/BackButton';
+import LoadingSpinner from '@/components/shared/LoadingSpinner';
 import { MdOutlineCalendarToday } from 'react-icons/md';
 import { FaUtensils } from 'react-icons/fa';
-import { CALENDAR_SOURCES, updateCalendarEventFromSource } from '@/lib/calendarUtils';
-import Button from '@/components/Button';
-import Toast from '@/components/Toast';
+import { CALENDAR_SOURCES, updateCalendarEventFromSource } from '@/lib/utils/calendarUtils';
+import Button from '@/components/shared/Button';
+import Toast from '@/components/client/Toast';
 
 export default function PlannedMealDetailPage() {
   const { id } = useParams();

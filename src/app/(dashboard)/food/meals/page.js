@@ -3,12 +3,12 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/context/UserContext';
-import LoadingSpinner from '@/components/LoadingSpinner';
+import LoadingSpinner from '@/components/shared/LoadingSpinner';
 import Link from 'next/link';
-import BackButton from '@/components/BackButton';
+import BackButton from '@/components/shared/BackButton';
 import dynamic from "next/dynamic";
 const UtensilsCrossed = dynamic(() => import("lucide-react/dist/esm/icons/utensils-crossed"), { ssr: false });
-import Button from '@/components/Button';
+import Button from '@/components/shared/Button';
 import { useMealsQuery, useDeleteMealMutation } from '@/lib/hooks/useMeals';
 
 export default function MealsPage() {

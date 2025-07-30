@@ -1,4 +1,4 @@
-import Button from '@/components/Button';
+import Button from '@/components/shared/Button';
 
 export default function EditButton({ href, onClick, size = "sm", className = "" }) {
   return (
