@@ -3,11 +3,11 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/context/UserContext';
-import LoadingSpinner from '@/components/LoadingSpinner';
+import LoadingSpinner from '@/components/shared/LoadingSpinner';
 import { useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
-import BackButton from '@/components/BackButton'
-import Button from '@/components/Button'
+import BackButton from '@/components/shared/BackButton'
+import Button from '@/components/shared/Button'
 import dynamic from "next/dynamic";
 const Receipt = dynamic(() => import("lucide-react/dist/esm/icons/receipt"), { ssr: false });
 const ChevronDown = dynamic(() => import("lucide-react/dist/esm/icons/chevron-down"), { ssr: false });

@@ -1,4 +1,4 @@
-import { supabase } from './supabaseClient'
+import { supabase } from '../supabaseClient'
 
 // Constants for consistent source values
 export const CALENDAR_SOURCES = {

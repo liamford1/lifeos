@@ -1,18 +1,17 @@
 import { supabase } from '@/lib/supabaseClient';
-import { useToast } from '@/components/Toast';
-import { deleteEntityWithCalendarEvent } from '@/lib/deleteUtils';
+import { useApiError } from '@/lib/hooks/useApiError';
+import { deleteEntityWithCalendarEvent } from '@/lib/utils/deleteUtils';
 
 export function useCardioSessions() {
-  const { showSuccess, showError } = useToast();
+  const { handleError, handleSuccess } = useApiError();
 
   // Fetch all cardio sessions for a user (excluding in-progress sessions)
-  const fetchCardioSessions = async (userId) => {
+  const fetchCardioSessions = async (userId, options = {}) => {
     if (!userId) {
       console.warn('fetchCardioSessions called without userId');
       return null;
     }
     
-    console.log('Fetching cardio sessions for user:', userId);
     const { data, error } = await supabase
       .from('fitness_cardio')
       .select('*')
@@ -22,31 +21,36 @@ export function useCardioSessions() {
     
     if (error) {
       console.error('Error fetching cardio sessions:', error);
-      showError('Failed to fetch cardio sessions.');
+      handleError(error, { 
+        customMessage: 'Failed to fetch cardio sessions.',
+        ...options 
+      });
       return null;
     }
     
-    console.log('Fetched cardio sessions:', data?.length || 0);
     return data;
   };
 
   // Create a new cardio session
-  const createCardioSession = async (data) => {
+  const createCardioSession = async (data, options = {}) => {
     const { data: inserted, error } = await supabase
       .from('fitness_cardio')
       .insert(data)
       .select()
       .single();
     if (error) {
-      showError('Failed to create cardio session.');
+      handleError(error, { 
+        customMessage: 'Failed to create cardio session.',
+        ...options 
+      });
       return null;
     }
-    showSuccess('Cardio session created!');
+    handleSuccess('Cardio session created!', options);
     return inserted;
   };
 
   // Update a cardio session
-  const updateCardioSession = async (id, updatedData) => {
+  const updateCardioSession = async (id, updatedData, options = {}) => {
     const { data, error } = await supabase
       .from('fitness_cardio')
       .update(updatedData)
@@ -54,15 +58,18 @@ export function useCardioSessions() {
       .select()
       .single();
     if (error) {
-      showError('Failed to update cardio session.');
+      handleError(error, { 
+        customMessage: 'Failed to update cardio session.',
+        ...options 
+      });
       return null;
     }
-    showSuccess('Cardio session updated!');
+    handleSuccess('Cardio session updated!', options);
     return data;
   };
 
   // Delete a cardio session (and its calendar event)
-  const deleteCardioSession = async (id, userId) => {
+  const deleteCardioSession = async (id, userId, options = {}) => {
     const error = await deleteEntityWithCalendarEvent({
       table: 'fitness_cardio',
       id,
@@ -70,10 +77,13 @@ export function useCardioSessions() {
       source: 'cardio',
     });
     if (error) {
-      showError('Failed to delete cardio session.');
+      handleError(error, { 
+        customMessage: 'Failed to delete cardio session.',
+        ...options 
+      });
       return false;
     }
-    showSuccess('Cardio session deleted!');
+    handleSuccess('Cardio session deleted!', options);
     return true;
   };
 

@@ -2,11 +2,11 @@
 // src/app/(dashboard)/food/meals/[id]/cook/page.js
 import { useEffect, useRef, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import Button from '@/components/Button';
-import LoadingSpinner from '@/components/LoadingSpinner';
-import { useToast } from '@/components/Toast';
+import Button from '@/components/shared/Button';
+import LoadingSpinner from '@/components/shared/LoadingSpinner';
+import { useToast } from '@/components/client/Toast';
 import { useCookingSession } from '@/context/CookingSessionContext';
-import BackButton from '@/components/BackButton';
+import BackButton from '@/components/shared/BackButton';
 import SharedDeleteButton from '@/components/SharedDeleteButton';
 import { useMealQuery } from '@/lib/hooks/useMeals';
 import { useUser } from '@/context/UserContext';
@@ -51,22 +51,14 @@ export default function CookMealPage() {
   // TEMP DEBUG: Log context and parsedInstructions
   useEffect(() => {
     if (!meal) return;
-    console.log('[CookPage] meal.id:', meal.id);
-    console.log('[CookPage] parsedInstructions:', parsedInstructions);
-    console.log('[CookPage] isCooking:', isCooking, 'cookingMealId:', cookingMealId, 'currentStep:', currentStep, 'instructions:', cookingInstructions);
+    
   }, [meal?.id, parsedInstructions, isCooking, cookingMealId, currentStep, cookingInstructions]);
 
   // Handler for Cook Meal button
   const handleCookMeal = () => {
     if (!meal) return;
-    console.log('[CookPage] Cook Meal button clicked');
-    console.log('[CookPage] Calling startCooking with:', meal.id, parsedInstructions);
     startCooking(meal.id, parsedInstructions);
     setSessionStarted((n) => n + 1); // force re-render
-    // Log context after
-    setTimeout(() => {
-      console.log('[CookPage] After startCooking: isCooking:', isCooking, 'cookingMealId:', cookingMealId, 'currentStep:', currentStep, 'instructions:', cookingInstructions);
-    }, 100);
   };
 
   // Handle the case where the meal being cooked is deleted

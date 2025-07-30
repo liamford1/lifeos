@@ -1,11 +1,11 @@
 import { supabase } from '@/lib/supabaseClient';
-import { useToast } from '@/components/Toast';
+import { useApiError } from '@/lib/hooks/useApiError';
 
 export function useWorkouts() {
-  const { showSuccess, showError } = useToast();
+  const { handleError, handleSuccess } = useApiError();
 
   // Fetch all workouts for a user
-  const fetchWorkouts = async (userId) => {
+  const fetchWorkouts = async (userId, options = {}) => {
     if (!userId) return null;
     const { data, error } = await supabase
       .from('fitness_workouts')
@@ -13,29 +13,35 @@ export function useWorkouts() {
       .eq('user_id', userId)
       .order('date', { ascending: false });
     if (error) {
-      showError(error.message || 'Failed to fetch workouts.');
+      handleError(error, { 
+        customMessage: 'Failed to fetch workouts.',
+        ...options 
+      });
       return null;
     }
     return data;
   };
 
   // Create a new workout
-  const createWorkout = async (workoutData) => {
+  const createWorkout = async (workoutData, options = {}) => {
     const { data, error } = await supabase
       .from('fitness_workouts')
       .insert([workoutData])
       .select()
       .single();
     if (error) {
-      showError(error.message || 'Failed to create workout.');
+      handleError(error, { 
+        customMessage: 'Failed to create workout.',
+        ...options 
+      });
       return null;
     }
-    showSuccess('Workout created successfully!');
+    handleSuccess('Workout created successfully!', options);
     return data;
   };
 
   // Update an existing workout
-  const updateWorkout = async (id, updatedData) => {
+  const updateWorkout = async (id, updatedData, options = {}) => {
     const { data, error } = await supabase
       .from('fitness_workouts')
       .update(updatedData)
@@ -43,24 +49,30 @@ export function useWorkouts() {
       .select()
       .single();
     if (error) {
-      showError(error.message || 'Failed to update workout.');
+      handleError(error, { 
+        customMessage: 'Failed to update workout.',
+        ...options 
+      });
       return null;
     }
-    showSuccess('Workout updated successfully!');
+    handleSuccess('Workout updated successfully!', options);
     return data;
   };
 
   // Delete a workout
-  const deleteWorkout = async (id) => {
+  const deleteWorkout = async (id, options = {}) => {
     const { error } = await supabase
       .from('fitness_workouts')
       .delete()
       .eq('id', id);
     if (error) {
-      showError(error.message || 'Failed to delete workout.');
+      handleError(error, { 
+        customMessage: 'Failed to delete workout.',
+        ...options 
+      });
       return null;
     }
-    showSuccess('Workout deleted successfully!');
+    handleSuccess('Workout deleted successfully!', options);
     return true;
   };
 

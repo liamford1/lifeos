@@ -3,11 +3,11 @@
 import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
-import BackButton from '@/components/BackButton';
-import Button from '@/components/Button';
+import BackButton from '@/components/shared/BackButton';
+import Button from '@/components/shared/Button';
 import { useUser } from '@/context/UserContext';
-import LoadingSpinner from '@/components/LoadingSpinner';
-import { useToast } from '@/components/Toast';
+import LoadingSpinner from '@/components/shared/LoadingSpinner';
+import { useToast } from '@/components/client/Toast';
 import { MdOutlineCalendarToday } from 'react-icons/md';
 import dynamic from "next/dynamic";
 const HeartPulse = dynamic(() => import("lucide-react/dist/esm/icons/heart-pulse"), { ssr: false });

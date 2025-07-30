@@ -2,21 +2,21 @@
 
 import { useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import BackButton from '@/components/BackButton';
-import MealForm from '@/components/MealForm';
-import { CALENDAR_SOURCES, updateCalendarEvent, updateCalendarEventFromSource } from '@/lib/calendarUtils';
+import BackButton from '@/components/shared/BackButton';
+import MealForm from '@/components/forms/MealForm';
+import { CALENDAR_SOURCES, updateCalendarEvent, updateCalendarEventFromSource } from '@/lib/utils/calendarUtils';
 import { useUser } from '@/context/UserContext';
-import LoadingSpinner from '@/components/LoadingSpinner';
-import Button from '@/components/Button';
+import LoadingSpinner from '@/components/shared/LoadingSpinner';
+import Button from '@/components/shared/Button';
 import SharedDeleteButton from '@/components/SharedDeleteButton';
 import { useMealQuery, useMealIngredientsQuery, useUpdateMealMutation, useDeleteMealMutation } from '@/lib/hooks/useMeals';
-import { useToast } from '@/components/Toast';
+import { useApiError } from '@/lib/hooks/useApiError';
 
 export default function EditMealPage() {
   const { user, loading: userLoading } = useUser();
   const router = useRouter();
   const { id } = useParams();
-  const { showSuccess, showError } = useToast();
+  const { handleError } = useApiError();
 
   // Use React Query for data fetching
   const { 
@@ -42,7 +42,9 @@ export default function EditMealPage() {
 
   async function handleUpdateMeal(mealData) {
     if (!user || !id) {
-      showError('User not authenticated or meal ID missing');
+      handleError(new Error('User not authenticated or meal ID missing'), {
+        customMessage: 'User not authenticated or meal ID missing'
+      });
       return;
     }
 
@@ -59,71 +61,82 @@ export default function EditMealPage() {
             servings: mealData.servings,
             instructions: mealData.instructions
           },
-          ingredients: mealData.ingredients
-        },
-        {
-          onSuccess: async (updatedMeal) => {
-            // Update calendar event for the edited meal
-            const startTime = new Date();
-            const calendarError = await updateCalendarEventFromSource(
-              CALENDAR_SOURCES.MEAL,
-              id,
-              {
-                title: `Meal: ${mealData.name}`,
-                start_time: startTime.toISOString(),
-                description: mealData.description || null,
+          ingredients: mealData.ingredients,
+          options: {
+            onSuccess: async (updatedMeal) => {
+              // Update calendar event for the edited meal
+              const startTime = new Date();
+              const calendarError = await updateCalendarEventFromSource(
+                CALENDAR_SOURCES.MEAL,
+                id,
+                {
+                  title: `Meal: ${mealData.name}`,
+                  start_time: startTime.toISOString(),
+                  description: mealData.description || null,
+                }
+              );
+              if (calendarError) {
+                console.error('Calendar event update failed:', calendarError);
               }
-            );
-            if (calendarError) {
-              console.error('Calendar event update failed:', calendarError);
-            }
 
-            showSuccess('Meal updated successfully!');
-            // Redirect to the meal view page
-            router.push(`/food/meals/${id}`);
-          },
-          onError: (error) => {
-            showError(error.message || 'Failed to update meal');
+              // Redirect to the meal view page
+              router.push(`/food/meals/${id}`);
+            },
+            onError: (error) => {
+              handleError(error, { 
+                customMessage: 'Failed to update meal' 
+              });
+            }
           }
         }
       );
     } catch (err) {
       console.error('Error in handleUpdateMeal:', err);
-      showError('An unexpected error occurred');
+      handleError(err, { 
+        customMessage: 'An unexpected error occurred' 
+      });
     }
   }
 
   async function handleDelete() {
     if (!user || !id) {
-      showError('User not authenticated or meal ID missing');
+      handleError(new Error('User not authenticated or meal ID missing'), {
+        customMessage: 'User not authenticated or meal ID missing'
+      });
       return;
     }
 
     try {
       // Delete the meal using React Query mutation
-      deleteMealMutation.mutate(id, {
-        onSuccess: async (deletedId) => {
-          // Update calendar event for the deleted meal
-          const calendarError = await updateCalendarEventFromSource(
-            CALENDAR_SOURCES.MEAL,
-            deletedId,
-            null // Set to null to indicate deletion
-          );
-          if (calendarError) {
-            console.error('Calendar event update failed:', calendarError);
-          }
+      deleteMealMutation.mutate({ 
+        id, 
+        options: {
+          onSuccess: async (deletedId) => {
+            // Update calendar event for the deleted meal
+            const calendarError = await updateCalendarEventFromSource(
+              CALENDAR_SOURCES.MEAL,
+              deletedId,
+              null // Set to null to indicate deletion
+            );
+            if (calendarError) {
+              console.error('Calendar event update failed:', calendarError);
+            }
 
-          showSuccess('Meal deleted successfully!');
-          // Redirect to the meals list page
-          router.push('/food/meals');
-        },
-        onError: (error) => {
-          showError(error.message || 'Failed to delete meal');
+            // Redirect to the meals list page
+            router.push('/food/meals');
+          },
+          onError: (error) => {
+            handleError(error, { 
+              customMessage: 'Failed to delete meal' 
+            });
+          }
         }
       });
     } catch (err) {
       console.error('Error in handleDelete:', err);
-      showError('An unexpected error occurred');
+      handleError(err, { 
+        customMessage: 'An unexpected error occurred' 
+      });
     }
   }
 
@@ -141,8 +154,8 @@ export default function EditMealPage() {
     return null;
   }
 
-  // Show loading state while fetching meal data
-  if (mealLoading) {
+  // Show loading state while fetching meal data or ingredients
+  if (mealLoading || ingredientsLoading) {
     return (
       <div className="max-w-6xl mx-auto p-4 space-y-4">
         <BackButton />
@@ -194,6 +207,15 @@ export default function EditMealPage() {
   }
 
   // Prepare initial values for the form
+  const mappedIngredients = ingredients.map(ing => ({
+    name: ing.food_item_name || '',
+    quantity: ing.quantity?.toString() || '',
+    unit: ing.unit || '',
+  }));
+  
+  // Ensure we have at least one ingredient to prevent validation failure
+  const initialIngredients = mappedIngredients.length > 0 ? mappedIngredients : [{ name: '', quantity: '', unit: '' }];
+  
   const initialValues = {
     name: meal?.name || '',
     description: meal?.description || '',
@@ -201,11 +223,7 @@ export default function EditMealPage() {
     cook_time: meal?.cook_time,
     servings: meal?.servings,
     instructions: meal?.instructions || [],
-    ingredients: ingredients.map(ing => ({
-      name: ing.food_item_name || '',
-      quantity: ing.quantity?.toString() || '',
-      unit: ing.unit || '',
-    })),
+    ingredients: initialIngredients,
   };
 
   return (

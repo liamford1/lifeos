@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/context/UserContext';
-import LoadingSpinner from '@/components/LoadingSpinner';
+import LoadingSpinner from '@/components/shared/LoadingSpinner';
 import { CalendarIconClient as CalendarIcon } from "@/components/client/CalendarIconClient";
 import Activity from "lucide-react/dist/esm/icons/activity";
 import Dumbbell from "lucide-react/dist/esm/icons/dumbbell";

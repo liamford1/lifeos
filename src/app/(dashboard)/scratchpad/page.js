@@ -1,15 +1,15 @@
 "use client";
 
 import { useEffect, useState } from 'react'
-import { useInsertEntity } from '@/lib/useSupabaseCrud'
+import { useInsertEntity } from '@/lib/hooks/useSupabaseCrud'
 import { supabase } from '@/lib/supabaseClient'
-import { deleteEntityWithCalendarEvent } from '@/lib/deleteUtils'
-import BackButton from '@/components/BackButton'
-import Button from '@/components/Button'
+import { deleteEntityWithCalendarEvent } from '@/lib/utils/deleteUtils'
+import BackButton from '@/components/shared/BackButton'
+import Button from '@/components/shared/Button'
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/context/UserContext';
-import LoadingSpinner from '@/components/LoadingSpinner';
-import { useToast } from '@/components/Toast';
+import LoadingSpinner from '@/components/shared/LoadingSpinner';
+import { useToast } from '@/components/client/Toast';
 import Link from 'next/link';
 import { MdOutlineStickyNote2 } from 'react-icons/md';
 import dynamic from "next/dynamic";

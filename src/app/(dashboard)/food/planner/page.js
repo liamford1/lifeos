@@ -2,12 +2,12 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '@/lib/supabaseClient'
-import { deleteEntityWithCalendarEvent } from '@/lib/deleteUtils'
-import BackButton from '@/components/BackButton'
-import Button from '@/components/Button'
-import LoadingSpinner from '@/components/LoadingSpinner'
-import { CALENDAR_SOURCES } from '@/lib/calendarUtils'
-import { useToast } from '@/components/Toast'
+import { deleteEntityWithCalendarEvent } from '@/lib/utils/deleteUtils'
+import BackButton from '@/components/shared/BackButton'
+import Button from '@/components/shared/Button'
+import LoadingSpinner from '@/components/shared/LoadingSpinner'
+import { CALENDAR_SOURCES } from '@/lib/utils/calendarUtils'
+import { useToast } from '@/components/client/Toast'
 import { MdOutlineCalendarToday } from 'react-icons/md';
 import dynamic from "next/dynamic";
 const CalendarCheck = dynamic(() => import("lucide-react/dist/esm/icons/calendar-check"), { ssr: false });

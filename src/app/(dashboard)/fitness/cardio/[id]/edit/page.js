@@ -3,10 +3,10 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
-import CardioForm from '@/components/CardioForm';
+import CardioForm from '@/components/forms/CardioForm';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/context/UserContext';
-import LoadingSpinner from '@/components/LoadingSpinner';
+import LoadingSpinner from '@/components/shared/LoadingSpinner';
 
 export default function EditCardioPage() {
   const params = useParams();

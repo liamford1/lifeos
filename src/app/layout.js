@@ -1,16 +1,16 @@
 import React from 'react';
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import SupabaseProvider from "@/components/SupabaseProvider";
+import SupabaseProvider from "@/components/client/SupabaseProvider";
 import { UserProvider } from '@/context/UserContext';
-import { ToastContainer } from '@/components/Toast';
+import { ToastContainer, ToastProvider } from '@/components/client/Toast';
 import { WorkoutSessionProvider } from '@/context/WorkoutSessionContext';
 import { CardioSessionProvider } from '@/context/CardioSessionContext';
 import { SportsSessionProvider } from '@/context/SportsSessionContext';
 import { CookingSessionProvider } from '@/context/CookingSessionContext';
-import ErrorBoundaryWrapper from "../components/ErrorBoundaryWrapper";
 import { supabase } from '@/lib/supabaseClient';
-import ReactQueryProvider from '@/components/ReactQueryProvider';
+import ErrorBoundary from "@/components/shared/ErrorBoundary";
+import QueryProvider from '@/components/QueryProvider';
 
 if (typeof window !== 'undefined' && !window.supabase) {
   window.supabase = supabase;
@@ -28,24 +28,26 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}>
-        <ReactQueryProvider>
+        <QueryProvider>
           <SupabaseProvider>
             <UserProvider>
-              <WorkoutSessionProvider>
-                <CardioSessionProvider>
-                  <SportsSessionProvider>
-                    <CookingSessionProvider>
-                      <ErrorBoundaryWrapper>
-                        <ToastContainer />
-                        {children}
-                      </ErrorBoundaryWrapper>
-                    </CookingSessionProvider>
-                  </SportsSessionProvider>
-                </CardioSessionProvider>
-              </WorkoutSessionProvider>
+              <ToastProvider>
+                <WorkoutSessionProvider>
+                  <CardioSessionProvider>
+                    <SportsSessionProvider>
+                      <CookingSessionProvider>
+                        <ErrorBoundary>
+                          <ToastContainer />
+                          {children}
+                        </ErrorBoundary>
+                      </CookingSessionProvider>
+                    </SportsSessionProvider>
+                  </CardioSessionProvider>
+                </WorkoutSessionProvider>
+              </ToastProvider>
             </UserProvider>
           </SupabaseProvider>
-        </ReactQueryProvider>
+        </QueryProvider>
       </body>
     </html>
   );

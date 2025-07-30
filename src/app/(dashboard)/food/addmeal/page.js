@@ -3,11 +3,11 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/context/UserContext';
-import LoadingSpinner from '@/components/LoadingSpinner';
-import BackButton from '@/components/BackButton';
-import MealForm from '@/components/MealForm';
-import { CALENDAR_SOURCES } from '@/lib/calendarUtils';
-import { useToast } from '@/components/Toast';
+import LoadingSpinner from '@/components/shared/LoadingSpinner';
+import BackButton from '@/components/shared/BackButton';
+import MealForm from '@/components/forms/MealForm';
+import { CALENDAR_SOURCES } from '@/lib/utils/calendarUtils';
+import { useApiError } from '@/lib/hooks/useApiError';
 import dynamic from "next/dynamic";
 const CirclePlus = dynamic(() => import("lucide-react/dist/esm/icons/circle-plus"), { ssr: false });
 import { createCalendarEventForEntity } from '@/lib/calendarSync';
@@ -16,7 +16,7 @@ import { useCreateMealMutation } from '@/lib/hooks/useMeals';
 export default function AddMealPage(props) {
   const { user, loading: userLoading } = useUser();
   const router = useRouter();
-  const { showSuccess, showError } = useToast();
+  const { handleError } = useApiError();
   const createMealMutation = useCreateMealMutation();
 
   useEffect(() => {
@@ -37,7 +37,9 @@ export default function AddMealPage(props) {
 
   async function handleSaveMeal(mealData) {
     if (!user) {
-      showError('User not logged in.');
+      handleError(new Error('User not logged in.'), { 
+        customMessage: 'User not logged in.' 
+      });
       return;
     }
 
@@ -45,30 +47,35 @@ export default function AddMealPage(props) {
       // Create the meal using React Query mutation
       createMealMutation.mutate(
         {
-          user_id: user.id,
-          name: mealData.name,
-          description: mealData.description,
-          prep_time: mealData.prep_time,
-          cook_time: mealData.cook_time,
-          servings: mealData.servings,
-          instructions: mealData.instructions,
-          notes: mealData.notes,
-          calories: mealData.calories,
-          date: mealData.date,
-          ingredients: mealData.ingredients
-        },
-        {
-          onSuccess: (createdMeal) => {
-            showSuccess('Meal and ingredients saved successfully!');
-            router.push('/food/meals');
+          mealData: {
+            user_id: user.id,
+            name: mealData.name,
+            description: mealData.description,
+            prep_time: mealData.prep_time,
+            cook_time: mealData.cook_time,
+            servings: mealData.servings,
+            instructions: mealData.instructions,
+            notes: mealData.notes,
+            calories: mealData.calories,
+            date: mealData.date,
+            ingredients: mealData.ingredients
           },
-          onError: (error) => {
-            showError(error.message || 'Failed to save meal.');
+          options: {
+            onSuccess: (createdMeal) => {
+              router.push('/food/meals');
+            },
+            onError: (error) => {
+              handleError(error, { 
+                customMessage: 'Failed to save meal.' 
+              });
+            }
           }
         }
       );
     } catch (err) {
-      showError('An unexpected error occurred.');
+      handleError(err, { 
+        customMessage: 'An unexpected error occurred.' 
+      });
     }
   }
 

@@ -3,13 +3,13 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/context/UserContext';
-import LoadingSpinner from '@/components/LoadingSpinner';
+import LoadingSpinner from '@/components/shared/LoadingSpinner';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabaseClient';
-import { deleteEntityWithCalendarEvent } from '@/lib/deleteUtils';
-import BackButton from '@/components/BackButton';
-import Button from '@/components/Button';
-import { useToast } from '@/components/Toast';
+import { deleteEntityWithCalendarEvent } from '@/lib/utils/deleteUtils';
+import BackButton from '@/components/shared/BackButton';
+import Button from '@/components/shared/Button';
+import { useToast } from '@/components/client/Toast';
 import { deleteCalendarEventForEntity } from '@/lib/calendarSync';
 import SharedDeleteButton from '@/components/SharedDeleteButton';
 import EditButton from '@/components/EditButton';

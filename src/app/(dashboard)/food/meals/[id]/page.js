@@ -3,11 +3,11 @@
 import { useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useUser } from '@/context/UserContext';
-import LoadingSpinner from '@/components/LoadingSpinner';
-import BackButton from '@/components/BackButton';
-import Button from '@/components/Button';
+import LoadingSpinner from '@/components/shared/LoadingSpinner';
+import BackButton from '@/components/shared/BackButton';
+import Button from '@/components/shared/Button';
 import Link from 'next/link';
-import { useToast } from '@/components/Toast';
+import { useToast } from '@/components/client/Toast';
 import { MdOutlineCalendarToday, MdOutlineStickyNote2 } from 'react-icons/md';
 import SharedDeleteButton from '@/components/SharedDeleteButton';
 import { useMealQuery, useMealIngredientsQuery, useDeleteMealMutation } from '@/lib/hooks/useMeals';
@@ -62,14 +62,17 @@ export default function MealDetailPage() {
       }
 
       // Delete the meal (this will cascade delete ingredients)
-      deleteMealMutation.mutate(meal.id, {
-        onSuccess: () => {
-          showSuccess('Meal deleted successfully!');
-          // Redirect back to meals list
-          router.push('/food/meals');
-        },
-        onError: (error) => {
-          showError(error.message || 'Failed to delete meal.');
+      deleteMealMutation.mutate({
+        id: meal.id,
+        options: {
+          onSuccess: () => {
+            showSuccess('Meal deleted successfully!');
+            // Redirect back to meals list
+            router.push('/food/meals');
+          },
+          onError: (error) => {
+            showError(error.message || 'Failed to delete meal.');
+          }
         }
       });
     } catch (error) {

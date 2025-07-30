@@ -7,8 +7,8 @@ import Link from 'next/link';
 import { supabase } from '@/lib/supabaseClient';
 import { FaUserCircle } from 'react-icons/fa';
 import { useUser } from '@/context/UserContext';
-import LoadingSpinner from '@/components/LoadingSpinner';
-import Button from '@/components/Button';
+import LoadingSpinner from '@/components/shared/LoadingSpinner';
+import Button from '@/components/shared/Button';
 import { useWorkoutSession } from '@/context/WorkoutSessionContext';
 import { useCardioSession } from '@/context/CardioSessionContext';
 import { useSportsSession } from '@/context/SportsSessionContext';
@@ -40,7 +40,7 @@ export default function AppBar() {
       }
     };
     getProfile();
-  }, [user, loading, session]);
+  }, [user, loading, session?.access_token]);
 
   // Handle user logout and redirect
   const handleLogout = async () => {

@@ -3,17 +3,18 @@
 import React from 'react'
 import { useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
-import Button from '@/components/Button'
-import FormLabel from '@/components/FormLabel'
-import FormInput from '@/components/FormInput'
-import FormTextarea from '@/components/FormTextarea'
+import Button from '@/components/shared/Button'
+import FormInput from '@/components/shared/FormInput'
+import FormSelect from '@/components/shared/FormSelect'
+import FormTextarea from '@/components/shared/FormTextarea'
+import FormField from '@/components/shared/FormField'
 import dayjs from 'dayjs'
-import { CALENDAR_SOURCES } from '@/lib/calendarUtils'
-import { useToast } from '@/components/Toast'
+import { CALENDAR_SOURCES } from '@/lib/utils/calendarUtils'
+import { useApiError } from '@/lib/hooks/useApiError'
 import { createCalendarEventForEntity } from '@/lib/calendarSync';
 import { z } from 'zod'
-import { mapZodErrors } from '@/lib/validationHelpers'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useFormValidation } from '@/lib/hooks/useFormValidation'
 
 // Zod schema for planned workout form
 const plannedWorkoutSchema = z.object({
@@ -25,14 +26,13 @@ const plannedWorkoutSchema = z.object({
 })
 
 export default function PlannedWorkoutForm({ onSuccess }) {
-  const { showSuccess, showError } = useToast();
+  const { handleError, handleSuccess } = useApiError();
   const queryClient = useQueryClient();
   const [type, setType] = useState('workout') // workout | cardio | sports
   const [title, setTitle] = useState('')
   const [startTime, setStartTime] = useState('')
   const [endTime, setEndTime] = useState('')
   const [notes, setNotes] = useState('')
-  const [fieldErrors, setFieldErrors] = useState({})
 
   // React Query mutation for creating planned workouts
   const createPlannedWorkoutMutation = useMutation({
@@ -76,143 +76,158 @@ export default function PlannedWorkoutForm({ onSuccess }) {
               start_time: formData.startTime || null,
               end_time: formData.endTime || null,
               performance_notes: formData.notes
-          }),
+          })
       }
-
-         
 
       const { data, error } = await supabase
-        .from(table)
-        .insert(insertData)
-        .select()
-        .single()
+          .from(table)
+          .insert([insertData])
+          .select()
+          .single()
 
       if (error) {
-        throw new Error(`Failed to save planned workout: ${error.message}`)
+          throw error
       }
 
-      // Map table to source for calendar events
-      const source = formData.type === 'workout' ? CALENDAR_SOURCES.WORKOUT 
-                   : formData.type === 'cardio' ? CALENDAR_SOURCES.CARDIO 
-                   : CALENDAR_SOURCES.SPORT
+      // Create calendar event
+      const calendarSource = formData.type === 'workout' ? CALENDAR_SOURCES.WORKOUT
+                          : formData.type === 'cardio' ? CALENDAR_SOURCES.CARDIO
+                          : CALENDAR_SOURCES.SPORT // Fixed: was SPORTS, should be SPORT
 
-      const calendarError = await createCalendarEventForEntity(source, {
-        id: data.id,
-        user_id: userId,
-        title: formData.title,
-        activity_type: formData.type === 'cardio' || formData.type === 'sports' ? formData.title : undefined,
-        date: formData.startTime,
-        notes: formData.type === 'sports' ? undefined : formData.notes,
-        performance_notes: formData.type === 'sports' ? formData.notes : undefined,
-        end_time: formData.endTime && formData.endTime.trim() !== '' ? formData.endTime : null,
-      });
+      // Fixed: Pass the entity object instead of separate parameters
+      const calendarError = await createCalendarEventForEntity(
+          calendarSource,
+          {
+              ...data,
+              user_id: userId,
+              title: formData.title,
+              activity_type: formData.type === 'workout' ? undefined : formData.title,
+              notes: formData.type === 'sports' ? undefined : formData.notes,
+              performance_notes: formData.type === 'sports' ? formData.notes : undefined,
+              date: formData.startTime ? formData.startTime.split('T')[0] : new Date().toISOString().split('T')[0],
+              start_time: formData.startTime || null,
+              end_time: formData.endTime || null,
+          }
+      )
 
       if (calendarError) {
-        throw new Error('Failed to create calendar event.')
+          console.error('Calendar event creation failed:', calendarError)
+          // Don't throw here - allow the workout to be created even if calendar fails
+          // But we should notify the user about the calendar issue
+          handleError(calendarError, { 
+              customMessage: 'Workout created but calendar event failed to create',
+              showToast: true 
+          });
       }
 
-      return { data, userId }
+      return data
     },
-    onSuccess: (data, variables) => {
-      showSuccess('Planned workout created successfully!');
-      
-      // Invalidate calendar events query to trigger a refresh
-      queryClient.invalidateQueries({ queryKey: ["events", data.userId] });
-      
-      // Reset form
-      setTitle('');
-      setStartTime('');
-      setEndTime('');
-      setNotes('');
-      setFieldErrors({});
-      
-      onSuccess?.();
+    onSuccess: (data) => {
+      queryClient.invalidateQueries(['events'])
+      handleSuccess('Planned workout created successfully!');
+      onSuccess?.()
     },
     onError: (error) => {
-      showError(error.message);
-      setFieldErrors({});
+      handleError(error, { 
+        customMessage: error.message 
+      });
     }
   });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-
-    // Zod validation
-    const result = plannedWorkoutSchema.safeParse({ type, title, startTime, endTime, notes })
-    if (!result.success) {
-      setFieldErrors(mapZodErrors(result.error))
-      return
-    }
-
+  const handleFormSubmit = (formData) => {
     // Execute the mutation
-    createPlannedWorkoutMutation.mutate({ type, title, startTime, endTime, notes })
-  }
+    createPlannedWorkoutMutation.mutate(formData);
+  };
+
+  const {
+    fieldErrors,
+    isSubmitting,
+    handleSubmit,
+    getFieldError,
+  } = useFormValidation(plannedWorkoutSchema, handleFormSubmit);
+
+  const onSubmitHandler = (e) => {
+    const formData = { type, title, startTime, endTime, notes };
+    handleSubmit(e, formData);
+  };
 
   return (
-    <form onSubmit={handleSubmit} className="mt-4 space-y-4 p-4 bg-surface rounded shadow">
-      <div>
-        <FormLabel>Type</FormLabel>
-        <select value={type} onChange={e => setType(e.target.value)} className="w-full p-2 bg-surface rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+    <form onSubmit={onSubmitHandler} className="mt-4 space-y-4 p-4 bg-surface rounded shadow">
+      <FormField 
+        label="Type" 
+        error={getFieldError('type')}
+        required
+      >
+        <FormSelect 
+          value={type} 
+          onChange={e => setType(e.target.value)}
+          disabled={isSubmitting}
+        >
           <option value="workout">Workout</option>
           <option value="cardio">Cardio</option>
           <option value="sports">Sports</option>
-        </select>
-        {fieldErrors.type && <div className="text-red-400 text-xs mt-1">{fieldErrors.type}</div>}
-      </div>
+        </FormSelect>
+      </FormField>
 
-      <div>
-        <FormLabel>
-          {type === 'workout' ? 'Title' : 'Activity Type'}
-        </FormLabel>
+      <FormField 
+        label={type === 'workout' ? 'Title' : 'Activity Type'}
+        error={getFieldError('title')}
+        required
+      >
         <FormInput
           type="text"
           value={title}
           onChange={e => setTitle(e.target.value)}
           placeholder={type === 'workout' ? 'e.g., Upper Body, Leg Day' : 'e.g., Running, Cycling'}
-          required
+          disabled={isSubmitting}
         />
-        {fieldErrors.title && <div className="text-red-400 text-xs mt-1">{fieldErrors.title}</div>}
-      </div>
+      </FormField>
 
-      <div>
-        <FormLabel>Start Time</FormLabel>
+      <FormField 
+        label="Start Time" 
+        error={getFieldError('startTime')}
+        required
+      >
         <FormInput
           type="datetime-local"
           value={startTime}
           onChange={e => setStartTime(e.target.value)}
-          required
+          disabled={isSubmitting}
         />
-        {fieldErrors.startTime && <div className="text-red-400 text-xs mt-1">{fieldErrors.startTime}</div>}
-      </div>
+      </FormField>
 
-      <div>
-        <FormLabel>End Time (Optional)</FormLabel>
+      <FormField 
+        label="End Time (Optional)" 
+        error={getFieldError('endTime')}
+      >
         <FormInput
           type="datetime-local"
           value={endTime}
           onChange={e => setEndTime(e.target.value)}
+          disabled={isSubmitting}
         />
-        {fieldErrors.endTime && <div className="text-red-400 text-xs mt-1">{fieldErrors.endTime}</div>}
-      </div>
+      </FormField>
 
-      <div>
-        <FormLabel>Notes (Optional)</FormLabel>
+      <FormField 
+        label="Notes (Optional)" 
+        error={getFieldError('notes')}
+      >
         <FormTextarea
           value={notes}
           onChange={e => setNotes(e.target.value)}
           placeholder="Any additional notes about this planned workout..."
           rows={3}
+          disabled={isSubmitting}
         />
-        {fieldErrors.notes && <div className="text-red-400 text-xs mt-1">{fieldErrors.notes}</div>}
-      </div>
+      </FormField>
 
       <Button
         type="submit"
         variant="primary"
-        disabled={createPlannedWorkoutMutation.isPending}
+        disabled={isSubmitting || createPlannedWorkoutMutation.isPending}
         className="w-full"
       >
-        {createPlannedWorkoutMutation.isPending ? 'Saving...' : 'Save Planned Workout'}
+        {isSubmitting || createPlannedWorkoutMutation.isPending ? 'Saving...' : 'Save Planned Workout'}
       </Button>
     </form>
   )

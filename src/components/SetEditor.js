@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
-import FormInput from './FormInput';
-import Button from './Button';
+import FormInput from './shared/FormInput';
+import Button from './shared/Button';
 
 export default function SetEditor({
   initialSets = [],

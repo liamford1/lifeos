@@ -8,14 +8,7 @@ test.describe('Login and add receipt', () => {
     const uniqueStoreName = `Test Grocery Store ${testId}`;
     
     // Capture browser console logs
-    page.on('console', msg => {
-      console.log(`[BROWSER LOG] ${msg.type()}: ${msg.text()}`);
-    });
-
-    // Log 406 responses
-    page.on('response', res => {
-      if (res.status() === 406) console.log('406:', res.url());
-    });
+    
 
     // Go to /auth
     await page.goto('http://localhost:3000/auth');
@@ -36,7 +29,7 @@ test.describe('Login and add receipt', () => {
     // ✅ Sanity check: window.supabase is defined
     await page.evaluate(() => {
       if (!window.supabase) throw new Error('[E2E] ❌ window.supabase is still not defined');
-      console.log('[E2E] ✅ window.supabase is defined');
+  
     });
 
     // Navigate to the Add Receipt page
@@ -157,12 +150,11 @@ test.describe('Login and add receipt', () => {
         .eq('user_id', userId)
         .in('name', ['Test Milk', 'Test Eggs', 'Test Bread']);
       
-      console.log('[E2E] Debug - Items in database:', items);
-      console.log('[E2E] Debug - Error if any:', error);
+
       return items;
     });
     
-    console.log('[E2E] Debug - Items found in database:', debugItems);
+    
 
     // Wait a bit more for any async operations to complete
     await page.waitForTimeout(2000);

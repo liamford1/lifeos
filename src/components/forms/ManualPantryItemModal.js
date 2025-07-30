@@ -2,10 +2,10 @@ import React from 'react';
 import { useState } from 'react';
 import { useMutation } from "@tanstack/react-query";
 import { useUser } from '@/context/UserContext';
-import FormInput from './FormInput';
-import FormLabel from './FormLabel';
-import Button from './Button';
-import SharedDeleteButton from './SharedDeleteButton';
+import FormInput from '../shared/FormInput';
+import FormLabel from '../shared/FormLabel';
+import Button from '../shared/Button';
+import SharedDeleteButton from '../SharedDeleteButton';
 
 export default function ManualPantryItemModal({ onClose, onAddSuccess }) {
   const { user } = useUser();
@@ -24,24 +24,20 @@ export default function ManualPantryItemModal({ onClose, onAddSuccess }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       }).then(async (r) => {
-        console.log('API response status:', r.status);
-        console.log('API response headers:', Object.fromEntries(r.headers.entries()));
+        
         if (!r.ok) {
           const errorData = await r.json();
           console.error('API error response:', errorData);
           throw new Error(errorData.error);
         }
         const responseData = await r.json();
-        console.log('API success response:', responseData);
         return responseData;
       })
   });
 
   const handleAddItem = async (payload) => {
-    console.log('handleAddItem called with payload:', payload);
     try {
       await insertItem.mutateAsync(payload);
-      console.log('insertItem.mutateAsync completed successfully');
     } catch (error) {
       console.error('insertItem.mutateAsync failed:', error);
       throw error;
@@ -67,7 +63,6 @@ export default function ManualPantryItemModal({ onClose, onAddSuccess }) {
         added_from: 'manual',
         added_at: new Date().toISOString(),
       };
-      console.log('Submitting payload:', payload);
       await handleAddItem(payload);
       if (onAddSuccess) onAddSuccess();
       onClose();

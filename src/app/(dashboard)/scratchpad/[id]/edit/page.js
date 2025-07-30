@@ -3,12 +3,12 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
-import BackButton from "@/components/BackButton";
-import LoadingSpinner from "@/components/LoadingSpinner";
-import Button from "@/components/Button";
-import { useToast } from "@/components/Toast";
-import FormInput from "@/components/FormInput";
-import FormSection from "@/components/FormSection";
+import BackButton from "@/components/shared/BackButton";
+import LoadingSpinner from "@/components/shared/LoadingSpinner";
+import Button from "@/components/shared/Button";
+import { useToast } from "@/components/client/Toast";
+import FormInput from "@/components/shared/FormInput";
+import FormSection from "@/components/shared/FormSection";
 
 export default function EditScratchpadPage() {
   const { id } = useParams();

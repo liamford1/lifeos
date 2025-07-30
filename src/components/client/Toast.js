@@ -1,8 +1,61 @@
 'use client';
 
-import React from 'react';
-import { useState, useEffect } from 'react';
-import Button from './Button'; // Added import for Button
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import Button from '../shared/Button'; // Added import for Button
+
+// Create a context for the toast state
+const ToastContext = createContext();
+
+// Toast Provider Component
+export function ToastProvider({ children }) {
+  const [toasts, setToasts] = useState([]);
+
+  const addToast = (message, type = 'success', duration = 5000) => {
+    const id = Date.now() + Math.random();
+    const newToast = { id, message, type, duration };
+    setToasts(prev => [...prev, newToast]);
+    
+    if (duration > 0) {
+      setTimeout(() => {
+        removeToast(id);
+      }, duration);
+    }
+  };
+
+  const removeToast = (id) => {
+    setToasts(prev => prev.filter(toast => toast.id !== id));
+  };
+
+  const showSuccess = (message, duration) => addToast(message, 'success', duration);
+  const showError = (message, duration) => addToast(message, 'error', duration);
+  const showWarning = (message, duration) => addToast(message, 'warning', duration);
+  const showInfo = (message, duration) => addToast(message, 'info', duration);
+
+  const value = {
+    toasts,
+    addToast,
+    removeToast,
+    showSuccess,
+    showError,
+    showWarning,
+    showInfo
+  };
+
+  return (
+    <ToastContext.Provider value={value}>
+      {children}
+    </ToastContext.Provider>
+  );
+}
+
+// Hook for managing toasts
+export function useToast() {
+  const context = useContext(ToastContext);
+  if (!context) {
+    throw new Error('useToast must be used within a ToastProvider');
+  }
+  return context;
+}
 
 export default function Toast({ 
   message, 
@@ -100,46 +153,20 @@ export default function Toast({
 }
 
 // Toast Container Component for managing multiple toasts
-export function ToastContainer({ children }) {
+export function ToastContainer() {
+  const { toasts, removeToast } = useToast();
+
   return (
     <div className="fixed inset-0 pointer-events-none z-50">
-      {children}
+      {toasts.map((toast) => (
+        <Toast
+          key={toast.id}
+          message={toast.message}
+          type={toast.type}
+          duration={toast.duration}
+          onClose={() => removeToast(toast.id)}
+        />
+      ))}
     </div>
   );
-}
-
-// Hook for managing toasts
-export function useToast() {
-  const [toasts, setToasts] = useState([]);
-
-  const addToast = (message, type = 'success', duration = 5000) => {
-    const id = Date.now() + Math.random();
-    const newToast = { id, message, type, duration };
-    setToasts(prev => [...prev, newToast]);
-    
-    if (duration > 0) {
-      setTimeout(() => {
-        removeToast(id);
-      }, duration);
-    }
-  };
-
-  const removeToast = (id) => {
-    setToasts(prev => prev.filter(toast => toast.id !== id));
-  };
-
-  const showSuccess = (message, duration) => addToast(message, 'success', duration);
-  const showError = (message, duration) => addToast(message, 'error', duration);
-  const showWarning = (message, duration) => addToast(message, 'warning', duration);
-  const showInfo = (message, duration) => addToast(message, 'info', duration);
-
-  return {
-    toasts,
-    addToast,
-    removeToast,
-    showSuccess,
-    showError,
-    showWarning,
-    showInfo
-  };
 } 

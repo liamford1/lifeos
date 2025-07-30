@@ -2,10 +2,10 @@
 // src/app/fitness/planner/page.js
 
 import CalendarView from '@/components/CalendarView'
-import BackButton from '@/components/BackButton'
+import BackButton from '@/components/shared/BackButton'
 import { useState } from 'react'
-import Button from '@/components/Button'
-import PlannedWorkoutForm from '@/components/PlannedWorkoutForm' // we’ll make this next
+import Button from '@/components/shared/Button'
+import PlannedWorkoutForm from '@/components/forms/PlannedWorkoutForm' // we’ll make this next
 
 export default function FitnessPlannerPage() {
   const [showForm, setShowForm] = useState(false)

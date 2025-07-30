@@ -1,4 +1,4 @@
-import { supabase } from './supabaseClient';
+import { supabase } from '../supabaseClient';
 
 /**
  * Deletes a workout and all its child data (exercises, sets, calendar event) safely.

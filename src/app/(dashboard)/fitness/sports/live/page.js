@@ -4,13 +4,13 @@ import { useState, useEffect } from 'react';
 import { useUser } from '@/context/UserContext';
 import { useSportsSession } from '@/context/SportsSessionContext';
 import { supabase } from '@/lib/supabaseClient';
-import Button from '@/components/Button';
-import FormInput from '@/components/FormInput';
-import FormTextarea from '@/components/FormTextarea';
+import Button from '@/components/shared/Button';
+import FormInput from '@/components/shared/FormInput';
+import FormTextarea from '@/components/shared/FormTextarea';
 import { useRouter } from 'next/navigation';
-import { useToast } from '@/components/Toast';
+import { useToast } from '@/components/client/Toast';
 import { updateCalendarEventForCompletedEntity, cleanupPlannedSessionOnCompletion } from '@/lib/calendarSync';
-import { CALENDAR_SOURCES } from '@/lib/calendarUtils';
+import { CALENDAR_SOURCES } from '@/lib/utils/calendarUtils';
 
 export default function LiveSportsPage() {
   const { user, loading: userLoading } = useUser();

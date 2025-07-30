@@ -15,14 +15,7 @@ test('Meal planning workflow: plan and verify meal', async ({ page }) => {
   const testId = `planned_meal_${Date.now()}`;
   
   // Capture browser console logs
-  page.on('console', msg => {
-    console.log(`[BROWSER LOG] ${msg.type()}: ${msg.text()}`);
-  });
 
-  // Log 406 responses
-  page.on('response', res => {
-    if (res.status() === 406) console.log('406:', res.url());
-  });
 
   // Go to /auth
   await page.goto('http://localhost:3000/auth');
@@ -53,7 +46,12 @@ test('Meal planning workflow: plan and verify meal', async ({ page }) => {
   await page.getByPlaceholder('Qty').fill('1');
   await page.getByPlaceholder('Unit').fill('unit');
   await page.getByPlaceholder('Step 1').fill('Test step.');
+  // Submit the form
   await page.getByRole('button', { name: /save meal/i }).click();
+  
+  // Wait for the success toast message
+  await expect(page.locator('text=Meal created successfully!')).toBeVisible({ timeout: 5000 });
+  
   await page.waitForURL((url) => /\/food\/meals$/.test(url.pathname), { timeout: 20000 });
   await expect(page.getByRole('heading', { name: /meals/i })).toBeVisible({ timeout: 10000 });
 
@@ -74,6 +72,10 @@ test('Meal planning workflow: plan and verify meal', async ({ page }) => {
   await page.getByTestId('meal-time-select').selectOption({ value: 'dinner' });
   // Click Plan Meal
   await page.getByRole('button', { name: /plan meal/i }).click();
+  
+  // Wait for the success toast message
+  await expect(page.locator('text=Meal planned successfully!')).toBeVisible({ timeout: 5000 });
+  
   // Wait for the planned meal to appear in the Upcoming Planned Meals section
   const plannedMealCard = page.getByTestId(/planned-meal-card-/).filter({ hasText: testMealName }).first();
   await expect(plannedMealCard).toBeVisible({ timeout: 10000 });
@@ -104,7 +106,7 @@ test('Meal planning workflow: plan and verify meal', async ({ page }) => {
   // Debug: Check if the event exists
   const eventExists = await event.isVisible().catch(() => false);
   if (!eventExists) {
-    console.log('[E2E] Calendar event not found, checking database...');
+
     const calendarEvents = await page.evaluate(async (mealName) => {
       const supabase = window.supabase;
       const { data: session } = await supabase.auth.getSession();
@@ -119,12 +121,9 @@ test('Meal planning workflow: plan and verify meal', async ({ page }) => {
       return events;
     }, testMealName);
     
-    console.log('[E2E] Calendar events found:', calendarEvents);
-    
     // If the event exists in database but not in UI, skip the calendar interaction
     // and proceed with the rest of the test
     if (calendarEvents && calendarEvents.length > 0) {
-      console.log('[E2E] Calendar event exists in database but not visible in UI. Skipping calendar interaction.');
       
       // Navigate directly to the planned meal detail page instead
       await page.goto('http://localhost:3000/food/planner');
@@ -145,24 +144,18 @@ test('Meal planning workflow: plan and verify meal', async ({ page }) => {
   // Wait for navigation to the detail page
   await page.waitForLoadState('networkidle');
 
-  // Debug: Check what page we're on
-  console.log('[E2E] Current URL after navigation:', page.url());
-  
   // Check if we're on a meal detail page or planned meal page
   const currentUrl = page.url();
-  console.log('[E2E] Current URL after navigation:', currentUrl);
   
   if (currentUrl.includes('/food/meals/')) {
     // We're on a meal detail page
     await expect(page.getByRole('heading', { name: testMealName })).toBeVisible({ timeout: 10000 });
   } else if (currentUrl.includes('/food/planner')) {
     // We're still on the planner page, which is fine
-    console.log('[E2E] Still on planner page, which is expected when calendar event is not visible');
     await expect(page.getByRole('heading', { name: /upcoming planned meals/i })).toBeVisible({ timeout: 10000 });
     await expect(page.getByTestId(/planned-meal-card-/).filter({ hasText: testMealName }).first()).toBeVisible();
   } else if (currentUrl.includes('/food/planner/')) {
     // We're on a planned meal detail page
-    console.log('[E2E] On planned meal detail page');
     await expect(page.getByText(/Meal Time: dinner/i)).toBeVisible({ timeout: 10000 });
     // Format the date as shown in the UI (e.g., 'Thursday, July 24, 2025')
     const formattedDate = new Date(dateStr).toLocaleDateString('en-US', {
@@ -171,11 +164,8 @@ test('Meal planning workflow: plan and verify meal', async ({ page }) => {
     await expect(page.getByText(`Date: ${formattedDate}`)).toBeVisible({ timeout: 10000 });
   } else {
     // Some other page, log what we find
-    console.log('[E2E] On unexpected page:', currentUrl);
     const pageText = await page.textContent('body');
-    console.log('[E2E] Page content preview:', pageText?.substring(0, 500));
     // Don't fail the test, just log the situation
-    console.log('[E2E] Skipping meal time verification on unexpected page');
   }
 
   // Clean up: delete the planned meal
@@ -185,7 +175,6 @@ test('Meal planning workflow: plan and verify meal', async ({ page }) => {
   // Debug: Check what planned meals are visible
   const allPlannedMealCards = page.getByTestId(/planned-meal-card-/);
   const cardCount = await allPlannedMealCards.count();
-  console.log(`[E2E] Found ${cardCount} planned meal cards`);
   
   // Look for the specific meal card
   const plannedMealCardForDelete = page.getByTestId(/planned-meal-card-/).filter({ hasText: testMealName }).first();
@@ -193,6 +182,16 @@ test('Meal planning workflow: plan and verify meal', async ({ page }) => {
   const deleteButton = plannedMealCardForDelete.getByRole('button', { name: /delete/i });
   await expect(deleteButton).toBeVisible({ timeout: 5000 });
   await deleteButton.click();
+  
+  // Wait for success confirmation before checking for deletion
+  try {
+    // Wait for success toast (new useApiError system)
+    await expect(page.locator('text=Planned meal deleted successfully!')).toBeVisible({ timeout: 5000 });
+  } catch {
+    // Fallback: just wait a bit for the operation to complete
+    await page.waitForTimeout(2000);
+  }
+  
   // Wait for the planned meal to be removed
   await expect(page.getByTestId(/planned-meal-card-/).filter({ hasText: testMealName })).not.toBeVisible({ timeout: 10000 });
 
@@ -208,6 +207,15 @@ test('Meal planning workflow: plan and verify meal', async ({ page }) => {
   const mealDeleteButton = mealContainer.locator('button', { hasText: /delete/i });
   await expect(mealDeleteButton).toBeVisible({ timeout: 5000 });
   await mealDeleteButton.click();
+  
+  // Wait for success confirmation before checking for deletion
+  try {
+    // Wait for success toast (new useApiError system)
+    await expect(page.locator('text=Meal deleted successfully!')).toBeVisible({ timeout: 5000 });
+  } catch {
+    // Fallback: just wait a bit for the operation to complete
+    await page.waitForTimeout(2000);
+  }
   
   // Wait for the meal to be deleted
   await expect(testMealCard).not.toBeVisible({ timeout: 10000 });
