@@ -12,14 +12,14 @@ import { CALENDAR_SOURCES, getCalendarEventRoute } from '@/lib/calendarUtils';
 import { getEventStyle } from '@/lib/eventStyleMap';
 import Button from '@/components/Button';
 
-import { useToast } from '@/components/Toast';
+import { useApiError } from '@/lib/hooks/useApiError';
 import { MdOutlineCalendarToday } from 'react-icons/md';
 import SharedDeleteButton from '@/components/SharedDeleteButton';
 import { supabase } from '@/lib/supabaseClient';
 import { MdRestaurant, MdFitnessCenter, MdEvent } from 'react-icons/md';
 
 export default function CalendarView() {
-  const { showSuccess, showError } = useToast();
+  const { handleError, handleSuccess } = useApiError();
   const queryClient = useQueryClient();
   const [selectedDate, setSelectedDate] = useState(new Date());
   // Remove local events state, use eventsQuery.data
@@ -75,7 +75,9 @@ export default function CalendarView() {
       });
 
       if (!response.ok) {
-        showError('Failed to add event.');
+        handleError(new Error('Failed to add event.'), { 
+          customMessage: 'Failed to add event.' 
+        });
       } else {
         setShowAddModal(false);
         setNewEvent({ title: '', start_time: '', end_time: '', description: '' });
@@ -83,10 +85,12 @@ export default function CalendarView() {
         
         // Invalidate the events query to refresh the data
         queryClient.invalidateQueries({ queryKey: ["events", user?.id] });
-        showSuccess('Event added successfully!');
+        handleSuccess('Event added successfully!');
       }
     } catch (error) {
-      showError('Failed to add event.');
+      handleError(error, { 
+        customMessage: 'Failed to add event.' 
+      });
     }
   };
 
@@ -132,7 +136,9 @@ export default function CalendarView() {
       const table = tableMap[type];
       
       if (!table) {
-        showError('Unknown fitness event type.');
+        handleError(new Error('Unknown fitness event type.'), { 
+          customMessage: 'Unknown fitness event type.' 
+        });
         return;
       }
 
@@ -144,7 +150,9 @@ export default function CalendarView() {
         .single();
 
       if (error) {
-        showError('Could not fetch event details.');
+        handleError(new Error('Could not fetch event details.'), { 
+          customMessage: 'Could not fetch event details.' 
+        });
         return;
       }
 
@@ -179,7 +187,9 @@ export default function CalendarView() {
       }
     } catch (error) {
       console.error('Error handling fitness event click:', error);
-      showError('Could not process event click.');
+      handleError(error, { 
+        customMessage: 'Could not process event click.' 
+      });
     }
   };
 
@@ -197,13 +207,17 @@ export default function CalendarView() {
         });
         
         if (!response.ok) {
-          showError('Could not delete event.');
+          handleError(new Error('Could not delete event.'), { 
+            customMessage: 'Could not delete event.' 
+          });
         } else {
           // Invalidate the events query to refresh the data
           queryClient.invalidateQueries({ queryKey: ["events", user?.id] });
         }
       } catch (error) {
-        showError('Could not delete event.');
+        handleError(error, { 
+          customMessage: 'Could not delete event.' 
+        });
       }
       return;
     }
@@ -218,7 +232,9 @@ export default function CalendarView() {
     if (event.source === CALENDAR_SOURCES.EXPENSE) sourceTable = 'expenses';
   
     if (!sourceTable) {
-      showError('Unknown event type.');
+      handleError(new Error('Unknown event type.'), { 
+        customMessage: 'Unknown event type.' 
+      });
       return;
     }
   
@@ -226,7 +242,9 @@ export default function CalendarView() {
     const user_id = user?.id;
     
     if (!user_id) {
-      showError('You must be logged in.');
+      handleError(new Error('You must be logged in.'), { 
+        customMessage: 'You must be logged in.' 
+      });
       return;
     }
   
@@ -250,11 +268,13 @@ export default function CalendarView() {
     }
   
     if (error) {
-      showError('Could not fully delete event.');
+      handleError(error, { 
+        customMessage: 'Could not fully delete event.' 
+      });
     } else {
       // Invalidate the events query to refresh the data
       queryClient.invalidateQueries({ queryKey: ["events", user?.id] });
-      showSuccess('Event deleted successfully!');
+      handleSuccess('Event deleted successfully!');
     }
   };  
 
@@ -267,7 +287,9 @@ export default function CalendarView() {
         .single();
 
       if (error) {
-        showError('Could not fetch planned meal details.');
+        handleError(new Error('Could not fetch planned meal details.'), { 
+          customMessage: 'Could not fetch planned meal details.' 
+        });
         return;
       }
 
@@ -277,7 +299,9 @@ export default function CalendarView() {
         router.push(`/food/planner/${event.source_id}`);
       }
     } catch (error) {
-      showError('Could not process planned meal click.');
+      handleError(error, { 
+        customMessage: 'Could not process planned meal click.' 
+      });
     }
   };
 

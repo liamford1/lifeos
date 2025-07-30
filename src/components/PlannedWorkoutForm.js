@@ -10,7 +10,7 @@ import FormTextarea from '@/components/FormTextarea'
 import FormField from '@/components/FormField'
 import dayjs from 'dayjs'
 import { CALENDAR_SOURCES } from '@/lib/calendarUtils'
-import { useToast } from '@/components/Toast'
+import { useApiError } from '@/lib/hooks/useApiError'
 import { createCalendarEventForEntity } from '@/lib/calendarSync';
 import { z } from 'zod'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
@@ -26,7 +26,7 @@ const plannedWorkoutSchema = z.object({
 })
 
 export default function PlannedWorkoutForm({ onSuccess }) {
-  const { showSuccess, showError } = useToast();
+  const { handleError, handleSuccess } = useApiError();
   const queryClient = useQueryClient();
   const [type, setType] = useState('workout') // workout | cardio | sports
   const [title, setTitle] = useState('')
@@ -76,57 +76,61 @@ export default function PlannedWorkoutForm({ onSuccess }) {
               start_time: formData.startTime || null,
               end_time: formData.endTime || null,
               performance_notes: formData.notes
-          }),
+          })
       }
 
       const { data, error } = await supabase
-        .from(table)
-        .insert(insertData)
-        .select()
-        .single()
+          .from(table)
+          .insert([insertData])
+          .select()
+          .single()
 
       if (error) {
-        throw new Error(`Failed to save planned workout: ${error.message}`)
+          throw error
       }
 
-      // Map table to source for calendar events
-      const source = formData.type === 'workout' ? CALENDAR_SOURCES.WORKOUT 
-                   : formData.type === 'cardio' ? CALENDAR_SOURCES.CARDIO 
-                   : CALENDAR_SOURCES.SPORT
+      // Create calendar event
+      const calendarSource = formData.type === 'workout' ? CALENDAR_SOURCES.WORKOUT
+                          : formData.type === 'cardio' ? CALENDAR_SOURCES.CARDIO
+                          : CALENDAR_SOURCES.SPORT // Fixed: was SPORTS, should be SPORT
 
-      const calendarError = await createCalendarEventForEntity(source, {
-        id: data.id,
-        user_id: userId,
-        title: formData.title,
-        activity_type: formData.type === 'cardio' || formData.type === 'sports' ? formData.title : undefined,
-        date: formData.startTime,
-        notes: formData.type === 'sports' ? undefined : formData.notes,
-        performance_notes: formData.type === 'sports' ? formData.notes : undefined,
-        end_time: formData.endTime && formData.endTime.trim() !== '' ? formData.endTime : null,
-      });
+      // Fixed: Pass the entity object instead of separate parameters
+      const calendarError = await createCalendarEventForEntity(
+          calendarSource,
+          {
+              ...data,
+              user_id: userId,
+              title: formData.title,
+              activity_type: formData.type === 'workout' ? undefined : formData.title,
+              notes: formData.type === 'sports' ? undefined : formData.notes,
+              performance_notes: formData.type === 'sports' ? formData.notes : undefined,
+              date: formData.startTime ? formData.startTime.split('T')[0] : new Date().toISOString().split('T')[0],
+              start_time: formData.startTime || null,
+              end_time: formData.endTime || null,
+          }
+      )
 
       if (calendarError) {
-        throw new Error('Failed to create calendar event.')
+          console.error('Calendar event creation failed:', calendarError)
+          // Don't throw here - allow the workout to be created even if calendar fails
+          // But we should notify the user about the calendar issue
+          handleError(calendarError, { 
+              customMessage: 'Workout created but calendar event failed to create',
+              showToast: true 
+          });
       }
 
-      return { data, userId }
+      return data
     },
-    onSuccess: (data, variables) => {
-      showSuccess('Planned workout created successfully!');
-      
-      // Invalidate calendar events query to trigger a refresh
-      queryClient.invalidateQueries({ queryKey: ["events", data.userId] });
-      
-      // Reset form
-      setTitle('');
-      setStartTime('');
-      setEndTime('');
-      setNotes('');
-      
-      onSuccess?.();
+    onSuccess: (data) => {
+      queryClient.invalidateQueries(['events'])
+      handleSuccess('Planned workout created successfully!');
+      onSuccess?.()
     },
     onError: (error) => {
-      showError(error.message);
+      handleError(error, { 
+        customMessage: error.message 
+      });
     }
   });
 

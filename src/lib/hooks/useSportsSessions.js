@@ -1,12 +1,12 @@
 import { supabase } from '@/lib/supabaseClient';
-import { useToast } from '@/components/Toast';
+import { useApiError } from '@/lib/hooks/useApiError';
 import { deleteEntityWithCalendarEvent } from '@/lib/deleteUtils';
 
 export function useSportsSessions() {
-  const { showSuccess, showError } = useToast();
+  const { handleError, handleSuccess } = useApiError();
 
   // Fetch all sports sessions for a user
-  const fetchSportsSessions = async (userId) => {
+  const fetchSportsSessions = async (userId, options = {}) => {
     if (!userId) {
       console.warn('fetchSportsSessions called without userId');
       return null;
@@ -20,7 +20,10 @@ export function useSportsSessions() {
     
     if (error) {
       console.error('Error fetching sports sessions:', error);
-      showError('Failed to fetch sports sessions.');
+      handleError(error, { 
+        customMessage: 'Failed to fetch sports sessions.',
+        ...options 
+      });
       return null;
     }
     
@@ -28,22 +31,25 @@ export function useSportsSessions() {
   };
 
   // Create a new sports session
-  const createSportsSession = async (data) => {
+  const createSportsSession = async (data, options = {}) => {
     const { data: inserted, error } = await supabase
       .from('fitness_sports')
       .insert(data)
       .select()
       .single();
     if (error) {
-      showError('Failed to create sports session.');
+      handleError(error, { 
+        customMessage: 'Failed to create sports session.',
+        ...options 
+      });
       return null;
     }
-    showSuccess('Sports session created!');
+    handleSuccess('Sports session created!', options);
     return inserted;
   };
 
   // Update a sports session
-  const updateSportsSession = async (id, updatedData) => {
+  const updateSportsSession = async (id, updatedData, options = {}) => {
     const { data, error } = await supabase
       .from('fitness_sports')
       .update(updatedData)
@@ -51,15 +57,18 @@ export function useSportsSessions() {
       .select()
       .single();
     if (error) {
-      showError('Failed to update sports session.');
+      handleError(error, { 
+        customMessage: 'Failed to update sports session.',
+        ...options 
+      });
       return null;
     }
-    showSuccess('Sports session updated!');
+    handleSuccess('Sports session updated!', options);
     return data;
   };
 
   // Delete a sports session (and its calendar event)
-  const deleteSportsSession = async (id, userId) => {
+  const deleteSportsSession = async (id, userId, options = {}) => {
     const error = await deleteEntityWithCalendarEvent({
       table: 'fitness_sports',
       id,
@@ -67,10 +76,13 @@ export function useSportsSessions() {
       source: 'sports',
     });
     if (error) {
-      showError('Failed to delete sports session.');
+      handleError(error, { 
+        customMessage: 'Failed to delete sports session.',
+        ...options 
+      });
       return false;
     }
-    showSuccess('Sports session deleted!');
+    handleSuccess('Sports session deleted!', options);
     return true;
   };
 

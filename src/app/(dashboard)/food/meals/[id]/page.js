@@ -62,14 +62,17 @@ export default function MealDetailPage() {
       }
 
       // Delete the meal (this will cascade delete ingredients)
-      deleteMealMutation.mutate(meal.id, {
-        onSuccess: () => {
-          showSuccess('Meal deleted successfully!');
-          // Redirect back to meals list
-          router.push('/food/meals');
-        },
-        onError: (error) => {
-          showError(error.message || 'Failed to delete meal.');
+      deleteMealMutation.mutate({
+        id: meal.id,
+        options: {
+          onSuccess: () => {
+            showSuccess('Meal deleted successfully!');
+            // Redirect back to meals list
+            router.push('/food/meals');
+          },
+          onError: (error) => {
+            showError(error.message || 'Failed to delete meal.');
+          }
         }
       });
     } catch (error) {

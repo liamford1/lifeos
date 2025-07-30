@@ -11,7 +11,7 @@ import FormTextarea from '@/components/FormTextarea';
 import FormField from '@/components/FormField';
 import BackButton from '@/components/BackButton';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import { useToast } from '@/components/Toast';
+import { useApiError } from '@/lib/hooks/useApiError';
 import { supabase } from '@/lib/supabaseClient';
 import { CALENDAR_SOURCES, updateCalendarEventFromSource } from '@/lib/calendarUtils';
 import { useFormValidation } from '@/lib/hooks/useFormValidation';
@@ -32,7 +32,7 @@ const cardioSchema = z.object({
 
 export default function CardioForm({ initialData = null, isEdit = false }) {
   const router = useRouter();
-  const { showSuccess, showError } = useToast();
+  const { handleError, handleSuccess } = useApiError();
   const { user, loading: userLoading } = useUser();
   
   const [activity, setActivity] = useState(initialData?.activity_type || '');
@@ -70,9 +70,11 @@ export default function CardioForm({ initialData = null, isEdit = false }) {
           }
         );
         if (calendarError) {
-          showError('Calendar event update failed:', calendarError);
+          handleError(calendarError, { 
+            customMessage: 'Calendar event update failed' 
+          });
         }
-        showSuccess("Cardio entry updated!");
+        handleSuccess("Cardio entry updated!");
         router.push(`/fitness/cardio/${initialData.id}`);
       } else {
         // Create new cardio entry
@@ -82,11 +84,14 @@ export default function CardioForm({ initialData = null, isEdit = false }) {
           .select()
           .single();
         if (error) throw error;
-        showSuccess("Cardio entry created!");
-        router.push('/fitness/cardio');
+
+        handleSuccess("Cardio entry created!");
+        router.push(`/fitness/cardio/${data.id}`);
       }
     } catch (err) {
-      showError(err.message || 'Failed to save cardio entry');
+      handleError(err, { 
+        customMessage: 'Failed to save cardio entry' 
+      });
     }
   };
 

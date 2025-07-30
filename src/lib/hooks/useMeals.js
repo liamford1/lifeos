@@ -1,14 +1,14 @@
 import { supabase } from '@/lib/supabaseClient';
-import { useToast } from '@/components/Toast';
+import { useApiError } from '@/lib/hooks/useApiError';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 // Custom hook for meal CRUD operations
 export function useMeals() {
-  const { showSuccess, showError } = useToast();
+  const { handleError, handleSuccess } = useApiError();
   const queryClient = useQueryClient();
 
   // Fetch all meals for a user with React Query
-  const fetchMeals = async (userId) => {
+  const fetchMeals = async (userId, options = {}) => {
     if (!userId) return null;
     const { data, error } = await supabase
       .from('meals')
@@ -16,29 +16,35 @@ export function useMeals() {
       .eq('user_id', userId)
       .order('created_at', { ascending: false });
     if (error) {
-      showError(error.message || 'Failed to fetch meals.');
+      handleError(error, { 
+        customMessage: 'Failed to fetch meals.',
+        ...options 
+      });
       return null;
     }
     return data;
   };
 
   // Create a new meal
-  const createMeal = async (mealData) => {
+  const createMeal = async (mealData, options = {}) => {
     const { data, error } = await supabase
       .from('meals')
       .insert([mealData])
       .select()
       .single();
     if (error) {
-      showError(error.message || 'Failed to create meal.');
+      handleError(error, { 
+        customMessage: 'Failed to create meal.',
+        ...options 
+      });
       return null;
     }
-    showSuccess('Meal created successfully!');
+    handleSuccess('Meal created successfully!', options);
     return data;
   };
 
   // Update an existing meal
-  const updateMeal = async (id, updatedData) => {
+  const updateMeal = async (id, updatedData, options = {}) => {
     const { data, error } = await supabase
       .from('meals')
       .update(updatedData)
@@ -46,24 +52,30 @@ export function useMeals() {
       .select()
       .single();
     if (error) {
-      showError(error.message || 'Failed to update meal.');
+      handleError(error, { 
+        customMessage: 'Failed to update meal.',
+        ...options 
+      });
       return null;
     }
-    showSuccess('Meal updated successfully!');
+    handleSuccess('Meal updated successfully!', options);
     return data;
   };
 
   // Delete a meal
-  const deleteMeal = async (id) => {
+  const deleteMeal = async (id, options = {}) => {
     const { error } = await supabase
       .from('meals')
       .delete()
       .eq('id', id);
     if (error) {
-      showError(error.message || 'Failed to delete meal.');
+      handleError(error, { 
+        customMessage: 'Failed to delete meal.',
+        ...options 
+      });
       return null;
     }
-    showSuccess('Meal deleted successfully!');
+    handleSuccess('Meal deleted successfully!', options);
     return true;
   };
 
@@ -72,6 +84,8 @@ export function useMeals() {
 
 // React Query hook for meals
 export function useMealsQuery(userId) {
+  const { handleError } = useApiError();
+  
   return useQuery({
     queryKey: ['meals', userId],
     queryFn: async () => {
@@ -95,61 +109,56 @@ export function useMealsQuery(userId) {
 // React Query mutation for creating meals
 export function useCreateMealMutation() {
   const queryClient = useQueryClient();
-  const { showSuccess, showError } = useToast();
+  const { handleError, handleSuccess } = useApiError();
 
   return useMutation({
-    mutationFn: async (mealData) => {
+    mutationFn: async ({ mealData, options = {} }) => {
       // Extract ingredients from mealData
       const { ingredients, ...mealDataWithoutIngredients } = mealData;
       
-      // Create the meal first
-      const { data: createdMeal, error: mealError } = await supabase
+      // Insert the meal first
+      const { data: meal, error: mealError } = await supabase
         .from('meals')
         .insert([mealDataWithoutIngredients])
         .select()
         .single();
       
       if (mealError) {
-        throw new Error(mealError.message || 'Failed to create meal.');
+        throw mealError;
       }
 
-      // If ingredients are provided, insert them as well
-      if (ingredients && Array.isArray(ingredients)) {
-        const cleanedIngredients = ingredients
-          .filter(i =>
-            typeof i.name === 'string' && i.name.trim() !== '' &&
-            i.quantity !== '' &&
-            typeof i.unit === 'string' && i.unit.trim() !== ''
-          )
-          .map(i => ({
-            meal_id: createdMeal.id,
-            food_item_name: (i.name || '').trim(),
-            quantity: Number(i.quantity),
-            unit: (i.unit || '').trim()
-          }));
+      // Insert ingredients if provided
+      if (ingredients && ingredients.length > 0) {
+        const ingredientsData = ingredients.map(ingredient => ({
+          meal_id: meal.id,
+          food_item_name: ingredient.name,
+          quantity: ingredient.quantity,
+          unit: ingredient.unit || null,
+          name: ingredient.name
+        }));
 
-        if (cleanedIngredients.length > 0) {
-          const { error: ingredientsError } = await supabase
-            .from('meal_ingredients')
-            .insert(cleanedIngredients);
+        const { error: ingredientsError } = await supabase
+          .from('meal_ingredients')
+          .insert(ingredientsData);
 
-          if (ingredientsError) {
-            throw new Error(ingredientsError.message || 'Failed to create ingredients.');
-          }
+        if (ingredientsError) {
+          // If ingredients fail, we should still return the meal but log the error
+          console.error('Failed to insert ingredients:', ingredientsError);
+          // Don't throw here - the meal was created successfully
         }
       }
 
-      return createdMeal;
+      return { data: meal, options };
     },
-    onSuccess: (data, variables) => {
-      showSuccess('Meal created successfully!');
-      // Invalidate and refetch meals for the user
-      queryClient.invalidateQueries({
-        queryKey: ['meals', variables.user_id],
+    onSuccess: ({ data, options }) => {
+      queryClient.invalidateQueries(['meals']);
+      handleSuccess('Meal created successfully!', options);
+    },
+    onError: (error, { options }) => {
+      handleError(error, { 
+        customMessage: 'Failed to create meal.',
+        ...options 
       });
-    },
-    onError: (error) => {
-      showError(error.message || 'Failed to create meal.');
     },
   });
 }
@@ -157,76 +166,68 @@ export function useCreateMealMutation() {
 // React Query mutation for updating meals
 export function useUpdateMealMutation() {
   const queryClient = useQueryClient();
-  const { showSuccess, showError } = useToast();
+  const { handleError, handleSuccess } = useApiError();
 
   return useMutation({
-    mutationFn: async ({ id, updatedData, ingredients }) => {
-      // Start a transaction to update both meal and ingredients
-      const { data: mealData, error: mealError } = await supabase
+    mutationFn: async ({ id, updatedData, ingredients, options = {} }) => {
+      // Update the meal first
+      const { data, error } = await supabase
         .from('meals')
         .update(updatedData)
         .eq('id', id)
         .select()
         .single();
-      
-      if (mealError) {
-        throw new Error(mealError.message || 'Failed to update meal.');
+      if (error) {
+        throw error;
       }
 
-      // If ingredients are provided, update them as well
-      if (ingredients && Array.isArray(ingredients)) {
-        // Delete old ingredients
+      // Update ingredients if provided
+      if (ingredients && ingredients.length >= 0) {
+        // First, delete existing ingredients
         const { error: deleteError } = await supabase
           .from('meal_ingredients')
           .delete()
           .eq('meal_id', id);
 
         if (deleteError) {
-          throw new Error(deleteError.message || 'Failed to delete old ingredients.');
+          console.error('Failed to delete existing ingredients:', deleteError);
+          // Don't throw here - the meal was updated successfully
         }
 
-        // Insert new ingredients
-        const cleanedIngredients = ingredients
-          .filter(i =>
-            i.name?.trim() !== '' &&
-            i.quantity !== '' &&
-            i.unit?.trim() !== ''
-          )
-          .map(i => ({
+        // Then insert new ingredients if any
+        if (ingredients.length > 0) {
+          const ingredientsData = ingredients.map(ingredient => ({
             meal_id: id,
-            food_item_name: i.name.trim(),
-            quantity: Number(i.quantity),
-            unit: i.unit.trim()
+            food_item_name: ingredient.name,
+            quantity: ingredient.quantity,
+            unit: ingredient.unit || null,
+            name: ingredient.name
           }));
 
-        if (cleanedIngredients.length > 0) {
-          const { error: insertError } = await supabase
+          const { error: ingredientsError } = await supabase
             .from('meal_ingredients')
-            .insert(cleanedIngredients);
+            .insert(ingredientsData);
 
-          if (insertError) {
-            throw new Error(insertError.message || 'Failed to insert new ingredients.');
+          if (ingredientsError) {
+            console.error('Failed to insert ingredients:', ingredientsError);
+            // Don't throw here - the meal was updated successfully
           }
         }
       }
 
-      return mealData;
+      return { data, options };
     },
-    onSuccess: (data, variables) => {
-      showSuccess('Meal updated successfully!');
-      // Invalidate and refetch meals and meal ingredients for the user
-      queryClient.invalidateQueries({
-        queryKey: ['meals', data.user_id],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ['meal', variables.id, data.user_id],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ['meal-ingredients', variables.id],
-      });
+    onSuccess: ({ data, options }) => {
+      queryClient.invalidateQueries(['meals']);
+      queryClient.invalidateQueries(['meal', data.id]);
+      queryClient.invalidateQueries(['meal-ingredients', data.id]);
+      handleSuccess('Meal updated successfully!', options);
     },
-    onError: (error) => {
-      showError(error.message || 'Failed to update meal.');
+    onError: (error, { options }) => {
+      handleError(error, { 
+        customMessage: 'Failed to update meal.',
+        ...options 
+      });
     },
   });
 }
@@ -234,42 +235,38 @@ export function useUpdateMealMutation() {
 // React Query mutation for deleting meals
 export function useDeleteMealMutation() {
   const queryClient = useQueryClient();
-  const { showSuccess, showError } = useToast();
+  const { handleError, handleSuccess } = useApiError();
 
   return useMutation({
-    mutationFn: async (id) => {
+    mutationFn: async ({ id, options = {} }) => {
       const { error } = await supabase
         .from('meals')
         .delete()
         .eq('id', id);
       if (error) {
-        throw new Error(error.message || 'Failed to delete meal.');
+        throw error;
       }
-      return id;
+      return { options };
     },
-    onSuccess: (deletedId) => {
-      showSuccess('Meal deleted successfully!');
-      // Optimistically update the cache by removing the deleted meal
-      queryClient.setQueriesData(
-        { queryKey: ['meals'] },
-        (oldData) => {
-          if (Array.isArray(oldData)) {
-            return oldData.filter(meal => meal.id !== deletedId);
-          }
-          return oldData;
-        }
-      );
+    onSuccess: ({ options }) => {
+      queryClient.invalidateQueries(['meals']);
+      handleSuccess('Meal deleted successfully!', options);
     },
-    onError: (error) => {
-      showError(error.message || 'Failed to delete meal.');
+    onError: (error, { options }) => {
+      handleError(error, { 
+        customMessage: 'Failed to delete meal.',
+        ...options 
+      });
     },
   });
 }
 
-// React Query hook for fetching a single meal
+// React Query hook for a single meal
 export function useMealQuery(mealId, userId) {
+  const { handleError } = useApiError();
+  
   return useQuery({
-    queryKey: ['meal', mealId, userId],
+    queryKey: ['meal', mealId],
     queryFn: async () => {
       if (!mealId || !userId) return null;
       const { data, error } = await supabase
@@ -289,8 +286,10 @@ export function useMealQuery(mealId, userId) {
   });
 }
 
-// React Query hook for fetching meal ingredients
+// React Query hook for meal ingredients
 export function useMealIngredientsQuery(mealId) {
+  const { handleError } = useApiError();
+  
   return useQuery({
     queryKey: ['meal-ingredients', mealId],
     queryFn: async () => {
@@ -298,7 +297,8 @@ export function useMealIngredientsQuery(mealId) {
       const { data, error } = await supabase
         .from('meal_ingredients')
         .select('*')
-        .eq('meal_id', mealId);
+        .eq('meal_id', mealId)
+        .order('created_at', { ascending: true });
       if (error) {
         throw new Error(error.message || 'Failed to fetch meal ingredients.');
       }

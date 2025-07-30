@@ -27,7 +27,17 @@ export default function MealsPage() {
 
   // Handle delete with optimistic updates
   const handleDelete = async (mealId) => {
-    deleteMealMutation.mutate(mealId);
+    deleteMealMutation.mutate({ 
+      id: mealId, 
+      options: {
+        onSuccess: () => {
+          // The mutation will handle the success toast
+        },
+        onError: (error) => {
+          // The mutation will handle the error toast
+        }
+      }
+    });
   };
 
   // Show loading spinner only when user is loading or when we don't have user data yet

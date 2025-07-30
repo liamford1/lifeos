@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import SupabaseProvider from "@/components/SupabaseProvider";
 import { UserProvider } from '@/context/UserContext';
-import { ToastContainer } from '@/components/Toast';
+import { ToastContainer, ToastProvider } from '@/components/Toast';
 import { WorkoutSessionProvider } from '@/context/WorkoutSessionContext';
 import { CardioSessionProvider } from '@/context/CardioSessionContext';
 import { SportsSessionProvider } from '@/context/SportsSessionContext';
@@ -31,18 +31,20 @@ export default function RootLayout({ children }) {
         <ReactQueryProvider>
           <SupabaseProvider>
             <UserProvider>
-              <WorkoutSessionProvider>
-                <CardioSessionProvider>
-                  <SportsSessionProvider>
-                    <CookingSessionProvider>
-                      <ErrorBoundaryWrapper>
-                        <ToastContainer />
-                        {children}
-                      </ErrorBoundaryWrapper>
-                    </CookingSessionProvider>
-                  </SportsSessionProvider>
-                </CardioSessionProvider>
-              </WorkoutSessionProvider>
+              <ToastProvider>
+                <WorkoutSessionProvider>
+                  <CardioSessionProvider>
+                    <SportsSessionProvider>
+                      <CookingSessionProvider>
+                        <ErrorBoundaryWrapper>
+                          <ToastContainer />
+                          {children}
+                        </ErrorBoundaryWrapper>
+                      </CookingSessionProvider>
+                    </SportsSessionProvider>
+                  </CardioSessionProvider>
+                </WorkoutSessionProvider>
+              </ToastProvider>
             </UserProvider>
           </SupabaseProvider>
         </ReactQueryProvider>
