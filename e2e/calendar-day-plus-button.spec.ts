@@ -29,12 +29,12 @@ test.describe('Calendar Day Plus Button Functionality', () => {
     await page.waitForTimeout(1000);
     
     // Debug: Check if the button is rendered
-    const allButtons = page.locator('button[aria-label="Add event for this day"]');
+    const allButtons = page.locator('div[aria-label="Add event for this day"]');
     const buttonCount = await allButtons.count();
 
     
     // Verify the "+" button appears (anywhere on the page)
-    const plusButton = page.locator('button[aria-label="Add event for this day"]').first();
+    const plusButton = page.locator('div[aria-label="Add event for this day"]').first();
     await expect(plusButton).toBeVisible();
     
     // Click the "+" button
@@ -63,7 +63,7 @@ test.describe('Calendar Day Plus Button Functionality', () => {
     await tomorrowCell.click();
     
     // Click the "+" button
-    const plusButton = page.locator('button[aria-label="Add event for this day"]').first();
+    const plusButton = page.locator('div[aria-label="Add event for this day"]').first();
     await plusButton.click();
     
     // Click General Event option
@@ -95,7 +95,7 @@ test.describe('Calendar Day Plus Button Functionality', () => {
     await tomorrowCell.click();
     
     // Click the "+" button
-    const plusButton = page.locator('button[aria-label="Add event for this day"]').first();
+    const plusButton = page.locator('div[aria-label="Add event for this day"]').first();
     await plusButton.click();
     
     // Click Meal option
@@ -117,7 +117,7 @@ test.describe('Calendar Day Plus Button Functionality', () => {
     await tomorrowCell.click();
     
     // Click the "+" button
-    const plusButton = page.locator('button[aria-label="Add event for this day"]').first();
+    const plusButton = page.locator('div[aria-label="Add event for this day"]').first();
     await plusButton.click();
     
     // Click Workout option
@@ -132,7 +132,7 @@ test.describe('Calendar Day Plus Button Functionality', () => {
     await page.waitForSelector('[data-testid="home-header"]');
     
     // Initially, check if there's already a "+" button visible
-    const plusButtons = page.locator('button[aria-label="Add event for this day"]');
+    const plusButtons = page.locator('div[aria-label="Add event for this day"]');
     const initialCount = await plusButtons.count();
 
     
@@ -164,7 +164,7 @@ test.describe('Calendar Day Plus Button Functionality', () => {
     await expect(plusButtons).toHaveCount(1);
     
     // Verify the button is on the new selected day
-    const newPlusButton = dayAfterTomorrowCell.locator('button[aria-label="Add event for this day"]');
+    const newPlusButton = dayAfterTomorrowCell.locator('div[aria-label="Add event for this day"]');
     await expect(newPlusButton).toBeVisible();
   });
 
@@ -177,7 +177,7 @@ test.describe('Calendar Day Plus Button Functionality', () => {
     const tomorrowCell = page.locator('button.react-calendar__tile').filter({ hasText: tomorrow.getDate().toString() }).first();
     await tomorrowCell.click();
     
-    const plusButton = page.locator('button[aria-label="Add event for this day"]').first();
+    const plusButton = page.locator('div[aria-label="Add event for this day"]').first();
     await plusButton.click();
     
     // Verify modal is open
