@@ -25,7 +25,7 @@ test.describe('Enhanced Plus Button Functionality', () => {
     
     // Verify all three options are present
     await expect(page.getByRole('button', { name: /General Event/ })).toBeVisible();
-    await expect(page.getByRole('button', { name: /Meal/ })).toBeVisible();
+    await expect(page.locator('button').filter({ hasText: 'Meal' }).filter({ hasText: 'Plan a meal for a specific date' })).toBeVisible();
     await expect(page.getByRole('button', { name: /Workout/ })).toBeVisible();
     
     // Verify descriptions are present

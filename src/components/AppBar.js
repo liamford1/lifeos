@@ -32,7 +32,7 @@ export default function AppBar() {
       if (!user?.id) return;
       const { data, error } = await supabase
         .from('profiles')
-        .select('first_name, last_name', { headers: { Accept: 'application/json' } })
+        .select('first_name, last_name')
         .eq('user_id', user.id)
         .single();
       if (!error && data) {
