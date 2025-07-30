@@ -23,6 +23,15 @@ export default function PlannedMealDetailPage() {
 
   useEffect(() => {
     async function fetchPlannedMeal() {
+      // Check if id looks like a valid UUID
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      
+      if (!uuidRegex.test(id)) {
+        console.warn('Invalid planned meal ID:', id);
+        setError('Invalid planned meal ID. Please check the URL.');
+        setLoading(false);
+        return;
+      }
 
       const { data, error } = await supabase
         .from('planned_meals')
@@ -93,6 +102,15 @@ export default function PlannedMealDetailPage() {
     setSaving(true);
     setError(null);
     try {
+      // Check if id looks like a valid UUID
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      
+      if (!uuidRegex.test(id)) {
+        setError('Invalid planned meal ID. Cannot update.');
+        setSaving(false);
+        return;
+      }
+
       // Ensure planned_date is in YYYY-MM-DD format
       let plannedDate = editData.planned_date;
       if (plannedDate instanceof Date) {

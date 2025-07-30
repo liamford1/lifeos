@@ -22,7 +22,7 @@ export default function CardioDashboard() {
   const [sessionsLoading, setSessionsLoading] = useState(true);
   const { fetchCardioSessions, deleteCardioSession } = useCardioSessions();
   // Memoize fetchCardioSessions to avoid unnecessary effect reruns
-  const memoizedFetchCardioSessions = useCallback(fetchCardioSessions, []);
+  const memoizedFetchCardioSessions = useCallback(fetchCardioSessions, [fetchCardioSessions]);
 
   useEffect(() => {
     if (!loading && !user) {

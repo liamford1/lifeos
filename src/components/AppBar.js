@@ -64,7 +64,7 @@ export default function AppBar() {
         alt="Thread OS Logo"
         width={80}
         height={40}
-        className="h-10 w-auto cursor-pointer ml-4"
+        className="h-10 w-20 cursor-pointer ml-4"
         onClick={() => router.push('/')}
         priority
       />

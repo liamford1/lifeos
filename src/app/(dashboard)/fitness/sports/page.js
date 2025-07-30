@@ -22,7 +22,7 @@ export default function SportsDashboard() {
   const [sessionsLoading, setSessionsLoading] = useState(true);
   const { fetchSportsSessions, deleteSportsSession } = useSportsSessions();
   // Memoize fetchSportsSessions to avoid unnecessary effect reruns
-  const memoizedFetchSportsSessions = useCallback(fetchSportsSessions, []);
+  const memoizedFetchSportsSessions = useCallback(fetchSportsSessions, [fetchSportsSessions]);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -99,13 +99,13 @@ export default function SportsDashboard() {
 
       {/* Simplified loading logic */}
       {(loading || sessionsLoading) ? (
-        <LoadingSpinner />
+        <LoadingSpinner data-testid="sports-loading" />
       ) : !user ? (
-        null
+        <div data-testid="sports-no-user" />
       ) : sessions.length === 0 ? (
-        <p className="text-muted-foreground text-sm">No entries yet. Add one above ⬆️</p>
+        <p className="text-muted-foreground text-sm" data-testid="sports-empty">No entries yet. Add one above ⬆️</p>
       ) : (
-        <ul className="space-y-3">
+        <ul className="space-y-3" data-testid="sports-list">
           {sessions.map((s) => (
             <li
               key={s.id}

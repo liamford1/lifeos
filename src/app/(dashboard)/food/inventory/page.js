@@ -32,7 +32,7 @@ export default function InventoryPage() {
     if (user) {
       fetchInventory();
     }
-  }, [user]);
+  }, [user, fetchInventory]);
 
   // fetchInventory must be defined before useEffect, so move it above
   async function fetchInventory() {
