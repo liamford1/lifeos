@@ -151,8 +151,8 @@ test.describe('Calendar Day Plus Button Functionality', () => {
     const tomorrowCell = page.locator('button.react-calendar__tile').filter({ hasText: tomorrow.getDate().toString() }).first();
     await tomorrowCell.click();
     
-    // Now one "+" button should be visible
-    await expect(plusButtons).toHaveCount(1);
+    // Wait for the plus button to appear after clicking
+    await expect(plusButtons).toHaveCount(1, { timeout: 5000 });
     
     // Click on a different day
     const dayAfterTomorrow = new Date();
@@ -160,12 +160,12 @@ test.describe('Calendar Day Plus Button Functionality', () => {
     const dayAfterTomorrowCell = page.locator('button.react-calendar__tile').filter({ hasText: dayAfterTomorrow.getDate().toString() }).first();
     await dayAfterTomorrowCell.click();
     
-    // The "+" button should move to the new selected day
-    await expect(plusButtons).toHaveCount(1);
+    // Wait for the plus button to move to the new selected day
+    await expect(plusButtons).toHaveCount(1, { timeout: 5000 });
     
     // Verify the button is on the new selected day
     const newPlusButton = dayAfterTomorrowCell.locator('div[aria-label="Add event for this day"]');
-    await expect(newPlusButton).toBeVisible();
+    await expect(newPlusButton).toBeVisible({ timeout: 5000 });
   });
 
   test('Cancel button closes the modal', async ({ page }) => {

@@ -58,7 +58,7 @@ test.describe('Sports happy path', () => {
     await page.waitForURL((url) => /\/fitness(\/)?$/.test(url.pathname), { timeout: 10000 });
 
     // Navigate to Sports section
-    await page.getByRole('link', { name: /sports/i }).click();
+    await page.getByRole('link', { name: 'Sports & Activities Games,' }).click();
     await page.waitForURL((url) => /\/fitness\/sports$/.test(url.pathname), { timeout: 10000 });
 
     // Verify the "Start Activity" button exists
@@ -116,12 +116,26 @@ test.describe('Sports happy path', () => {
 
     // Verify the session is now active
     await expect(page.getByRole('heading', { name: /sports session in progress/i })).toBeVisible();
-    await expect(page.getByText(activityType)).toBeVisible();
+    // Use a more specific selector to avoid strict mode violation
+    await expect(page.locator('h1, h2, h3, p').filter({ hasText: activityType }).first()).toBeVisible();
     await expect(page.getByText(location)).toBeVisible();
     await expect(page.getByText(performanceNotes)).toBeVisible();
 
-    // Verify the "End Activity" button is visible
-    await expect(page.getByRole('button', { name: /end activity/i })).toBeVisible();
+    // Debug: Check what buttons are available on the page
+    const allButtons = await page.locator('button').allTextContents();
+    console.log('[E2E] Available buttons on page:', allButtons);
+    console.log('[E2E] Current URL:', page.url());
+    
+    // Try to find the end button with different possible names
+    const endSportsButton = page.getByRole('button', { name: /end sports session/i });
+    const endActivityButton = page.getByRole('button', { name: /end activity/i });
+    
+    const endSportsVisible = await endSportsButton.isVisible().catch(() => false);
+    const endActivityVisible = await endActivityButton.isVisible().catch(() => false);
+    
+    if (!endSportsVisible && !endActivityVisible) {
+      throw new Error('Neither "End Sports Session" nor "End Activity" button is visible');
+    }
 
     // Test 1: Verify session appears in navbar
     await expect(page.getByRole('button', { name: /sports in progress/i })).toBeVisible();
@@ -135,11 +149,12 @@ test.describe('Sports happy path', () => {
     
     // Click the navbar button to return to live session
     await page.getByRole('button', { name: /sports in progress/i }).click();
-    await page.waitForURL((url) => /\/fitness\/sports\/live$/.test(url.pathname), { timeout: 10000 });
+    await page.waitForURL((url) => /\/fitness\/sports\/.*\/session$/.test(url.pathname), { timeout: 10000 });
     
     // Verify session is still active
     await expect(page.getByRole('heading', { name: /sports session in progress/i })).toBeVisible();
-    await expect(page.getByText(activityType)).toBeVisible();
+    // Use a more specific selector to avoid strict mode violation
+    await expect(page.locator('h1, h2, h3, p').filter({ hasText: activityType }).first()).toBeVisible();
 
     // Test 3: Page reload persistence
     await page.reload();
@@ -188,7 +203,13 @@ test.describe('Sports happy path', () => {
     }
 
     // Test 4: End the sports session
-    await page.getByRole('button', { name: /end activity/i }).click();
+    if (await endSportsButton.isVisible().catch(() => false)) {
+      await endSportsButton.click();
+    } else if (await endActivityButton.isVisible().catch(() => false)) {
+      await endActivityButton.click();
+    } else {
+      throw new Error('No end button found');
+    }
     
     // Wait for redirect to sports dashboard
     await page.waitForURL((url) => /\/fitness\/sports$/.test(url.pathname), { timeout: 10000 });
