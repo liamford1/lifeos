@@ -253,12 +253,14 @@ CREATE POLICY "Users can insert their own meals" ON public.meals FOR INSERT TO p
 -- Meal Ingredients
 CREATE POLICY "Insert meal_ingredients if parent meal is user's" ON public.meal_ingredients FOR INSERT TO public WITH CHECK (auth.uid() = (SELECT meals.user_id FROM meals WHERE meals.id = meal_ingredients.meal_id));
 CREATE POLICY "Select meal_ingredients by meal's user" ON public.meal_ingredients FOR SELECT TO public USING (auth.uid() = (SELECT meals.user_id FROM meals WHERE meals.id = meal_ingredients.meal_id));
+CREATE POLICY "Users can update their own meal ingredients" ON public.meal_ingredients FOR UPDATE TO public USING (EXISTS (SELECT 1 FROM meals WHERE meals.id = meal_ingredients.meal_id AND meals.user_id = auth.uid()));
 CREATE POLICY "Users can delete their own meal ingredients" ON public.meal_ingredients FOR DELETE TO public USING (EXISTS (SELECT 1 FROM meals WHERE meals.id = meal_ingredients.meal_id AND meals.user_id = auth.uid()));
 
 -- Cooked Meals
 CREATE POLICY "Users can insert their own logs" ON public.cooked_meals FOR INSERT TO public WITH CHECK (auth.uid() = user_id);
 CREATE POLICY "Users can update their own cooked_meals" ON public.cooked_meals FOR UPDATE TO public USING (user_id = auth.uid());
 CREATE POLICY "Users can view their own logs" ON public.cooked_meals FOR SELECT TO public USING (auth.uid() = user_id);
+CREATE POLICY "Users can delete their own cooked_meals" ON public.cooked_meals FOR DELETE TO public USING (auth.uid() = user_id);
 
 -- Planned Meals
 CREATE POLICY "Users can access their own planned meals" ON public.planned_meals FOR ALL TO public USING (auth.uid() = user_id);

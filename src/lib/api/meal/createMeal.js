@@ -3,14 +3,38 @@ import { cookies } from 'next/headers';
 
 export default async function handleCreateMeal(request) {
   try {
-    const supabase = createRouteHandlerClient({ cookies }); // ✅ correct now
+    const cookieStore = await cookies();
+    const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
 
     // Parse and log the incoming payload
     const payload = await request.json();
 
-    // Get the authenticated user
-    const { data: userData, error: userError } = await supabase.auth.getUser();
-    const user = userData?.user;
+    // Check for Bearer token in Authorization header
+    const authHeader = request.headers.get('authorization');
+    let user = null;
+    let userError = null;
+
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      // Use Bearer token authentication
+      const token = authHeader.substring(7);
+      const { data: userData, error: error } = await supabase.auth.getUser(token);
+      user = userData?.user;
+      userError = error;
+    } else {
+      // Fall back to cookie-based authentication
+      const { data: userData, error: error } = await supabase.auth.getUser();
+      user = userData?.user;
+      userError = error;
+      
+      // If no user, try to refresh the session
+      if (!user && userError?.message?.includes('Auth session missing')) {
+        const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession();
+        if (refreshData?.user) {
+          user = refreshData.user;
+        }
+      }
+    }
+    
     if (!user) {
       if (process.env.NODE_ENV !== "production") {
         console.error('🚫 Not authenticated:', userError);

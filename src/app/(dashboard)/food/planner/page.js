@@ -8,13 +8,14 @@ import Button from '@/components/shared/Button'
 import LoadingSpinner from '@/components/shared/LoadingSpinner'
 import { CALENDAR_SOURCES } from '@/lib/utils/calendarUtils'
 import { useToast } from '@/components/client/Toast'
-import { MdOutlineCalendarToday } from 'react-icons/md';
+import { MdOutlineCalendarToday, MdLightbulb } from 'react-icons/md';
 import dynamic from "next/dynamic";
 const CalendarCheck = dynamic(() => import("lucide-react/dist/esm/icons/calendar-check"), { ssr: false });
 import { createCalendarEventForEntity } from '@/lib/calendarSync';
 import { deleteCalendarEventForEntity } from '@/lib/calendarSync';
 import { useUser } from '@/context/UserContext';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import AIMealSuggestionsModal from '@/components/forms/AIMealSuggestionsModal';
 
 export default function MealPlannerPage() {
   const { showSuccess, showError } = useToast();
@@ -27,6 +28,7 @@ export default function MealPlannerPage() {
   const [message, setMessage] = useState('')
   const [mealsLoading, setMealsLoading] = useState(true)
   const [plannedMealsLoading, setPlannedMealsLoading] = useState(true)
+  const [showAIModal, setShowAIModal] = useState(false)
   const { user, loading: userLoading } = useUser();
 
   useEffect(() => {
@@ -176,6 +178,55 @@ export default function MealPlannerPage() {
     planMealMutation.mutate({ selectedMealId, plannedDate, mealTime });
   }
 
+  const handleMealAdded = () => {
+    // Refetch meals and planned meals when a new AI meal is added
+    const fetchData = async () => {
+      setMealsLoading(true);
+      setPlannedMealsLoading(true);
+      try {
+        const { data: mealsData, error: mealsError } = await supabase
+          .from('meals')
+          .select('*')
+          .order('name');
+        if (mealsError) {
+          showError('Error fetching meals:', mealsError.message);
+          setMeals([]);
+        } else {
+          setMeals(mealsData);
+        }
+      } catch (err) {
+        showError('Error fetching meals:', err.message || String(err));
+        setMeals([]);
+      } finally {
+        setMealsLoading(false);
+      }
+
+      try {
+        const { data: plannedData, error: plannedError } = await supabase
+          .from('planned_meals')
+          .select(`
+            *,
+            meals (
+              name
+            )
+          `)
+          .order('planned_date');
+        if (plannedError) {
+          showError('Error fetching planned meals:', plannedError.message);
+          setPlannedMeals([]);
+        } else {
+          setPlannedMeals(plannedData);
+        }
+      } catch (err) {
+        showError('Error fetching planned meals:', err.message || String(err));
+        setPlannedMeals([]);
+      } finally {
+        setPlannedMealsLoading(false);
+      }
+    };
+    fetchData();
+  }
+
   const handleDelete = async (id) => {
     if (!user) {
       showError('You must be logged in.');
@@ -242,6 +293,18 @@ export default function MealPlannerPage() {
         Plan a Meal
       </h1>
       <p className="text-base">Schedule meals for the week ahead.</p>
+
+      {/* AI Suggestions Button */}
+      <div className="mb-6">
+        <Button
+          onClick={() => setShowAIModal(true)}
+          variant="secondary"
+          className="mb-4"
+        >
+          <MdLightbulb className="w-4 h-4 mr-2" />
+          AI Suggest Meals
+        </Button>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <select
@@ -350,6 +413,14 @@ export default function MealPlannerPage() {
           <h2 className="text-xl font-semibold mb-4">🗓️ Upcoming Planned Meals</h2>
           <p className="text-muted-foreground text-sm">No entries yet. Add one above ⬆️</p>
         </div>
+      )}
+
+      {/* AI Meal Suggestions Modal */}
+      {showAIModal && (
+        <AIMealSuggestionsModal
+          onClose={() => setShowAIModal(false)}
+          onMealAdded={handleMealAdded}
+        />
       )}
     </div>
   )

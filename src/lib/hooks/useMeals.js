@@ -298,7 +298,7 @@ export function useMealIngredientsQuery(mealId) {
         .from('meal_ingredients')
         .select('*')
         .eq('meal_id', mealId)
-        .order('created_at', { ascending: true });
+        .order('id', { ascending: true });
       if (error) {
         throw new Error(error.message || 'Failed to fetch meal ingredients.');
       }

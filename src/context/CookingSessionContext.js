@@ -132,10 +132,10 @@ export function CookingSessionProvider({ children }) {
     // Upsert into cooked_meals
     const { data: existing, error: fetchError } = await supabase
       .from('cooked_meals')
-      .select('cook_count')
+      .select('cook_count, user_id, meal_id')
       .eq('user_id', user.id)
       .eq('meal_id', mealId)
-      .single();
+      .maybeSingle();
     if (!fetchError && existing) {
       // Increment cook_count
       await supabase
