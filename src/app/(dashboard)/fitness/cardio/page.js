@@ -125,9 +125,15 @@ export default function CardioDashboard() {
     if (sessions.length === 0) {
       return (
         <div className="border p-8 rounded shadow-sm text-center">
-          <p className="text-muted-foreground text-sm">
+          <p className="text-muted-foreground text-sm mb-4">
             No cardio sessions yet. Click &quot;Start Cardio&quot; to begin tracking your first session.
           </p>
+          <Link href="/fitness/cardio/live">
+            <Button variant="success" className="flex items-center gap-2 mx-auto">
+              <HeartPulse className="w-4 h-4" />
+              Start Cardio
+            </Button>
+          </Link>
         </div>
       );
     }

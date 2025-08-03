@@ -123,9 +123,15 @@ export default function WorkoutsDashboard() {
     if (workouts.length === 0) {
       return (
         <div className="border p-8 rounded shadow-sm text-center">
-          <p className="text-muted-foreground text-sm" data-testid="workouts-empty">
-            No entries yet. Add one above ⬆️
+          <p className="text-muted-foreground text-sm mb-4" data-testid="workouts-empty">
+            No entries yet. Click &quot;Start Workout&quot; to begin tracking your first session.
           </p>
+          <Link href="/fitness/workouts/live">
+            <Button variant="primary" className="flex items-center gap-2 mx-auto">
+              <Dumbbell className="w-4 h-4" />
+              Start Workout
+            </Button>
+          </Link>
         </div>
       );
     }

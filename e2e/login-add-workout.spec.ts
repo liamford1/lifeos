@@ -41,6 +41,33 @@ test.describe('Login and add workout', () => {
     // Clean up any existing test data after login
     await cleanupTestDataBeforeTest(page, testId);
 
+    // Clear any existing workout sessions
+    await page.evaluate(async () => {
+      const supabase = window.supabase;
+      const { data: session } = await supabase.auth.getSession();
+      const userId = session.session.user.id;
+      
+      // Clear any in-progress workouts
+      await supabase
+        .from('fitness_workouts')
+        .update({ in_progress: false, status: 'completed' })
+        .eq('user_id', userId)
+        .eq('in_progress', true);
+      
+      // Also clear any in-progress cardio and sports sessions
+      await supabase
+        .from('fitness_cardio')
+        .update({ in_progress: false, status: 'completed' })
+        .eq('user_id', userId)
+        .eq('in_progress', true);
+      
+      await supabase
+        .from('fitness_sports')
+        .update({ in_progress: false, status: 'completed' })
+        .eq('user_id', userId)
+        .eq('in_progress', true);
+    });
+
     // Navigate to workouts page first, then start a workout
     await page.goto('http://localhost:3000/fitness/workouts');
     await expect(page.getByRole('heading', { name: /workouts/i })).toBeVisible();
@@ -112,18 +139,16 @@ test.describe('Login and add workout', () => {
 
 
 
-    // Assert for either the new workout or the empty state
-    const workoutVisible = await page.getByText(uniqueTitle).isVisible().catch(() => false);
-    const emptyStateVisible = await page.getByText(/no entries yet/i).isVisible().catch(() => false);
-    expect(workoutVisible || emptyStateVisible).toBe(true);
+    // Assert that we're on the live workout page with the workout in progress
+    const inProgressHeading = await page.getByRole('heading', { name: /Workout In Progress/i }).isVisible().catch(() => false);
+    const workoutTitle = await page.getByText(uniqueTitle).isVisible().catch(() => false);
+    expect(inProgressHeading || workoutTitle).toBe(true);
 
     // Wait for the logging UI or confirmation to load by checking for confirmation text
-    const inProgressHeading = await page.getByRole('heading', { name: /workout in progress/i }).isVisible().catch(() => false);
-    const inProgressHeadingExact = await page.getByRole('heading', { name: 'Workout In Progress' }).isVisible().catch(() => false);
     const inProgressButton = await page.getByRole('button', { name: /workout in progress/i }).isVisible().catch(() => false);
     const workoutSaved = await page.getByText(/workout saved|workout created|workout history|workouts/i).isVisible().catch(() => false);
 
-    expect(inProgressHeading || inProgressHeadingExact || inProgressButton || workoutSaved).toBe(true);
+    expect(inProgressHeading || inProgressButton || workoutSaved).toBe(true);
 
     // --- Begin expanded test ---
 
@@ -134,10 +159,11 @@ test.describe('Login and add workout', () => {
     await expect(page.getByRole('button', { name: /workout in progress/i })).toBeVisible();
     // Click the nav button to return to live workout
     await page.getByRole('button', { name: /workout in progress/i }).click();
-    await page.waitForURL((url) => /\/fitness\/workouts\/live$/.test(url.pathname), { timeout: 10000 });
+    await page.waitForURL((url) => /\/fitness\/workouts\/.*\/session$/.test(url.pathname), { timeout: 10000 });
     // Confirm the workout in progress UI is still present
     await expect(page.getByRole('heading', { name: /workout in progress/i })).toBeVisible();
-    await expect(page.getByText(uniqueTitle)).toBeVisible();
+    // Use a more specific selector to avoid strict mode violation
+    await expect(page.locator('p').filter({ hasText: uniqueTitle }).first()).toBeVisible();
 
     // 2. Reload the page and confirm session state persists
     await page.reload();
@@ -147,13 +173,12 @@ test.describe('Login and add workout', () => {
     await page.waitForTimeout(2000);
     
     // Check for workout in progress - try multiple possible selectors
-    const workoutInProgress = await page.getByRole('heading', { name: /workout in progress/i }).isVisible().catch(() => false);
-    const workoutInProgressExact = await page.getByRole('heading', { name: 'Workout In Progress' }).isVisible().catch(() => false);
+    const workoutInProgressReload = await page.getByRole('heading', { name: /Workout In Progress/i }).isVisible().catch(() => false);
     const loggingText = await page.getByText(/logging|in progress/i).isVisible().catch(() => false);
-    const workoutTitle = await page.getByText(uniqueTitle).isVisible().catch(() => false);
+    const workoutTitleReload = await page.getByText(uniqueTitle).isVisible().catch(() => false);
     
     // If none of the expected elements are visible, check the database state
-    if (!workoutInProgress && !workoutInProgressExact && !loggingText && !workoutTitle) {
+    if (!workoutInProgressReload && !loggingText && !workoutTitleReload) {
       const workoutState = await page.evaluate(async (title) => {
         const supabase = window.supabase;
         const { data: session } = await supabase.auth.getSession();
@@ -178,10 +203,10 @@ test.describe('Login and add workout', () => {
       }
     } else {
       // At least one of the expected elements is visible
-      if (workoutInProgress || workoutInProgressExact) {
-        await expect(page.getByRole('heading', { name: /workout in progress/i })).toBeVisible();
+      if (workoutInProgressReload) {
+        await expect(page.getByRole('heading', { name: /Workout In Progress/i })).toBeVisible();
       }
-      if (workoutTitle) {
+      if (workoutTitleReload) {
         await expect(page.getByText(uniqueTitle)).toBeVisible();
       }
     }
