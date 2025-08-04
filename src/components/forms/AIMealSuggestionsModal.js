@@ -214,6 +214,7 @@ export default function AIMealSuggestionsModal({ onClose, onMealAdded }) {
             onClick={onClose}
             className="text-gray-400 hover:text-white transition-colors"
             disabled={loading}
+            aria-label="Close modal"
           >
             <MdClose className="w-6 h-6" />
           </button>
@@ -282,8 +283,9 @@ export default function AIMealSuggestionsModal({ onClose, onMealAdded }) {
             {/* Date/Time Selection */}
             <div className="flex gap-4 mb-4">
               <div className="flex-1">
-                <label className="block text-sm font-medium mb-1">Date</label>
+                <label htmlFor="meal-date" className="block text-sm font-medium mb-1">Date</label>
                 <input
+                  id="meal-date"
                   type="date"
                   value={selectedDate}
                   onChange={(e) => setSelectedDate(e.target.value)}
@@ -291,8 +293,9 @@ export default function AIMealSuggestionsModal({ onClose, onMealAdded }) {
                 />
               </div>
               <div className="flex-1">
-                <label className="block text-sm font-medium mb-1">Meal Time</label>
+                <label htmlFor="meal-time" className="block text-sm font-medium mb-1">Meal Time</label>
                 <select
+                  id="meal-time"
                   value={selectedTime}
                   onChange={(e) => setSelectedTime(e.target.value)}
                   className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-white"

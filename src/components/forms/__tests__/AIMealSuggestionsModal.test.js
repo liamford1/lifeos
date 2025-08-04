@@ -100,13 +100,17 @@ describe('AIMealSuggestionsModal', () => {
       />
     );
 
-    expect(screen.getByText('AI Meal Suggestions')).toBeInTheDocument();
-    expect(screen.getByText('Current Pantry (2 items)')).toBeInTheDocument();
+    // Wait for pantry items to load
+    await waitFor(() => {
+      expect(screen.getByText('AI Meal Suggestions')).toBeInTheDocument();
+      expect(screen.getByText('Current Pantry (2 items)')).toBeInTheDocument();
+    });
+    
     expect(screen.getByText('Pasta (500 g)')).toBeInTheDocument();
     expect(screen.getByText('Tomato Sauce (2 cups)')).toBeInTheDocument();
   });
 
-  it('shows get suggestions button', () => {
+  it('shows get suggestions button', async () => {
     render(
       <AIMealSuggestionsModal
         onClose={mockOnClose}
@@ -114,10 +118,12 @@ describe('AIMealSuggestionsModal', () => {
       />
     );
 
-    expect(screen.getByText('Get AI Meal Suggestions')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('Get AI Meal Suggestions')).toBeInTheDocument();
+    });
   });
 
-  it('calls onClose when close button is clicked', () => {
+  it('calls onClose when close button is clicked', async () => {
     render(
       <AIMealSuggestionsModal
         onClose={mockOnClose}
@@ -125,8 +131,10 @@ describe('AIMealSuggestionsModal', () => {
       />
     );
 
-    const closeButton = screen.getByRole('button', { name: /close/i });
-    fireEvent.click(closeButton);
+    await waitFor(() => {
+      const closeButton = screen.getByRole('button', { name: /close modal/i });
+      fireEvent.click(closeButton);
+    });
 
     expect(mockOnClose).toHaveBeenCalled();
   });
@@ -138,6 +146,11 @@ describe('AIMealSuggestionsModal', () => {
         onMealAdded={mockOnMealAdded}
       />
     );
+
+    // Wait for component to load
+    await waitFor(() => {
+      expect(screen.getByText('Get AI Meal Suggestions')).toBeInTheDocument();
+    });
 
     const getSuggestionsButton = screen.getByText('Get AI Meal Suggestions');
     fireEvent.click(getSuggestionsButton);
@@ -157,6 +170,11 @@ describe('AIMealSuggestionsModal', () => {
       />
     );
 
+    // Wait for component to load
+    await waitFor(() => {
+      expect(screen.getByText('Get AI Meal Suggestions')).toBeInTheDocument();
+    });
+
     const getSuggestionsButton = screen.getByText('Get AI Meal Suggestions');
     fireEvent.click(getSuggestionsButton);
 
@@ -174,6 +192,11 @@ describe('AIMealSuggestionsModal', () => {
       />
     );
 
+    // Wait for component to load
+    await waitFor(() => {
+      expect(screen.getByText('Get AI Meal Suggestions')).toBeInTheDocument();
+    });
+
     const getSuggestionsButton = screen.getByText('Get AI Meal Suggestions');
     fireEvent.click(getSuggestionsButton);
 
@@ -190,6 +213,11 @@ describe('AIMealSuggestionsModal', () => {
         onMealAdded={mockOnMealAdded}
       />
     );
+
+    // Wait for component to load
+    await waitFor(() => {
+      expect(screen.getByText('Get AI Meal Suggestions')).toBeInTheDocument();
+    });
 
     const getSuggestionsButton = screen.getByText('Get AI Meal Suggestions');
     fireEvent.click(getSuggestionsButton);
