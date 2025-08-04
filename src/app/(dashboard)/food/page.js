@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/context/UserContext';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
+import PlanMealModal from '@/components/modals/PlanMealModal';
 import dynamic from "next/dynamic";
 import { supabase } from '@/lib/supabaseClient';
 import dayjs from 'dayjs';
@@ -33,6 +34,7 @@ export default function FoodHome() {
   const [upcomingMeals, setUpcomingMeals] = useState([]);
   const [loadingCooked, setLoadingCooked] = useState(false);
   const [loadingPlanned, setLoadingPlanned] = useState(false);
+  const [showPlanMealModal, setShowPlanMealModal] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -295,9 +297,9 @@ export default function FoodHome() {
                 </div>
               </Link>
               
-              <Link
-                href="/food/planner"
-                className="block p-3 bg-card rounded-lg hover:bg-card/80 transition-colors border border-border"
+              <button
+                onClick={() => setShowPlanMealModal(true)}
+                className="block p-3 bg-card rounded-lg hover:bg-card/80 transition-colors border border-border w-full text-left"
               >
                 <div className="flex items-center space-x-3">
                   <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/20 rounded-lg flex items-center justify-center">
@@ -308,7 +310,7 @@ export default function FoodHome() {
                     <p className="text-xs text-muted-foreground">Schedule your week</p>
                   </div>
                 </div>
-              </Link>
+              </button>
               
               <Link
                 href="/food/inventory"
@@ -379,6 +381,49 @@ export default function FoodHome() {
           </div>
         </div>
       </div>
+
+      {/* Plan Meal Modal */}
+      <PlanMealModal 
+        isOpen={showPlanMealModal} 
+        onClose={() => setShowPlanMealModal(false)}
+        onSuccess={() => {
+          // Refresh the upcoming meals when a meal is successfully planned
+          const fetchUpcomingMeals = async () => {
+            if (!user) return;
+            
+            setLoadingPlanned(true);
+            try {
+              const today = dayjs().format('YYYY-MM-DD');
+              const { data, error } = await supabase
+                .from('planned_meals')
+                .select(`
+                  *,
+                  meals (
+                    id,
+                    name
+                  )
+                `)
+                .eq('user_id', user.id)
+                .gte('planned_date', today)
+                .order('planned_date', { ascending: true })
+                .limit(3);
+
+              if (error) {
+                console.error('Error fetching planned meals:', error);
+                setUpcomingMeals([]);
+              } else {
+                setUpcomingMeals(data || []);
+              }
+            } catch (err) {
+              console.error('Error fetching planned meals:', err);
+              setUpcomingMeals([]);
+            } finally {
+              setLoadingPlanned(false);
+            }
+          };
+          fetchUpcomingMeals();
+        }}
+      />
     </div>
   );
 }

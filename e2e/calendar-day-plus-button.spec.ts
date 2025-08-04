@@ -84,7 +84,7 @@ test.describe('Calendar Day Plus Button Functionality', () => {
     await page.locator('button').filter({ hasText: 'Cancel' }).last().click();
   });
 
-  test('Meal option navigates to food planner with selected date', async ({ page }) => {
+  test('Meal option opens meal planning modal with selected date', async ({ page }) => {
     await page.waitForSelector('[data-testid="home-header"]');
     
     // Click on a day in the calendar
@@ -101,9 +101,16 @@ test.describe('Calendar Day Plus Button Functionality', () => {
     // Click Meal option
     await page.getByRole('button', { name: /Plan a meal for/ }).click();
     
-    // Verify navigation to food planner with date parameter
-    await page.waitForURL(/\/food\/planner\?date=/);
-    await expect(page.getByText('Plan a Meal')).toBeVisible();
+    // Verify the meal planning modal opens
+    await expect(page.getByRole('heading', { name: 'Plan a Meal' })).toBeVisible();
+    await expect(page.getByText('Schedule meals for the week ahead')).toBeVisible();
+    
+    // Verify the date is pre-selected (should be tomorrow)
+    const dateInput = page.locator('input[type="date"]');
+    await expect(dateInput).toHaveValue(tomorrowStr);
+    
+    // Close the modal
+    await page.getByRole('button', { name: 'Close modal' }).click();
   });
 
   test('Workout option navigates to fitness planner with selected date', async ({ page }) => {

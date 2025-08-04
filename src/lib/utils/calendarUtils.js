@@ -22,7 +22,7 @@ export const getCalendarEventRoute = (source, source_id) => {
     case CALENDAR_SOURCES.MEAL:
       return `/food/meals/${source_id}/cook`
     case CALENDAR_SOURCES.PLANNED_MEAL:
-      return `/food/planner/${source_id}`
+      return `/food` // Redirect to food page since planning is now done via modal
     case CALENDAR_SOURCES.WORKOUT:
       return `/fitness/workouts/${source_id}`
     case CALENDAR_SOURCES.CARDIO:

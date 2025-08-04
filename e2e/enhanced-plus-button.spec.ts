@@ -50,7 +50,7 @@ test.describe('Enhanced Plus Button Functionality', () => {
     await expect(page.getByPlaceholder('Description (optional)')).toBeVisible();
   });
 
-  test('Meal option navigates to food planner page', async ({ page }) => {
+  test('Meal option opens meal planning modal', async ({ page }) => {
     await page.waitForSelector('[data-testid="home-header"]');
     
     // Click the floating "+" button
@@ -60,9 +60,17 @@ test.describe('Enhanced Plus Button Functionality', () => {
     // Click Meal option
     await page.locator('button').filter({ hasText: 'Meal' }).filter({ hasText: 'Plan a meal for a specific date' }).click();
     
-    // Verify navigation to food planner page
-    await page.waitForURL(/\/food\/planner/);
-    await expect(page.getByText('Plan a Meal')).toBeVisible();
+    // Verify the meal planning modal opens
+    await expect(page.getByRole('heading', { name: 'Plan a Meal' })).toBeVisible();
+    await expect(page.getByText('Schedule meals for the week ahead')).toBeVisible();
+    
+    // Verify the form elements are present
+    await expect(page.getByTestId('meal-select')).toBeVisible();
+    await expect(page.getByTestId('meal-time-select')).toBeVisible();
+    await expect(page.locator('input[type="date"]')).toBeVisible();
+    
+    // Close the modal
+    await page.getByRole('button', { name: 'Close modal' }).click();
   });
 
   test('Workout option navigates to fitness planner page', async ({ page }) => {

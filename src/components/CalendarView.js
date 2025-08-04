@@ -17,6 +17,7 @@ import { MdOutlineCalendarToday } from 'react-icons/md';
 import SharedDeleteButton from '@/components/SharedDeleteButton';
 import { supabase } from '@/lib/supabaseClient';
 import { MdRestaurant, MdFitnessCenter, MdEvent } from 'react-icons/md';
+import PlanMealModal from '@/components/modals/PlanMealModal';
 
 export default function CalendarView() {
   const { handleError, handleSuccess } = useApiError();
@@ -27,6 +28,8 @@ export default function CalendarView() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showSelectionModal, setShowSelectionModal] = useState(false);
   const [showSelectionModalForDate, setShowSelectionModalForDate] = useState(null);
+  const [showPlanMealModal, setShowPlanMealModal] = useState(false);
+  const [selectedDateForMealPlanning, setSelectedDateForMealPlanning] = useState(null);
   const [newEvent, setNewEvent] = useState({
     title: '',
     start_time: '',
@@ -113,8 +116,9 @@ export default function CalendarView() {
         setShowAddModal(true);
         break;
       case 'meal':
-        // Navigate to food planner with the selected date
-        router.push(`/food/planner?date=${dateStr}`);
+        // Open meal planning modal with the selected date
+        setSelectedDateForMealPlanning(dateStr);
+        setShowPlanMealModal(true);
         break;
       case 'workout':
         // Navigate to fitness planner with the selected date
@@ -285,12 +289,13 @@ export default function CalendarView() {
       
       if (!uuidRegex.test(event.source_id)) {
         console.warn('Invalid source_id for planned meal:', event.source_id);
-        // If source_id is not a valid UUID, try to extract date and navigate to planner
+        // If source_id is not a valid UUID, try to extract date and open modal
         const dateMatch = event.source_id.match(/^(\d{4}-\d{2}-\d{2})/);
         if (dateMatch) {
-          router.push(`/food/planner/${dateMatch[1]}`);
+          setSelectedDateForMealPlanning(dateMatch[1]);
+          setShowPlanMealModal(true);
         } else {
-          router.push('/food/planner');
+          setShowPlanMealModal(true);
         }
         return;
       }
@@ -312,7 +317,8 @@ export default function CalendarView() {
       if (plannedMeal && plannedMeal.meal_id) {
         router.push(`/food/meals/${plannedMeal.meal_id}/cook`);
       } else {
-        router.push(`/food/planner/${event.source_id}`);
+        // If no meal_id, open the modal to show the planned meal
+        setShowPlanMealModal(true);
       }
     } catch (error) {
       console.error('Error in handlePlannedMealClick:', error);
@@ -665,6 +671,20 @@ export default function CalendarView() {
           </div>
         </div>
       )}
+
+      {/* Plan Meal Modal */}
+      <PlanMealModal 
+        isOpen={showPlanMealModal} 
+        onClose={() => {
+          setShowPlanMealModal(false);
+          setSelectedDateForMealPlanning(null);
+        }}
+        onSuccess={() => {
+          // Refresh calendar events when a meal is successfully planned
+          queryClient.invalidateQueries({ queryKey: ["events", user?.id] });
+        }}
+        selectedDate={selectedDateForMealPlanning}
+      />
     </div>
   );
 }

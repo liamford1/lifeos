@@ -55,11 +55,18 @@ test('Meal planning workflow: plan and verify meal', async ({ page }) => {
   await page.waitForURL((url) => /\/food\/meals$/.test(url.pathname), { timeout: 20000 });
   await expect(page.getByRole('heading', { name: /meals/i })).toBeVisible({ timeout: 10000 });
 
-  // Plan the meal
-  await page.goto('http://localhost:3000/food/planner');
-  await expect(page.getByRole('heading', { name: /plan a meal/i })).toBeVisible();
+  // Plan the meal using the modal
+  await page.goto('http://localhost:3000/food');
+  
+  // Click the "Plan Weekly Meals" button to open the modal
+  await page.getByRole('button', { name: /plan weekly meals/i }).click();
+  
+  // Wait for the modal to open
+  await expect(page.getByRole('heading', { name: 'Plan a Meal' })).toBeVisible();
+  
   // Select the meal
   await page.getByTestId('meal-select').selectOption({ label: testMealName });
+  
   // Pick a date (today + 1)
   const today = new Date();
   const planDate = new Date(today.getTime() + 24 * 60 * 60 * 1000);
@@ -67,9 +74,11 @@ test('Meal planning workflow: plan and verify meal', async ({ page }) => {
   const mm = String(planDate.getMonth() + 1).padStart(2, '0');
   const dd = String(planDate.getDate()).padStart(2, '0');
   const dateStr = `${yyyy}-${mm}-${dd}`;
-  await page.getByRole('textbox', { name: '' }).fill(dateStr);
+  await page.locator('input[type="date"]').fill(dateStr);
+  
   // Select meal time
   await page.getByTestId('meal-time-select').selectOption({ value: 'dinner' });
+  
   // Click Plan Meal
   await page.getByRole('button', { name: /plan meal/i }).click();
   
@@ -80,16 +89,22 @@ test('Meal planning workflow: plan and verify meal', async ({ page }) => {
   const plannedMealCard = page.getByTestId(/planned-meal-card-/).filter({ hasText: testMealName }).first();
   await expect(plannedMealCard).toBeVisible({ timeout: 10000 });
   await expect(plannedMealCard.locator('div.font-medium')).toHaveText(testMealName);
-  await expect(plannedMealCard.locator('div.text-base')).toHaveText(/Dinner/i);
+  await expect(plannedMealCard.locator('div.text-sm.text-gray-400')).toHaveText(/Dinner/i);
 
-  // Reload and verify in Upcoming Planned Meals
+  // Reload and verify in Upcoming Planned Meals by reopening the modal
   await page.reload();
-  await expect(page.getByRole('heading', { name: /upcoming planned meals/i })).toBeVisible({ timeout: 10000 });
+  
+  // Click the "Plan Weekly Meals" button to open the modal again
+  await page.getByRole('button', { name: /plan weekly meals/i }).click();
+  
+  // Wait for the modal to open
+  await expect(page.getByRole('heading', { name: 'Plan a Meal' })).toBeVisible();
+  
+  // Wait for the planned meal to appear in the Upcoming Planned Meals section
   const plannedMealCardAfterReload = page.getByTestId(/planned-meal-card-/).filter({ hasText: testMealName }).first();
   await expect(plannedMealCardAfterReload).toBeVisible({ timeout: 10000 });
   await expect(plannedMealCardAfterReload.locator('div.font-medium')).toHaveText(testMealName);
-  await expect(plannedMealCardAfterReload.locator('div.text-base')).toHaveText(/Dinner/i);
-  // Optionally, check the date by finding the parent section or using a more robust locator if needed
+  await expect(plannedMealCardAfterReload.locator('div.text-sm.text-gray-400')).toHaveText(/Dinner/i);
 
   // Verify in calendar view and click the event
   await page.goto('http://localhost:3000/');
@@ -125,12 +140,14 @@ test('Meal planning workflow: plan and verify meal', async ({ page }) => {
     // and proceed with the rest of the test
     if (calendarEvents && calendarEvents.length > 0) {
       
-      // Navigate directly to the planned meal detail page instead
-      await page.goto('http://localhost:3000/food/planner');
-      await expect(page.getByRole('heading', { name: /upcoming planned meals/i })).toBeVisible({ timeout: 10000 });
+      // Navigate to food page and open the modal to find the planned meal
+      await page.goto('http://localhost:3000/food');
+      await page.getByRole('button', { name: /plan weekly meals/i }).click();
+      await expect(page.getByRole('heading', { name: 'Plan a Meal' })).toBeVisible();
       const plannedMealCard = page.getByTestId(/planned-meal-card-/).filter({ hasText: testMealName }).first();
       await expect(plannedMealCard).toBeVisible({ timeout: 10000 });
-      await plannedMealCard.click();
+      // Note: We can't click on the planned meal card in the modal to navigate to detail page
+      // The modal doesn't support navigation to detail pages
     } else {
       // If no calendar event exists, fail the test
       throw new Error('Calendar event not found in database');
@@ -150,27 +167,20 @@ test('Meal planning workflow: plan and verify meal', async ({ page }) => {
   if (currentUrl.includes('/food/meals/')) {
     // We're on a meal detail page
     await expect(page.getByRole('heading', { name: testMealName })).toBeVisible({ timeout: 10000 });
-  } else if (currentUrl.includes('/food/planner')) {
-    // We're still on the planner page, which is fine
-    await expect(page.getByRole('heading', { name: /upcoming planned meals/i })).toBeVisible({ timeout: 10000 });
-    await expect(page.getByTestId(/planned-meal-card-/).filter({ hasText: testMealName }).first()).toBeVisible();
-  } else if (currentUrl.includes('/food/planner/')) {
-    // We're on a planned meal detail page
-    await expect(page.getByText(/Meal Time: dinner/i)).toBeVisible({ timeout: 10000 });
-    // Format the date as shown in the UI (e.g., 'Thursday, July 24, 2025')
-    const formattedDate = new Date(dateStr).toLocaleDateString('en-US', {
-      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-    });
-    await expect(page.getByText(`Date: ${formattedDate}`)).toBeVisible({ timeout: 10000 });
+  } else if (currentUrl.includes('/food')) {
+    // We're on the food page, which is fine since we're using the modal
+    // The modal approach doesn't navigate to detail pages, so we just verify the meal exists
+    await expect(page.getByText(testMealName)).toBeVisible({ timeout: 10000 });
   } else {
     // Some other page, log what we find
     const pageText = await page.textContent('body');
     // Don't fail the test, just log the situation
   }
 
-  // Clean up: delete the planned meal
-  await page.goto('http://localhost:3000/food/planner');
-  await expect(page.getByRole('heading', { name: /upcoming planned meals/i })).toBeVisible({ timeout: 10000 });
+  // Clean up: delete the planned meal using the modal
+  await page.goto('http://localhost:3000/food');
+  await page.getByRole('button', { name: /plan weekly meals/i }).click();
+  await expect(page.getByRole('heading', { name: 'Plan a Meal' })).toBeVisible();
   
   // Debug: Check what planned meals are visible
   const allPlannedMealCards = page.getByTestId(/planned-meal-card-/);
@@ -221,7 +231,9 @@ test('Meal planning workflow: plan and verify meal', async ({ page }) => {
   await expect(testMealCard).not.toBeVisible({ timeout: 10000 });
 
   // Reload and confirm neither appear in planner, calendar, or meal list
-  await page.goto('http://localhost:3000/food/planner');
+  await page.goto('http://localhost:3000/food');
+  await page.getByRole('button', { name: /plan weekly meals/i }).click();
+  await expect(page.getByRole('heading', { name: 'Plan a Meal' })).toBeVisible();
   await expect(page.getByRole('heading', { name: /upcoming planned meals/i })).toBeVisible({ timeout: 10000 });
   await expect(page.getByTestId(/planned-meal-card-/)).not.toBeVisible({ timeout: 10000 });
   await page.goto('http://localhost:3000/food/meals');
