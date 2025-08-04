@@ -26,7 +26,7 @@ export default function InventoryDetailPage() {
         return;
       }
       const { data, error } = await supabase
-        .from("inventory")
+        .from("food_items")
         .select("*")
         .eq("id", id)
         .single();
@@ -44,14 +44,14 @@ export default function InventoryDetailPage() {
     if (!window.confirm("Delete this inventory item?")) return;
     setDeleting(true);
     const { error } = await supabase
-      .from("inventory")
+      .from("food_items")
       .delete()
       .eq("id", id);
     if (error) {
       showError("Failed to delete inventory item");
     } else {
       showSuccess("Inventory item deleted");
-      router.push("/food/inventory");
+      router.push("/food");
     }
     setDeleting(false);
   }

@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useUser } from '@/context/UserContext';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
 import PlanMealModal from '@/components/modals/PlanMealModal';
+import PantryModal from '@/components/modals/PantryModal';
 import dynamic from "next/dynamic";
 import { supabase } from '@/lib/supabaseClient';
 import dayjs from 'dayjs';
@@ -35,6 +36,7 @@ export default function FoodHome() {
   const [loadingCooked, setLoadingCooked] = useState(false);
   const [loadingPlanned, setLoadingPlanned] = useState(false);
   const [showPlanMealModal, setShowPlanMealModal] = useState(false);
+  const [showPantryModal, setShowPantryModal] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -312,9 +314,9 @@ export default function FoodHome() {
                 </div>
               </button>
               
-              <Link
-                href="/food/inventory"
-                className="block p-3 bg-card rounded-lg hover:bg-card/80 transition-colors border border-border"
+              <button
+                onClick={() => setShowPantryModal(true)}
+                className="block p-3 bg-card rounded-lg hover:bg-card/80 transition-colors border border-border w-full text-left"
               >
                 <div className="flex items-center space-x-3">
                   <div className="w-8 h-8 bg-orange-100 dark:bg-orange-900/20 rounded-lg flex items-center justify-center">
@@ -325,7 +327,7 @@ export default function FoodHome() {
                     <p className="text-xs text-muted-foreground">Check inventory</p>
                   </div>
                 </div>
-              </Link>
+              </button>
               
               <Link
                 href="/food/meals"
@@ -423,6 +425,12 @@ export default function FoodHome() {
           };
           fetchUpcomingMeals();
         }}
+      />
+
+      {/* Pantry Modal */}
+      <PantryModal 
+        isOpen={showPantryModal} 
+        onClose={() => setShowPantryModal(false)}
       />
     </div>
   );

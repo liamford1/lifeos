@@ -28,7 +28,7 @@ export default function EditInventoryPage() {
         return;
       }
       const { data, error } = await supabase
-        .from("inventory")
+        .from("food_items")
         .select("*")
         .eq("id", id)
         .single();
@@ -55,7 +55,7 @@ export default function EditInventoryPage() {
       notes: form.notes.value,
     };
     const { error } = await supabase
-      .from("inventory")
+      .from("food_items")
       .update(updated)
       .eq("id", id);
     if (error) {
@@ -64,14 +64,14 @@ export default function EditInventoryPage() {
       return;
     }
     showSuccess("Inventory item updated!");
-    router.push(`/food/inventory/${id}`);
+    router.push("/food");
   }
 
   async function handleDelete() {
     if (!window.confirm("Delete this inventory item?")) return;
     setDeleting(true);
     const { error } = await supabase
-      .from("inventory")
+      .from("food_items")
       .delete()
       .eq("id", id);
     if (error) {
@@ -80,7 +80,7 @@ export default function EditInventoryPage() {
       return;
     }
     showSuccess("Inventory item deleted");
-    router.push("/food/inventory");
+    router.push("/food");
   }
 
   if (loading) return <LoadingSpinner />;
