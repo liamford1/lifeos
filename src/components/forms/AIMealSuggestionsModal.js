@@ -395,7 +395,7 @@ export default function AIMealSuggestionsModal({ onClose, onMealAdded }) {
         {!loading && suggestions.length === 0 && !error && (
           <div className="text-center py-8 text-gray-400">
             <MdLightbulb className="w-12 h-12 mx-auto mb-4 text-gray-600" />
-            <p>Click "Get AI Meal Suggestions" to see what you can cook with your current pantry items.</p>
+            <p>Click &ldquo;Get AI Meal Suggestions&rdquo; to see what you can cook with your current pantry items.</p>
           </div>
         )}
       </div>

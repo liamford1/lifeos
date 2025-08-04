@@ -2,13 +2,18 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactNode, useState } from "react";
 
+// Type for errors that might have a status property
+interface ErrorWithStatus extends Error {
+  status?: number;
+}
+
 export default function QueryProvider({ children }: { children: ReactNode }) {
   const [client] = useState(() => new QueryClient({
     defaultOptions: {
       queries: {
-        retry: (failureCount, error) => {
+        retry: (failureCount, error: ErrorWithStatus) => {
           // Don't retry on 4xx errors (client errors)
-          if (error?.status >= 400 && error?.status < 500) {
+          if (error?.status && error.status >= 400 && error.status < 500) {
             return false;
           }
           // Retry up to 3 times for other errors
@@ -19,9 +24,9 @@ export default function QueryProvider({ children }: { children: ReactNode }) {
         gcTime: 10 * 60 * 1000, // 10 minutes (formerly cacheTime)
       },
       mutations: {
-        retry: (failureCount, error) => {
+        retry: (failureCount, error: ErrorWithStatus) => {
           // Don't retry mutations on 4xx errors
-          if (error?.status >= 400 && error?.status < 500) {
+          if (error?.status && error.status >= 400 && error.status < 500) {
             return false;
           }
           // Retry up to 2 times for other errors
