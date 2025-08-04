@@ -1,6 +1,6 @@
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
 import { cookies } from 'next/headers';
-import { getStructuredResponse } from '@/lib/ai';
+import { getStructuredResponse, isOpenAIAvailable } from '@/lib/ai';
 import { mealPlannerPrompt, getMealPlanningSystemPrompt } from '@/lib/ai/prompts';
 
 export default async function handleMealSuggestions(request) {
@@ -62,6 +62,40 @@ export default async function handleMealSuggestions(request) {
     // Validate input
     if (!Array.isArray(pantryItems)) {
       return new Response(JSON.stringify({ error: 'pantryItems must be an array' }), { status: 400 });
+    }
+
+    // Check if OpenAI is available
+    if (!isOpenAIAvailable()) {
+      if (process.env.NODE_ENV === 'test' || process.env.NODE_ENV === 'development') {
+        // Return mock suggestions for testing
+        const mockSuggestions = [
+          {
+            id: 'mock-suggestion-1',
+            name: 'Mock Pasta Dish',
+            description: 'A simple mock pasta dish for testing',
+            ingredients: pantryItems.length > 0 ? pantryItems.map(item => ({
+              name: item.name,
+              quantity: item.quantity || 1,
+              unit: item.unit || 'piece'
+            })) : [
+              { name: 'pasta', quantity: 200, unit: 'g' },
+              { name: 'sauce', quantity: 1, unit: 'cup' }
+            ],
+            prepTime: 10,
+            cookTime: 15,
+            difficulty: 'easy',
+            instructions: ['Boil water', 'Cook pasta', 'Add sauce'],
+            estimatedServings: 2,
+            missingIngredients: []
+          }
+        ];
+        
+        return new Response(JSON.stringify({ suggestions: mockSuggestions }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' }
+        });
+      }
+      return new Response(JSON.stringify({ error: 'AI service not available' }), { status: 503 });
     }
 
     // Build the prompt for AI using the template

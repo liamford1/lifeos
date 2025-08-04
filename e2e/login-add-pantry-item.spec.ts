@@ -42,11 +42,10 @@ test('Complete pantry workflow with single item', async ({ page }) => {
   await page.getByRole('link', { name: 'Food' }).click();
   await page.waitForURL((url) => /\/food(\/)?$/.test(url.pathname), { timeout: 10000 });
 
-  // Click the "View Pantry" link from the food sub-navigation
-  await page.getByRole('link', { name: 'View Pantry' }).click();
-  await page.waitForURL((url) => /\/food\/inventory$/.test(url.pathname), { timeout: 10000 });
-
-  // Wait for the pantry page to load
+  // Click the "View Pantry" button from the food page to open the modal
+  await page.getByRole('button', { name: 'View Pantry' }).click();
+  
+  // Wait for the pantry modal to appear
   await expect(page.getByRole('heading', { name: 'Your Pantry' })).toBeVisible();
 
   // Click the "Add Item" button

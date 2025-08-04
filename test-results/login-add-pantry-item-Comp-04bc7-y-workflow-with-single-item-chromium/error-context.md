@@ -1,0 +1,74 @@
+# Page snapshot
+
+```yaml
+- alert
+- navigation:
+  - img "Thread OS Logo"
+  - button "Profile":
+    - img
+  - paragraph:
+    - text: Signed in as
+    - strong: test@example.com
+  - button "Log Out"
+- complementary:
+  - navigation:
+    - list:
+      - listitem:
+        - link "Home":
+          - /url: /
+          - img
+          - text: Home
+      - listitem:
+        - link "Food":
+          - /url: /food
+          - img
+          - text: Food
+      - listitem:
+        - link "Fitness":
+          - /url: /fitness
+          - img
+          - text: Fitness
+      - listitem:
+        - link "Finances":
+          - /url: /finances
+          - img
+          - text: Finances
+      - listitem:
+        - link "Scratchpad":
+          - /url: /scratchpad
+          - img
+          - text: Scratchpad
+      - listitem:
+        - link "Profile":
+          - /url: /profile
+          - img
+          - text: Profile
+- main:
+  - heading "Food & Diet Dashboard" [level=1]
+  - heading "Recently Cooked" [level=2]
+  - paragraph: You haven't cooked any meals yet.
+  - heading "Upcoming Meals" [level=2]
+  - paragraph: No meals planned. Let's fix that!
+  - heading "Quick Actions" [level=2]
+  - link "Add a Meal Create new recipe":
+    - /url: /food/addmeal
+    - heading "Add a Meal" [level=3]
+    - paragraph: Create new recipe
+  - button "Plan Weekly Meals Schedule your week":
+    - heading "Plan Weekly Meals" [level=3]
+    - paragraph: Schedule your week
+  - button "View Pantry Check inventory":
+    - heading "View Pantry" [level=3]
+    - paragraph: Check inventory
+  - link "Recipe Search Browse recipes":
+    - /url: /food/meals
+    - heading "Recipe Search" [level=3]
+    - paragraph: Browse recipes
+  - link "Add a Receipt Log a grocery receipt":
+    - /url: /food/addreceipt
+    - heading "Add a Receipt" [level=3]
+    - paragraph: Log a grocery receipt
+  - heading "Suggestion" [level=2]
+  - paragraph: Need help planning this week's dinners?
+  - button "Ask AI"
+```

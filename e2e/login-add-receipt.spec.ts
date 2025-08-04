@@ -129,10 +129,10 @@ test.describe('Login and add receipt', () => {
     await page.getByRole('link', { name: 'Food' }).click();
     await page.waitForURL((url) => /\/food(\/)?$/.test(url.pathname), { timeout: 10000 });
 
-    await page.getByRole('link', { name: 'View Pantry' }).click();
-    await page.waitForURL((url) => /\/food\/inventory$/.test(url.pathname), { timeout: 10000 });
-
-    // Wait for the pantry page to load
+    // Click the "View Pantry" button from the food page to open the modal
+    await page.getByRole('button', { name: 'View Pantry' }).click();
+    
+    // Wait for the pantry modal to appear
     await expect(page.getByRole('heading', { name: 'Your Pantry' })).toBeVisible();
 
     // Wait for inventory to load and check if items exist

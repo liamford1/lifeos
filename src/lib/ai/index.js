@@ -1,9 +1,25 @@
 import OpenAI from 'openai';
 
-// Initialize OpenAI client
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+// Lazy initialization of OpenAI client
+let openai = null;
+
+function getOpenAIClient() {
+  if (!openai) {
+    // Only check for API key when actually making a request
+    if (!process.env.OPENAI_API_KEY) {
+      throw new Error('OPENAI_API_KEY environment variable is required');
+    }
+    openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+  }
+  return openai;
+}
+
+// Export a function to check if OpenAI is available without initializing
+export function isOpenAIAvailable() {
+  return !!process.env.OPENAI_API_KEY;
+}
 
 /**
  * Call OpenAI API with the given prompt and options
@@ -30,11 +46,6 @@ export async function callOpenAI(prompt, options = {}) {
     retries = 3,
     retryDelay = 1000,
   } = options;
-
-  // Validate required environment variable
-  if (!process.env.OPENAI_API_KEY) {
-    throw new Error('OPENAI_API_KEY environment variable is required');
-  }
 
   // Validate input parameters
   if (!prompt || typeof prompt !== 'string') {
@@ -73,7 +84,7 @@ export async function callOpenAI(prompt, options = {}) {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), timeout);
 
-      const response = await openai.chat.completions.create(requestConfig, {
+      const response = await getOpenAIClient().chat.completions.create(requestConfig, {
         signal: controller.signal,
       });
 
