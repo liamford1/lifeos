@@ -1,0 +1,36 @@
+<testsuites id="" name="" tests="1" failures="1" skipped="0" errors="0" time="42.127863999999995">
+<testsuite name="login-add-pantry-item.spec.ts" timestamp="2025-08-05T00:15:18.940Z" hostname="chromium" tests="1" failures="1" skipped="0" time="14.447" errors="0">
+<testcase name="Complete pantry workflow with single item" classname="login-add-pantry-item.spec.ts" time="14.447">
+<failure message="login-add-pantry-item.spec.ts:10:5 Complete pantry workflow with single item" type="FAILURE">
+<![CDATA[  [chromium] › login-add-pantry-item.spec.ts:10:5 › Complete pantry workflow with single item ──────
+
+    Error: Timed out 10000ms waiting for expect(locator).toBeVisible()
+
+    Locator: getByRole('heading', { name: 'Your Pantry' })
+    Expected: visible
+    Received: <element(s) not found>
+    Call log:
+      - Expect "toBeVisible" with timeout 10000ms
+      - waiting for getByRole('heading', { name: 'Your Pantry' })
+
+
+      86 |   
+      87 |   // Wait for the pantry modal to be visible again after reload
+    > 88 |   await expect(page.getByRole('heading', { name: 'Your Pantry' })).toBeVisible({ timeout: 10000 });
+         |                                                                    ^
+      89 |
+      90 |   // Verify the added pantry item is still visible in the list (check name and quantity)
+      91 |   await expect(page.getByText(foodName).first()).toBeVisible({ timeout: 15000 });
+        at /Users/liamford/Documents/plannerapp/e2e/login-add-pantry-item.spec.ts:88:68
+
+    Error Context: ../test-results/login-add-pantry-item-Comp-04bc7-y-workflow-with-single-item-chromium/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|login-add-pantry-item-Comp-04bc7-y-workflow-with-single-item-chromium/error-context.md]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+</testsuites>

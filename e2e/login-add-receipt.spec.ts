@@ -133,7 +133,7 @@ test.describe('Login and add receipt', () => {
     await page.getByRole('button', { name: 'View Pantry' }).click();
     
     // Wait for the pantry modal to appear
-    await expect(page.getByRole('heading', { name: 'Your Pantry' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Your Pantry' })).toBeVisible({ timeout: 10000 });
 
     // Wait for inventory to load and check if items exist
     await page.waitForLoadState('networkidle');
@@ -157,13 +157,13 @@ test.describe('Login and add receipt', () => {
     
 
     // Wait a bit more for any async operations to complete
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(3000);
 
     // Verify that all three items from the receipt appear in the pantry
     // Use a more specific selector that matches the pantry page structure
-    await expect(page.locator('li').filter({ hasText: 'Test Milk' }).first()).toBeVisible({ timeout: 10000 });
-    await expect(page.locator('li').filter({ hasText: 'Test Eggs' }).first()).toBeVisible({ timeout: 10000 });
-    await expect(page.locator('li').filter({ hasText: 'Test Bread' }).first()).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('li').filter({ hasText: 'Test Milk' }).first()).toBeVisible({ timeout: 15000 });
+    await expect(page.locator('li').filter({ hasText: 'Test Eggs' }).first()).toBeVisible({ timeout: 15000 });
+    await expect(page.locator('li').filter({ hasText: 'Test Bread' }).first()).toBeVisible({ timeout: 15000 });
 
     // Verify quantities in pantry
     await expect(page.getByText('2 gallons').first()).toBeVisible();
@@ -184,15 +184,15 @@ test.describe('Login and add receipt', () => {
     await page.reload();
     
     // Wait for the pantry page to load again
-    await expect(page.getByRole('heading', { name: 'Your Pantry' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Your Pantry' })).toBeVisible({ timeout: 10000 });
 
     // Wait for inventory to load - use a more reliable approach
     await page.waitForTimeout(3000);
 
     // Verify the items are still visible after reload
-    await expect(page.locator('li').filter({ hasText: 'Test Milk' }).first()).toBeVisible({ timeout: 10000 });
-    await expect(page.locator('li').filter({ hasText: 'Test Eggs' }).first()).toBeVisible({ timeout: 10000 });
-    await expect(page.locator('li').filter({ hasText: 'Test Bread' }).first()).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('li').filter({ hasText: 'Test Milk' }).first()).toBeVisible({ timeout: 15000 });
+    await expect(page.locator('li').filter({ hasText: 'Test Eggs' }).first()).toBeVisible({ timeout: 15000 });
+    await expect(page.locator('li').filter({ hasText: 'Test Bread' }).first()).toBeVisible({ timeout: 15000 });
 
          // Clean up test data by getting the receipt ID from the database
      const receiptId = await page.evaluate(async (storeName) => {

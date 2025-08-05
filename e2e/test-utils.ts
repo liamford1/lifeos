@@ -253,6 +253,33 @@ export async function waitForDatabaseOperation(page: Page, delayMs: number = 500
   await page.waitForTimeout(delayMs);
 }
 
+// Helper function to retry database operations with exponential backoff
+export async function retryDatabaseOperation<T>(
+  page: Page, 
+  operation: () => Promise<T>, 
+  maxRetries: number = 3,
+  baseDelay: number = 1000
+): Promise<T> {
+  let lastError: Error;
+  
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      return await operation();
+    } catch (error) {
+      lastError = error as Error;
+      console.log(`[E2E] Database operation attempt ${attempt} failed:`, error);
+      
+      if (attempt < maxRetries) {
+        const delay = baseDelay * Math.pow(2, attempt - 1);
+        console.log(`[E2E] Retrying in ${delay}ms...`);
+        await page.waitForTimeout(delay);
+      }
+    }
+  }
+  
+  throw lastError!;
+}
+
 // Helper function to verify test data was created
 export async function verifyTestDataExists(page: Page, table: string, conditions: Record<string, any>): Promise<boolean> {
   return await page.evaluate(async ({ table, conditions }) => {
@@ -287,27 +314,70 @@ export async function waitForUserContext(page: Page, timeoutMs: number = 10000):
   
   while (Date.now() - startTime < timeoutMs) {
     try {
-      // Check if user context is ready by verifying supabase auth
-      const userReady = await page.evaluate(async () => {
-        const supabase = window.supabase;
-        if (!supabase) return false;
+      // Check if supabase is available and user is authenticated
+      const isReady = await page.evaluate(async () => {
+        if (!window.supabase) {
+          console.log('[E2E] window.supabase not available yet');
+          return false;
+        }
         
-        const { data: { session } } = await supabase.auth.getSession();
-        return !!session?.user?.id;
+        try {
+          const { data: session } = await window.supabase.auth.getSession();
+          if (!session?.session?.user) {
+            console.log('[E2E] No user session available yet');
+            return false;
+          }
+          
+          console.log('[E2E] ✅ User context is ready');
+          return true;
+        } catch (error) {
+          console.log('[E2E] Error checking session:', error);
+          return false;
+        }
       });
       
-      if (userReady) {
-        console.log('[E2E] ✅ User context is ready');
+      if (isReady) {
         return;
       }
     } catch (error) {
-      // Continue waiting if there's an error
+      console.log('[E2E] Error in waitForUserContext:', error);
     }
     
-    await page.waitForTimeout(100);
+    await page.waitForTimeout(500);
   }
   
-  throw new Error(`User context not ready within ${timeoutMs}ms`);
+  throw new Error(`User context not ready after ${timeoutMs}ms`);
+}
+
+/**
+ * Helper function to handle API errors and retry with proper authentication
+ */
+export async function handleApiError(page: Page, error: any): Promise<void> {
+  console.log('[E2E] API Error encountered:', error);
+  
+  // If it's a 406 error, it might be an authentication issue
+  if (error?.message?.includes('406') || error?.status === 406) {
+    console.log('[E2E] 406 error detected, attempting to refresh authentication...');
+    
+    try {
+      await page.evaluate(async () => {
+        const supabase = window.supabase;
+        if (supabase) {
+          const { error: refreshError } = await supabase.auth.refreshSession();
+          if (refreshError) {
+            console.log('[E2E] Session refresh failed:', refreshError);
+          } else {
+            console.log('[E2E] Session refreshed successfully');
+          }
+        }
+      });
+      
+      // Wait a bit for the refresh to take effect
+      await page.waitForTimeout(1000);
+    } catch (refreshError) {
+      console.log('[E2E] Error during session refresh:', refreshError);
+    }
+  }
 }
 
 /**

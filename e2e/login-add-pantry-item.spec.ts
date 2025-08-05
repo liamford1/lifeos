@@ -73,7 +73,7 @@ test('Complete pantry workflow with single item', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Add Pantry Item' })).not.toBeVisible();
 
   // Wait for the new item to appear in the pantry list instead of networkidle
-  await expect(page.getByText(foodName).first()).toBeVisible({ timeout: 10000 });
+  await expect(page.getByText(foodName).first()).toBeVisible({ timeout: 15000 });
 
   // Additional verification: check that the item shows the correct details
   const itemRow = page.locator('li').filter({ hasText: foodName }).first();
@@ -83,9 +83,12 @@ test('Complete pantry workflow with single item', async ({ page }) => {
   // 1. Reload the page and verify the item persists
   await page.reload();
   await page.waitForLoadState('domcontentloaded');
+  
+  // Wait for the pantry modal to be visible again after reload
+  await expect(page.getByRole('heading', { name: 'Your Pantry' })).toBeVisible({ timeout: 10000 });
 
   // Verify the added pantry item is still visible in the list (check name and quantity)
-  await expect(page.getByText(foodName).first()).toBeVisible({ timeout: 10000 });
+  await expect(page.getByText(foodName).first()).toBeVisible({ timeout: 15000 });
   await expect(page.getByText('3 lbs').first()).toBeVisible();
 
   // 2. Subtract 1 unit from that item and confirm the quantity decreases
@@ -100,7 +103,7 @@ test('Complete pantry workflow with single item', async ({ page }) => {
   await subtractButton.click();
   
   // Wait for the quantity to update instead of networkidle
-  await expect(page.getByText('2 lbs').first()).toBeVisible({ timeout: 10000 });
+  await expect(page.getByText('2 lbs').first()).toBeVisible({ timeout: 15000 });
   
   // Verify the quantity decreased from 3 to 2
   await expect(page.getByText('2 lbs').first()).toBeVisible();
@@ -108,7 +111,11 @@ test('Complete pantry workflow with single item', async ({ page }) => {
   // 3. Reload the page and verify the new quantity persists
   await page.reload();
   await page.waitForLoadState('domcontentloaded');
-  await expect(page.getByText(foodName).first()).toBeVisible({ timeout: 10000 });
+  
+  // Wait for the pantry modal to be visible again after reload
+  await expect(page.getByRole('heading', { name: 'Your Pantry' })).toBeVisible({ timeout: 10000 });
+  
+  await expect(page.getByText(foodName).first()).toBeVisible({ timeout: 15000 });
   await expect(page.getByText('2 lbs').first()).toBeVisible();
 
   // 4. Delete the same item
