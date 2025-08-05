@@ -18,7 +18,8 @@ test.describe('Calendar Day Plus Button Functionality', () => {
     // Click on a day in the calendar (not today to avoid conflicts)
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
-    const tomorrowStr = tomorrow.toISOString().split('T')[0];
+    // Use a more reliable date formatting that accounts for timezone
+    const tomorrowStr = tomorrow.toLocaleDateString('en-CA'); // YYYY-MM-DD format
     
     // Find and click on tomorrow's date in the calendar (use first match)
     const tomorrowCell = page.locator('button.react-calendar__tile').filter({ hasText: tomorrow.getDate().toString() }).first();
@@ -90,7 +91,8 @@ test.describe('Calendar Day Plus Button Functionality', () => {
     // Click on a day in the calendar
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
-    const tomorrowStr = tomorrow.toISOString().split('T')[0];
+    // Use a more reliable date formatting that accounts for timezone
+    const tomorrowStr = tomorrow.toLocaleDateString('en-CA'); // YYYY-MM-DD format
     const tomorrowCell = page.locator('button.react-calendar__tile').filter({ hasText: tomorrow.getDate().toString() }).first();
     await tomorrowCell.click();
     
@@ -119,7 +121,8 @@ test.describe('Calendar Day Plus Button Functionality', () => {
     // Click on a day in the calendar
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
-    const tomorrowStr = tomorrow.toISOString().split('T')[0];
+    // Use a more reliable date formatting that accounts for timezone
+    const tomorrowStr = tomorrow.toLocaleDateString('en-CA'); // YYYY-MM-DD format
     const tomorrowCell = page.locator('button.react-calendar__tile').filter({ hasText: tomorrow.getDate().toString() }).first();
     await tomorrowCell.click();
     

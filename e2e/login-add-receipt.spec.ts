@@ -183,7 +183,12 @@ test.describe('Login and add receipt', () => {
     // Reload the pantry page to verify persistence
     await page.reload();
     
-    // Wait for the pantry page to load again
+    // Wait for the page to load and then click the View Pantry button
+    await page.waitForLoadState('domcontentloaded');
+    await page.waitForTimeout(2000); // Give time for all components to load
+    await page.getByRole('button', { name: 'View Pantry' }).click();
+    
+    // Wait for the pantry modal to appear
     await expect(page.getByRole('heading', { name: 'Your Pantry' })).toBeVisible({ timeout: 10000 });
 
     // Wait for inventory to load - use a more reliable approach

@@ -63,7 +63,8 @@ test('Complete pantry workflow with single item', async ({ page }) => {
   // Set expiration date (30 days from now)
   const futureDate = new Date();
   futureDate.setDate(futureDate.getDate() + 30);
-  const formattedDate = futureDate.toISOString().split('T')[0]; // YYYY-MM-DD format
+  // Use a more reliable date formatting that accounts for timezone
+  const formattedDate = futureDate.toLocaleDateString('en-CA'); // YYYY-MM-DD format
   await page.getByLabel('Expiration').fill(formattedDate);
 
   // Submit the form
@@ -83,6 +84,10 @@ test('Complete pantry workflow with single item', async ({ page }) => {
   // 1. Reload the page and verify the item persists
   await page.reload();
   await page.waitForLoadState('domcontentloaded');
+  
+  // Wait for the page to be fully loaded and then click the View Pantry button
+  await page.waitForTimeout(2000); // Give time for all components to load
+  await page.getByRole('button', { name: 'View Pantry' }).click();
   
   // Wait for the pantry modal to be visible again after reload
   await expect(page.getByRole('heading', { name: 'Your Pantry' })).toBeVisible({ timeout: 10000 });
@@ -111,6 +116,10 @@ test('Complete pantry workflow with single item', async ({ page }) => {
   // 3. Reload the page and verify the new quantity persists
   await page.reload();
   await page.waitForLoadState('domcontentloaded');
+  
+  // Wait for the page to be fully loaded and then click the View Pantry button again
+  await page.waitForTimeout(2000); // Give time for all components to load
+  await page.getByRole('button', { name: 'View Pantry' }).click();
   
   // Wait for the pantry modal to be visible again after reload
   await expect(page.getByRole('heading', { name: 'Your Pantry' })).toBeVisible({ timeout: 10000 });
