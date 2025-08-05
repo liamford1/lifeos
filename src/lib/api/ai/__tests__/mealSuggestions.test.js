@@ -3,6 +3,7 @@ import handleMealSuggestions from '../mealSuggestions';
 // Mock the AI module
 jest.mock('@/lib/ai', () => ({
   getStructuredResponse: jest.fn(),
+  isOpenAIAvailable: jest.fn().mockReturnValue(true),
 }));
 
 // Mock Supabase

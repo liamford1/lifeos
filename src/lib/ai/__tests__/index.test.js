@@ -48,6 +48,12 @@ describe('AI Module', () => {
     it('should throw error when OPENAI_API_KEY is missing', async () => {
       delete process.env.OPENAI_API_KEY;
 
+      // Reset the module to clear the cached client
+      jest.resetModules();
+      
+      // Re-import the module to get a fresh instance
+      const { callOpenAI } = require('../index');
+
       await expect(callOpenAI('test')).rejects.toThrow(
         'OPENAI_API_KEY environment variable is required'
       );

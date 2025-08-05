@@ -1,5 +1,5 @@
 const React = require('react');
-const { render, screen, fireEvent, waitFor } = require('@testing-library/react');
+const { render, screen, fireEvent, waitFor, act } = require('@testing-library/react');
 const MealForm = require('../../../../../components/forms/MealForm').default;
 
 // Mock Supabase client
