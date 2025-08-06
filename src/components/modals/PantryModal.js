@@ -10,7 +10,7 @@ const Package = dynamic(() => import("lucide-react/dist/esm/icons/package"), { s
 import ManualPantryItemModal from '@/components/forms/ManualPantryItemModal';
 import AddReceiptModal from '@/components/modals/AddReceiptModal';
 import SharedDeleteButton from '@/components/SharedDeleteButton';
-import { MdClose } from 'react-icons/md';
+import BaseModal from '@/components/shared/BaseModal';
 
 export default function PantryModal({ isOpen, onClose }) {
   // All hooks at the top!
@@ -18,7 +18,6 @@ export default function PantryModal({ isOpen, onClose }) {
   const { deleteByFilters, loading: deleteLoading } = useDeleteEntity('food_items');
   const [items, setItems] = useState([])
   const [inventoryLoading, setInventoryLoading] = useState(true)
-  const [subtractAmounts, setSubtractAmounts] = useState({})
   const [showManualAddModal, setShowManualAddModal] = useState(false);
   const [showAddReceiptModal, setShowAddReceiptModal] = useState(false);
 
@@ -69,13 +68,10 @@ export default function PantryModal({ isOpen, onClose }) {
   }
 
   const handleSubtract = async (id) => {
-    const amount = parseFloat(subtractAmounts[id])
-    if (isNaN(amount) || amount <= 0) return
-
     const item = items.find((i) => i.id === id)
     if (!item) return
 
-    const newQty = parseFloat(item.quantity) - amount
+    const newQty = parseFloat(item.quantity) - 1
 
     if (newQty <= 0) {
       await handleDelete(id)
@@ -92,37 +88,37 @@ export default function PantryModal({ isOpen, onClose }) {
         )
       }
     }
+  }
 
-    setSubtractAmounts((prev) => ({ ...prev, [id]: '' }))
+  const handleAdd = async (id) => {
+    const item = items.find((i) => i.id === id)
+    if (!item) return
+
+    const newQty = parseFloat(item.quantity) + 1
+
+    const { error } = await import('@/lib/supabaseClient').then(m => m.supabase.from('food_items').update({ quantity: newQty }).eq('id', id))
+
+    if (error) {
+      if (process.env.NODE_ENV !== "production") {
+        console.error('Update error:', error)
+      }
+    } else {
+      setItems((prev) =>
+        prev.map((i) => (i.id === id ? { ...i, quantity: newQty } : i))
+      )
+    }
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4 md:p-6 transition-opacity duration-200">
-      <div className="bg-surface rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] md:max-h-[85vh] overflow-y-auto relative transform transition-all duration-200 ease-out">
-        {/* Header */}
-        <div className="sticky top-0 bg-surface border-b border-border/50 px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-orange-500/10 rounded-lg flex items-center justify-center">
-                <Package className="w-5 h-5 text-orange-500" />
-              </div>
-              <div>
-                <h2 className="text-xl font-semibold">Your Pantry</h2>
-                <p className="text-sm text-gray-400">Track your food inventory and pantry items</p>
-              </div>
-            </div>
-            <button
-              onClick={onClose}
-              className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-white hover:bg-gray-700/50 transition-colors"
-              aria-label="Close modal"
-            >
-              <MdClose className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
-
-        {/* Content */}
-        <div className="p-6 space-y-6">
+    <BaseModal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Your Pantry"
+      subtitle="Track your food inventory and pantry items"
+      icon={Package}
+      iconBgColor="bg-orange-500/10"
+      iconColor="text-orange-500"
+    >
           {/* Add Item Buttons */}
           <div className="flex gap-3 justify-center">
             <Button
@@ -186,36 +182,33 @@ export default function PantryModal({ isOpen, onClose }) {
                     />
                   </div>
 
-                  <div className="mt-4 flex gap-2 items-center">
-                    <input
-                      className="bg-surface text-white px-2 py-1 rounded w-24 border border-border"
-                      type="number"
-                      step="any"
-                      min="0"
-                      placeholder="Amount"
-                      value={subtractAmounts[item.id] || ''}
-                      onChange={(e) =>
-                        setSubtractAmounts((prev) => ({
-                          ...prev,
-                          [item.id]: e.target.value,
-                        }))
-                      }
-                    />
-                    <span className="text-sm text-gray-400">{item.unit}</span>
+                  <div className="mt-4 flex items-center space-x-2">
                     <Button
-                      onClick={() => handleSubtract(item.id)}
-                      variant="secondary"
+                      variant="outline"
                       size="sm"
-                      className="text-sm"
+                      onClick={() => handleSubtract(item.id)}
+                      aria-label="Decrease quantity"
+                      className="w-8 h-8 p-0 flex items-center justify-center"
                     >
-                      Subtract
+                      –
+                    </Button>
+                    <span className="text-sm font-medium min-w-[3rem] text-center">
+                      {item.quantity} {item.unit}
+                    </span>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleAdd(item.id)}
+                      aria-label="Increase quantity"
+                      className="w-8 h-8 p-0 flex items-center justify-center"
+                    >
+                      +
                     </Button>
                   </div>
                 </li>
               ))}
             </ul>
           )}
-        </div>
 
         {/* Manual Add Modal */}
         {showManualAddModal && (
@@ -231,7 +224,6 @@ export default function PantryModal({ isOpen, onClose }) {
           onClose={() => setShowAddReceiptModal(false)}
           onSuccess={fetchInventory}
         />
-      </div>
-    </div>
+    </BaseModal>
   );
 } 

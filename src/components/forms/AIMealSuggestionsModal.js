@@ -9,6 +9,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createCalendarEventForEntity } from '@/lib/calendarSync';
 import { CALENDAR_SOURCES } from '@/lib/utils/calendarUtils';
 import { MdRestaurant, MdAdd, MdClose, MdLightbulb } from 'react-icons/md';
+import BaseModal from '../shared/BaseModal';
 
 export default function AIMealSuggestionsModal({ onClose, onMealAdded }) {
   const { user } = useUser();
@@ -202,206 +203,210 @@ export default function AIMealSuggestionsModal({ onClose, onMealAdded }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-surface rounded-lg shadow-xl p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto relative">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-2">
-            <MdLightbulb className="w-6 h-6 text-yellow-400" />
-            <h2 className="text-xl font-bold">AI Meal Suggestions</h2>
-          </div>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-white transition-colors"
-            disabled={loading}
-            aria-label="Close modal"
-          >
-            <MdClose className="w-6 h-6" />
-          </button>
+    <BaseModal
+      isOpen={true}
+      onClose={onClose}
+      title="AI Meal Suggestions"
+      subtitle="Get personalized meal suggestions based on your pantry"
+      icon={MdLightbulb}
+      iconBgColor="bg-yellow-500/10"
+      iconColor="text-yellow-500"
+      maxWidth="max-w-4xl"
+      disabled={loading}
+    >
+      {/* Pantry Summary */}
+      <div className="mb-6 p-4 bg-card border border-border rounded-lg">
+        <h3 className="font-semibold mb-2">Current Pantry ({pantryItems.length} items)</h3>
+        <div className="text-sm text-gray-300">
+          {pantryItems.length > 0 ? (
+            <div className="flex flex-wrap gap-2">
+              {pantryItems.slice(0, 10).map((item, index) => (
+                <span key={index} className="bg-gray-700 px-2 py-1 rounded">
+                  {item.name} ({item.quantity} {item.unit})
+                </span>
+              ))}
+              {pantryItems.length > 10 && (
+                <span className="text-gray-400">+{pantryItems.length - 10} more</span>
+              )}
+            </div>
+          ) : (
+            <p className="text-gray-400">No pantry items found. Add some items to get better suggestions!</p>
+          )}
         </div>
+      </div>
 
-        {/* Pantry Summary */}
-        <div className="mb-6 p-4 bg-gray-800 rounded-lg">
-          <h3 className="font-semibold mb-2">Current Pantry ({pantryItems.length} items)</h3>
-          <div className="text-sm text-gray-300">
-            {pantryItems.length > 0 ? (
-              <div className="flex flex-wrap gap-2">
-                {pantryItems.slice(0, 10).map((item, index) => (
-                  <span key={index} className="bg-gray-700 px-2 py-1 rounded">
-                    {item.name} ({item.quantity} {item.unit})
-                  </span>
-                ))}
-                {pantryItems.length > 10 && (
-                  <span className="text-gray-400">+{pantryItems.length - 10} more</span>
-                )}
-              </div>
-            ) : (
-              <p className="text-gray-400">No pantry items found. Add some items to get better suggestions!</p>
-            )}
-          </div>
-        </div>
-
-        {/* Get Suggestions Button */}
-        <div className="mb-6">
-                  <Button
+      {/* Get Suggestions Button */}
+      <div className="flex justify-end mb-6">
+        <Button
           onClick={handleGetSuggestions}
           disabled={loading || pantryItems.length === 0 || !user}
           variant="primary"
-          className="w-full"
+          size="md"
+          className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 disabled:transform-none disabled:scale-100"
         >
-            {loading ? (
-              <>
-                <LoadingSpinner className="w-4 h-4 mr-2" />
-                Getting AI Suggestions...
-              </>
-            ) : !user ? (
-              <>
-                <MdLightbulb className="w-4 h-4 mr-2" />
-                Please Log In to Use AI
-              </>
-            ) : (
-              <>
-                <MdLightbulb className="w-4 h-4 mr-2" />
-                Get AI Meal Suggestions
-              </>
-            )}
-          </Button>
-        </div>
-
-        {/* Error Display */}
-        {error && (
-          <div className="mb-4 p-3 bg-red-900/20 border border-red-500/30 rounded text-red-300">
-            {error}
-          </div>
-        )}
-
-        {/* Suggestions */}
-        {suggestions.length > 0 && (
-          <div className="space-y-4">
-            <h3 className="font-semibold text-lg">Suggested Meals</h3>
-            
-            {/* Date/Time Selection */}
-            <div className="flex gap-4 mb-4">
-              <div className="flex-1">
-                <label htmlFor="meal-date" className="block text-sm font-medium mb-1">Date</label>
-                <input
-                  id="meal-date"
-                  type="date"
-                  value={selectedDate}
-                  onChange={(e) => setSelectedDate(e.target.value)}
-                  className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-white"
-                />
-              </div>
-              <div className="flex-1">
-                <label htmlFor="meal-time" className="block text-sm font-medium mb-1">Meal Time</label>
-                <select
-                  id="meal-time"
-                  value={selectedTime}
-                  onChange={(e) => setSelectedTime(e.target.value)}
-                  className="w-full bg-gray-800 border border-gray-600 rounded px-3 py-2 text-white"
-                >
-                  <option value="breakfast">Breakfast</option>
-                  <option value="lunch">Lunch</option>
-                  <option value="dinner">Dinner</option>
-                  <option value="snack">Snack</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="grid gap-4">
-              {suggestions.map((meal, index) => (
-                <div key={index} className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-                  <div className="flex justify-between items-start mb-3">
-                    <div>
-                      <h4 className="font-semibold text-lg flex items-center gap-2">
-                        <MdRestaurant className="w-5 h-5 text-orange-400" />
-                        {meal.name}
-                      </h4>
-                      <p className="text-gray-300 text-sm mt-1">{meal.description}</p>
-                    </div>
-                    <div className="text-right text-sm text-gray-400">
-                      <div>Prep: {formatTime(meal.prepTime)}</div>
-                      <div>Cook: {formatTime(meal.cookTime)}</div>
-                      <div className="capitalize">{meal.difficulty}</div>
-                    </div>
-                  </div>
-
-                  {/* Ingredients */}
-                  <div className="mb-3">
-                    <h5 className="font-medium text-sm mb-2">Ingredients:</h5>
-                    <div className="flex flex-wrap gap-2">
-                      {meal.ingredients.map((ingredient, idx) => (
-                        <span key={idx} className="bg-gray-700 px-2 py-1 rounded text-xs">
-                          {ingredient.name} ({ingredient.quantity} {ingredient.unit})
-                        </span>
-                      ))}
-                    </div>
-                    {meal.missingIngredients.length > 0 && (
-                      <div className="mt-2">
-                        <h6 className="text-sm text-yellow-400 mb-1">Missing ingredients:</h6>
-                        <div className="flex flex-wrap gap-2">
-                          {meal.missingIngredients.map((ingredient, idx) => (
-                            <span key={idx} className="bg-yellow-900/30 border border-yellow-500/30 px-2 py-1 rounded text-xs text-yellow-300">
-                              {ingredient}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Instructions Preview */}
-                  <div className="mb-4">
-                    <h5 className="font-medium text-sm mb-2">Instructions:</h5>
-                    <ol className="text-sm text-gray-300 space-y-1">
-                      {meal.instructions.slice(0, 3).map((instruction, idx) => (
-                        <li key={idx} className="flex gap-2">
-                          <span className="text-gray-500 font-mono">{idx + 1}.</span>
-                          <span>{instruction}</span>
-                        </li>
-                      ))}
-                      {meal.instructions.length > 3 && (
-                        <li className="text-gray-500 text-xs">
-                          ... and {meal.instructions.length - 3} more steps
-                        </li>
-                      )}
-                    </ol>
-                  </div>
-
-                  {/* Add to Planner Button */}
-                  <Button
-                    onClick={() => handleAddToPlanner(meal)}
-                    disabled={addMealToPlannerMutation.isPending}
-                    variant="success"
-                    size="sm"
-                    className="w-full"
-                  >
-                    {addMealToPlannerMutation.isPending ? (
-                      <>
-                        <LoadingSpinner className="w-4 h-4 mr-2" />
-                        Adding...
-                      </>
-                    ) : (
-                      <>
-                        <MdAdd className="w-4 h-4 mr-2" />
-                        Add to Planner
-                      </>
-                    )}
-                  </Button>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Empty State */}
-        {!loading && suggestions.length === 0 && !error && (
-          <div className="text-center py-8 text-gray-400">
-            <MdLightbulb className="w-12 h-12 mx-auto mb-4 text-gray-600" />
-            <p>Click &ldquo;Get AI Meal Suggestions&rdquo; to see what you can cook with your current pantry items.</p>
-          </div>
-        )}
+          {loading ? (
+            <>
+              <div className="w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              Getting AI Suggestions...
+            </>
+          ) : !user ? (
+            <>
+              <MdLightbulb className="w-4 h-4 mr-2 text-yellow-300" />
+              Please Log In to Use AI
+            </>
+          ) : (
+            <>
+              <MdLightbulb className="w-4 h-4 mr-2 text-yellow-300" />
+              Get AI Meal Suggestions
+            </>
+          )}
+        </Button>
       </div>
-    </div>
+
+      {/* Error Display */}
+      {error && (
+        <div className="mb-4 p-3 bg-red-900/20 border border-red-500/30 rounded text-red-300">
+          {error}
+        </div>
+      )}
+
+      {/* Loading State */}
+      {loading && (
+        <div className="text-center py-12">
+          <div className="bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg p-8 max-w-md mx-auto">
+            <div className="w-12 h-12 border-4 border-white border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-white font-medium">Getting AI Suggestions...</p>
+            <p className="text-purple-200 text-sm mt-2">Analyzing your pantry and creating personalized meal ideas</p>
+          </div>
+        </div>
+      )}
+
+      {/* Suggestions */}
+      {!loading && suggestions.length > 0 && (
+        <div className="space-y-4">
+          <h3 className="font-semibold text-lg">Suggested Meals</h3>
+          
+          {/* Date/Time Selection */}
+          <div className="flex gap-4 mb-4">
+            <div className="flex-1">
+              <label htmlFor="meal-date" className="block text-sm font-medium mb-1">Date</label>
+              <input
+                id="meal-date"
+                type="date"
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                className="w-full h-10 bg-card border border-border rounded px-3 py-2 text-white"
+              />
+            </div>
+            <div className="flex-1">
+              <label htmlFor="meal-time" className="block text-sm font-medium mb-1">Meal Time</label>
+              <select
+                id="meal-time"
+                value={selectedTime}
+                onChange={(e) => setSelectedTime(e.target.value)}
+                className="w-full h-10 bg-card border border-border rounded px-3 py-2 text-white"
+              >
+                <option value="breakfast">Breakfast</option>
+                <option value="lunch">Lunch</option>
+                <option value="dinner">Dinner</option>
+                <option value="snack">Snack</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="grid gap-4">
+            {suggestions.map((meal, index) => (
+              <div key={index} className="bg-card border border-border rounded-lg p-4 hover:bg-[#2e2e2e] transition-colors">
+                <div className="flex justify-between items-start mb-3">
+                  <div>
+                    <h4 className="font-semibold text-lg flex items-center gap-2">
+                      <MdRestaurant className="w-5 h-5 text-orange-400" />
+                      {meal.name}
+                    </h4>
+                    <p className="text-base mt-1">{meal.description}</p>
+                  </div>
+                  <div className="text-right text-sm text-gray-400">
+                    <div>Prep: {formatTime(meal.prepTime)}</div>
+                    <div>Cook: {formatTime(meal.cookTime)}</div>
+                    <div className="capitalize">{meal.difficulty}</div>
+                  </div>
+                </div>
+
+                {/* Ingredients */}
+                <div className="mb-3">
+                  <h5 className="font-medium text-sm mb-2">Ingredients:</h5>
+                  <div className="flex flex-wrap gap-2">
+                    {meal.ingredients.map((ingredient, idx) => (
+                      <span key={idx} className="bg-gray-700 px-2 py-1 rounded text-xs">
+                        {ingredient.name} ({ingredient.quantity} {ingredient.unit})
+                      </span>
+                    ))}
+                  </div>
+                  {meal.missingIngredients.length > 0 && (
+                    <div className="mt-2">
+                      <h6 className="text-sm text-yellow-400 mb-1">Missing ingredients:</h6>
+                      <div className="flex flex-wrap gap-2">
+                        {meal.missingIngredients.map((ingredient, idx) => (
+                          <span key={idx} className="bg-yellow-900/30 border border-yellow-500/30 px-2 py-1 rounded text-xs text-yellow-300">
+                            {ingredient}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Instructions Preview */}
+                <div className="mb-4">
+                  <h5 className="font-medium text-sm mb-2">Instructions:</h5>
+                  <ol className="text-sm text-gray-300 space-y-1">
+                    {meal.instructions.slice(0, 3).map((instruction, idx) => (
+                      <li key={idx} className="flex gap-2">
+                        <span className="text-gray-500 font-mono">{idx + 1}.</span>
+                        <span>{instruction}</span>
+                      </li>
+                    ))}
+                    {meal.instructions.length > 3 && (
+                      <li className="text-gray-500 text-xs">
+                        ... and {meal.instructions.length - 3} more steps
+                      </li>
+                    )}
+                  </ol>
+                </div>
+
+                {/* Add to Planner Button */}
+                <Button
+                  onClick={() => handleAddToPlanner(meal)}
+                  disabled={addMealToPlannerMutation.isPending}
+                  variant="primary"
+                  size="sm"
+                  className="w-full max-w-xs mx-auto flex items-center justify-center"
+                >
+                  {addMealToPlannerMutation.isPending ? (
+                    <>
+                      <div className="w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      Adding...
+                    </>
+                  ) : (
+                    <>
+                      <MdAdd className="w-4 h-4 mr-2" />
+                      Add to Planner
+                    </>
+                  )}
+                </Button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Empty State */}
+      {!loading && suggestions.length === 0 && !error && (
+        <div className="text-center py-8 text-gray-400">
+          <MdLightbulb className="w-12 h-12 mx-auto mb-4 text-gray-600" />
+          <p>Click &ldquo;Get AI Meal Suggestions&rdquo; to see what you can cook with your current pantry items.</p>
+        </div>
+      )}
+    </BaseModal>
   );
 } 
