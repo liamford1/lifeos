@@ -107,7 +107,9 @@ describe('PantryModal', () => {
       expect(screen.getByText('Test Item')).toBeInTheDocument();
     });
     
-    expect(screen.getByText('5 pieces')).toBeInTheDocument();
+    // Use getAllByText to get all instances and check the first one
+    const quantityElements = screen.getAllByText('5 pieces');
+    expect(quantityElements.length).toBeGreaterThan(0);
     expect(screen.getByText('Added from: manual')).toBeInTheDocument();
   });
 

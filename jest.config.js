@@ -15,6 +15,9 @@ const customJestConfig = {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
   },
+  transformIgnorePatterns: [
+    'node_modules/(?!(@supabase|@babel)/)',
+  ],
 };
 
 module.exports = createJestConfig(customJestConfig); 

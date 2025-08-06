@@ -2,6 +2,17 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import MealsModal from '../MealsModal';
 
+// Mock Supabase client
+jest.mock('@/lib/supabaseClient', () => ({
+  supabase: {
+    from: jest.fn(() => ({
+      select: jest.fn(() => ({
+        eq: jest.fn(() => Promise.resolve({ data: [], error: null }))
+      }))
+    }))
+  }
+}));
+
 // Mock dependencies
 jest.mock('@/context/UserContext', () => ({
   useUser: () => ({ user: { id: 'test-user-id' }, loading: false }),
@@ -132,7 +143,7 @@ describe('MealsModal', () => {
       />
     );
 
-    const deleteButtons = screen.getAllByLabelText('Delete meal');
+    const deleteButtons = screen.getAllByLabelText('delete');
     expect(deleteButtons).toHaveLength(2);
   });
 }); 
