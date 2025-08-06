@@ -309,8 +309,8 @@ export default function AddReceiptModal({ isOpen, onClose, onSuccess }) {
           <Button
             onClick={handleAddItem}
             variant="secondary"
-            size="lg"
-            className="mb-6 w-full max-w-md"
+            size="md"
+            className="mb-6"
           >
             + Add Item
           </Button>
@@ -335,10 +335,10 @@ export default function AddReceiptModal({ isOpen, onClose, onSuccess }) {
             <Button
               onClick={handleSubmit}
               variant="primary"
-              size="lg"
+              size="md"
               disabled={isSubmitting}
               loading={isSubmitting}
-              className="w-full max-w-md"
+              className="max-w-xs"
             >
               {isSubmitting ? 'Saving Receipt...' : 'Submit Receipt'}
             </Button>

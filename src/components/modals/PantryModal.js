@@ -18,7 +18,6 @@ export default function PantryModal({ isOpen, onClose }) {
   const { deleteByFilters, loading: deleteLoading } = useDeleteEntity('food_items');
   const [items, setItems] = useState([])
   const [inventoryLoading, setInventoryLoading] = useState(true)
-  const [subtractAmounts, setSubtractAmounts] = useState({})
   const [showManualAddModal, setShowManualAddModal] = useState(false);
   const [showAddReceiptModal, setShowAddReceiptModal] = useState(false);
 
@@ -69,13 +68,10 @@ export default function PantryModal({ isOpen, onClose }) {
   }
 
   const handleSubtract = async (id) => {
-    const amount = parseFloat(subtractAmounts[id])
-    if (isNaN(amount) || amount <= 0) return
-
     const item = items.find((i) => i.id === id)
     if (!item) return
 
-    const newQty = parseFloat(item.quantity) - amount
+    const newQty = parseFloat(item.quantity) - 1
 
     if (newQty <= 0) {
       await handleDelete(id)
@@ -92,8 +88,25 @@ export default function PantryModal({ isOpen, onClose }) {
         )
       }
     }
+  }
 
-    setSubtractAmounts((prev) => ({ ...prev, [id]: '' }))
+  const handleAdd = async (id) => {
+    const item = items.find((i) => i.id === id)
+    if (!item) return
+
+    const newQty = parseFloat(item.quantity) + 1
+
+    const { error } = await import('@/lib/supabaseClient').then(m => m.supabase.from('food_items').update({ quantity: newQty }).eq('id', id))
+
+    if (error) {
+      if (process.env.NODE_ENV !== "production") {
+        console.error('Update error:', error)
+      }
+    } else {
+      setItems((prev) =>
+        prev.map((i) => (i.id === id ? { ...i, quantity: newQty } : i))
+      )
+    }
   }
 
   return (
@@ -169,29 +182,27 @@ export default function PantryModal({ isOpen, onClose }) {
                     />
                   </div>
 
-                  <div className="mt-4 flex gap-2 items-center">
-                    <input
-                      className="bg-surface text-white px-2 py-1 rounded w-24 border border-border"
-                      type="number"
-                      step="any"
-                      min="0"
-                      placeholder="Amount"
-                      value={subtractAmounts[item.id] || ''}
-                      onChange={(e) =>
-                        setSubtractAmounts((prev) => ({
-                          ...prev,
-                          [item.id]: e.target.value,
-                        }))
-                      }
-                    />
-                    <span className="text-sm text-gray-400">{item.unit}</span>
+                  <div className="mt-4 flex items-center space-x-2">
                     <Button
-                      onClick={() => handleSubtract(item.id)}
-                      variant="secondary"
+                      variant="outline"
                       size="sm"
-                      className="text-sm"
+                      onClick={() => handleSubtract(item.id)}
+                      aria-label="Decrease quantity"
+                      className="w-8 h-8 p-0 flex items-center justify-center"
                     >
-                      Subtract
+                      –
+                    </Button>
+                    <span className="text-sm font-medium min-w-[3rem] text-center">
+                      {item.quantity} {item.unit}
+                    </span>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleAdd(item.id)}
+                      aria-label="Increase quantity"
+                      className="w-8 h-8 p-0 flex items-center justify-center"
+                    >
+                      +
                     </Button>
                   </div>
                 </li>
