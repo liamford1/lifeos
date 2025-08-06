@@ -16,7 +16,7 @@ import { useApiError } from '@/lib/hooks/useApiError';
 import { MdOutlineCalendarToday } from 'react-icons/md';
 import SharedDeleteButton from '@/components/SharedDeleteButton';
 import { supabase } from '@/lib/supabaseClient';
-import { MdRestaurant, MdFitnessCenter, MdEvent } from 'react-icons/md';
+import { MdRestaurant, MdFitnessCenter, MdEvent, MdAdd } from 'react-icons/md';
 import PlanMealModal from '@/components/modals/PlanMealModal';
 
 export default function CalendarView() {
@@ -334,6 +334,42 @@ export default function CalendarView() {
         <MdOutlineCalendarToday className="inline w-5 h-5 mr-2 align-text-bottom" />
         Calendar
       </h2>
+      
+      {/* Quick Action Buttons */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <button
+          onClick={() => setShowSelectionModal(true)}
+          className="h-20 bg-gray-800 rounded-xl hover:bg-gray-700 transition-all duration-200 border border-gray-600 hover:border-blue-500 group p-4 flex flex-col items-center justify-center shadow-sm hover:shadow-md"
+        >
+          <MdAdd className="w-7 h-7 text-blue-500 mb-2 group-hover:scale-110 transition-transform" />
+          <span className="font-semibold text-sm text-white">Add Event</span>
+        </button>
+        
+        <button
+          onClick={() => router.push('/food/addmeal')}
+          className="h-20 bg-gray-800 rounded-xl hover:bg-gray-700 transition-all duration-200 border border-gray-600 hover:border-orange-500 group p-4 flex flex-col items-center justify-center shadow-sm hover:shadow-md"
+        >
+          <MdRestaurant className="w-7 h-7 text-orange-500 mb-2 group-hover:scale-110 transition-transform" />
+          <span className="font-semibold text-sm text-white">Add Meal</span>
+        </button>
+        
+        <button
+          onClick={() => router.push('/fitness/workouts/live')}
+          className="h-20 bg-gray-800 rounded-xl hover:bg-gray-700 transition-all duration-200 border border-gray-600 hover:border-blue-500 group p-4 flex flex-col items-center justify-center shadow-sm hover:shadow-md"
+        >
+          <MdFitnessCenter className="w-7 h-7 text-blue-500 mb-2 group-hover:scale-110 transition-transform" />
+          <span className="font-semibold text-sm text-white">Start Workout</span>
+        </button>
+        
+        <button
+          onClick={() => router.push('/food/inventory')}
+          className="h-20 bg-gray-800 rounded-xl hover:bg-gray-700 transition-all duration-200 border border-gray-600 hover:border-green-500 group p-4 flex flex-col items-center justify-center shadow-sm hover:shadow-md"
+        >
+          <MdEvent className="w-7 h-7 text-green-500 mb-2 group-hover:scale-110 transition-transform" />
+          <span className="font-semibold text-sm text-white">Inventory</span>
+        </button>
+      </div>
+      
       <div className="w-full flex justify-center my-6">
         <div className="w-[80rem]">
           <div className="bg-panel p-2 rounded">
@@ -456,16 +492,6 @@ export default function CalendarView() {
           />
           </div>
         </div>
-        {/* Floating Add Button */}
-        <Button
-          onClick={() => setShowSelectionModal(true)}
-          aria-label="Add calendar event"
-          variant="secondary"
-          className="fixed bottom-8 right-8 z-50 w-14 h-14 rounded-full bg-card text-base shadow-lg flex items-center justify-center text-3xl hover:bg-panel transition-colors border border-border focus:outline-none focus:ring-2 focus:ring-primary"
-          type="button"
-        >
-          +
-        </Button>
       </div>
 
       <div className="mt-4">

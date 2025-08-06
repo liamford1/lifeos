@@ -13,7 +13,6 @@ import { useWorkoutSession } from '@/context/WorkoutSessionContext';
 import { useCardioSession } from '@/context/CardioSessionContext';
 import { useSportsSession } from '@/context/SportsSessionContext';
 import { useCookingSession } from '@/context/CookingSessionContext';
-import Image from 'next/image';
 
 export default function AppBar() {
   const { user, loading, session } = useUser();
@@ -59,15 +58,12 @@ export default function AppBar() {
     // Main navigation bar with dark theme and shadow
     <nav className="flex items-center justify-between p-4 bg-panel border-b border-default">
       {/* App title - clickable to navigate home */}
-      <Image
-        src="/threados-logo.png"
-        alt="Thread OS Logo"
-        width={80}
-        height={40}
-        className="h-10 w-20 cursor-pointer ml-4"
+      <div
+        className="text-2xl font-bold text-base cursor-pointer ml-4 hover:text-base/80 transition-colors"
         onClick={() => router.push('/')}
-        priority
-      />
+      >
+        LifeOS
+      </div>
 
       {/* Right side actions container */}
       <div className="flex items-center space-x-4">
