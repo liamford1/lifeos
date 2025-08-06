@@ -139,11 +139,24 @@ export default function ManualPantryItemModal({ onClose, onAddSuccess }) {
             />
           </div>
           {error && <div className="text-red-400 text-sm">{error}</div>}
-          <div className="flex justify-end gap-2">
-            <Button type="button" variant="ghost" onClick={onClose} disabled={loading}>
+          <div className="flex gap-4 pt-4">
+            <Button 
+              type="button" 
+              variant="secondary" 
+              size="lg"
+              onClick={onClose} 
+              disabled={loading}
+              className="flex-1 max-w-md"
+            >
               Cancel
             </Button>
-            <Button type="submit" variant="primary" disabled={loading}>
+            <Button 
+              type="submit" 
+              variant="primary" 
+              size="lg"
+              disabled={loading}
+              className="flex-1 max-w-md"
+            >
               {loading ? 'Adding...' : 'Add Item'}
             </Button>
           </div>

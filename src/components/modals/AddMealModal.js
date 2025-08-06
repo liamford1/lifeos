@@ -6,7 +6,7 @@ import LoadingSpinner from '@/components/shared/LoadingSpinner';
 import MealForm from '@/components/forms/MealForm';
 import { useApiError } from '@/lib/hooks/useApiError';
 import { useCreateMealMutation } from '@/lib/hooks/useMeals';
-import { MdClose } from 'react-icons/md';
+import BaseModal from '@/components/shared/BaseModal';
 import dynamic from "next/dynamic";
 const CirclePlus = dynamic(() => import("lucide-react/dist/esm/icons/circle-plus"), { ssr: false });
 
@@ -21,13 +21,19 @@ export default function AddMealModal({ isOpen, onClose, onSuccess }) {
   // Show loading spinner when user is loading
   if (userLoading) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4 md:p-6">
-        <div className="bg-surface rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] md:max-h-[85vh] overflow-y-auto relative">
-          <div className="flex justify-center py-8">
-            <LoadingSpinner />
-          </div>
+      <BaseModal
+        isOpen={isOpen}
+        onClose={onClose}
+        title="Loading..."
+        subtitle="Please wait"
+        icon={CirclePlus}
+        iconBgColor="bg-green-500/10"
+        iconColor="text-green-500"
+      >
+        <div className="flex justify-center py-8">
+          <LoadingSpinner />
         </div>
-      </div>
+      </BaseModal>
     );
   }
 
@@ -89,40 +95,22 @@ export default function AddMealModal({ isOpen, onClose, onSuccess }) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4 md:p-6 transition-opacity duration-200">
-      <div className="bg-surface rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] md:max-h-[85vh] overflow-y-auto relative transform transition-all duration-200 ease-out">
-        {/* Header */}
-        <div className="sticky top-0 bg-surface border-b border-border/50 px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-green-500/10 rounded-lg flex items-center justify-center">
-                <CirclePlus className="w-5 h-5 text-green-500" />
-              </div>
-              <div>
-                <h2 className="text-xl font-semibold">Add a New Meal</h2>
-                <p className="text-sm text-gray-400">Create a new meal recipe with ingredients and instructions</p>
-              </div>
-            </div>
-            <button
-              onClick={onClose}
-              className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-white hover:bg-gray-700/50 transition-colors"
-              aria-label="Close modal"
-            >
-              <MdClose className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
-
-        {/* Content */}
-        <div className="p-6">
-          <MealForm
-            onSubmit={handleSaveMeal}
-            onCancel={handleCancel}
-            loading={createMealMutation.isPending}
-            error={createMealMutation.error?.message}
-          />
-        </div>
-      </div>
-    </div>
+    <BaseModal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Add a New Meal"
+      subtitle="Create a new meal recipe with ingredients and instructions"
+      icon={CirclePlus}
+      iconBgColor="bg-green-500/10"
+      iconColor="text-green-500"
+      disabled={createMealMutation.isPending}
+    >
+      <MealForm
+        onSubmit={handleSaveMeal}
+        onCancel={handleCancel}
+        loading={createMealMutation.isPending}
+        error={createMealMutation.error?.message}
+      />
+    </BaseModal>
   );
 } 

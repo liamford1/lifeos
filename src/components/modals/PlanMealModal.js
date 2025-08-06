@@ -4,13 +4,14 @@ import { useEffect, useState, useCallback } from 'react'
 import { supabase } from '@/lib/supabaseClient'
 import { deleteEntityWithCalendarEvent } from '@/lib/utils/deleteUtils'
 import Button from '@/components/shared/Button'
+import SharedDeleteButton from '@/components/SharedDeleteButton'
 import LoadingSpinner from '@/components/shared/LoadingSpinner'
 import FormInput from '@/components/shared/FormInput'
 import FormSelect from '@/components/shared/FormSelect'
 import FormLabel from '@/components/shared/FormLabel'
 import { CALENDAR_SOURCES } from '@/lib/utils/calendarUtils'
 import { useToast } from '@/components/client/Toast'
-import { MdOutlineCalendarToday, MdLightbulb, MdClose } from 'react-icons/md';
+import { MdOutlineCalendarToday, MdLightbulb } from 'react-icons/md';
 import dynamic from "next/dynamic";
 const CalendarCheck = dynamic(() => import("lucide-react/dist/esm/icons/calendar-check"), { ssr: false });
 import { createCalendarEventForEntity } from '@/lib/calendarSync';
@@ -18,6 +19,7 @@ import { deleteCalendarEventForEntity } from '@/lib/calendarSync';
 import { useUser } from '@/context/UserContext';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import AIMealSuggestionsModal from '@/components/forms/AIMealSuggestionsModal';
+import BaseModal from '@/components/shared/BaseModal';
 
 export default function PlanMealModal({ isOpen, onClose, onSuccess, selectedDate }) {
   const { showSuccess, showError } = useToast();
@@ -303,48 +305,38 @@ export default function PlanMealModal({ isOpen, onClose, onSuccess, selectedDate
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4 md:p-6 transition-opacity duration-200">
-      <div className="bg-surface rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] md:max-h-[85vh] overflow-y-auto relative transform transition-all duration-200 ease-out">
-        {/* Header */}
-        <div className="sticky top-0 bg-surface border-b border-border/50 px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-blue-500/10 rounded-lg flex items-center justify-center">
-                <MdOutlineCalendarToday className="w-5 h-5 text-blue-500" />
-              </div>
-              <div>
-                <h2 className="text-xl font-semibold">Plan a Meal</h2>
-                <p className="text-sm text-gray-400">Schedule meals for the week ahead</p>
-              </div>
-            </div>
-            <button
-              onClick={onClose}
-              className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-white hover:bg-gray-700/50 transition-colors"
-              disabled={planMealMutation.isPending}
-              aria-label="Close modal"
-            >
-              <MdClose className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
-
-        {/* Content */}
-        <div className="p-6 space-y-6">
+    <BaseModal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Plan a Meal"
+      subtitle="Schedule meals for the week ahead"
+      icon={MdOutlineCalendarToday}
+      iconBgColor="bg-blue-500/10"
+      iconColor="text-blue-500"
+      disabled={planMealMutation.isPending}
+    >
           {/* AI Suggestions Button */}
-          <div className="flex justify-center">
+          <div className="flex justify-end">
             <Button
               onClick={() => setShowAIModal(true)}
-              variant="secondary"
-              size="lg"
-              className="w-full max-w-md"
+              variant="primary"
+              size="md"
+              className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
             >
-              <MdLightbulb className="w-5 h-5 mr-2" />
+              <MdLightbulb className="w-4 h-4 mr-2 text-yellow-300" />
               AI Suggest Meals
             </Button>
           </div>
 
           {/* Form */}
-          <div className="space-y-4">
+          <div className="bg-card border border-border rounded-lg p-6 space-y-6">
+            <div className="flex items-center gap-3">
+              <div className="w-6 h-6 bg-blue-500/10 rounded-lg flex items-center justify-center">
+                <MdOutlineCalendarToday className="w-4 h-4 text-blue-500" />
+              </div>
+              <h2 className="text-lg font-semibold">Plan a New Meal</h2>
+            </div>
+            
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <div className="space-y-2">
                 <FormLabel htmlFor="meal-select">Meal</FormLabel>
@@ -393,14 +385,14 @@ export default function PlanMealModal({ isOpen, onClose, onSuccess, selectedDate
               </div>
             </div>
 
-            <div className="flex justify-center pt-2">
+            <div className="flex justify-end pt-2">
               <Button
                 onClick={handlePlanMeal}
                 variant="primary"
-                size="lg"
+                size="md"
                 disabled={planMealMutation.isPending}
                 loading={planMealMutation.isPending}
-                className="min-w-[140px]"
+                className="max-w-xs"
               >
                 {planMealMutation.isPending ? 'Planning...' : 'Plan Meal'}
               </Button>
@@ -412,7 +404,6 @@ export default function PlanMealModal({ isOpen, onClose, onSuccess, selectedDate
               </div>
             )}
           </div>
-        </div>
 
         {/* Planned Meals Section */}
         <div className="border-t border-border/50 pt-6">
@@ -466,14 +457,10 @@ export default function PlanMealModal({ isOpen, onClose, onSuccess, selectedDate
                                 </div>
                               </div>
                             </div>
-                            <Button
+                            <SharedDeleteButton
                               onClick={() => handleDelete(item.id)}
-                              variant="ghost"
                               size="sm"
-                              className="text-red-500 hover:text-red-400 hover:bg-red-500/10"
-                            >
-                              Delete
-                            </Button>
+                            />
                           </div>
                         )) ?? null
                       )}
@@ -502,7 +489,6 @@ export default function PlanMealModal({ isOpen, onClose, onSuccess, selectedDate
             onMealAdded={handleMealAdded}
           />
         )}
-      </div>
-    </div>
+    </BaseModal>
   );
 } 

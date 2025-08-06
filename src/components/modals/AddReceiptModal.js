@@ -6,7 +6,7 @@ import LoadingSpinner from '@/components/shared/LoadingSpinner';
 import Button from '@/components/shared/Button';
 import { supabase } from '@/lib/supabaseClient';
 import { useToast } from '@/components/client/Toast';
-import { MdClose } from 'react-icons/md';
+import BaseModal from '@/components/shared/BaseModal';
 import dynamic from "next/dynamic";
 const Receipt = dynamic(() => import("lucide-react/dist/esm/icons/receipt"), { ssr: false });
 const ChevronDown = dynamic(() => import("lucide-react/dist/esm/icons/chevron-down"), { ssr: false });
@@ -68,13 +68,20 @@ export default function AddReceiptModal({ isOpen, onClose, onSuccess }) {
   // Show loading spinner when user is loading
   if (userLoading) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4 md:p-6">
-        <div className="bg-surface rounded-xl shadow-2xl w-full max-w-6xl max-h-[90vh] md:max-h-[85vh] overflow-y-auto relative">
-          <div className="flex justify-center py-8">
-            <LoadingSpinner />
-          </div>
+      <BaseModal
+        isOpen={isOpen}
+        onClose={onClose}
+        title="Loading..."
+        subtitle="Please wait"
+        icon={Receipt}
+        iconBgColor="bg-blue-500/10"
+        iconColor="text-blue-500"
+        maxWidth="max-w-6xl"
+      >
+        <div className="flex justify-center py-8">
+          <LoadingSpinner />
         </div>
-      </div>
+      </BaseModal>
     );
   }
 
@@ -245,203 +252,192 @@ export default function AddReceiptModal({ isOpen, onClose, onSuccess }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4 md:p-6 transition-opacity duration-200">
-      <div className="bg-surface rounded-xl shadow-2xl w-full max-w-6xl max-h-[90vh] md:max-h-[85vh] overflow-y-auto relative transform transition-all duration-200 ease-out">
-        {/* Header */}
-        <div className="sticky top-0 bg-surface border-b border-border/50 px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-blue-500/10 rounded-lg flex items-center justify-center">
-                <Receipt className="w-5 h-5 text-blue-500" />
-              </div>
-              <div>
-                <h2 className="text-xl font-semibold">Add Receipt</h2>
-                <p className="text-sm text-gray-400">Add items from a receipt to your pantry inventory</p>
-              </div>
-            </div>
-            <button
-              onClick={handleCancel}
-              className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-white hover:bg-gray-700/50 transition-colors"
-              aria-label="Close modal"
-            >
-              <MdClose className="w-5 h-5" />
-            </button>
-          </div>
+    <BaseModal
+      isOpen={isOpen}
+      onClose={handleCancel}
+      title="Add Receipt"
+      subtitle="Add items from a receipt to your pantry inventory"
+      icon={Receipt}
+      iconBgColor="bg-blue-500/10"
+      iconColor="text-blue-500"
+      maxWidth="max-w-6xl"
+    >
+      <div className="space-y-6">
+        {/* Store Name Input */}
+        <div>
+          <label className="block text-sm font-medium mb-2">Store Name</label>
+          <input
+            className="bg-panel border border-border p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            placeholder="Store name (e.g. Safeway)"
+            value={storeName}
+            onChange={(e) => setStoreName(e.target.value)}
+          />
         </div>
 
-        {/* Content */}
-        <div className="p-6 space-y-6">
-          {/* Store Name Input */}
-          <div>
-            <label className="block text-sm font-medium mb-2">Store Name</label>
+        {/* Add Items Section */}
+        <div>
+          <h3 className="text-lg font-semibold mb-4">Add Items</h3>
+          
+          {/* Item Input Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-4">
             <input
-              className="bg-panel border border-border p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Store name (e.g. Safeway)"
-              value={storeName}
-              onChange={(e) => setStoreName(e.target.value)}
+              className="bg-panel border border-border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Item name"
+              value={currentItem.name}
+              onChange={(e) => setCurrentItem({ ...currentItem, name: e.target.value })}
+            />
+            <input
+              className="bg-panel border border-border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Qty"
+              value={currentItem.quantity}
+              onChange={(e) => setCurrentItem({ ...currentItem, quantity: e.target.value })}
+            />
+            <input
+              className="bg-panel border border-border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Unit"
+              value={currentItem.unit}
+              onChange={(e) => setCurrentItem({ ...currentItem, unit: e.target.value })}
+            />
+            <input
+              className="bg-panel border border-border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Price"
+              value={currentItem.price}
+              onChange={(e) => setCurrentItem({ ...currentItem, price: e.target.value })}
             />
           </div>
 
-          {/* Add Items Section */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4">Add Items</h3>
-            
-            {/* Item Input Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-4">
-              <input
-                className="bg-panel border border-border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Item name"
-                value={currentItem.name}
-                onChange={(e) => setCurrentItem({ ...currentItem, name: e.target.value })}
-              />
-              <input
-                className="bg-panel border border-border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Qty"
-                value={currentItem.quantity}
-                onChange={(e) => setCurrentItem({ ...currentItem, quantity: e.target.value })}
-              />
-              <input
-                className="bg-panel border border-border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Unit"
-                value={currentItem.unit}
-                onChange={(e) => setCurrentItem({ ...currentItem, unit: e.target.value })}
-              />
-              <input
-                className="bg-panel border border-border p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Price"
-                value={currentItem.price}
-                onChange={(e) => setCurrentItem({ ...currentItem, price: e.target.value })}
-              />
+          <Button
+            onClick={handleAddItem}
+            variant="secondary"
+            size="lg"
+            className="mb-6 w-full max-w-md"
+          >
+            + Add Item
+          </Button>
+
+          {/* Items List */}
+          {items.length > 0 && (
+            <div className="mb-6">
+              <h4 className="text-md font-medium mb-3">Added Items</h4>
+              <ul className="space-y-2">
+                {items.map((item, index) => (
+                  <li key={index} className="bg-panel p-3 rounded-lg border border-border">
+                    <span className="font-semibold">{item.name}</span> — {item.quantity} {item.unit}
+                    {item.price && <span className="text-base"> (${item.price})</span>}
+                  </li>
+                ))}
+              </ul>
             </div>
+          )}
 
-            <Button
-              onClick={handleAddItem}
-              variant="secondary"
-              className="mb-6"
-            >
-              + Add Item
-            </Button>
-
-            {/* Items List */}
-            {items.length > 0 && (
-              <div className="mb-6">
-                <h4 className="text-md font-medium mb-3">Added Items</h4>
-                <ul className="space-y-2">
-                  {items.map((item, index) => (
-                    <li key={index} className="bg-panel p-3 rounded-lg border border-border">
-                      <span className="font-semibold">{item.name}</span> — {item.quantity} {item.unit}
-                      {item.price && <span className="text-base"> (${item.price})</span>}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {/* Submit Button */}
+          {/* Submit Button */}
+          <div className="flex justify-center">
             <Button
               onClick={handleSubmit}
+              variant="primary"
+              size="lg"
               disabled={isSubmitting}
               loading={isSubmitting}
-              className="w-full"
+              className="w-full max-w-md"
             >
               {isSubmitting ? 'Saving Receipt...' : 'Submit Receipt'}
             </Button>
           </div>
+        </div>
 
-          {/* Past Receipts Section */}
-          <div className="border-t border-border pt-6">
-            <h3 className="text-lg font-semibold mb-4">Past Receipts</h3>
-            
-            {loadingReceipts && (
-              <div className="flex justify-center py-8">
-                <LoadingSpinner />
-              </div>
-            )}
+        {/* Past Receipts Section */}
+        <div className="border-t border-border pt-6">
+          <h3 className="text-lg font-semibold mb-4">Past Receipts</h3>
+          
+          {loadingReceipts && (
+            <div className="flex justify-center py-8">
+              <LoadingSpinner />
+            </div>
+          )}
 
-            {receiptsError && (
-              <div className="bg-red-900/20 border border-red-500/50 rounded-lg p-4 text-red-400">
-                {receiptsError}
-              </div>
-            )}
+          {receiptsError && (
+            <div className="bg-red-900/20 border border-red-500/50 rounded-lg p-4 text-red-400">
+              {receiptsError}
+            </div>
+          )}
 
-            {!loadingReceipts && !receiptsError && pastReceipts.length === 0 && (
-              <div className="text-center py-8 text-base">
-                <p>No past receipts found.</p>
-                <p className="text-sm text-gray-400 mt-2">Add your first receipt above to get started.</p>
-              </div>
-            )}
+          {!loadingReceipts && !receiptsError && pastReceipts.length === 0 && (
+            <div className="text-center py-8 text-base">
+              <p>No past receipts found.</p>
+              <p className="text-sm text-gray-400 mt-2">Add your first receipt above to get started.</p>
+            </div>
+          )}
 
-            {!loadingReceipts && !receiptsError && pastReceipts.length > 0 && (
-              <div className="space-y-3">
-                {pastReceipts.map((receipt) => {
-                  const isExpanded = expandedReceipts.has(receipt.id);
-                  const items = receiptItems[receipt.id] || [];
-                  const totalAmount = calculateTotalAmount(items);
-                  
-                  return (
-                    <div key={receipt.id} className="bg-panel rounded-lg border border-border">
-                      <button
-                        onClick={() => toggleReceiptExpansion(receipt.id)}
-                        className="w-full p-4 text-left flex items-center justify-between hover:bg-surface transition-colors rounded-lg"
-                      >
-                        <div className="flex-1">
-                          <div className="font-semibold text-base">
-                            {receipt.store_name || 'Unknown Store'}
-                          </div>
+          {!loadingReceipts && !receiptsError && pastReceipts.length > 0 && (
+            <div className="space-y-3">
+              {pastReceipts.map((receipt) => {
+                const isExpanded = expandedReceipts.has(receipt.id);
+                const items = receiptItems[receipt.id] || [];
+                const totalAmount = calculateTotalAmount(items);
+                
+                return (
+                  <div key={receipt.id} className="bg-panel rounded-lg border border-border">
+                    <button
+                      onClick={() => toggleReceiptExpansion(receipt.id)}
+                      className="w-full p-4 text-left flex items-center justify-between hover:bg-surface transition-colors rounded-lg"
+                    >
+                      <div className="flex-1">
+                        <div className="font-semibold text-base">
+                          {receipt.store_name || 'Unknown Store'}
+                        </div>
+                        <div className="text-sm text-gray-400 mt-1">
+                          {formatDate(receipt.scanned_at)}
+                        </div>
+                        {items.length > 0 && (
                           <div className="text-sm text-gray-400 mt-1">
-                            {formatDate(receipt.scanned_at)}
+                            {items.length} item{items.length !== 1 ? 's' : ''}
+                            {totalAmount > 0 && ` • $${totalAmount.toFixed(2)}`}
                           </div>
-                          {items.length > 0 && (
-                            <div className="text-sm text-gray-400 mt-1">
-                              {items.length} item{items.length !== 1 ? 's' : ''}
-                              {totalAmount > 0 && ` • $${totalAmount.toFixed(2)}`}
-                            </div>
-                          )}
-                        </div>
-                        <div className="ml-4">
-                          {isExpanded ? (
-                            <ChevronUp className="w-5 h-5 text-gray-400" />
-                          ) : (
-                            <ChevronDown className="w-5 h-5 text-gray-400" />
-                          )}
-                        </div>
-                      </button>
-                      
-                      {isExpanded && (
-                        <div className="px-4 pb-4">
-                          {items.length === 0 ? (
-                            <p className="text-sm text-gray-400 py-2">No items found for this receipt.</p>
-                          ) : (
-                            <div className="space-y-2 mt-3">
-                              {items.map((item) => (
-                                <div key={item.id} className="flex justify-between items-center py-2 px-3 bg-surface rounded">
-                                  <div className="flex-1">
-                                    <span className="font-medium">{item.name}</span>
-                                    {item.quantity && item.unit && (
-                                      <span className="text-sm text-gray-400 ml-2">
-                                        {item.quantity} {item.unit}
-                                      </span>
-                                    )}
-                                  </div>
-                                  {item.price && (
-                                    <span className="text-sm font-medium">
-                                      ${item.price.toFixed(2)}
+                        )}
+                      </div>
+                      <div className="ml-4">
+                        {isExpanded ? (
+                          <ChevronUp className="w-5 h-5 text-gray-400" />
+                        ) : (
+                          <ChevronDown className="w-5 h-5 text-gray-400" />
+                        )}
+                      </div>
+                    </button>
+                    
+                    {isExpanded && (
+                      <div className="px-4 pb-4">
+                        {items.length === 0 ? (
+                          <p className="text-sm text-gray-400 py-2">No items found for this receipt.</p>
+                        ) : (
+                          <div className="space-y-2 mt-3">
+                            {items.map((item) => (
+                              <div key={item.id} className="flex justify-between items-center py-2 px-3 bg-surface rounded">
+                                <div className="flex-1">
+                                  <span className="font-medium">{item.name}</span>
+                                  {item.quantity && item.unit && (
+                                    <span className="text-sm text-gray-400 ml-2">
+                                      {item.quantity} {item.unit}
                                     </span>
                                   )}
                                 </div>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
+                                {item.price && (
+                                  <span className="text-sm font-medium">
+                                    ${item.price.toFixed(2)}
+                                  </span>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
-    </div>
+    </BaseModal>
   );
 } 

@@ -10,7 +10,7 @@ const Package = dynamic(() => import("lucide-react/dist/esm/icons/package"), { s
 import ManualPantryItemModal from '@/components/forms/ManualPantryItemModal';
 import AddReceiptModal from '@/components/modals/AddReceiptModal';
 import SharedDeleteButton from '@/components/SharedDeleteButton';
-import { MdClose } from 'react-icons/md';
+import BaseModal from '@/components/shared/BaseModal';
 
 export default function PantryModal({ isOpen, onClose }) {
   // All hooks at the top!
@@ -97,32 +97,15 @@ export default function PantryModal({ isOpen, onClose }) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4 md:p-6 transition-opacity duration-200">
-      <div className="bg-surface rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] md:max-h-[85vh] overflow-y-auto relative transform transition-all duration-200 ease-out">
-        {/* Header */}
-        <div className="sticky top-0 bg-surface border-b border-border/50 px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-orange-500/10 rounded-lg flex items-center justify-center">
-                <Package className="w-5 h-5 text-orange-500" />
-              </div>
-              <div>
-                <h2 className="text-xl font-semibold">Your Pantry</h2>
-                <p className="text-sm text-gray-400">Track your food inventory and pantry items</p>
-              </div>
-            </div>
-            <button
-              onClick={onClose}
-              className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-white hover:bg-gray-700/50 transition-colors"
-              aria-label="Close modal"
-            >
-              <MdClose className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
-
-        {/* Content */}
-        <div className="p-6 space-y-6">
+    <BaseModal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Your Pantry"
+      subtitle="Track your food inventory and pantry items"
+      icon={Package}
+      iconBgColor="bg-orange-500/10"
+      iconColor="text-orange-500"
+    >
           {/* Add Item Buttons */}
           <div className="flex gap-3 justify-center">
             <Button
@@ -215,7 +198,6 @@ export default function PantryModal({ isOpen, onClose }) {
               ))}
             </ul>
           )}
-        </div>
 
         {/* Manual Add Modal */}
         {showManualAddModal && (
@@ -231,7 +213,6 @@ export default function PantryModal({ isOpen, onClose }) {
           onClose={() => setShowAddReceiptModal(false)}
           onSuccess={fetchInventory}
         />
-      </div>
-    </div>
+    </BaseModal>
   );
 } 

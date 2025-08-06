@@ -242,13 +242,14 @@ export default function AIMealSuggestionsModal({ onClose, onMealAdded }) {
         </div>
 
         {/* Get Suggestions Button */}
-        <div className="mb-6">
-                  <Button
-          onClick={handleGetSuggestions}
-          disabled={loading || pantryItems.length === 0 || !user}
-          variant="primary"
-          className="w-full"
-        >
+        <div className="flex justify-end mb-6">
+          <Button
+            onClick={handleGetSuggestions}
+            disabled={loading || pantryItems.length === 0 || !user}
+            variant="primary"
+            size="md"
+            className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 disabled:transform-none disabled:scale-100"
+          >
             {loading ? (
               <>
                 <LoadingSpinner className="w-4 h-4 mr-2" />
@@ -256,12 +257,12 @@ export default function AIMealSuggestionsModal({ onClose, onMealAdded }) {
               </>
             ) : !user ? (
               <>
-                <MdLightbulb className="w-4 h-4 mr-2" />
+                <MdLightbulb className="w-4 h-4 mr-2 text-yellow-300" />
                 Please Log In to Use AI
               </>
             ) : (
               <>
-                <MdLightbulb className="w-4 h-4 mr-2" />
+                <MdLightbulb className="w-4 h-4 mr-2 text-yellow-300" />
                 Get AI Meal Suggestions
               </>
             )}
@@ -372,8 +373,8 @@ export default function AIMealSuggestionsModal({ onClose, onMealAdded }) {
                   <Button
                     onClick={() => handleAddToPlanner(meal)}
                     disabled={addMealToPlannerMutation.isPending}
-                    variant="success"
-                    size="sm"
+                    variant="primary"
+                    size="lg"
                     className="w-full"
                   >
                     {addMealToPlannerMutation.isPending ? (

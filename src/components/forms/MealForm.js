@@ -3,6 +3,7 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import Button from '@/components/shared/Button';
+import SharedDeleteButton from '@/components/SharedDeleteButton';
 import FormLabel from '@/components/shared/FormLabel';
 import FormInput from '@/components/shared/FormInput';
 import FormTextarea from '@/components/shared/FormTextarea';
@@ -203,17 +204,13 @@ export default function MealForm({
               disabled={loading}
               className="w-28"
             />
-            <Button
-              type="button"
+            <SharedDeleteButton
               onClick={() => removeIngredient(index)}
-              variant="link"
               size="sm"
-              className="text-red-400 hover:text-red-300"
               disabled={loading}
-              aria-label="Remove ingredient"
-            >
-              ×
-            </Button>
+              label=""
+              className="text-red-400 hover:text-red-300"
+            />
             {/* Inline errors for ingredient fields */}
             {fieldErrors[`ingredients.${index}.name`] && <div className="text-red-400 text-xs ml-2">{fieldErrors[`ingredients.${index}.name`]}</div>}
             {fieldErrors[`ingredients.${index}.quantity`] && <div className="text-red-400 text-xs ml-2">{fieldErrors[`ingredients.${index}.quantity`]}</div>}
@@ -222,8 +219,8 @@ export default function MealForm({
         <Button 
           type="button" 
           onClick={addIngredient} 
-          variant="success"
-          size="sm"
+          variant="secondary"
+          size="lg"
           disabled={loading}
           className="mt-4"
         >
@@ -244,16 +241,13 @@ export default function MealForm({
               disabled={loading}
               className="flex-1"
             />
-            <Button
-              type="button"
+            <SharedDeleteButton
               onClick={() => removeInstruction(index)}
-              variant="link"
               size="sm"
-              className="text-red-400 hover:text-red-300"
               disabled={loading}
-            >
-              ×
-            </Button>
+              label=""
+              className="text-red-400 hover:text-red-300"
+            />
             {/* Inline error for instruction step */}
             {fieldErrors[`instructions.${index}`] && <div className="text-red-400 text-xs ml-2">{fieldErrors[`instructions.${index}`]}</div>}
           </div>
@@ -261,8 +255,8 @@ export default function MealForm({
         <Button 
           type="button" 
           onClick={addInstruction} 
-          variant="success"
-          size="sm"
+          variant="secondary"
+          size="lg"
           disabled={loading}
           className="mt-4"
         >
@@ -296,7 +290,9 @@ export default function MealForm({
         <Button
           type="submit"
           variant="primary"
+          size="lg"
           disabled={loading}
+          className="flex-1 max-w-md"
         >
           {loading ? 'Saving...' : (isEditing ? 'Update Meal' : 'Save Meal')}
         </Button>
@@ -306,7 +302,9 @@ export default function MealForm({
             type="button"
             onClick={onCancel}
             variant="secondary"
+            size="lg"
             disabled={loading}
+            className="flex-1 max-w-md"
           >
             Cancel
           </Button>

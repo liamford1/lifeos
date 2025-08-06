@@ -8,9 +8,10 @@ import dynamic from "next/dynamic";
 const UtensilsCrossed = dynamic(() => import("lucide-react/dist/esm/icons/utensils-crossed"), { ssr: false });
 const CirclePlus = dynamic(() => import("lucide-react/dist/esm/icons/circle-plus"), { ssr: false });
 import Button from '@/components/shared/Button';
+import SharedDeleteButton from '@/components/SharedDeleteButton';
 import { useMealsQuery, useDeleteMealMutation } from '@/lib/hooks/useMeals';
 import AddMealModal from '@/components/modals/AddMealModal';
-import { MdClose } from 'react-icons/md';
+import BaseModal from '@/components/shared/BaseModal';
 
 export default function MealsModal({ isOpen, onClose }) {
   const { user, loading: userLoading } = useUser();
@@ -26,13 +27,19 @@ export default function MealsModal({ isOpen, onClose }) {
   // Show loading spinner when user is loading
   if (userLoading) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4 md:p-6">
-        <div className="bg-surface rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] md:max-h-[85vh] overflow-y-auto relative">
-          <div className="flex justify-center py-8">
-            <LoadingSpinner />
-          </div>
+      <BaseModal
+        isOpen={isOpen}
+        onClose={onClose}
+        title="Loading..."
+        subtitle="Please wait"
+        icon={UtensilsCrossed}
+        iconBgColor="bg-purple-500/10"
+        iconColor="text-purple-500"
+      >
+        <div className="flex justify-center py-8">
+          <LoadingSpinner />
         </div>
-      </div>
+      </BaseModal>
     );
   }
 
@@ -57,41 +64,24 @@ export default function MealsModal({ isOpen, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4 md:p-6 transition-opacity duration-200">
-      <div className="bg-surface rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] md:max-h-[85vh] overflow-y-auto relative transform transition-all duration-200 ease-out">
-        {/* Header */}
-        <div className="sticky top-0 bg-surface border-b border-border/50 px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-purple-500/10 rounded-lg flex items-center justify-center">
-                <UtensilsCrossed className="w-5 h-5 text-purple-500" />
-              </div>
-              <div>
-                <h2 className="text-xl font-semibold">Meals</h2>
-                <p className="text-sm text-gray-400">Browse and manage your saved meal recipes</p>
-              </div>
-            </div>
-            <button
-              onClick={onClose}
-              className="w-8 h-8 rounded-lg flex items-center justify-center text-gray-400 hover:text-white hover:bg-gray-700/50 transition-colors"
-              aria-label="Close modal"
-            >
-              <MdClose className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
-
-        {/* Content */}
-        <div className="p-6 space-y-6">
+    <BaseModal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Meals"
+      subtitle="Browse and manage your saved meal recipes"
+      icon={UtensilsCrossed}
+      iconBgColor="bg-purple-500/10"
+      iconColor="text-purple-500"
+    >
           {/* Add Meal Button */}
           <div className="flex justify-center">
             <Button
               onClick={() => setShowAddMealModal(true)}
-              variant="primary"
+              variant="secondary"
               size="lg"
-              className="flex items-center gap-2"
+              className="w-full max-w-md"
             >
-              <CirclePlus className="w-5 h-5" />
+              <CirclePlus className="w-5 h-5 mr-2" />
               Add Meal
             </Button>
           </div>
@@ -133,22 +123,16 @@ export default function MealsModal({ isOpen, onClose }) {
                       </p>
                     </div>
                   </Link>
-                  <Button
-                    variant="danger"
-                    size="sm"
+                  <SharedDeleteButton
                     onClick={() => handleDelete(meal.id)}
-                    aria-label="Delete meal"
-                    loading={deleteMealMutation.isPending && deleteMealMutation.variables === meal.id}
+                    size="sm"
                     disabled={deleteMealMutation.isPending}
                     className="ml-4"
-                  >
-                    🗑️ Delete
-                  </Button>
+                  />
                 </li>
               ))}
             </ul>
           )}
-        </div>
 
         {/* Add Meal Modal */}
         <AddMealModal 
@@ -158,7 +142,6 @@ export default function MealsModal({ isOpen, onClose }) {
             refetch();
           }}
         />
-      </div>
-    </div>
+    </BaseModal>
   );
 } 
