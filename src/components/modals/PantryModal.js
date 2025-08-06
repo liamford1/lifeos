@@ -8,6 +8,7 @@ import { useDeleteEntity } from '@/lib/hooks/useSupabaseCrud';
 import dynamic from "next/dynamic";
 const Package = dynamic(() => import("lucide-react/dist/esm/icons/package"), { ssr: false });
 import ManualPantryItemModal from '@/components/forms/ManualPantryItemModal';
+import AddReceiptModal from '@/components/modals/AddReceiptModal';
 import SharedDeleteButton from '@/components/SharedDeleteButton';
 import { MdClose } from 'react-icons/md';
 
@@ -19,6 +20,7 @@ export default function PantryModal({ isOpen, onClose }) {
   const [inventoryLoading, setInventoryLoading] = useState(true)
   const [subtractAmounts, setSubtractAmounts] = useState({})
   const [showManualAddModal, setShowManualAddModal] = useState(false);
+  const [showAddReceiptModal, setShowAddReceiptModal] = useState(false);
 
   // fetchInventory must be defined before useEffect, so move it above
   const fetchInventory = useCallback(async () => {
@@ -121,15 +123,23 @@ export default function PantryModal({ isOpen, onClose }) {
 
         {/* Content */}
         <div className="p-6 space-y-6">
-          {/* Add Item Button */}
-          <div className="flex justify-center">
+          {/* Add Item Buttons */}
+          <div className="flex gap-3 justify-center">
             <Button
               onClick={() => setShowManualAddModal(true)}
               variant="secondary"
               size="lg"
-              className="w-full max-w-md"
+              className="flex-1 max-w-md"
             >
               + Add Item
+            </Button>
+            <Button
+              onClick={() => setShowAddReceiptModal(true)}
+              variant="secondary"
+              size="lg"
+              className="flex-1 max-w-md"
+            >
+              + Add Receipt
             </Button>
           </div>
 
@@ -214,6 +224,13 @@ export default function PantryModal({ isOpen, onClose }) {
             onAddSuccess={fetchInventory}
           />
         )}
+
+        {/* Add Receipt Modal */}
+        <AddReceiptModal 
+          isOpen={showAddReceiptModal} 
+          onClose={() => setShowAddReceiptModal(false)}
+          onSuccess={fetchInventory}
+        />
       </div>
     </div>
   );
