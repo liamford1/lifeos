@@ -14,7 +14,6 @@ test('Complete pantry workflow with single item', async ({ page }) => {
   
   // Capture browser console logs
 
-
   // Go to /auth
   await page.goto('http://localhost:3000/auth');
 
@@ -31,7 +30,6 @@ test('Complete pantry workflow with single item', async ({ page }) => {
   // ✅ Sanity check: window.supabase is defined
   await page.evaluate(() => {
     if (!window.supabase) throw new Error('[E2E] ❌ window.supabase is still not defined');
-
   });
 
   // Clean up any leftover test data from previous runs
@@ -48,10 +46,10 @@ test('Complete pantry workflow with single item', async ({ page }) => {
   // Wait for the pantry modal to appear
   await expect(page.getByRole('heading', { name: 'Your Pantry' })).toBeVisible();
 
-  // Click the "Add Item" button
+  // Click the "Add Item" button to open the manual add modal
   await page.getByRole('button', { name: '+ Add Item' }).click();
 
-  // Wait for the modal to appear
+  // Wait for the manual add modal to appear
   await expect(page.getByRole('heading', { name: 'Add Pantry Item' })).toBeVisible();
 
   // Fill out the form with test values
@@ -70,10 +68,10 @@ test('Complete pantry workflow with single item', async ({ page }) => {
   // Submit the form
   await page.getByRole('button', { name: 'Add Item', exact: true }).click();
 
-  // Wait for the modal to close and the page to update
+  // Wait for the manual add modal to close
   await expect(page.getByRole('heading', { name: 'Add Pantry Item' })).not.toBeVisible();
 
-  // Wait for the new item to appear in the pantry list instead of networkidle
+  // Wait for the new item to appear in the pantry list
   await expect(page.getByText(foodName).first()).toBeVisible({ timeout: 15000 });
 
   // Additional verification: check that the item shows the correct details
@@ -96,18 +94,14 @@ test('Complete pantry workflow with single item', async ({ page }) => {
   await expect(page.getByText(foodName).first()).toBeVisible({ timeout: 15000 });
   await expect(page.getByText('3 lbs').first()).toBeVisible();
 
-  // 2. Subtract 1 unit from that item and confirm the quantity decreases
+  // 2. Subtract 1 unit from that item using the "-" button
   const updatedItemRow = page.locator('li').filter({ hasText: foodName }).first();
   
-  // Find the subtract input field within this item row and fill it with "1"
-  const subtractInput = updatedItemRow.locator('input[type="number"][placeholder="Amount"]');
-  await subtractInput.fill('1');
-  
-  // Click the "Subtract" button within this item row
-  const subtractButton = updatedItemRow.getByRole('button', { name: 'Subtract' });
+  // Click the "-" button to decrease quantity by 1
+  const subtractButton = updatedItemRow.getByRole('button', { name: 'Decrease quantity' });
   await subtractButton.click();
   
-  // Wait for the quantity to update instead of networkidle
+  // Wait for the quantity to update from 3 to 2
   await expect(page.getByText('2 lbs').first()).toBeVisible({ timeout: 15000 });
   
   // Verify the quantity decreased from 3 to 2

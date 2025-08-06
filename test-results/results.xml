@@ -1,30 +1,30 @@
-<testsuites id="" name="" tests="28" failures="2" skipped="0" errors="0" time="311.358939">
-<testsuite name="basic-test.spec.ts" timestamp="2025-08-05T01:00:27.553Z" hostname="chromium" tests="1" failures="0" skipped="0" time="1.193" errors="0">
-<testcase name="Basic page load test" classname="basic-test.spec.ts" time="1.193">
+<testsuites id="" name="" tests="28" failures="0" skipped="0" errors="0" time="254.15423199999998">
+<testsuite name="basic-test.spec.ts" timestamp="2025-08-06T04:17:06.849Z" hostname="chromium" tests="1" failures="0" skipped="0" time="1.19" errors="0">
+<testcase name="Basic page load test" classname="basic-test.spec.ts" time="1.19">
 </testcase>
 </testsuite>
-<testsuite name="calendar-day-plus-button.spec.ts" timestamp="2025-08-05T01:00:27.553Z" hostname="chromium" tests="6" failures="0" skipped="0" time="7.261" errors="0">
-<testcase name="Calendar Day Plus Button Functionality › Plus button appears on selected day and opens planning modal" classname="calendar-day-plus-button.spec.ts" time="1.943">
+<testsuite name="calendar-day-plus-button.spec.ts" timestamp="2025-08-06T04:17:06.849Z" hostname="chromium" tests="6" failures="0" skipped="0" time="7.032" errors="0">
+<testcase name="Calendar Day Plus Button Functionality › Plus button appears on selected day and opens planning modal" classname="calendar-day-plus-button.spec.ts" time="2.037">
 </testcase>
-<testcase name="Calendar Day Plus Button Functionality › General Event option opens add event modal with pre-selected date" classname="calendar-day-plus-button.spec.ts" time="1.056">
+<testcase name="Calendar Day Plus Button Functionality › General Event option opens add event modal with pre-selected date" classname="calendar-day-plus-button.spec.ts" time="1.002">
 </testcase>
-<testcase name="Calendar Day Plus Button Functionality › Meal option opens meal planning modal with selected date" classname="calendar-day-plus-button.spec.ts" time="0.964">
+<testcase name="Calendar Day Plus Button Functionality › Meal option opens meal planning modal with selected date" classname="calendar-day-plus-button.spec.ts" time="0.982">
 </testcase>
-<testcase name="Calendar Day Plus Button Functionality › Workout option navigates to fitness planner with selected date" classname="calendar-day-plus-button.spec.ts" time="0.957">
+<testcase name="Calendar Day Plus Button Functionality › Workout option navigates to fitness planner with selected date" classname="calendar-day-plus-button.spec.ts" time="0.975">
 </testcase>
-<testcase name="Calendar Day Plus Button Functionality › Plus button only appears on selected day" classname="calendar-day-plus-button.spec.ts" time="1.428">
+<testcase name="Calendar Day Plus Button Functionality › Plus button only appears on selected day" classname="calendar-day-plus-button.spec.ts" time="1.023">
 </testcase>
-<testcase name="Calendar Day Plus Button Functionality › Cancel button closes the modal" classname="calendar-day-plus-button.spec.ts" time="0.913">
-</testcase>
-</testsuite>
-<testsuite name="calendar-meal-click.spec.ts" timestamp="2025-08-05T01:00:27.553Z" hostname="chromium" tests="2" failures="0" skipped="0" time="10.358" errors="0">
-<testcase name="Calendar Meal Click Behavior › Clicking meal event on calendar navigates to cook page" classname="calendar-meal-click.spec.ts" time="5.173">
-</testcase>
-<testcase name="Calendar Meal Click Behavior › Clicking meal event in day view list navigates to cook page" classname="calendar-meal-click.spec.ts" time="5.185">
+<testcase name="Calendar Day Plus Button Functionality › Cancel button closes the modal" classname="calendar-day-plus-button.spec.ts" time="1.013">
 </testcase>
 </testsuite>
-<testsuite name="cardio-session.spec.ts" timestamp="2025-08-05T01:00:27.553Z" hostname="chromium" tests="1" failures="0" skipped="0" time="24.793" errors="0">
-<testcase name="Complete Cardio Session Lifecycle" classname="cardio-session.spec.ts" time="24.793">
+<testsuite name="calendar-meal-click.spec.ts" timestamp="2025-08-06T04:17:06.849Z" hostname="chromium" tests="2" failures="0" skipped="0" time="10.341" errors="0">
+<testcase name="Calendar Meal Click Behavior › Clicking meal event on calendar navigates to cook page" classname="calendar-meal-click.spec.ts" time="5.018">
+</testcase>
+<testcase name="Calendar Meal Click Behavior › Clicking meal event in day view list navigates to cook page" classname="calendar-meal-click.spec.ts" time="5.323">
+</testcase>
+</testsuite>
+<testsuite name="cardio-session.spec.ts" timestamp="2025-08-06T04:17:06.849Z" hostname="chromium" tests="1" failures="0" skipped="0" time="25.571" errors="0">
+<testcase name="Complete Cardio Session Lifecycle" classname="cardio-session.spec.ts" time="25.571">
 <system-out>
 <![CDATA[[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()
 [BROWSER LOG] log: [E2E] Cleaning up cardio sessions for user: 0f3a417b-077d-4868-acef-9d79ada0945b
@@ -48,100 +48,93 @@
 </system-out>
 </testcase>
 </testsuite>
-<testsuite name="enhanced-plus-button.spec.ts" timestamp="2025-08-05T01:00:27.553Z" hostname="chromium" tests="6" failures="0" skipped="0" time="5.085" errors="0">
+<testsuite name="enhanced-plus-button.spec.ts" timestamp="2025-08-06T04:17:06.849Z" hostname="chromium" tests="6" failures="0" skipped="0" time="5.314" errors="0">
 <testcase name="Enhanced Plus Button Functionality › Plus button shows selection modal with three options" classname="enhanced-plus-button.spec.ts" time="0.822">
 </testcase>
-<testcase name="Enhanced Plus Button Functionality › General Event option opens existing add event modal" classname="enhanced-plus-button.spec.ts" time="0.819">
+<testcase name="Enhanced Plus Button Functionality › General Event option opens existing add event modal" classname="enhanced-plus-button.spec.ts" time="0.866">
 </testcase>
-<testcase name="Enhanced Plus Button Functionality › Meal option opens meal planning modal" classname="enhanced-plus-button.spec.ts" time="0.907">
+<testcase name="Enhanced Plus Button Functionality › Meal option opens meal planning modal" classname="enhanced-plus-button.spec.ts" time="0.956">
 </testcase>
-<testcase name="Enhanced Plus Button Functionality › Workout option navigates to fitness planner page" classname="enhanced-plus-button.spec.ts" time="0.873">
+<testcase name="Enhanced Plus Button Functionality › Workout option navigates to fitness planner page" classname="enhanced-plus-button.spec.ts" time="0.958">
 </testcase>
-<testcase name="Enhanced Plus Button Functionality › Cancel button closes selection modal" classname="enhanced-plus-button.spec.ts" time="0.841">
+<testcase name="Enhanced Plus Button Functionality › Cancel button closes selection modal" classname="enhanced-plus-button.spec.ts" time="0.857">
 </testcase>
-<testcase name="Enhanced Plus Button Functionality › Modal can be closed by clicking outside" classname="enhanced-plus-button.spec.ts" time="0.823">
+<testcase name="Enhanced Plus Button Functionality › Modal can be closed by clicking outside" classname="enhanced-plus-button.spec.ts" time="0.855">
 </testcase>
 </testsuite>
-<testsuite name="login-add-meal.spec.ts" timestamp="2025-08-05T01:00:27.553Z" hostname="chromium" tests="1" failures="1" skipped="0" time="60.021" errors="0">
-<testcase name="Login and add meal › Basic meal workflow: add and verify meal" classname="login-add-meal.spec.ts" time="60.021">
-<failure message="login-add-meal.spec.ts:6:7 Basic meal workflow: add and verify meal" type="FAILURE">
-<![CDATA[  [chromium] › login-add-meal.spec.ts:6:7 › Login and add meal › Basic meal workflow: add and verify meal 
-
-    Test timeout of 60000ms exceeded.
-
-    Error: locator.click: Test timeout of 60000ms exceeded.
-    Call log:
-      - waiting for getByRole('link', { name: /add a meal/i })
-
-
-      35 |
-      36 |     // Click the "Add a Meal" link
-    > 37 |     await page.getByRole('link', { name: /add a meal/i }).click();
-         |                                                           ^
-      38 |     await page.waitForURL((url) => /\/food\/addmeal$/.test(url.pathname), { timeout: 10000 });
-      39 |
-      40 |     // Wait for the Add Meal page to load
-        at /Users/liamford/Documents/plannerapp/e2e/login-add-meal.spec.ts:37:59
-
-    Error Context: ../test-results/login-add-meal-Login-and-a-5d6e5-orkflow-add-and-verify-meal-chromium/error-context.md
-]]>
-</failure>
+<testsuite name="login-add-meal.spec.ts" timestamp="2025-08-06T04:17:06.849Z" hostname="chromium" tests="1" failures="0" skipped="0" time="15.058" errors="0">
+<testcase name="Login and add meal › Basic meal workflow: add and verify meal" classname="login-add-meal.spec.ts" time="15.058">
+</testcase>
+</testsuite>
+<testsuite name="login-add-pantry-item.spec.ts" timestamp="2025-08-06T04:17:06.849Z" hostname="chromium" tests="1" failures="0" skipped="0" time="11.224" errors="0">
+<testcase name="Complete pantry workflow with single item" classname="login-add-pantry-item.spec.ts" time="11.224">
+</testcase>
+</testsuite>
+<testsuite name="login-add-planned-meal.spec.ts" timestamp="2025-08-06T04:17:06.849Z" hostname="chromium" tests="1" failures="0" skipped="0" time="13.447" errors="0">
+<testcase name="Meal planning workflow: plan and verify meal" classname="login-add-planned-meal.spec.ts" time="13.447">
+</testcase>
+</testsuite>
+<testsuite name="login-add-receipt.spec.ts" timestamp="2025-08-06T04:17:06.849Z" hostname="chromium" tests="1" failures="0" skipped="0" time="14.488" errors="0">
+<testcase name="Login and add receipt › Complete receipt workflow with multiple items" classname="login-add-receipt.spec.ts" time="14.488">
 <system-out>
-<![CDATA[
-[[ATTACHMENT|login-add-meal-Login-and-a-5d6e5-orkflow-add-and-verify-meal-chromium/error-context.md]]
+<![CDATA[[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()
+[BROWSER LOG] log: [E2E] ✅ window.supabase is defined
+[BROWSER LOG] log: [E2E] Debug items in database: [Object, Object, Object]
+[E2E] Debug items found: [
+  {
+    id: [32m'85a70871-8c24-43e5-825a-a02a27339d66'[39m,
+    user_id: [32m'0f3a417b-077d-4868-acef-9d79ada0945b'[39m,
+    name: [32m'Test Milk'[39m,
+    quantity: [33m2[39m,
+    unit: [32m'gallons'[39m,
+    category: [1mnull[22m,
+    added_from: [32m'receipt'[39m,
+    expires_at: [1mnull[22m,
+    added_at: [32m'2025-08-06T04:18:40.406328+00:00'[39m,
+    receipt_id: [32m'38b65b8b-0be9-4697-be53-40588e115355'[39m
+  },
+  {
+    id: [32m'e07d57cf-84da-436a-bd3e-399aecb31949'[39m,
+    user_id: [32m'0f3a417b-077d-4868-acef-9d79ada0945b'[39m,
+    name: [32m'Test Eggs'[39m,
+    quantity: [33m12[39m,
+    unit: [32m'count'[39m,
+    category: [1mnull[22m,
+    added_from: [32m'receipt'[39m,
+    expires_at: [1mnull[22m,
+    added_at: [32m'2025-08-06T04:18:40.406328+00:00'[39m,
+    receipt_id: [32m'38b65b8b-0be9-4697-be53-40588e115355'[39m
+  },
+  {
+    id: [32m'fc65c2e3-60f1-4d30-bb74-203ce3033847'[39m,
+    user_id: [32m'0f3a417b-077d-4868-acef-9d79ada0945b'[39m,
+    name: [32m'Test Bread'[39m,
+    quantity: [33m1[39m,
+    unit: [32m'loaf'[39m,
+    category: [1mnull[22m,
+    added_from: [32m'receipt'[39m,
+    expires_at: [1mnull[22m,
+    added_at: [32m'2025-08-06T04:18:40.406328+00:00'[39m,
+    receipt_id: [32m'38b65b8b-0be9-4697-be53-40588e115355'[39m
+  }
+]
+[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()
 ]]>
 </system-out>
 </testcase>
 </testsuite>
-<testsuite name="login-add-pantry-item.spec.ts" timestamp="2025-08-05T01:00:27.553Z" hostname="chromium" tests="1" failures="0" skipped="0" time="11.436" errors="0">
-<testcase name="Complete pantry workflow with single item" classname="login-add-pantry-item.spec.ts" time="11.436">
-</testcase>
-</testsuite>
-<testsuite name="login-add-planned-meal.spec.ts" timestamp="2025-08-05T01:00:27.553Z" hostname="chromium" tests="1" failures="1" skipped="0" time="24.676" errors="0">
-<testcase name="Meal planning workflow: plan and verify meal" classname="login-add-planned-meal.spec.ts" time="24.676">
-<failure message="login-add-planned-meal.spec.ts:12:5 Meal planning workflow: plan and verify meal" type="FAILURE">
-<![CDATA[  [chromium] › login-add-planned-meal.spec.ts:12:5 › Meal planning workflow: plan and verify meal ──
-
-    TimeoutError: page.waitForURL: Timeout 20000ms exceeded.
-    =========================== logs ===========================
-    waiting for navigation until "load"
-    ============================================================
-
-      53 |   await expect(page.locator('text=Meal created successfully!')).toBeVisible({ timeout: 5000 });
-      54 |   
-    > 55 |   await page.waitForURL((url) => /\/food\/meals$/.test(url.pathname), { timeout: 20000 });
-         |              ^
-      56 |   await expect(page.getByRole('heading', { name: /meals/i })).toBeVisible({ timeout: 10000 });
-      57 |
-      58 |   // Plan the meal using the modal
-        at /Users/liamford/Documents/plannerapp/e2e/login-add-planned-meal.spec.ts:55:14
-
-    Error Context: ../test-results/login-add-planned-meal-Mea-2d323-rkflow-plan-and-verify-meal-chromium/error-context.md
-]]>
-</failure>
-<system-out>
-<![CDATA[
-[[ATTACHMENT|login-add-planned-meal-Mea-2d323-rkflow-plan-and-verify-meal-chromium/error-context.md]]
-]]>
-</system-out>
-</testcase>
-</testsuite>
-<testsuite name="login-add-receipt.spec.ts" timestamp="2025-08-05T01:00:27.553Z" hostname="chromium" tests="1" failures="0" skipped="0" time="15.175" errors="0">
-<testcase name="Login and add receipt › Complete receipt workflow with multiple items" classname="login-add-receipt.spec.ts" time="15.175">
-</testcase>
-</testsuite>
-<testsuite name="login-add-workout.spec.ts" timestamp="2025-08-05T01:00:27.553Z" hostname="chromium" tests="1" failures="0" skipped="0" time="18.155" errors="0">
-<testcase name="Login and add workout › Login and add a workout" classname="login-add-workout.spec.ts" time="18.155">
+<testsuite name="login-add-workout.spec.ts" timestamp="2025-08-06T04:17:06.849Z" hostname="chromium" tests="1" failures="0" skipped="0" time="17.709" errors="0">
+<testcase name="Login and add workout › Login and add a workout" classname="login-add-workout.spec.ts" time="17.709">
 <system-out>
 <![CDATA[[E2E] ✅ Workout verified in database, navigating directly
 [E2E] ✅ Updated workout found in UI
-[E2E] ✅ Final workout verification successful: Push Day 1754355788933 Edited
+[E2E] ✅ Final workout verification successful: Push Day 1754453931176 Edited
 ]]>
 </system-out>
 </testcase>
 </testsuite>
-<testsuite name="planned-fitness-events.spec.ts" timestamp="2025-08-05T01:00:27.553Z" hostname="chromium" tests="4" failures="0" skipped="0" time="55.018" errors="0">
-<testcase name="Planned Fitness Events - Complete Flow" classname="planned-fitness-events.spec.ts" time="17.927">
+<testsuite name="planned-fitness-events.spec.ts" timestamp="2025-08-06T04:17:06.849Z" hostname="chromium" tests="4" failures="0" skipped="0" time="54.017" errors="0">
+<testcase name="Planned Fitness Events - Complete Flow" classname="planned-fitness-events.spec.ts" time="17.477">
 <system-out>
 <![CDATA[406: https://ffubefmikpkrxtueeusj.supabase.co/rest/v1/profiles?select=first_name%2Clast_name&user_id=eq.0f3a417b-077d-4868-acef-9d79ada0945b
 [BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()
@@ -160,64 +153,64 @@
 [BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()
 [E2E] All calendar events in database: [
   {
-    id: [32m'4c2a4f84-8032-4838-a6fe-6597b6f3069f'[39m,
+    id: [32m'9537ed60-5327-4698-99d9-6b1878e457e7'[39m,
     user_id: [32m'0f3a417b-077d-4868-acef-9d79ada0945b'[39m,
     title: [32m'Sport: Test Planned Sports'[39m,
     description: [32m'Test planned sports notes'[39m,
-    start_time: [32m'2025-08-04T00:00:00+00:00'[39m,
-    end_time: [32m'2025-08-05T01:00:00+00:00'[39m,
+    start_time: [32m'2025-08-05T00:00:00+00:00'[39m,
+    end_time: [32m'2025-08-06T01:00:00+00:00'[39m,
     source: [32m'sport'[39m,
-    source_id: [32m'aa9e5a05-ef79-416d-85b4-ed175db58eca'[39m,
-    created_at: [32m'2025-08-05T01:03:34.365236+00:00'[39m,
-    updated_at: [32m'2025-08-05T01:03:34.365236+00:00'[39m
+    source_id: [32m'cc2d7a4f-d202-4c22-bbce-84d31b10dcd9'[39m,
+    created_at: [32m'2025-08-06T04:19:15.653877+00:00'[39m,
+    updated_at: [32m'2025-08-06T04:19:15.653877+00:00'[39m
   },
   {
-    id: [32m'14fad05a-4bb4-479b-b2ad-31b31e7bcad9'[39m,
+    id: [32m'9ac694d8-24f4-4e28-9891-44b79695c5c6'[39m,
     user_id: [32m'0f3a417b-077d-4868-acef-9d79ada0945b'[39m,
     title: [32m'Cardio: Test Planned Cardio'[39m,
     description: [32m'Test planned cardio notes'[39m,
-    start_time: [32m'2025-08-04T00:00:00+00:00'[39m,
-    end_time: [32m'2025-08-05T00:00:00+00:00'[39m,
+    start_time: [32m'2025-08-05T00:00:00+00:00'[39m,
+    end_time: [32m'2025-08-06T00:00:00+00:00'[39m,
     source: [32m'cardio'[39m,
-    source_id: [32m'3fa83bf9-7e49-47be-a56c-e7c112d14f7a'[39m,
-    created_at: [32m'2025-08-05T01:03:32.83786+00:00'[39m,
-    updated_at: [32m'2025-08-05T01:03:32.83786+00:00'[39m
+    source_id: [32m'33e7556d-758e-4846-8070-c774c081dcd3'[39m,
+    created_at: [32m'2025-08-06T04:19:14.30677+00:00'[39m,
+    updated_at: [32m'2025-08-06T04:19:14.30677+00:00'[39m
   },
   {
-    id: [32m'ae24a833-e9a5-429a-8071-9a3b24798273'[39m,
+    id: [32m'5e6133a7-0f62-48b4-862a-be64559b587b'[39m,
     user_id: [32m'0f3a417b-077d-4868-acef-9d79ada0945b'[39m,
     title: [32m'Workout: Test Planned Workout'[39m,
     description: [32m'Test planned workout notes'[39m,
-    start_time: [32m'2025-08-04T00:00:00+00:00'[39m,
-    end_time: [32m'2025-08-04T23:00:00+00:00'[39m,
+    start_time: [32m'2025-08-05T00:00:00+00:00'[39m,
+    end_time: [32m'2025-08-05T23:00:00+00:00'[39m,
     source: [32m'workout'[39m,
-    source_id: [32m'994f4698-39bc-40a5-944a-3245b90878c6'[39m,
-    created_at: [32m'2025-08-05T01:03:31.523838+00:00'[39m,
-    updated_at: [32m'2025-08-05T01:03:31.523838+00:00'[39m
+    source_id: [32m'c3e27262-f6fe-4edb-a8b8-e4206a78d898'[39m,
+    created_at: [32m'2025-08-06T04:19:12.978661+00:00'[39m,
+    updated_at: [32m'2025-08-06T04:19:12.978661+00:00'[39m
   },
   {
-    id: [32m'0f01bb81-6e8b-43c1-a7f1-cd8e85d5f8f7'[39m,
+    id: [32m'088f1a41-59ea-4442-95b3-5e65c2269241'[39m,
     user_id: [32m'0f3a417b-077d-4868-acef-9d79ada0945b'[39m,
-    title: [32m'Meal: Test Calendar Meal 1754355641724'[39m,
+    title: [32m'Meal: Test Calendar Meal 1754453840678'[39m,
     description: [32m'Test meal for calendar click behavior'[39m,
     start_time: [32m'2025-07-28T12:00:00+00:00'[39m,
     end_time: [1mnull[22m,
     source: [32m'meal'[39m,
-    source_id: [32m'c49ac3b9-7669-4154-9a8a-0a93743b8d46'[39m,
-    created_at: [32m'2025-08-05T01:00:43.742631+00:00'[39m,
-    updated_at: [32m'2025-08-05T01:00:43.742631+00:00'[39m
+    source_id: [32m'8a391417-2fcc-4c19-9b38-6072b70940c4'[39m,
+    created_at: [32m'2025-08-06T04:17:22.83341+00:00'[39m,
+    updated_at: [32m'2025-08-06T04:17:22.83341+00:00'[39m
   },
   {
-    id: [32m'593bb046-8d91-4655-90b0-fff15792ea1c'[39m,
+    id: [32m'1424c427-8e95-450c-bdd6-921ce3dac40f'[39m,
     user_id: [32m'0f3a417b-077d-4868-acef-9d79ada0945b'[39m,
-    title: [32m'Meal: Test Calendar Meal 1754355636528'[39m,
+    title: [32m'Meal: Test Calendar Meal 1754453835644'[39m,
     description: [32m'Test meal for calendar click behavior'[39m,
     start_time: [32m'2025-07-28T12:00:00+00:00'[39m,
     end_time: [1mnull[22m,
     source: [32m'meal'[39m,
-    source_id: [32m'edf6b95c-8430-4657-811b-2f35f20d4541'[39m,
-    created_at: [32m'2025-08-05T01:00:38.794401+00:00'[39m,
-    updated_at: [32m'2025-08-05T01:00:38.794401+00:00'[39m
+    source_id: [32m'460deb36-926b-4a94-ae96-bbd7f3d69068'[39m,
+    created_at: [32m'2025-08-06T04:17:17.793731+00:00'[39m,
+    updated_at: [32m'2025-08-06T04:17:17.793731+00:00'[39m
   }
 ]
 [E2E] Number of events found in list: [33m6[39m
@@ -234,49 +227,49 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="Calendar Click Behavior for Planned Fitness Events" classname="planned-fitness-events.spec.ts" time="13.707">
+<testcase name="Calendar Click Behavior for Planned Fitness Events" classname="planned-fitness-events.spec.ts" time="13.7">
 <system-out>
 <![CDATA[406: https://ffubefmikpkrxtueeusj.supabase.co/rest/v1/profiles?select=first_name%2Clast_name&user_id=eq.0f3a417b-077d-4868-acef-9d79ada0945b
 [BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()
-[E2E] Created test workout with ID: dd702e23-51e8-4281-a8b1-c8d0a7ad1179
+[E2E] Created test workout with ID: fc853aa9-5bb0-43ab-b3e6-042c73cca77f
 406: https://ffubefmikpkrxtueeusj.supabase.co/rest/v1/profiles?select=first_name%2Clast_name&user_id=eq.0f3a417b-077d-4868-acef-9d79ada0945b
 [BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()
 [E2E] Available calendar events: [
   {
-    id: [32m'593bb046-8d91-4655-90b0-fff15792ea1c'[39m,
+    id: [32m'1424c427-8e95-450c-bdd6-921ce3dac40f'[39m,
     user_id: [32m'0f3a417b-077d-4868-acef-9d79ada0945b'[39m,
-    title: [32m'Meal: Test Calendar Meal 1754355636528'[39m,
+    title: [32m'Meal: Test Calendar Meal 1754453835644'[39m,
     description: [32m'Test meal for calendar click behavior'[39m,
     start_time: [32m'2025-07-28T12:00:00+00:00'[39m,
     end_time: [1mnull[22m,
     source: [32m'meal'[39m,
-    source_id: [32m'edf6b95c-8430-4657-811b-2f35f20d4541'[39m,
-    created_at: [32m'2025-08-05T01:00:38.794401+00:00'[39m,
-    updated_at: [32m'2025-08-05T01:00:38.794401+00:00'[39m
+    source_id: [32m'460deb36-926b-4a94-ae96-bbd7f3d69068'[39m,
+    created_at: [32m'2025-08-06T04:17:17.793731+00:00'[39m,
+    updated_at: [32m'2025-08-06T04:17:17.793731+00:00'[39m
   },
   {
-    id: [32m'0f01bb81-6e8b-43c1-a7f1-cd8e85d5f8f7'[39m,
+    id: [32m'088f1a41-59ea-4442-95b3-5e65c2269241'[39m,
     user_id: [32m'0f3a417b-077d-4868-acef-9d79ada0945b'[39m,
-    title: [32m'Meal: Test Calendar Meal 1754355641724'[39m,
+    title: [32m'Meal: Test Calendar Meal 1754453840678'[39m,
     description: [32m'Test meal for calendar click behavior'[39m,
     start_time: [32m'2025-07-28T12:00:00+00:00'[39m,
     end_time: [1mnull[22m,
     source: [32m'meal'[39m,
-    source_id: [32m'c49ac3b9-7669-4154-9a8a-0a93743b8d46'[39m,
-    created_at: [32m'2025-08-05T01:00:43.742631+00:00'[39m,
-    updated_at: [32m'2025-08-05T01:00:43.742631+00:00'[39m
+    source_id: [32m'8a391417-2fcc-4c19-9b38-6072b70940c4'[39m,
+    created_at: [32m'2025-08-06T04:17:22.83341+00:00'[39m,
+    updated_at: [32m'2025-08-06T04:17:22.83341+00:00'[39m
   },
   {
-    id: [32m'9f2a7f82-67f0-46d4-a893-6806c7ad7377'[39m,
+    id: [32m'd23af6bc-fbec-40d3-9f69-b73e3a747c9f'[39m,
     user_id: [32m'0f3a417b-077d-4868-acef-9d79ada0945b'[39m,
     title: [32m'Workout: Test Calendar Workout'[39m,
     description: [32m'Test notes for calendar workout'[39m,
-    start_time: [32m'2025-08-05T01:03:47.656+00:00'[39m,
+    start_time: [32m'2025-08-06T04:19:28.982+00:00'[39m,
     end_time: [1mnull[22m,
     source: [32m'workout'[39m,
-    source_id: [32m'dd702e23-51e8-4281-a8b1-c8d0a7ad1179'[39m,
-    created_at: [32m'2025-08-05T01:03:47.784971+00:00'[39m,
-    updated_at: [32m'2025-08-05T01:03:47.784971+00:00'[39m
+    source_id: [32m'fc853aa9-5bb0-43ab-b3e6-042c73cca77f'[39m,
+    created_at: [32m'2025-08-06T04:19:29.12676+00:00'[39m,
+    updated_at: [32m'2025-08-06T04:19:29.12676+00:00'[39m
   }
 ]
 406: https://ffubefmikpkrxtueeusj.supabase.co/rest/v1/profiles?select=first_name%2Clast_name&user_id=eq.0f3a417b-077d-4868-acef-9d79ada0945b
@@ -285,20 +278,21 @@
 ]]>
 </system-out>
 </testcase>
-<testcase name="Event List Click Behavior for Planned Fitness Events" classname="planned-fitness-events.spec.ts" time="11.572">
+<testcase name="Event List Click Behavior for Planned Fitness Events" classname="planned-fitness-events.spec.ts" time="11.089">
 <system-out>
 <![CDATA[[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()
-[E2E] Created test workout for event list with ID: 754388d9-0e0a-47f2-a7b4-8d7b4935035b
+[E2E] Created test workout for event list with ID: 0201a761-c535-4b3a-a2d2-3ad64a39a0eb
 [BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()
 [E2E] ✅ Event list click behavior test completed successfully
 ]]>
 </system-out>
 </testcase>
-<testcase name="Planned Session Cleanup After Completion" classname="planned-fitness-events.spec.ts" time="11.812">
+<testcase name="Planned Session Cleanup After Completion" classname="planned-fitness-events.spec.ts" time="11.751">
 <system-out>
 <![CDATA[[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()
-[E2E] Created test workout for cleanup with ID: 28817fdc-873b-4fb2-82c4-cfb71c69e11f
+[E2E] Created test workout for cleanup with ID: b5551598-d105-4842-a136-dc82146f120e
 [BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()
+[BROWSER LOG] error: Failed to load resource: the server responded with a status of 429 ()
 [E2E] Workout status after completion: { status: [32m'completed'[39m, in_progress: [33mfalse[39m }
 [E2E] Calendar events after cleanup: []
 [E2E] Calendar event was cleaned up (unexpected when navigating directly)
@@ -307,21 +301,21 @@
 </system-out>
 </testcase>
 </testsuite>
-<testsuite name="planned-workout-completion.spec.ts" timestamp="2025-08-05T01:00:27.553Z" hostname="chromium" tests="2" failures="0" skipped="0" time="38.356" errors="0">
-<testcase name="Planned Workout Completion Flow › Complete planned workout from calendar - full flow" classname="planned-workout-completion.spec.ts" time="19.734">
+<testsuite name="planned-workout-completion.spec.ts" timestamp="2025-08-06T04:17:06.849Z" hostname="chromium" tests="2" failures="0" skipped="0" time="38.107" errors="0">
+<testcase name="Planned Workout Completion Flow › Complete planned workout from calendar - full flow" classname="planned-workout-completion.spec.ts" time="19.813">
 <system-out>
 <![CDATA[[E2E] Calendar event found, clicking on it
 ]]>
 </system-out>
 </testcase>
-<testcase name="Planned Workout Completion Flow › Complete planned workout from day event list - full flow" classname="planned-workout-completion.spec.ts" time="18.622">
+<testcase name="Planned Workout Completion Flow › Complete planned workout from day event list - full flow" classname="planned-workout-completion.spec.ts" time="18.294">
 </testcase>
 </testsuite>
-<testsuite name="sports-happy-path.spec.ts" timestamp="2025-08-05T01:00:27.553Z" hostname="chromium" tests="1" failures="0" skipped="0" time="14.015" errors="0">
-<testcase name="Sports happy path › Complete Sports Session Lifecycle" classname="sports-happy-path.spec.ts" time="14.015">
+<testsuite name="sports-happy-path.spec.ts" timestamp="2025-08-06T04:17:06.849Z" hostname="chromium" tests="1" failures="0" skipped="0" time="15.693" errors="0">
+<testcase name="Sports happy path › Complete Sports Session Lifecycle" classname="sports-happy-path.spec.ts" time="15.693">
 <system-out>
 <![CDATA[[E2E] Available buttons on page: [
-  [32m'Sports In Progress: Basketball 1754355900509'[39m,
+  [32m'Sports In Progress: Basketball 1754454041059'[39m,
   [32m''[39m,
   [32m'Log Out'[39m,
   [32m'End Activity'[39m

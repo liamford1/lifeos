@@ -9,6 +9,7 @@ import PlanMealModal from '@/components/modals/PlanMealModal';
 import PantryModal from '@/components/modals/PantryModal';
 import AddMealModal from '@/components/modals/AddMealModal';
 import MealsModal from '@/components/modals/MealsModal';
+import AddReceiptModal from '@/components/modals/AddReceiptModal';
 
 import dynamic from "next/dynamic";
 import { supabase } from '@/lib/supabaseClient';
@@ -30,6 +31,7 @@ const Drumstick = dynamic(() => import("lucide-react/dist/esm/icons/drumstick"),
 const Salad = dynamic(() => import("lucide-react/dist/esm/icons/salad"), { ssr: false });
 const Coffee = dynamic(() => import("lucide-react/dist/esm/icons/coffee"), { ssr: false });
 const Pizza = dynamic(() => import("lucide-react/dist/esm/icons/pizza"), { ssr: false });
+const Receipt = dynamic(() => import("lucide-react/dist/esm/icons/receipt"), { ssr: false });
 
 export default function FoodHome() {
   const { user, loading } = useUser();
@@ -43,6 +45,7 @@ export default function FoodHome() {
   const [showPantryModal, setShowPantryModal] = useState(false);
   const [showAddMealModal, setShowAddMealModal] = useState(false);
   const [showMealsModal, setShowMealsModal] = useState(false);
+  const [showAddReceiptModal, setShowAddReceiptModal] = useState(false);
 
 
   useEffect(() => {
@@ -370,6 +373,21 @@ export default function FoodHome() {
                 </div>
               </button>
               
+              <button
+                onClick={() => setShowAddReceiptModal(true)}
+                className="block p-3 bg-card rounded-lg hover:bg-card/80 transition-colors border border-border w-full text-left"
+              >
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 bg-green-100 dark:bg-green-900/20 rounded-lg flex items-center justify-center">
+                    <Receipt className="w-4 h-4 text-green-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-medium text-sm">Add a Receipt</h3>
+                    <p className="text-xs text-muted-foreground">Scan grocery receipt</p>
+                  </div>
+                </div>
+              </button>
+              
 
             </div>
           </div>
@@ -491,6 +509,12 @@ export default function FoodHome() {
       <MealsModal 
         isOpen={showMealsModal} 
         onClose={() => setShowMealsModal(false)}
+      />
+
+      {/* Add Receipt Modal */}
+      <AddReceiptModal 
+        isOpen={showAddReceiptModal} 
+        onClose={() => setShowAddReceiptModal(false)}
       />
 
 

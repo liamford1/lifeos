@@ -33,12 +33,14 @@ test.describe('Login and add meal', () => {
     await page.getByRole('link', { name: /food/i }).click();
     await page.waitForURL((url) => /\/food(\/)?.*$/.test(url.pathname), { timeout: 10000 });
 
-    // Click the "Add a Meal" link
-    await page.getByRole('link', { name: /add a meal/i }).click();
-    await page.waitForURL((url) => /\/food\/addmeal$/.test(url.pathname), { timeout: 10000 });
+    // Wait for the Food page to load completely
+    await expect(page.getByRole('heading', { name: /food & diet dashboard/i })).toBeVisible({ timeout: 10000 });
 
-    // Wait for the Add Meal page to load
-    await expect(page.getByRole('heading', { name: /add a new meal/i })).toBeVisible();
+    // Click the "Add a Meal" button to open the modal
+    await page.getByRole('button', { name: /add a meal/i }).click();
+    
+    // Wait for the Add Meal modal to appear
+    await expect(page.getByRole('heading', { name: /add a new meal/i })).toBeVisible({ timeout: 10000 });
 
     // Create a meal with a unique name
     const mealName = uniqueMealName;
@@ -52,7 +54,7 @@ test.describe('Login and add meal', () => {
     ];
     const mealNotes = 'Serve with pasta and marinara sauce';
 
-    // Fill out the meal form
+    // Fill out the meal form in the modal
     await page.getByPlaceholder('e.g. Chicken Alfredo').fill(mealName);
     await page.getByPlaceholder('Brief description').fill(mealDescription);
     await page.getByLabel('Prep Time (min)').fill(mealPrepTime.toString());
@@ -79,19 +81,18 @@ test.describe('Login and add meal', () => {
     await page.getByRole('button', { name: '+ Add Step' }).click();
     await page.getByPlaceholder('Step 2').fill(mealInstructions[1]);
 
-    // Submit the form
+    // Submit the form in the modal
     await page.getByRole('button', { name: /save meal/i }).click();
+    
+    // Wait for the modal to close (success should close the modal)
+    await expect(page.getByRole('heading', { name: /add a new meal/i })).not.toBeVisible({ timeout: 10000 });
     
     // Wait for the success toast message
     await expect(page.locator('text=Meal created successfully!')).toBeVisible({ timeout: 5000 });
     
-    // Now wait for navigation to Meals list
-    await page.waitForURL((url) => /\/food\/meals$/.test(url.pathname), { timeout: 30000 });
-    await expect(page.getByRole('heading', { name: /meals/i })).toBeVisible({ timeout: 10000 });
-
-    // Reload the Meals list page to ensure fresh data
-    await page.reload();
-    await expect(page.getByRole('heading', { name: /meals/i })).toBeVisible({ timeout: 10000 });
+    // Navigate to the Meals list to verify the meal was created
+    await page.getByRole('button', { name: /recipe search/i }).click();
+    await expect(page.getByRole('heading', { name: 'Meals', exact: true })).toBeVisible({ timeout: 10000 });
 
     // Verify the meal appears in the list with the unique name
     const mealLink = page.getByRole('link', { name: mealName });
@@ -154,9 +155,10 @@ test.describe('Login and add meal', () => {
     await page.waitForURL((url) => /\/food\/meals\/.+/.test(url.pathname), { timeout: 20000 });
     await expect(page.getByRole('heading', { name: updatedMealName, level: 1 })).toBeVisible({ timeout: 10000 });
 
-    // Reload the Meals list page
-    await page.goto('http://localhost:3000/food/meals');
-    await expect(page.getByRole('heading', { name: /meals/i })).toBeVisible({ timeout: 10000 });
+    // Navigate back to the Meals list to verify the updated meal
+    await page.goto('http://localhost:3000/food');
+    await page.getByRole('button', { name: /recipe search/i }).click();
+    await expect(page.getByRole('heading', { name: 'Meals', exact: true })).toBeVisible({ timeout: 10000 });
 
     // Verify the updated meal appears in the list (use the unique updated name)
     const updatedMealLink = page.getByRole('link', { name: updatedMealName });

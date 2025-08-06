@@ -8,7 +8,13 @@ test.describe('Login and add receipt', () => {
     const uniqueStoreName = `Test Grocery Store ${testId}`;
     
     // Capture browser console logs
-    
+    page.on('console', msg => {
+      if (msg.type() === 'error') {
+        console.log(`[BROWSER LOG] error: ${msg.text()}`);
+      } else if (msg.type() === 'log') {
+        console.log(`[BROWSER LOG] log: ${msg.text()}`);
+      }
+    });
 
     // Go to /auth
     await page.goto('http://localhost:3000/auth');
@@ -29,28 +35,30 @@ test.describe('Login and add receipt', () => {
     // ✅ Sanity check: window.supabase is defined
     await page.evaluate(() => {
       if (!window.supabase) throw new Error('[E2E] ❌ window.supabase is still not defined');
-  
+      console.log('[E2E] ✅ window.supabase is defined');
     });
 
-    // Navigate to the Add Receipt page
+    // Navigate to the Food page
     await page.getByRole('link', { name: 'Food' }).click();
     await page.waitForURL((url) => /\/food(\/)?$/.test(url.pathname), { timeout: 10000 });
 
-    // Click the "Add a Receipt" link
-    await page.getByRole('link', { name: 'Add a Receipt' }).click();
-    await page.waitForURL((url) => /\/food\/addreceipt$/.test(url.pathname), { timeout: 10000 });
+    // Click the "Add a Receipt" button to open the modal
+    await page.getByRole('button', { name: 'Add a Receipt' }).click();
+    
+    // Wait for the modal to appear
+    await expect(page.getByRole('heading', { name: 'Add Receipt' })).toBeVisible({ timeout: 10000 });
 
-    // Wait for the Add Receipt page to load
-    await expect(page.getByRole('heading', { name: 'Add Receipt' })).toBeVisible();
+    // Wait for the form to load
+    await page.waitForSelector('input[placeholder="Store name (e.g. Safeway)"]', { timeout: 10000 });
 
     // Fill in the store name with unique identifier
-    await page.getByPlaceholder('Store name').fill(uniqueStoreName);
+    await page.getByPlaceholder('Store name (e.g. Safeway)').fill(uniqueStoreName);
 
     // Add first item: Milk
-    await page.locator('input[placeholder="Item name"]').fill('Test Milk');
-    await page.locator('input[placeholder="Qty"]').fill('2');
-    await page.locator('input[placeholder="Unit"]').fill('gallons');
-    await page.locator('input[placeholder="Price"]').fill('5.99');
+    await page.getByPlaceholder('Item name').fill('Test Milk');
+    await page.getByPlaceholder('Qty').fill('2');
+    await page.getByPlaceholder('Unit').fill('gallons');
+    await page.getByPlaceholder('Price').fill('5.99');
     
     // Click "Add Item" button
     await page.getByRole('button', { name: '+ Add Item' }).click();
@@ -59,10 +67,10 @@ test.describe('Login and add receipt', () => {
     await expect(page.getByText('Test Milk — 2 gallons ($5.99)')).toBeVisible();
 
     // Add second item: Eggs
-    await page.locator('input[placeholder="Item name"]').fill('Test Eggs');
-    await page.locator('input[placeholder="Qty"]').fill('12');
-    await page.locator('input[placeholder="Unit"]').fill('count');
-    await page.locator('input[placeholder="Price"]').fill('3.49');
+    await page.getByPlaceholder('Item name').fill('Test Eggs');
+    await page.getByPlaceholder('Qty').fill('12');
+    await page.getByPlaceholder('Unit').fill('count');
+    await page.getByPlaceholder('Price').fill('3.49');
     
     // Click "Add Item" button
     await page.getByRole('button', { name: '+ Add Item' }).click();
@@ -71,10 +79,10 @@ test.describe('Login and add receipt', () => {
     await expect(page.getByText('Test Eggs — 12 count ($3.49)')).toBeVisible();
 
     // Add third item: Bread
-    await page.locator('input[placeholder="Item name"]').fill('Test Bread');
-    await page.locator('input[placeholder="Qty"]').fill('1');
-    await page.locator('input[placeholder="Unit"]').fill('loaf');
-    await page.locator('input[placeholder="Price"]').fill('2.99');
+    await page.getByPlaceholder('Item name').fill('Test Bread');
+    await page.getByPlaceholder('Qty').fill('1');
+    await page.getByPlaceholder('Unit').fill('loaf');
+    await page.getByPlaceholder('Price').fill('2.99');
     
     // Click "Add Item" button
     await page.getByRole('button', { name: '+ Add Item' }).click();
@@ -88,17 +96,14 @@ test.describe('Login and add receipt', () => {
     // Wait for success message
     await expect(page.getByText('✅ Receipt and items saved!')).toBeVisible({ timeout: 10000 });
 
-    // Wait for the form to reset
-    await expect(page.getByPlaceholder('Store name')).toHaveValue('');
+    // Wait for the modal to close
+    await expect(page.getByRole('heading', { name: 'Add Receipt' })).not.toBeVisible({ timeout: 10000 });
 
-    // Reload the page to verify persistence
-    await page.reload();
-    await page.waitForLoadState('networkidle');
+    // Verify that the new receipt appears in the "Past Receipts" section by reopening the modal
+    await page.getByRole('button', { name: 'Add a Receipt' }).click();
+    await expect(page.getByRole('heading', { name: 'Add Receipt' })).toBeVisible({ timeout: 10000 });
 
-    // Wait for the page to load again
-    await expect(page.getByRole('heading', { name: 'Add Receipt' })).toBeVisible();
-
-    // Verify that the new receipt appears in the "Past Receipts" section
+    // Wait for past receipts to load
     await expect(page.getByText('Past Receipts')).toBeVisible();
     await expect(page.getByText(uniqueStoreName)).toBeVisible();
 
@@ -125,11 +130,11 @@ test.describe('Login and add receipt', () => {
     await expect(page.getByText('$3.49')).toBeVisible();
     await expect(page.getByText('$2.99')).toBeVisible();
 
-    // Navigate to the Pantry page to verify items were added to inventory
-    await page.getByRole('link', { name: 'Food' }).click();
-    await page.waitForURL((url) => /\/food(\/)?$/.test(url.pathname), { timeout: 10000 });
+    // Close the modal
+    await page.getByRole('button', { name: 'Close modal' }).click();
+    await expect(page.getByRole('heading', { name: 'Add Receipt' })).not.toBeVisible();
 
-    // Click the "View Pantry" button from the food page to open the modal
+    // Navigate to the Pantry page to verify items were added to inventory
     await page.getByRole('button', { name: 'View Pantry' }).click();
     
     // Wait for the pantry modal to appear
@@ -150,11 +155,11 @@ test.describe('Login and add receipt', () => {
         .eq('user_id', userId)
         .in('name', ['Test Milk', 'Test Eggs', 'Test Bread']);
       
-
+      console.log('[E2E] Debug items in database:', items);
       return items;
     });
     
-    
+    console.log('[E2E] Debug items found:', debugItems);
 
     // Wait a bit more for any async operations to complete
     await page.waitForTimeout(3000);
@@ -180,7 +185,11 @@ test.describe('Login and add receipt', () => {
     const breadRow = page.locator('li').filter({ hasText: 'Test Bread' }).first();
     await expect(breadRow.getByText('Added from: receipt')).toBeVisible();
 
-    // Reload the pantry page to verify persistence
+    // Close the pantry modal
+    await page.getByRole('button', { name: 'Close modal' }).click();
+    await expect(page.getByRole('heading', { name: 'Your Pantry' })).not.toBeVisible();
+
+    // Reload the page to verify persistence
     await page.reload();
     
     // Wait for the page to load and then click the View Pantry button
@@ -199,26 +208,26 @@ test.describe('Login and add receipt', () => {
     await expect(page.locator('li').filter({ hasText: 'Test Eggs' }).first()).toBeVisible({ timeout: 15000 });
     await expect(page.locator('li').filter({ hasText: 'Test Bread' }).first()).toBeVisible({ timeout: 15000 });
 
-         // Clean up test data by getting the receipt ID from the database
-     const receiptId = await page.evaluate(async (storeName) => {
-       const supabase = window.supabase;
-       const { data: session } = await supabase.auth.getSession();
-       const userId = session.session.user.id;
-       
-       const { data: receipts } = await supabase
-         .from('receipts')
-         .select('id')
-         .eq('user_id', userId)
-         .eq('store_name', storeName)
-         .limit(1);
-       
-       return receipts?.[0]?.id;
-     }, uniqueStoreName);
-     
-     if (receiptId) {
-       await cleanupTestReceipt(page, receiptId);
-     }
-     
-     await page.waitForTimeout(500);
+    // Clean up test data by getting the receipt ID from the database
+    const receiptId = await page.evaluate(async (storeName) => {
+      const supabase = window.supabase;
+      const { data: session } = await supabase.auth.getSession();
+      const userId = session.session.user.id;
+      
+      const { data: receipts } = await supabase
+        .from('receipts')
+        .select('id')
+        .eq('user_id', userId)
+        .eq('store_name', storeName)
+        .limit(1);
+      
+      return receipts?.[0]?.id;
+    }, uniqueStoreName);
+    
+    if (receiptId) {
+      await cleanupTestReceipt(page, receiptId);
+    }
+    
+    await page.waitForTimeout(500);
   });
 }); 
