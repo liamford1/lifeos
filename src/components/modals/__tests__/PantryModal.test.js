@@ -53,6 +53,25 @@ jest.mock('@/components/forms/ManualPantryItemModal', () => {
   };
 });
 
+jest.mock('@/components/modals/AddReceiptModal', () => {
+  return function MockAddReceiptModal({ isOpen, onClose, onSuccess }) {
+    if (!isOpen) return null;
+    return (
+      <div data-testid="add-receipt-modal">
+        <button onClick={onClose}>Close Receipt Modal</button>
+        <button onClick={onSuccess}>Add Receipt Success</button>
+      </div>
+    );
+  };
+});
+
+jest.mock('@/components/client/Toast', () => ({
+  useToast: () => ({
+    showSuccess: jest.fn(),
+    showError: jest.fn()
+  })
+}));
+
 describe('PantryModal', () => {
   const mockOnClose = jest.fn();
 

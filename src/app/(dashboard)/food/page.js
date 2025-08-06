@@ -2,11 +2,14 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useUser } from '@/context/UserContext';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
 import PlanMealModal from '@/components/modals/PlanMealModal';
 import PantryModal from '@/components/modals/PantryModal';
+import AddMealModal from '@/components/modals/AddMealModal';
+import MealsModal from '@/components/modals/MealsModal';
+import AddReceiptModal from '@/components/modals/AddReceiptModal';
 import dynamic from "next/dynamic";
 import { supabase } from '@/lib/supabaseClient';
 import dayjs from 'dayjs';
@@ -31,18 +34,41 @@ const Pizza = dynamic(() => import("lucide-react/dist/esm/icons/pizza"), { ssr: 
 export default function FoodHome() {
   const { user, loading } = useUser();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [recentlyCooked, setRecentlyCooked] = useState([]);
   const [upcomingMeals, setUpcomingMeals] = useState([]);
   const [loadingCooked, setLoadingCooked] = useState(false);
   const [loadingPlanned, setLoadingPlanned] = useState(false);
   const [showPlanMealModal, setShowPlanMealModal] = useState(false);
   const [showPantryModal, setShowPantryModal] = useState(false);
+  const [showAddMealModal, setShowAddMealModal] = useState(false);
+  const [showMealsModal, setShowMealsModal] = useState(false);
+  const [showAddReceiptModal, setShowAddReceiptModal] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
       router.push('/auth');
     }
   }, [loading, user, router]);
+
+  // Check for URL parameters to open modals
+  useEffect(() => {
+    if (searchParams.get('showAddMealModal') === 'true') {
+      setShowAddMealModal(true);
+      // Clean up the URL parameter
+      const newUrl = new URL(window.location);
+      newUrl.searchParams.delete('showAddMealModal');
+      window.history.replaceState({}, '', newUrl);
+    }
+    
+    if (searchParams.get('showMealsModal') === 'true') {
+      setShowMealsModal(true);
+      // Clean up the URL parameter
+      const newUrl = new URL(window.location);
+      newUrl.searchParams.delete('showMealsModal');
+      window.history.replaceState({}, '', newUrl);
+    }
+  }, [searchParams]);
 
   // Fetch recently cooked meals
   useEffect(() => {
@@ -284,9 +310,9 @@ export default function FoodHome() {
               Quick Actions
             </h2>
             <div className="space-y-3">
-              <Link
-                href="/food/addmeal"
-                className="block p-3 bg-card rounded-lg hover:bg-card/80 transition-colors border border-border"
+              <button
+                onClick={() => setShowAddMealModal(true)}
+                className="block p-3 bg-card rounded-lg hover:bg-card/80 transition-colors border border-border w-full text-left"
               >
                 <div className="flex items-center space-x-3">
                   <div className="w-8 h-8 bg-green-100 dark:bg-green-900/20 rounded-lg flex items-center justify-center">
@@ -297,7 +323,7 @@ export default function FoodHome() {
                     <p className="text-xs text-muted-foreground">Create new recipe</p>
                   </div>
                 </div>
-              </Link>
+              </button>
               
               <button
                 onClick={() => setShowPlanMealModal(true)}
@@ -329,9 +355,9 @@ export default function FoodHome() {
                 </div>
               </button>
               
-              <Link
-                href="/food/meals"
-                className="block p-3 bg-card rounded-lg hover:bg-card/80 transition-colors border border-border"
+              <button
+                onClick={() => setShowMealsModal(true)}
+                className="block p-3 bg-card rounded-lg hover:bg-card/80 transition-colors border border-border w-full text-left"
               >
                 <div className="flex items-center space-x-3">
                   <div className="w-8 h-8 bg-purple-100 dark:bg-purple-900/20 rounded-lg flex items-center justify-center">
@@ -342,11 +368,11 @@ export default function FoodHome() {
                     <p className="text-xs text-muted-foreground">Browse recipes</p>
                   </div>
                 </div>
-              </Link>
+              </button>
               
-              <Link
-                href="/food/addreceipt"
-                className="block p-3 bg-card rounded-lg hover:bg-card/80 transition-colors border border-border"
+              <button
+                onClick={() => setShowAddReceiptModal(true)}
+                className="block p-3 bg-card rounded-lg hover:bg-card/80 transition-colors border border-border w-full text-left"
               >
                 <div className="flex items-center space-x-3">
                   <div className="w-8 h-8 bg-red-100 dark:bg-red-900/20 rounded-lg flex items-center justify-center">
@@ -357,7 +383,7 @@ export default function FoodHome() {
                     <p className="text-xs text-muted-foreground">Log a grocery receipt</p>
                   </div>
                 </div>
-              </Link>
+              </button>
             </div>
           </div>
 
@@ -431,6 +457,63 @@ export default function FoodHome() {
       <PantryModal 
         isOpen={showPantryModal} 
         onClose={() => setShowPantryModal(false)}
+      />
+
+      {/* Add Meal Modal */}
+      <AddMealModal 
+        isOpen={showAddMealModal} 
+        onClose={() => setShowAddMealModal(false)}
+        onSuccess={() => {
+          // Refresh the recently cooked meals when a meal is successfully created
+          const fetchRecentlyCooked = async () => {
+            if (!user) return;
+            
+            setLoadingCooked(true);
+            try {
+              const { data, error } = await supabase
+                .from('cooked_meals')
+                .select(`
+                  *,
+                  meals (
+                    id,
+                    name
+                  )
+                `)
+                .eq('user_id', user.id)
+                .order('last_cooked_at', { ascending: false })
+                .limit(2);
+
+              if (error) {
+                console.error('Error fetching cooked meals:', error);
+                setRecentlyCooked([]);
+              } else {
+                setRecentlyCooked(data || []);
+              }
+            } catch (err) {
+              console.error('Error fetching cooked meals:', err);
+              setRecentlyCooked([]);
+            } finally {
+              setLoadingCooked(false);
+            }
+          };
+          fetchRecentlyCooked();
+        }}
+      />
+
+      {/* Meals Modal */}
+      <MealsModal 
+        isOpen={showMealsModal} 
+        onClose={() => setShowMealsModal(false)}
+      />
+
+      {/* Add Receipt Modal */}
+      <AddReceiptModal 
+        isOpen={showAddReceiptModal} 
+        onClose={() => setShowAddReceiptModal(false)}
+        onSuccess={() => {
+          // Optionally refresh data when a receipt is successfully added
+          // This could refresh pantry items or other related data
+        }}
       />
     </div>
   );

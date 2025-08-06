@@ -1,0 +1,1482 @@
+{
+  "config": {
+    "configFile": "/Users/liamford/Documents/plannerapp/playwright.config.ts",
+    "rootDir": "/Users/liamford/Documents/plannerapp/e2e",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "/Users/liamford/Documents/plannerapp/e2e/global-setup.js",
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "reporter": [
+      [
+        "html",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "test-results/results.json"
+        }
+      ],
+      [
+        "junit",
+        {
+          "outputFile": "test-results/results.xml"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "quiet": false,
+    "projects": [
+      {
+        "outputDir": "/Users/liamford/Documents/plannerapp/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/Users/liamford/Documents/plannerapp/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 60000
+      }
+    ],
+    "shard": null,
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.54.1",
+    "workers": 1,
+    "webServer": {
+      "command": "npm run e2e:start",
+      "url": "http://localhost:3000",
+      "timeout": 120000,
+      "reuseExistingServer": true
+    }
+  },
+  "suites": [
+    {
+      "title": "basic-test.spec.ts",
+      "file": "basic-test.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Basic page load test",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 1193,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2025-08-05T01:00:27.849Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "6a887aa2576b40705ac9-e3c5b2796c70c1720921",
+          "file": "basic-test.spec.ts",
+          "line": 4,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "calendar-day-plus-button.spec.ts",
+      "file": "calendar-day-plus-button.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Calendar Day Plus Button Functionality",
+          "file": "calendar-day-plus-button.spec.ts",
+          "line": 4,
+          "column": 6,
+          "specs": [
+            {
+              "title": "Plus button appears on selected day and opens planning modal",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1943,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-05T01:00:29.217Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "09b582d0735f617f013b-f27e4fd9566c85e8a121",
+              "file": "calendar-day-plus-button.spec.ts",
+              "line": 14,
+              "column": 7
+            },
+            {
+              "title": "General Event option opens add event modal with pre-selected date",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1056,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-05T01:00:31.163Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "09b582d0735f617f013b-23b4a07f779ca38a80d1",
+              "file": "calendar-day-plus-button.spec.ts",
+              "line": 57,
+              "column": 7
+            },
+            {
+              "title": "Meal option opens meal planning modal with selected date",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 964,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-05T01:00:32.221Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "09b582d0735f617f013b-b16c7d181ef90d9b4c85",
+              "file": "calendar-day-plus-button.spec.ts",
+              "line": 88,
+              "column": 7
+            },
+            {
+              "title": "Workout option navigates to fitness planner with selected date",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 957,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-05T01:00:33.187Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "09b582d0735f617f013b-072a13211f22b9c1ca79",
+              "file": "calendar-day-plus-button.spec.ts",
+              "line": 118,
+              "column": 7
+            },
+            {
+              "title": "Plus button only appears on selected day",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1428,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-05T01:00:34.146Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "09b582d0735f617f013b-b7b82ddbef8d3178d4d7",
+              "file": "calendar-day-plus-button.spec.ts",
+              "line": 141,
+              "column": 7
+            },
+            {
+              "title": "Cancel button closes the modal",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 913,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-05T01:00:35.576Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "09b582d0735f617f013b-5a3a7600c98ed116f270",
+              "file": "calendar-day-plus-button.spec.ts",
+              "line": 181,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "calendar-meal-click.spec.ts",
+      "file": "calendar-meal-click.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Calendar Meal Click Behavior",
+          "file": "calendar-meal-click.spec.ts",
+          "line": 4,
+          "column": 6,
+          "specs": [
+            {
+              "title": "Clicking meal event on calendar navigates to cook page",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5173,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-05T01:00:36.496Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "bf060deadd24ae209234-c2aba428d19776fb0b9c",
+              "file": "calendar-meal-click.spec.ts",
+              "line": 71,
+              "column": 7
+            },
+            {
+              "title": "Clicking meal event in day view list navigates to cook page",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 5185,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-05T01:00:41.674Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "bf060deadd24ae209234-fdaebc816afdfaa98256",
+              "file": "calendar-meal-click.spec.ts",
+              "line": 123,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "cardio-session.spec.ts",
+      "file": "cardio-session.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Complete Cardio Session Lifecycle",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 24793,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] log: [E2E] Cleaning up cardio sessions for user: 0f3a417b-077d-4868-acef-9d79ada0945b\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] log: [E2E] All cardio sessions before cleanup: []\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] log: [E2E] Successfully cleaned up ALL cardio sessions\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] log: [E2E] Remaining cardio sessions after cleanup: []\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()\n"
+                    },
+                    {
+                      "text": "[E2E] Sessions in database after cleanup: []\n"
+                    },
+                    {
+                      "text": "[E2E] Number of sessions shown in UI: \u001b[33m0\u001b[39m\n"
+                    },
+                    {
+                      "text": "[E2E] Start Cardio button visible: \u001b[33mtrue\u001b[39m\n"
+                    },
+                    {
+                      "text": "[E2E] Empty state message visible: \u001b[33mtrue\u001b[39m\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] error: Error fetching cooked meals: {message: TypeError: Failed to fetch (ffubefmikpkrxtueeusj.supabase.co), details: TypeError: Failed to fetch\n    at http://localhost…t/static/chunks/5647-84631fd367f02df5.js:6:19582), hint: , code: }\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] error: Error fetching planned meals: {message: TypeError: Failed to fetch (ffubefmikpkrxtueeusj.supabase.co), details: TypeError: Failed to fetch\n    at http://localhost…t/static/chunks/5647-84631fd367f02df5.js:6:19582), hint: , code: }\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()\n"
+                    },
+                    {
+                      "text": "[E2E] Start Cardio button not visible on final test, skipping\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2025-08-05T01:00:46.876Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "330739d40c5e63b65ae0-640d349dbc2a1b73fba8",
+          "file": "cardio-session.spec.ts",
+          "line": 23,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "enhanced-plus-button.spec.ts",
+      "file": "enhanced-plus-button.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Enhanced Plus Button Functionality",
+          "file": "enhanced-plus-button.spec.ts",
+          "line": 4,
+          "column": 6,
+          "specs": [
+            {
+              "title": "Plus button shows selection modal with three options",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 822,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-05T01:01:11.678Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "143b09e0edc26e068f10-3935b29b4138958d9d61",
+              "file": "enhanced-plus-button.spec.ts",
+              "line": 14,
+              "column": 7
+            },
+            {
+              "title": "General Event option opens existing add event modal",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 819,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-05T01:01:12.504Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "143b09e0edc26e068f10-5baa3d8fe9fae9a33671",
+              "file": "enhanced-plus-button.spec.ts",
+              "line": 37,
+              "column": 7
+            },
+            {
+              "title": "Meal option opens meal planning modal",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 907,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-05T01:01:13.325Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "143b09e0edc26e068f10-755315080f122f888f9b",
+              "file": "enhanced-plus-button.spec.ts",
+              "line": 53,
+              "column": 7
+            },
+            {
+              "title": "Workout option navigates to fitness planner page",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 873,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-05T01:01:14.234Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "143b09e0edc26e068f10-bdc69e2472c2bd890d90",
+              "file": "enhanced-plus-button.spec.ts",
+              "line": 76,
+              "column": 7
+            },
+            {
+              "title": "Cancel button closes selection modal",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 841,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-05T01:01:15.109Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "143b09e0edc26e068f10-0dfccc18f8f2e532c699",
+              "file": "enhanced-plus-button.spec.ts",
+              "line": 91,
+              "column": 7
+            },
+            {
+              "title": "Modal can be closed by clicking outside",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 823,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-05T01:01:15.952Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "143b09e0edc26e068f10-48a2d3371b2bf0ec2500",
+              "file": "enhanced-plus-button.spec.ts",
+              "line": 108,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "login-add-meal.spec.ts",
+      "file": "login-add-meal.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Login and add meal",
+          "file": "login-add-meal.spec.ts",
+          "line": 5,
+          "column": 6,
+          "specs": [
+            {
+              "title": "Basic meal workflow: add and verify meal",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 60021,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 60000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 60000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 60000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "/Users/liamford/Documents/plannerapp/e2e/login-add-meal.spec.ts",
+                            "column": 59,
+                            "line": 37
+                          },
+                          "message": "Error: locator.click: Test timeout of 60000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('link', { name: /add a meal/i })\u001b[22m\n\n\n\u001b[0m \u001b[90m 35 |\u001b[39m\n \u001b[90m 36 |\u001b[39m     \u001b[90m// Click the \"Add a Meal\" link\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 37 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'link'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/add a meal/i\u001b[39m })\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                           \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 38 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForURL((url) \u001b[33m=>\u001b[39m \u001b[35m/\\/food\\/addmeal$/\u001b[39m\u001b[33m.\u001b[39mtest(url\u001b[33m.\u001b[39mpathname)\u001b[33m,\u001b[39m { timeout\u001b[33m:\u001b[39m \u001b[35m10000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m 39 |\u001b[39m\n \u001b[90m 40 |\u001b[39m     \u001b[90m// Wait for the Add Meal page to load\u001b[39m\u001b[0m\n\u001b[2m    at /Users/liamford/Documents/plannerapp/e2e/login-add-meal.spec.ts:37:59\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-05T01:01:16.779Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/liamford/Documents/plannerapp/test-results/login-add-meal-Login-and-a-5d6e5-orkflow-add-and-verify-meal-chromium/error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "370c9b7c05a29463c46b-007cc00779d76eaa3057",
+              "file": "login-add-meal.spec.ts",
+              "line": 6,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "login-add-pantry-item.spec.ts",
+      "file": "login-add-pantry-item.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Complete pantry workflow with single item",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11436,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2025-08-05T01:02:17.098Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "a13aabc692b1169324f4-7be00db8cfc61ece7168",
+          "file": "login-add-pantry-item.spec.ts",
+          "line": 10,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "login-add-planned-meal.spec.ts",
+      "file": "login-add-planned-meal.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Meal planning workflow: plan and verify meal",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 24676,
+                  "error": {
+                    "message": "TimeoutError: page.waitForURL: Timeout 20000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation until \"load\"\n============================================================",
+                    "stack": "TimeoutError: page.waitForURL: Timeout 20000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation until \"load\"\n============================================================\n    at /Users/liamford/Documents/plannerapp/e2e/login-add-planned-meal.spec.ts:55:14",
+                    "location": {
+                      "file": "/Users/liamford/Documents/plannerapp/e2e/login-add-planned-meal.spec.ts",
+                      "column": 14,
+                      "line": 55
+                    },
+                    "snippet": "\u001b[0m \u001b[90m 53 |\u001b[39m   \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mlocator(\u001b[32m'text=Meal created successfully!'\u001b[39m))\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m5000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m 54 |\u001b[39m   \n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 55 |\u001b[39m   \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForURL((url) \u001b[33m=>\u001b[39m \u001b[35m/\\/food\\/meals$/\u001b[39m\u001b[33m.\u001b[39mtest(url\u001b[33m.\u001b[39mpathname)\u001b[33m,\u001b[39m { timeout\u001b[33m:\u001b[39m \u001b[35m20000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m              \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 56 |\u001b[39m   \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'heading'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/meals/i\u001b[39m }))\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m10000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m 57 |\u001b[39m\n \u001b[90m 58 |\u001b[39m   \u001b[90m// Plan the meal using the modal\u001b[39m\u001b[0m"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/liamford/Documents/plannerapp/e2e/login-add-planned-meal.spec.ts",
+                        "column": 14,
+                        "line": 55
+                      },
+                      "message": "TimeoutError: page.waitForURL: Timeout 20000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation until \"load\"\n============================================================\n\n\u001b[0m \u001b[90m 53 |\u001b[39m   \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mlocator(\u001b[32m'text=Meal created successfully!'\u001b[39m))\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m5000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m 54 |\u001b[39m   \n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 55 |\u001b[39m   \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mwaitForURL((url) \u001b[33m=>\u001b[39m \u001b[35m/\\/food\\/meals$/\u001b[39m\u001b[33m.\u001b[39mtest(url\u001b[33m.\u001b[39mpathname)\u001b[33m,\u001b[39m { timeout\u001b[33m:\u001b[39m \u001b[35m20000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m              \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 56 |\u001b[39m   \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'heading'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/meals/i\u001b[39m }))\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m10000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m 57 |\u001b[39m\n \u001b[90m 58 |\u001b[39m   \u001b[90m// Plan the meal using the modal\u001b[39m\u001b[0m\n\u001b[2m    at /Users/liamford/Documents/plannerapp/e2e/login-add-planned-meal.spec.ts:55:14\u001b[22m"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2025-08-05T01:02:28.626Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/liamford/Documents/plannerapp/test-results/login-add-planned-meal-Mea-2d323-rkflow-plan-and-verify-meal-chromium/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/liamford/Documents/plannerapp/e2e/login-add-planned-meal.spec.ts",
+                    "column": 14,
+                    "line": 55
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "9db1369e966a90199969-4baf10e5bbdf87dc4cc4",
+          "file": "login-add-planned-meal.spec.ts",
+          "line": 12,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "login-add-receipt.spec.ts",
+      "file": "login-add-receipt.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Login and add receipt",
+          "file": "login-add-receipt.spec.ts",
+          "line": 5,
+          "column": 6,
+          "specs": [
+            {
+              "title": "Complete receipt workflow with multiple items",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 15175,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-05T01:02:53.606Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "ed7ab48539854822419d-0da350a12901a15efab7",
+              "file": "login-add-receipt.spec.ts",
+              "line": 6,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "login-add-workout.spec.ts",
+      "file": "login-add-workout.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Login and add workout",
+          "file": "login-add-workout.spec.ts",
+          "line": 25,
+          "column": 6,
+          "specs": [
+            {
+              "title": "Login and add a workout",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 18155,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[E2E] ✅ Workout verified in database, navigating directly\n"
+                        },
+                        {
+                          "text": "[E2E] ✅ Updated workout found in UI\n"
+                        },
+                        {
+                          "text": "[E2E] ✅ Final workout verification successful: Push Day 1754355788933 Edited\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-05T01:03:08.889Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "a172fcf2bbca2cfe11a7-14f68b0200aa5f52e299",
+              "file": "login-add-workout.spec.ts",
+              "line": 26,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "planned-fitness-events.spec.ts",
+      "file": "planned-fitness-events.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Planned Fitness Events - Complete Flow",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 17927,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "406: https://ffubefmikpkrxtueeusj.supabase.co/rest/v1/profiles?select=first_name%2Clast_name&user_id=eq.0f3a417b-077d-4868-acef-9d79ada0945b\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] log: [E2E] ✅ window.supabase is defined\n"
+                    },
+                    {
+                      "text": "[E2E] Form error: \n"
+                    },
+                    {
+                      "text": "[E2E] Planned workout created successfully in database\n"
+                    },
+                    {
+                      "text": "[E2E] Workout calendar events found: \u001b[33m1\u001b[39m\n"
+                    },
+                    {
+                      "text": "[E2E] Planned cardio created successfully in database\n"
+                    },
+                    {
+                      "text": "[E2E] Cardio calendar events found: \u001b[33m1\u001b[39m\n"
+                    },
+                    {
+                      "text": "[E2E] Sports form error: \n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] log: [E2E] All sports sessions found: [Object]\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] log: [E2E] Planned sports sessions found: [Object]\n"
+                    },
+                    {
+                      "text": "[E2E] Planned sports created successfully\n"
+                    },
+                    {
+                      "text": "[E2E] Sports calendar events found: \u001b[33m1\u001b[39m\n"
+                    },
+                    {
+                      "text": "406: https://ffubefmikpkrxtueeusj.supabase.co/rest/v1/profiles?select=first_name%2Clast_name&user_id=eq.0f3a417b-077d-4868-acef-9d79ada0945b\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()\n"
+                    },
+                    {
+                      "text": "[E2E] All calendar events in database: [\n  {\n    id: \u001b[32m'4c2a4f84-8032-4838-a6fe-6597b6f3069f'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Sport: Test Planned Sports'\u001b[39m,\n    description: \u001b[32m'Test planned sports notes'\u001b[39m,\n    start_time: \u001b[32m'2025-08-04T00:00:00+00:00'\u001b[39m,\n    end_time: \u001b[32m'2025-08-05T01:00:00+00:00'\u001b[39m,\n    source: \u001b[32m'sport'\u001b[39m,\n    source_id: \u001b[32m'aa9e5a05-ef79-416d-85b4-ed175db58eca'\u001b[39m,\n    created_at: \u001b[32m'2025-08-05T01:03:34.365236+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-05T01:03:34.365236+00:00'\u001b[39m\n  },\n  {\n    id: \u001b[32m'14fad05a-4bb4-479b-b2ad-31b31e7bcad9'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Cardio: Test Planned Cardio'\u001b[39m,\n    description: \u001b[32m'Test planned cardio notes'\u001b[39m,\n    start_time: \u001b[32m'2025-08-04T00:00:00+00:00'\u001b[39m,\n    end_time: \u001b[32m'2025-08-05T00:00:00+00:00'\u001b[39m,\n    source: \u001b[32m'cardio'\u001b[39m,\n    source_id: \u001b[32m'3fa83bf9-7e49-47be-a56c-e7c112d14f7a'\u001b[39m,\n    created_at: \u001b[32m'2025-08-05T01:03:32.83786+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-05T01:03:32.83786+00:00'\u001b[39m\n  },\n  {\n    id: \u001b[32m'ae24a833-e9a5-429a-8071-9a3b24798273'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Workout: Test Planned Workout'\u001b[39m,\n    description: \u001b[32m'Test planned workout notes'\u001b[39m,\n    start_time: \u001b[32m'2025-08-04T00:00:00+00:00'\u001b[39m,\n    end_time: \u001b[32m'2025-08-04T23:00:00+00:00'\u001b[39m,\n    source: \u001b[32m'workout'\u001b[39m,\n    source_id: \u001b[32m'994f4698-39bc-40a5-944a-3245b90878c6'\u001b[39m,\n    created_at: \u001b[32m'2025-08-05T01:03:31.523838+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-05T01:03:31.523838+00:00'\u001b[39m\n  },\n  {\n    id: \u001b[32m'0f01bb81-6e8b-43c1-a7f1-cd8e85d5f8f7'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Meal: Test Calendar Meal 1754355641724'\u001b[39m,\n    description: \u001b[32m'Test meal for calendar click behavior'\u001b[39m,\n    start_time: \u001b[32m'2025-07-28T12:00:00+00:00'\u001b[39m,\n    end_time: \u001b[1mnull\u001b[22m,\n    source: \u001b[32m'meal'\u001b[39m,\n    source_id: \u001b[32m'c49ac3b9-7669-4154-9a8a-0a93743b8d46'\u001b[39m,\n    created_at: \u001b[32m'2025-08-05T01:00:43.742631+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-05T01:00:43.742631+00:00'\u001b[39m\n  },\n  {\n    id: \u001b[32m'593bb046-8d91-4655-90b0-fff15792ea1c'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Meal: Test Calendar Meal 1754355636528'\u001b[39m,\n    description: \u001b[32m'Test meal for calendar click behavior'\u001b[39m,\n    start_time: \u001b[32m'2025-07-28T12:00:00+00:00'\u001b[39m,\n    end_time: \u001b[1mnull\u001b[22m,\n    source: \u001b[32m'meal'\u001b[39m,\n    source_id: \u001b[32m'edf6b95c-8430-4657-811b-2f35f20d4541'\u001b[39m,\n    created_at: \u001b[32m'2025-08-05T01:00:38.794401+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-05T01:00:38.794401+00:00'\u001b[39m\n  }\n]\n"
+                    },
+                    {
+                      "text": "[E2E] Number of events found in list: \u001b[33m6\u001b[39m\n"
+                    },
+                    {
+                      "text": "[E2E] Verification attempt 1: { workout: \u001b[33mfalse\u001b[39m, cardio: \u001b[33mfalse\u001b[39m, sports: \u001b[33mfalse\u001b[39m }\n"
+                    },
+                    {
+                      "text": "[E2E] Not all events found, retry 1/2\n"
+                    },
+                    {
+                      "text": "[E2E] Verification attempt 2: { workout: \u001b[33mfalse\u001b[39m, cardio: \u001b[33mfalse\u001b[39m, sports: \u001b[33mfalse\u001b[39m }\n"
+                    },
+                    {
+                      "text": "[E2E] Not all events found, retry 2/2\n"
+                    },
+                    {
+                      "text": "[E2E] Final UI verification: { workout: \u001b[33mfalse\u001b[39m, cardio: \u001b[33mfalse\u001b[39m, sports: \u001b[33mfalse\u001b[39m }\n"
+                    },
+                    {
+                      "text": "[E2E] Some events not visible in UI, checking database...\n"
+                    },
+                    {
+                      "text": "[E2E] Database fallback check: { workoutExists: \u001b[33mtrue\u001b[39m, cardioExists: \u001b[33mtrue\u001b[39m, sportsExists: \u001b[33mtrue\u001b[39m }\n"
+                    },
+                    {
+                      "text": "[E2E] 3/3 events exist in database - test successful!\n"
+                    },
+                    {
+                      "text": "[E2E] Final database state: { workoutCount: \u001b[33m1\u001b[39m, cardioCount: \u001b[33m1\u001b[39m, sportsCount: \u001b[33m1\u001b[39m, calendarCount: \u001b[33m3\u001b[39m }\n"
+                    },
+                    {
+                      "text": "[E2E] ✅ Planned fitness events test completed successfully\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2025-08-05T01:03:27.062Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "543845632da372441ed5-f08ac313a389a7d14da0",
+          "file": "planned-fitness-events.spec.ts",
+          "line": 53,
+          "column": 5
+        },
+        {
+          "title": "Calendar Click Behavior for Planned Fitness Events",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 13707,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "406: https://ffubefmikpkrxtueeusj.supabase.co/rest/v1/profiles?select=first_name%2Clast_name&user_id=eq.0f3a417b-077d-4868-acef-9d79ada0945b\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()\n"
+                    },
+                    {
+                      "text": "[E2E] Created test workout with ID: dd702e23-51e8-4281-a8b1-c8d0a7ad1179\n"
+                    },
+                    {
+                      "text": "406: https://ffubefmikpkrxtueeusj.supabase.co/rest/v1/profiles?select=first_name%2Clast_name&user_id=eq.0f3a417b-077d-4868-acef-9d79ada0945b\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()\n"
+                    },
+                    {
+                      "text": "[E2E] Available calendar events: [\n  {\n    id: \u001b[32m'593bb046-8d91-4655-90b0-fff15792ea1c'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Meal: Test Calendar Meal 1754355636528'\u001b[39m,\n    description: \u001b[32m'Test meal for calendar click behavior'\u001b[39m,\n    start_time: \u001b[32m'2025-07-28T12:00:00+00:00'\u001b[39m,\n    end_time: \u001b[1mnull\u001b[22m,\n    source: \u001b[32m'meal'\u001b[39m,\n    source_id: \u001b[32m'edf6b95c-8430-4657-811b-2f35f20d4541'\u001b[39m,\n    created_at: \u001b[32m'2025-08-05T01:00:38.794401+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-05T01:00:38.794401+00:00'\u001b[39m\n  },\n  {\n    id: \u001b[32m'0f01bb81-6e8b-43c1-a7f1-cd8e85d5f8f7'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Meal: Test Calendar Meal 1754355641724'\u001b[39m,\n    description: \u001b[32m'Test meal for calendar click behavior'\u001b[39m,\n    start_time: \u001b[32m'2025-07-28T12:00:00+00:00'\u001b[39m,\n    end_time: \u001b[1mnull\u001b[22m,\n    source: \u001b[32m'meal'\u001b[39m,\n    source_id: \u001b[32m'c49ac3b9-7669-4154-9a8a-0a93743b8d46'\u001b[39m,\n    created_at: \u001b[32m'2025-08-05T01:00:43.742631+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-05T01:00:43.742631+00:00'\u001b[39m\n  },\n  {\n    id: \u001b[32m'9f2a7f82-67f0-46d4-a893-6806c7ad7377'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Workout: Test Calendar Workout'\u001b[39m,\n    description: \u001b[32m'Test notes for calendar workout'\u001b[39m,\n    start_time: \u001b[32m'2025-08-05T01:03:47.656+00:00'\u001b[39m,\n    end_time: \u001b[1mnull\u001b[22m,\n    source: \u001b[32m'workout'\u001b[39m,\n    source_id: \u001b[32m'dd702e23-51e8-4281-a8b1-c8d0a7ad1179'\u001b[39m,\n    created_at: \u001b[32m'2025-08-05T01:03:47.784971+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-05T01:03:47.784971+00:00'\u001b[39m\n  }\n]\n"
+                    },
+                    {
+                      "text": "406: https://ffubefmikpkrxtueeusj.supabase.co/rest/v1/profiles?select=first_name%2Clast_name&user_id=eq.0f3a417b-077d-4868-acef-9d79ada0945b\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()\n"
+                    },
+                    {
+                      "text": "[E2E] ✅ Calendar click behavior test completed successfully\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2025-08-05T01:03:44.992Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "543845632da372441ed5-0fefa672a23baa89b51f",
+          "file": "planned-fitness-events.spec.ts",
+          "line": 785,
+          "column": 5
+        },
+        {
+          "title": "Event List Click Behavior for Planned Fitness Events",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11572,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()\n"
+                    },
+                    {
+                      "text": "[E2E] Created test workout for event list with ID: 754388d9-0e0a-47f2-a7b4-8d7b4935035b\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()\n"
+                    },
+                    {
+                      "text": "[E2E] ✅ Event list click behavior test completed successfully\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2025-08-05T01:03:58.701Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "543845632da372441ed5-eef542138efe8b9e3553",
+          "file": "planned-fitness-events.spec.ts",
+          "line": 1060,
+          "column": 5
+        },
+        {
+          "title": "Planned Session Cleanup After Completion",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 11812,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()\n"
+                    },
+                    {
+                      "text": "[E2E] Created test workout for cleanup with ID: 28817fdc-873b-4fb2-82c4-cfb71c69e11f\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()\n"
+                    },
+                    {
+                      "text": "[E2E] Workout status after completion: { status: \u001b[32m'completed'\u001b[39m, in_progress: \u001b[33mfalse\u001b[39m }\n"
+                    },
+                    {
+                      "text": "[E2E] Calendar events after cleanup: []\n"
+                    },
+                    {
+                      "text": "[E2E] Calendar event was cleaned up (unexpected when navigating directly)\n"
+                    },
+                    {
+                      "text": "[E2E] ✅ Planned session cleanup test completed successfully\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2025-08-05T01:04:10.277Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "543845632da372441ed5-b9ef4b69f6759b8d322d",
+          "file": "planned-fitness-events.spec.ts",
+          "line": 1235,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "planned-workout-completion.spec.ts",
+      "file": "planned-workout-completion.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Planned Workout Completion Flow",
+          "file": "planned-workout-completion.spec.ts",
+          "line": 16,
+          "column": 6,
+          "specs": [
+            {
+              "title": "Complete planned workout from calendar - full flow",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 19734,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[E2E] Calendar event found, clicking on it\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-05T01:04:22.101Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "56bc35f38093ba9abdc2-bb835df1cf771f7de9e9",
+              "file": "planned-workout-completion.spec.ts",
+              "line": 17,
+              "column": 7
+            },
+            {
+              "title": "Complete planned workout from day event list - full flow",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 18622,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-05T01:04:41.837Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "56bc35f38093ba9abdc2-2c03595ec573ee71e2f5",
+              "file": "planned-workout-completion.spec.ts",
+              "line": 339,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "sports-happy-path.spec.ts",
+      "file": "sports-happy-path.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Sports happy path",
+          "file": "sports-happy-path.spec.ts",
+          "line": 25,
+          "column": 6,
+          "specs": [
+            {
+              "title": "Complete Sports Session Lifecycle",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 14015,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[E2E] Available buttons on page: [\n  \u001b[32m'Sports In Progress: Basketball 1754355900509'\u001b[39m,\n  \u001b[32m''\u001b[39m,\n  \u001b[32m'Log Out'\u001b[39m,\n  \u001b[32m'End Activity'\u001b[39m\n]\n"
+                        },
+                        {
+                          "text": "[E2E] Current URL: http://localhost:3000/fitness/sports/live\n"
+                        },
+                        {
+                          "text": "[E2E] ✅ Sports session verified in database\n"
+                        },
+                        {
+                          "text": "[E2E] ✅ Updated sports session verified in database: Test Basketball Edited\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-05T01:05:00.469Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "e8d291aa59db1b0658e8-43bf961486ef6af74b27",
+              "file": "sports-happy-path.spec.ts",
+              "line": 26,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2025-08-05T01:00:03.163Z",
+    "duration": 311358.939,
+    "expected": 26,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  }
+}
