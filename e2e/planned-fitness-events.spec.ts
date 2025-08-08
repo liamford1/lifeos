@@ -505,7 +505,7 @@ test('Planned Fitness Events - Complete Flow', async ({ page }) => {
   
   console.log('[E2E] Sports calendar events found:', sportsCalendarEvent.length);
   
-  // ✅ Step 3: Verify the planned events appear on the /fitness/planner page
+  // ✅ Step 3: Verify the planned events appear in the calendar UI (planner is now a modal)
   
   // Wait for the calendar to refresh and show the events
   await page.waitForTimeout(3000);
@@ -1022,8 +1022,8 @@ test('Calendar Click Behavior for Planned Fitness Events', async ({ page }) => {
   // End the workout
   await page.getByRole('button', { name: /end workout/i }).click();
 
-  // Verify we're redirected back to workouts page
-  await expect(page.getByRole('heading', { name: /workouts/i })).toBeVisible({ timeout: 10000 });
+  // Verify we're redirected back to Fitness dashboard
+  await expect(page.getByRole('heading', { name: /fitness dashboard/i })).toBeVisible({ timeout: 10000 });
 
   // Verify the calendar event was cleaned up (no longer planned)
   await page.goto('http://localhost:3000/');

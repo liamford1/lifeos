@@ -201,8 +201,8 @@ export default function LiveWorkoutPage() {
     // Show success message
     showSuccess('Workout ended!');
     
-    // Redirect
-    router.push('/fitness/workouts');
+    // Redirect to Fitness dashboard
+    router.push('/fitness');
   };
 
   // Show loading while workout session is loading

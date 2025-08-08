@@ -236,7 +236,7 @@ export default function LiveCardioPage() {
     // Show success message
     showSuccess('Cardio session ended!');
     
-    // Redirect
-    router.push('/fitness/cardio');
+    // Redirect to Fitness dashboard
+    router.push('/fitness');
   }
 } 

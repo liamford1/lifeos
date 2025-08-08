@@ -297,13 +297,15 @@ test('Complete Cardio Session Lifecycle', async ({ page }) => {
   // Test 4: End the cardio session
   await page.getByRole('button', { name: /end cardio session/i }).click();
 
-  // Wait for redirect to cardio dashboard
-  await page.waitForURL((url) => /\/fitness\/cardio$/.test(url.pathname), { timeout: 10000 });
+  // Wait for redirect to Fitness dashboard
+  await page.waitForURL((url) => /\/fitness$/.test(url.pathname), { timeout: 10000 });
 
-  // Verify we're back on the cardio dashboard
-  await expect(page).toHaveURL(/\/fitness\/cardio$/);
+  // Verify we're back on the Fitness dashboard
+  await expect(page).toHaveURL(/\/fitness$/);
 
-  // Test 5: Verify the completed session appears in the list
+  // Test 5: Verify the completed session appears in Cardio History modal
+  await page.getByRole('button', { name: /Cardio History/i }).click();
+  await expect(page.getByTestId('cardio-history-modal')).toBeVisible();
   await expect(page.getByText(activityType)).toBeVisible();
   await expect(page.getByText(location)).toBeVisible();
   await expect(page.getByText(notes)).toBeVisible();
@@ -405,7 +407,8 @@ test('Complete Cardio Session Lifecycle', async ({ page }) => {
 
   // Test 8: Try to start another session and verify it works
   // Navigate back to cardio dashboard first
-  await page.goto('http://localhost:3000/fitness/cardio');
+  // Navigate to Fitness dashboard instead of old cardio page
+  await page.goto('http://localhost:3000/fitness');
   await page.waitForLoadState('networkidle');
   await page.waitForTimeout(2000);
   

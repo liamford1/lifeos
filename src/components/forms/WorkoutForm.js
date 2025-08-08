@@ -263,7 +263,7 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
     } else {
       showSuccess('Workout updated successfully!');
     }
-    router.push('/fitness/workouts');
+    router.push('/fitness');
     return;
   };
 

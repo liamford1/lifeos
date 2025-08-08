@@ -121,8 +121,8 @@ export default function CalendarView() {
         setShowPlanMealModal(true);
         break;
       case 'workout':
-        // Navigate to fitness planner with the selected date
-        router.push(`/fitness/planner?date=${dateStr}`);
+        // Navigate to Fitness dashboard (planning handled via modal there)
+        router.push(`/fitness`);
         break;
       default:
         break;
