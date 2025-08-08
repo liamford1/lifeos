@@ -110,17 +110,11 @@ test('Complete Cardio Session Lifecycle', async ({ page }) => {
   await page.getByRole('link', { name: /fitness/i }).click();
   await page.waitForURL((url) => /\/fitness(\/)?$/.test(url.pathname), { timeout: 10000 });
 
-  // Navigate to Cardio section
-  await page.getByRole('link', { name: /cardio/i }).click();
-  await page.waitForURL((url) => /\/fitness\/cardio$/.test(url.pathname), { timeout: 10000 });
+  // Open Cardio History modal
+  await page.getByRole('button', { name: /Cardio History/i }).click();
+  await expect(page.getByTestId('cardio-history-modal')).toBeVisible();
   
-  // Wait for the page to fully load
-  await page.waitForLoadState('networkidle');
-  await page.waitForTimeout(2000);
-  
-  // Force a page refresh to ensure we get the latest data after cleanup
-  await page.reload();
-  await page.waitForLoadState('networkidle');
+  // Wait for the modal to fully load
   await page.waitForTimeout(2000);
   
   // Debug: Check what sessions are actually in the database after cleanup
@@ -151,14 +145,14 @@ test('Complete Cardio Session Lifecycle', async ({ page }) => {
   // Wait for the component to be fully initialized
   await page.waitForTimeout(3000);
   
-  // Check if we can see the "Start Cardio" button or the empty state message
-  const startCardioButton = page.getByRole('button', { name: /Start Cardio/i });
+  // Check if we can see the "Start New Cardio Session" button or the empty state message
+  const startCardioButton = page.getByRole('button', { name: /Start New Cardio Session/i });
   const emptyStateMessage = page.getByText(/No cardio sessions yet/i);
   
   const hasStartButton = await startCardioButton.isVisible().catch(() => false);
   const hasEmptyMessage = await emptyStateMessage.isVisible().catch(() => false);
   
-  console.log('[E2E] Start Cardio button visible:', hasStartButton);
+  console.log('[E2E] Start New Cardio Session button visible:', hasStartButton);
   console.log('[E2E] Empty state message visible:', hasEmptyMessage);
   
   if (!hasStartButton && !hasEmptyMessage) {
@@ -175,11 +169,11 @@ test('Complete Cardio Session Lifecycle', async ({ page }) => {
   }
 
   // Check if there's already a cardio session in progress
-  const startCardioButtonCheck = page.getByRole('button', { name: /Start Cardio/i });
+  const startCardioButtonCheck = page.getByRole('button', { name: /Start New Cardio Session/i });
   const hasStartButtonCheck = await startCardioButtonCheck.isVisible().catch(() => false);
   
   if (hasStartButtonCheck) {
-    // Click "Start Cardio" button
+    // Click "Start New Cardio Session" button
     await startCardioButtonCheck.click();
   } else {
     // There might be an existing session, check if there's a cardio session in the list
@@ -191,15 +185,16 @@ test('Complete Cardio Session Lifecycle', async ({ page }) => {
       await existingSession.click();
       await page.waitForURL(/\/fitness\/cardio\/[\w-]+$/);
       
-      // Navigate back to cardio dashboard
-      await page.goto('http://localhost:3000/fitness/cardio');
-      await page.waitForLoadState('networkidle');
+      // Close the modal and reopen it
+      await page.getByRole('button', { name: 'Close modal' }).click();
+      await page.getByRole('button', { name: /Cardio History/i }).click();
+      await expect(page.getByTestId('cardio-history-modal')).toBeVisible();
       
-      // Now try to click Start Cardio again
-      await expect(page.getByRole('button', { name: /Start Cardio/i })).toBeVisible();
-      await page.getByRole('button', { name: /Start Cardio/i }).click();
+      // Now try to click Start New Cardio Session again
+      await expect(page.getByRole('button', { name: /Start New Cardio Session/i })).toBeVisible();
+      await page.getByRole('button', { name: /Start New Cardio Session/i }).click();
     } else {
-      throw new Error('No Start Cardio button found and no existing sessions visible');
+      throw new Error('No Start New Cardio Session button found and no existing sessions visible');
     }
   }
   await page.waitForURL((url) => /\/fitness\/cardio\/live$/.test(url.pathname), { timeout: 10000 });

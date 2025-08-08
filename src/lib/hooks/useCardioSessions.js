@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { useApiError } from '@/lib/hooks/useApiError';
 import { deleteEntityWithCalendarEvent } from '@/lib/utils/deleteUtils';
@@ -6,7 +7,7 @@ export function useCardioSessions() {
   const { handleError, handleSuccess } = useApiError();
 
   // Fetch all cardio sessions for a user (excluding in-progress sessions)
-  const fetchCardioSessions = async (userId, options = {}) => {
+  const fetchCardioSessions = useCallback(async (userId, options = {}) => {
     if (!userId) {
       console.warn('fetchCardioSessions called without userId');
       return null;
@@ -29,10 +30,10 @@ export function useCardioSessions() {
     }
     
     return data;
-  };
+  }, [handleError]);
 
   // Create a new cardio session
-  const createCardioSession = async (data, options = {}) => {
+  const createCardioSession = useCallback(async (data, options = {}) => {
     const { data: inserted, error } = await supabase
       .from('fitness_cardio')
       .insert(data)
@@ -47,10 +48,10 @@ export function useCardioSessions() {
     }
     handleSuccess('Cardio session created!', options);
     return inserted;
-  };
+  }, [handleError, handleSuccess]);
 
   // Update a cardio session
-  const updateCardioSession = async (id, updatedData, options = {}) => {
+  const updateCardioSession = useCallback(async (id, updatedData, options = {}) => {
     const { data, error } = await supabase
       .from('fitness_cardio')
       .update(updatedData)
@@ -66,10 +67,10 @@ export function useCardioSessions() {
     }
     handleSuccess('Cardio session updated!', options);
     return data;
-  };
+  }, [handleError, handleSuccess]);
 
   // Delete a cardio session (and its calendar event)
-  const deleteCardioSession = async (id, userId, options = {}) => {
+  const deleteCardioSession = useCallback(async (id, userId, options = {}) => {
     const error = await deleteEntityWithCalendarEvent({
       table: 'fitness_cardio',
       id,
@@ -85,7 +86,7 @@ export function useCardioSessions() {
     }
     handleSuccess('Cardio session deleted!', options);
     return true;
-  };
+  }, [handleError, handleSuccess]);
 
   return {
     fetchCardioSessions,

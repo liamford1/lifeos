@@ -184,11 +184,11 @@ test('Planned Fitness Events - Complete Flow', async ({ page }) => {
   await page.getByRole('link', { name: /fitness/i }).click();
   await page.waitForURL((url) => /\/fitness(\/)?$/.test(url.pathname), { timeout: 10000 });
   
-  await page.getByRole('link', { name: /plan workouts/i }).click();
-  await page.waitForURL((url) => /\/fitness\/planner$/.test(url.pathname), { timeout: 10000 });
+  await page.getByRole('button', { name: /Plan Workouts/i }).click();
+  await expect(page.getByTestId('plan-workout-modal')).toBeVisible();
 
-  // Verify we're on the planner page
-  await expect(page.getByRole('heading', { name: /planned fitness activities/i })).toBeVisible();
+  // Verify we're in the planner modal
+  await expect(page.getByRole('heading', { name: /Plan Workouts/i })).toBeVisible();
 
   // Test data for planned events
   const plannedWorkout = {
@@ -213,8 +213,9 @@ test('Planned Fitness Events - Complete Flow', async ({ page }) => {
   };
 
   // Plan a Workout
-  await page.getByRole('button', { name: /\+ add planned activity/i }).click();
-  await expect(page.getByText('Type')).toBeVisible();
+  await page.getByRole('button', { name: /\+ Add Planned Activity/i }).click();
+  await page.waitForTimeout(1000); // Wait for form to render
+  await expect(page.getByRole('combobox')).toBeVisible();
   
   // Select workout type
   await page.getByRole('combobox').selectOption('workout');
@@ -301,8 +302,8 @@ test('Planned Fitness Events - Complete Flow', async ({ page }) => {
   console.log('[E2E] Workout calendar events found:', workoutCalendarEvent.length);
 
   // Plan a Cardio session
-  await page.getByRole('button', { name: /\+ add planned activity/i }).click();
-  await expect(page.getByText('Type')).toBeVisible();
+  await page.getByRole('button', { name: /\+ Add Planned Activity/i }).click();
+  await expect(page.getByRole('combobox')).toBeVisible();
   
   // Select cardio type
   await page.getByRole('combobox').selectOption('cardio');
@@ -382,8 +383,8 @@ test('Planned Fitness Events - Complete Flow', async ({ page }) => {
   console.log('[E2E] Cardio calendar events found:', cardioCalendarEvent.length);
 
   // Plan a Sports/Activity
-  await page.getByRole('button', { name: /\+ add planned activity/i }).click();
-  await expect(page.getByText('Type')).toBeVisible();
+  await page.getByRole('button', { name: /\+ Add Planned Activity/i }).click();
+  await expect(page.getByRole('combobox')).toBeVisible();
   
   // Select sports type
   await page.getByRole('combobox').selectOption('sports');

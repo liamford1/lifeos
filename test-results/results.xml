@@ -1,16 +1,203 @@
-<testsuites id="" name="" tests="6" failures="0" skipped="0" errors="0" time="32.68053">
-<testsuite name="calendar-day-plus-button.spec.ts" timestamp="2025-08-08T02:01:01.417Z" hostname="chromium" tests="6" failures="0" skipped="0" time="7.906" errors="0">
-<testcase name="Calendar Day Plus Button Functionality › Plus button appears on selected day and opens planning modal" classname="calendar-day-plus-button.spec.ts" time="2.213">
+<testsuites id="" name="" tests="5" failures="0" skipped="0" errors="0" time="149.574308">
+<testsuite name="cardio-session.spec.ts" timestamp="2025-08-08T02:46:18.974Z" hostname="chromium" tests="1" failures="0" skipped="0" time="41.202" errors="0">
+<testcase name="Complete Cardio Session Lifecycle" classname="cardio-session.spec.ts" time="41.202">
+<system-out>
+<![CDATA[[BROWSER LOG] log: [Client Instrumentation Hook] Slow execution detected: 66ms (Note: Code download overhead is not included in this measurement)
+[BROWSER LOG] info: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()
+[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()
+[BROWSER LOG] log: [E2E] Cleaning up cardio sessions for user: 0f3a417b-077d-4868-acef-9d79ada0945b
+[BROWSER LOG] log: [E2E] All cardio sessions before cleanup: []
+[BROWSER LOG] log: [E2E] Successfully cleaned up ALL cardio sessions
+[BROWSER LOG] log: [E2E] Remaining cardio sessions after cleanup: []
+[BROWSER LOG] error: Failed to load resource: the server responded with a status of 429 ()
+[E2E] Sessions in database after cleanup: []
+[E2E] Number of sessions shown in UI: [33m0[39m
+[E2E] Start New Cardio Session button visible: [33mtrue[39m
+[E2E] Empty state message visible: [33mfalse[39m
+[BROWSER LOG] log: [Fast Refresh] rebuilding
+[BROWSER LOG] log: [Fast Refresh] done in 827ms
+[BROWSER LOG] log: [Fast Refresh] rebuilding
+[BROWSER LOG] log: [Fast Refresh] done in 3172ms
+[BROWSER LOG] log: [Fast Refresh] rebuilding
+[BROWSER LOG] log: [Fast Refresh] done in 899ms
+[BROWSER LOG] log: [Client Instrumentation Hook] Slow execution detected: 44ms (Note: Code download overhead is not included in this measurement)
+[BROWSER LOG] info: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()
+[BROWSER LOG] log: [Fast Refresh] rebuilding
+[BROWSER LOG] log: [Fast Refresh] done in 1402ms
+[BROWSER LOG] log: [Fast Refresh] rebuilding
+[BROWSER LOG] log: [Fast Refresh] done in 984ms
+[BROWSER LOG] log: [Fast Refresh] rebuilding
+[BROWSER LOG] log: [Fast Refresh] done in 1770ms
+[BROWSER LOG] log: [Client Instrumentation Hook] Slow execution detected: 46ms (Note: Code download overhead is not included in this measurement)
+[BROWSER LOG] info: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()
+[BROWSER LOG] log: [Client Instrumentation Hook] Slow execution detected: 40ms (Note: Code download overhead is not included in this measurement)
+[BROWSER LOG] info: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()
+[E2E] Start Cardio button not visible on final test, skipping
+]]>
+</system-out>
 </testcase>
-<testcase name="Calendar Day Plus Button Functionality › General Event option opens add event modal with pre-selected date" classname="calendar-day-plus-button.spec.ts" time="1.052">
+</testsuite>
+<testsuite name="planned-fitness-events.spec.ts" timestamp="2025-08-08T02:46:18.974Z" hostname="chromium" tests="3" failures="0" skipped="0" time="67.795" errors="0">
+<testcase name="Planned Fitness Events - Complete Flow" classname="planned-fitness-events.spec.ts" time="38.506">
+<system-out>
+<![CDATA[[BROWSER LOG] log: [Client Instrumentation Hook] Slow execution detected: 43ms (Note: Code download overhead is not included in this measurement)
+[BROWSER LOG] info: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+406: https://ffubefmikpkrxtueeusj.supabase.co/rest/v1/profiles?select=first_name%2Clast_name&user_id=eq.0f3a417b-077d-4868-acef-9d79ada0945b
+[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()
+406: https://ffubefmikpkrxtueeusj.supabase.co/rest/v1/profiles?select=first_name%2Clast_name&user_id=eq.0f3a417b-077d-4868-acef-9d79ada0945b
+[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()
+[BROWSER LOG] log: [E2E] ✅ window.supabase is defined
+[E2E] Form error: 
+[E2E] Planned workout created successfully in database
+[E2E] Workout calendar events found: [33m1[39m
+[E2E] Planned cardio created successfully in database
+[E2E] Cardio calendar events found: [33m1[39m
+[E2E] Form did not hide, waiting longer...
+[E2E] Sports form error: 
+[BROWSER LOG] log: [E2E] All sports sessions found: [Object]
+[BROWSER LOG] log: [E2E] Planned sports sessions found: [Object]
+[E2E] Planned sports created successfully
+[E2E] Sports calendar events found: [33m1[39m
+[BROWSER LOG] log: [Client Instrumentation Hook] Slow execution detected: 43ms (Note: Code download overhead is not included in this measurement)
+[BROWSER LOG] info: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+406: https://ffubefmikpkrxtueeusj.supabase.co/rest/v1/profiles?select=first_name%2Clast_name&user_id=eq.0f3a417b-077d-4868-acef-9d79ada0945b
+[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()
+[E2E] Error navigating to home page: [31mTimed out 5000ms waiting for [39m[2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m()[22m
+
+Locator: locator('h1').filter({ hasText: /Planned Fitness Activities/i })
+Expected: visible
+Received: <element(s) not found>
+Call log:
+[2m  - Expect "toBeVisible" with timeout 5000ms[22m
+[2m  - waiting for locator('h1').filter({ hasText: /Planned Fitness Activities/i })[22m
+
+[E2E] Skipping UI verification, proceeding with database check
+[E2E] All calendar events in database: [
+  {
+    id: [32m'6c9fadcf-d2cc-422a-a901-a90f21c6447e'[39m,
+    user_id: [32m'0f3a417b-077d-4868-acef-9d79ada0945b'[39m,
+    title: [32m'Sport: Test Planned Sports'[39m,
+    description: [32m'Test planned sports notes'[39m,
+    start_time: [32m'2025-08-07T00:00:00+00:00'[39m,
+    end_time: [32m'2025-08-08T01:00:00+00:00'[39m,
+    source: [32m'sport'[39m,
+    source_id: [32m'2a0d0e10-2e0d-41cf-b988-6851c2be92d6'[39m,
+    created_at: [32m'2025-08-08T02:47:18.600598+00:00'[39m,
+    updated_at: [32m'2025-08-08T02:47:18.600598+00:00'[39m
+  },
+  {
+    id: [32m'7e8b7299-447f-4633-9f38-4d99c3f4b959'[39m,
+    user_id: [32m'0f3a417b-077d-4868-acef-9d79ada0945b'[39m,
+    title: [32m'Cardio: Test Planned Cardio'[39m,
+    description: [32m'Test planned cardio notes'[39m,
+    start_time: [32m'2025-08-07T00:00:00+00:00'[39m,
+    end_time: [32m'2025-08-08T00:00:00+00:00'[39m,
+    source: [32m'cardio'[39m,
+    source_id: [32m'cc1e8eb8-a350-45e6-a2a3-9b4b61ec1401'[39m,
+    created_at: [32m'2025-08-08T02:47:13.241897+00:00'[39m,
+    updated_at: [32m'2025-08-08T02:47:13.241897+00:00'[39m
+  },
+  {
+    id: [32m'bd5058fa-2017-4a97-bcc0-37caa9a0a687'[39m,
+    user_id: [32m'0f3a417b-077d-4868-acef-9d79ada0945b'[39m,
+    title: [32m'Workout: Test Planned Workout'[39m,
+    description: [32m'Test planned workout notes'[39m,
+    start_time: [32m'2025-08-07T00:00:00+00:00'[39m,
+    end_time: [32m'2025-08-07T23:00:00+00:00'[39m,
+    source: [32m'workout'[39m,
+    source_id: [32m'1d81e7b1-b8ed-411a-adfd-f6d0539c59e5'[39m,
+    created_at: [32m'2025-08-08T02:47:07.947264+00:00'[39m,
+    updated_at: [32m'2025-08-08T02:47:07.947264+00:00'[39m
+  }
+]
+[E2E] Number of events found in list: [33m6[39m
+[E2E] Verification attempt 1: { workout: [33mfalse[39m, cardio: [33mfalse[39m, sports: [33mfalse[39m }
+[E2E] Not all events found, retry 1/2
+[E2E] Verification attempt 2: { workout: [33mfalse[39m, cardio: [33mfalse[39m, sports: [33mfalse[39m }
+[E2E] Not all events found, retry 2/2
+[E2E] Final UI verification: { workout: [33mfalse[39m, cardio: [33mfalse[39m, sports: [33mfalse[39m }
+[E2E] Some events not visible in UI, checking database...
+[E2E] Database fallback check: { workoutExists: [33mtrue[39m, cardioExists: [33mtrue[39m, sportsExists: [33mtrue[39m }
+[E2E] 3/3 events exist in database - test successful!
+[E2E] Final database state: { workoutCount: [33m1[39m, cardioCount: [33m1[39m, sportsCount: [33m1[39m, calendarCount: [33m3[39m }
+[E2E] ✅ Planned fitness events test completed successfully
+]]>
+</system-out>
 </testcase>
-<testcase name="Calendar Day Plus Button Functionality › Meal option opens meal planning modal with selected date" classname="calendar-day-plus-button.spec.ts" time="1.064">
+<testcase name="Calendar Click Behavior for Planned Fitness Events" classname="planned-fitness-events.spec.ts" time="16.612">
+<system-out>
+<![CDATA[[BROWSER LOG] log: [Client Instrumentation Hook] Slow execution detected: 43ms (Note: Code download overhead is not included in this measurement)
+[BROWSER LOG] info: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+406: https://ffubefmikpkrxtueeusj.supabase.co/rest/v1/profiles?select=first_name%2Clast_name&user_id=eq.0f3a417b-077d-4868-acef-9d79ada0945b
+[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()
+406: https://ffubefmikpkrxtueeusj.supabase.co/rest/v1/profiles?select=first_name%2Clast_name&user_id=eq.0f3a417b-077d-4868-acef-9d79ada0945b
+[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()
+[E2E] Created test workout with ID: fd38690b-bf6c-423e-8707-be7ca1415c4e
+[BROWSER LOG] log: [Client Instrumentation Hook] Slow execution detected: 40ms (Note: Code download overhead is not included in this measurement)
+[BROWSER LOG] info: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+406: https://ffubefmikpkrxtueeusj.supabase.co/rest/v1/profiles?select=first_name%2Clast_name&user_id=eq.0f3a417b-077d-4868-acef-9d79ada0945b
+[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()
+[E2E] Available calendar events: [
+  {
+    id: [32m'97db1548-111c-494c-8636-52bf0f4af5f5'[39m,
+    user_id: [32m'0f3a417b-077d-4868-acef-9d79ada0945b'[39m,
+    title: [32m'Workout: Test Calendar Workout'[39m,
+    description: [32m'Test notes for calendar workout'[39m,
+    start_time: [32m'2025-08-08T02:47:42.254+00:00'[39m,
+    end_time: [1mnull[22m,
+    source: [32m'workout'[39m,
+    source_id: [32m'fd38690b-bf6c-423e-8707-be7ca1415c4e'[39m,
+    created_at: [32m'2025-08-08T02:47:42.353949+00:00'[39m,
+    updated_at: [32m'2025-08-08T02:47:42.353949+00:00'[39m
+  }
+]
+[BROWSER LOG] log: [Fast Refresh] rebuilding
+[BROWSER LOG] log: [Fast Refresh] done in 1421ms
+[E2E] Navigating directly to live workout page, filling form manually
+[BROWSER LOG] log: [Fast Refresh] rebuilding
+[BROWSER LOG] log: [Fast Refresh] done in 1053ms
+[BROWSER LOG] log: [Client Instrumentation Hook] Slow execution detected: 41ms (Note: Code download overhead is not included in this measurement)
+[BROWSER LOG] info: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+406: https://ffubefmikpkrxtueeusj.supabase.co/rest/v1/profiles?select=first_name%2Clast_name&user_id=eq.0f3a417b-077d-4868-acef-9d79ada0945b
+[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()
+[E2E] ✅ Calendar click behavior test completed successfully
+]]>
+</system-out>
 </testcase>
-<testcase name="Calendar Day Plus Button Functionality › Workout option navigates to fitness planner with selected date" classname="calendar-day-plus-button.spec.ts" time="1.057">
+<testcase name="Event List Click Behavior for Planned Fitness Events" classname="planned-fitness-events.spec.ts" time="12.677">
+<system-out>
+<![CDATA[[BROWSER LOG] log: [Client Instrumentation Hook] Slow execution detected: 44ms (Note: Code download overhead is not included in this measurement)
+[BROWSER LOG] info: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()
+[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()
+[E2E] Created test workout for event list with ID: 71989eef-45e6-4fa8-95f3-f44d66a78e87
+[BROWSER LOG] log: [Client Instrumentation Hook] Slow execution detected: 39ms (Note: Code download overhead is not included in this measurement)
+[BROWSER LOG] info: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()
+[E2E] ✅ Event list click behavior test completed successfully
+]]>
+</system-out>
 </testcase>
-<testcase name="Calendar Day Plus Button Functionality › Plus button only appears on selected day" classname="calendar-day-plus-button.spec.ts" time="1.512">
-</testcase>
-<testcase name="Calendar Day Plus Button Functionality › Cancel button closes the modal" classname="calendar-day-plus-button.spec.ts" time="1.008">
+</testsuite>
+<testsuite name="sports-happy-path.spec.ts" timestamp="2025-08-08T02:46:18.974Z" hostname="chromium" tests="1" failures="0" skipped="0" time="35.943" errors="0">
+<testcase name="Sports happy path › Complete Sports Session Lifecycle" classname="sports-happy-path.spec.ts" time="35.943">
+<system-out>
+<![CDATA[[E2E] Available buttons on page: [
+  [32m'Sports In Progress: Basketball 1754621288603'[39m,
+  [32m''[39m,
+  [32m'Log Out'[39m,
+  [32m'End Activity'[39m,
+  [32m''[39m
+]
+[E2E] Current URL: http://localhost:3000/fitness/sports/live
+[E2E] ✅ Sports session verified in database
+[E2E] ✅ Updated sports session verified in database: Test Basketball Edited
+]]>
+</system-out>
 </testcase>
 </testsuite>
 </testsuites>
