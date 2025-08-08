@@ -79,7 +79,7 @@ export default function EditSportPage() {
       return;
     }
     showSuccess("Sport entry deleted");
-    router.push("/fitness/sports");
+    router.push("/fitness");
   }
 
   if (loading || userLoading) return <LoadingSpinner />;

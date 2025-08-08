@@ -60,7 +60,7 @@ export default function SportDetailPage() {
       showError("Failed to delete sport entry");
     } else {
       showSuccess("Sport entry deleted");
-      router.push("/fitness/sports");
+      router.push("/fitness");
     }
   }
 

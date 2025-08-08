@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { useApiError } from '@/lib/hooks/useApiError';
 
@@ -5,7 +6,7 @@ export function useWorkouts() {
   const { handleError, handleSuccess } = useApiError();
 
   // Fetch all workouts for a user
-  const fetchWorkouts = async (userId, options = {}) => {
+  const fetchWorkouts = useCallback(async (userId, options = {}) => {
     if (!userId) return null;
     const { data, error } = await supabase
       .from('fitness_workouts')
@@ -20,10 +21,10 @@ export function useWorkouts() {
       return null;
     }
     return data;
-  };
+  }, [handleError]);
 
   // Create a new workout
-  const createWorkout = async (workoutData, options = {}) => {
+  const createWorkout = useCallback(async (workoutData, options = {}) => {
     const { data, error } = await supabase
       .from('fitness_workouts')
       .insert([workoutData])
@@ -38,10 +39,10 @@ export function useWorkouts() {
     }
     handleSuccess('Workout created successfully!', options);
     return data;
-  };
+  }, [handleError, handleSuccess]);
 
   // Update an existing workout
-  const updateWorkout = async (id, updatedData, options = {}) => {
+  const updateWorkout = useCallback(async (id, updatedData, options = {}) => {
     const { data, error } = await supabase
       .from('fitness_workouts')
       .update(updatedData)
@@ -57,10 +58,10 @@ export function useWorkouts() {
     }
     handleSuccess('Workout updated successfully!', options);
     return data;
-  };
+  }, [handleError, handleSuccess]);
 
   // Delete a workout
-  const deleteWorkout = async (id, options = {}) => {
+  const deleteWorkout = useCallback(async (id, options = {}) => {
     const { error } = await supabase
       .from('fitness_workouts')
       .delete()
@@ -74,7 +75,7 @@ export function useWorkouts() {
     }
     handleSuccess('Workout deleted successfully!', options);
     return true;
-  };
+  }, [handleError, handleSuccess]);
 
   return { fetchWorkouts, createWorkout, updateWorkout, deleteWorkout };
 } 

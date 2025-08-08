@@ -1,22 +1,16 @@
 "use client";
 
-import { useEffect, useState, useCallback, useMemo } from 'react';
-import Link from 'next/link';
-import { supabase } from '@/lib/supabaseClient';
-import { deleteEntityWithCalendarEvent } from '@/lib/utils/deleteUtils';
-import BackButton from '@/components/shared/BackButton';
-import Button from '@/components/shared/Button';
+import { useEffect, useState, useCallback, useMemo, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/context/UserContext';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
-import { useToast } from '@/components/client/Toast';
-import { MdOutlineCalendarToday } from 'react-icons/md';
-import dynamic from "next/dynamic";
-const HeartPulse = dynamic(() => import("lucide-react/dist/esm/icons/heart-pulse"), { ssr: false });
-import { format } from 'date-fns';
+import Button from '@/components/shared/Button';
 import SharedDeleteButton from '@/components/SharedDeleteButton';
 import EditButton from '@/components/EditButton';
+import BaseModal from '@/components/shared/BaseModal';
 import { useCardioSessions } from '@/lib/hooks/useCardioSessions';
+import dynamic from "next/dynamic";
+const HeartPulse = dynamic(() => import("lucide-react/dist/esm/icons/heart-pulse"), { ssr: false, loading: () => <span className="inline-block w-4 h-4" /> });
 
 // Skeleton component for cardio items
 function CardioSkeleton() {
@@ -34,66 +28,50 @@ function CardioSkeleton() {
   );
 }
 
-export default function CardioDashboard() {
-  const { user, loading: userLoading } = useUser();
+export default function CardioHistoryModal({ isOpen, onClose }) {
+  const { user } = useUser();
   const router = useRouter();
   const [sessions, setSessions] = useState([]);
   const [sessionsLoading, setSessionsLoading] = useState(true);
   const [hasInitialized, setHasInitialized] = useState(false);
+  const fetchedRef = useRef({ userId: null, done: false });
   const { fetchCardioSessions, deleteCardioSession } = useCardioSessions();
   
   // Memoize fetchCardioSessions to avoid unnecessary effect reruns
-  const memoizedFetchCardioSessions = useCallback(fetchCardioSessions, []);
+  const memoizedFetchCardioSessions = useCallback(fetchCardioSessions, [fetchCardioSessions]);
 
   // Memoize user ID to prevent unnecessary re-renders
   const userId = useMemo(() => user?.id, [user?.id]);
 
-  useEffect(() => {
-    if (!userLoading && !user) {
-      router.push('/auth');
-    }
-  }, [userLoading, user, router]);
-
-  useEffect(() => {
-    let isMounted = true;
-    
-    async function loadSessions() {
-      if (!userId) {
-        if (isMounted) {
-          setSessionsLoading(false);
-          setHasInitialized(true);
-        }
-        return;
-      }
-      
-      if (isMounted) {
-        setSessionsLoading(true);
-      }
-      
-      try {
-        const data = await memoizedFetchCardioSessions(userId);
-        if (isMounted) {
-          setSessions(data || []);
-          setSessionsLoading(false);
-          setHasInitialized(true);
-        }
-      } catch (error) {
-        console.error('Error loading cardio sessions:', error);
-        if (isMounted) {
-          setSessionsLoading(false);
-          setHasInitialized(true);
-        }
-      }
+  const loadSessions = useCallback(async () => {
+    if (!userId) {
+      setSessionsLoading(false);
+      setHasInitialized(true);
+      return;
     }
     
-    loadSessions();
+    setSessionsLoading(true);
     
-    return () => { 
-      isMounted = false; 
-    };
+    try {
+      const data = await memoizedFetchCardioSessions(userId);
+      setSessions(data || []);
+      setSessionsLoading(false);
+      setHasInitialized(true);
+    } catch (error) {
+      console.error('Error loading cardio sessions:', error);
+      setSessionsLoading(false);
+      setHasInitialized(true);
+    }
   }, [userId, memoizedFetchCardioSessions]);
 
-  const handleDelete = async (id) => {
+  useEffect(() => {
+    if (!isOpen || !user) return;
+    if (fetchedRef.current.done && fetchedRef.current.userId === user.id) return;
+    fetchedRef.current = { userId: user.id, done: true };
+    loadSessions();
+  }, [isOpen, user, loadSessions]);
+
+  const handleDelete = useCallback(async (id) => {
     const confirm = window.confirm('Delete this session?');
     if (!confirm) return;
     if (!user) return;
@@ -101,7 +79,11 @@ export default function CardioDashboard() {
     if (success) {
       setSessions((prev) => prev.filter((s) => s.id !== id));
     }
-  };
+  }, [deleteCardioSession, user]);
+
+  const handleStartCardio = useCallback(() => {
+    router.push('/fitness/cardio/live');
+  }, [router]);
 
   // Determine what to render - memoized to prevent unnecessary re-renders
   const content = useMemo(() => {
@@ -128,12 +110,14 @@ export default function CardioDashboard() {
           <p className="text-muted-foreground text-sm mb-4">
             No cardio sessions yet. Click &quot;Start Cardio&quot; to begin tracking your first session.
           </p>
-          <Link href="/fitness/cardio/live">
-            <Button variant="success" className="flex items-center gap-2 mx-auto">
-              <HeartPulse className="w-4 h-4" />
-              Start Cardio
-            </Button>
-          </Link>
+          <Button 
+            variant="success" 
+            className="flex items-center gap-2 mx-auto"
+            onClick={handleStartCardio}
+          >
+            <HeartPulse className="w-4 h-4" />
+            Start Cardio
+          </Button>
         </div>
       );
     }
@@ -176,26 +160,39 @@ export default function CardioDashboard() {
         </div>
       </li>
     ));
-  }, [hasInitialized, sessionsLoading, user, sessions, router]);
+  }, [hasInitialized, sessionsLoading, user, sessions, router, handleDelete, handleStartCardio]);
+
+  if (!isOpen) return null;
 
   return (
-    <div className="max-w-6xl mx-auto p-4 space-y-4">
-      <BackButton />
-      <h1 className="text-2xl font-bold flex items-center">
-        <HeartPulse className="w-5 h-5 text-base mr-2 inline-block" />
-        Cardio
-      </h1>
-      <p className="text-base">Track your running, cycling, and other cardio activities.</p>
+    <BaseModal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Cardio History"
+      subtitle="Track your running, cycling, and other cardio activities"
+      icon={HeartPulse}
+      iconBgColor="bg-red-500/10"
+      iconColor="text-red-500"
+      maxWidth="max-w-4xl"
+      data-testid="cardio-history-modal"
+    >
+      {/* Start Cardio Button */}
+      <div className="flex justify-center">
+        <Button
+          onClick={handleStartCardio}
+          variant="success"
+          size="lg"
+          className="flex items-center gap-2"
+        >
+          <HeartPulse className="w-4 h-4" />
+          Start New Cardio Session
+        </Button>
+      </div>
 
-      <h2 className="text-xl font-semibold mb-2">
-        <MdOutlineCalendarToday className="inline w-5 h-5 text-base align-text-bottom mr-2" />
-        Cardio History
-      </h2>
-
-      {/* Stable container with consistent height */}
-      <div className="space-y-3 min-h-[300px] relative">
+      {/* Cardio History */}
+      <div className="space-y-3 min-h-[300px] relative" data-testid="cardio-list">
         {content}
       </div>
-    </div>
+    </BaseModal>
   );
-}
+} 

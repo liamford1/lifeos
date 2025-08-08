@@ -69,20 +69,482 @@
   },
   "suites": [
     {
-      "title": "calendar-day-plus-button.spec.ts",
-      "file": "calendar-day-plus-button.spec.ts",
+      "title": "cardio-session.spec.ts",
+      "file": "cardio-session.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Complete Cardio Session Lifecycle",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 41202,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "[BROWSER LOG] log: [Client Instrumentation Hook] Slow execution detected: 66ms (Note: Code download overhead is not included in this measurement)\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] info: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] log: [E2E] Cleaning up cardio sessions for user: 0f3a417b-077d-4868-acef-9d79ada0945b\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] log: [E2E] All cardio sessions before cleanup: []\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] log: [E2E] Successfully cleaned up ALL cardio sessions\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] log: [E2E] Remaining cardio sessions after cleanup: []\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] error: Failed to load resource: the server responded with a status of 429 ()\n"
+                    },
+                    {
+                      "text": "[E2E] Sessions in database after cleanup: []\n"
+                    },
+                    {
+                      "text": "[E2E] Number of sessions shown in UI: \u001b[33m0\u001b[39m\n"
+                    },
+                    {
+                      "text": "[E2E] Start New Cardio Session button visible: \u001b[33mtrue\u001b[39m\n"
+                    },
+                    {
+                      "text": "[E2E] Empty state message visible: \u001b[33mfalse\u001b[39m\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] log: [Fast Refresh] rebuilding\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] log: [Fast Refresh] done in 827ms\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] log: [Fast Refresh] rebuilding\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] log: [Fast Refresh] done in 3172ms\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] log: [Fast Refresh] rebuilding\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] log: [Fast Refresh] done in 899ms\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] log: [Client Instrumentation Hook] Slow execution detected: 44ms (Note: Code download overhead is not included in this measurement)\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] info: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] log: [Fast Refresh] rebuilding\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] log: [Fast Refresh] done in 1402ms\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] log: [Fast Refresh] rebuilding\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] log: [Fast Refresh] done in 984ms\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] log: [Fast Refresh] rebuilding\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] log: [Fast Refresh] done in 1770ms\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] log: [Client Instrumentation Hook] Slow execution detected: 46ms (Note: Code download overhead is not included in this measurement)\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] info: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] log: [Client Instrumentation Hook] Slow execution detected: 40ms (Note: Code download overhead is not included in this measurement)\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] info: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()\n"
+                    },
+                    {
+                      "text": "[E2E] Start Cardio button not visible on final test, skipping\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2025-08-08T02:46:19.260Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "330739d40c5e63b65ae0-640d349dbc2a1b73fba8",
+          "file": "cardio-session.spec.ts",
+          "line": 23,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "planned-fitness-events.spec.ts",
+      "file": "planned-fitness-events.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Planned Fitness Events - Complete Flow",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 38506,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "[BROWSER LOG] log: [Client Instrumentation Hook] Slow execution detected: 43ms (Note: Code download overhead is not included in this measurement)\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] info: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold\n"
+                    },
+                    {
+                      "text": "406: https://ffubefmikpkrxtueeusj.supabase.co/rest/v1/profiles?select=first_name%2Clast_name&user_id=eq.0f3a417b-077d-4868-acef-9d79ada0945b\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()\n"
+                    },
+                    {
+                      "text": "406: https://ffubefmikpkrxtueeusj.supabase.co/rest/v1/profiles?select=first_name%2Clast_name&user_id=eq.0f3a417b-077d-4868-acef-9d79ada0945b\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] log: [E2E] ✅ window.supabase is defined\n"
+                    },
+                    {
+                      "text": "[E2E] Form error: \n"
+                    },
+                    {
+                      "text": "[E2E] Planned workout created successfully in database\n"
+                    },
+                    {
+                      "text": "[E2E] Workout calendar events found: \u001b[33m1\u001b[39m\n"
+                    },
+                    {
+                      "text": "[E2E] Planned cardio created successfully in database\n"
+                    },
+                    {
+                      "text": "[E2E] Cardio calendar events found: \u001b[33m1\u001b[39m\n"
+                    },
+                    {
+                      "text": "[E2E] Form did not hide, waiting longer...\n"
+                    },
+                    {
+                      "text": "[E2E] Sports form error: \n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] log: [E2E] All sports sessions found: [Object]\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] log: [E2E] Planned sports sessions found: [Object]\n"
+                    },
+                    {
+                      "text": "[E2E] Planned sports created successfully\n"
+                    },
+                    {
+                      "text": "[E2E] Sports calendar events found: \u001b[33m1\u001b[39m\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] log: [Client Instrumentation Hook] Slow execution detected: 43ms (Note: Code download overhead is not included in this measurement)\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] info: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold\n"
+                    },
+                    {
+                      "text": "406: https://ffubefmikpkrxtueeusj.supabase.co/rest/v1/profiles?select=first_name%2Clast_name&user_id=eq.0f3a417b-077d-4868-acef-9d79ada0945b\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()\n"
+                    },
+                    {
+                      "text": "[E2E] Error navigating to home page: \u001b[31mTimed out 5000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: locator('h1').filter({ hasText: /Planned Fitness Activities/i })\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('h1').filter({ hasText: /Planned Fitness Activities/i })\u001b[22m\n\n"
+                    },
+                    {
+                      "text": "[E2E] Skipping UI verification, proceeding with database check\n"
+                    },
+                    {
+                      "text": "[E2E] All calendar events in database: [\n  {\n    id: \u001b[32m'6c9fadcf-d2cc-422a-a901-a90f21c6447e'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Sport: Test Planned Sports'\u001b[39m,\n    description: \u001b[32m'Test planned sports notes'\u001b[39m,\n    start_time: \u001b[32m'2025-08-07T00:00:00+00:00'\u001b[39m,\n    end_time: \u001b[32m'2025-08-08T01:00:00+00:00'\u001b[39m,\n    source: \u001b[32m'sport'\u001b[39m,\n    source_id: \u001b[32m'2a0d0e10-2e0d-41cf-b988-6851c2be92d6'\u001b[39m,\n    created_at: \u001b[32m'2025-08-08T02:47:18.600598+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-08T02:47:18.600598+00:00'\u001b[39m\n  },\n  {\n    id: \u001b[32m'7e8b7299-447f-4633-9f38-4d99c3f4b959'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Cardio: Test Planned Cardio'\u001b[39m,\n    description: \u001b[32m'Test planned cardio notes'\u001b[39m,\n    start_time: \u001b[32m'2025-08-07T00:00:00+00:00'\u001b[39m,\n    end_time: \u001b[32m'2025-08-08T00:00:00+00:00'\u001b[39m,\n    source: \u001b[32m'cardio'\u001b[39m,\n    source_id: \u001b[32m'cc1e8eb8-a350-45e6-a2a3-9b4b61ec1401'\u001b[39m,\n    created_at: \u001b[32m'2025-08-08T02:47:13.241897+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-08T02:47:13.241897+00:00'\u001b[39m\n  },\n  {\n    id: \u001b[32m'bd5058fa-2017-4a97-bcc0-37caa9a0a687'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Workout: Test Planned Workout'\u001b[39m,\n    description: \u001b[32m'Test planned workout notes'\u001b[39m,\n    start_time: \u001b[32m'2025-08-07T00:00:00+00:00'\u001b[39m,\n    end_time: \u001b[32m'2025-08-07T23:00:00+00:00'\u001b[39m,\n    source: \u001b[32m'workout'\u001b[39m,\n    source_id: \u001b[32m'1d81e7b1-b8ed-411a-adfd-f6d0539c59e5'\u001b[39m,\n    created_at: \u001b[32m'2025-08-08T02:47:07.947264+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-08T02:47:07.947264+00:00'\u001b[39m\n  }\n]\n"
+                    },
+                    {
+                      "text": "[E2E] Number of events found in list: \u001b[33m6\u001b[39m\n"
+                    },
+                    {
+                      "text": "[E2E] Verification attempt 1: { workout: \u001b[33mfalse\u001b[39m, cardio: \u001b[33mfalse\u001b[39m, sports: \u001b[33mfalse\u001b[39m }\n"
+                    },
+                    {
+                      "text": "[E2E] Not all events found, retry 1/2\n"
+                    },
+                    {
+                      "text": "[E2E] Verification attempt 2: { workout: \u001b[33mfalse\u001b[39m, cardio: \u001b[33mfalse\u001b[39m, sports: \u001b[33mfalse\u001b[39m }\n"
+                    },
+                    {
+                      "text": "[E2E] Not all events found, retry 2/2\n"
+                    },
+                    {
+                      "text": "[E2E] Final UI verification: { workout: \u001b[33mfalse\u001b[39m, cardio: \u001b[33mfalse\u001b[39m, sports: \u001b[33mfalse\u001b[39m }\n"
+                    },
+                    {
+                      "text": "[E2E] Some events not visible in UI, checking database...\n"
+                    },
+                    {
+                      "text": "[E2E] Database fallback check: { workoutExists: \u001b[33mtrue\u001b[39m, cardioExists: \u001b[33mtrue\u001b[39m, sportsExists: \u001b[33mtrue\u001b[39m }\n"
+                    },
+                    {
+                      "text": "[E2E] 3/3 events exist in database - test successful!\n"
+                    },
+                    {
+                      "text": "[E2E] Final database state: { workoutCount: \u001b[33m1\u001b[39m, cardioCount: \u001b[33m1\u001b[39m, sportsCount: \u001b[33m1\u001b[39m, calendarCount: \u001b[33m3\u001b[39m }\n"
+                    },
+                    {
+                      "text": "[E2E] ✅ Planned fitness events test completed successfully\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2025-08-08T02:47:00.728Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "543845632da372441ed5-f08ac313a389a7d14da0",
+          "file": "planned-fitness-events.spec.ts",
+          "line": 53,
+          "column": 5
+        },
+        {
+          "title": "Calendar Click Behavior for Planned Fitness Events",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 16612,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "[BROWSER LOG] log: [Client Instrumentation Hook] Slow execution detected: 43ms (Note: Code download overhead is not included in this measurement)\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] info: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold\n"
+                    },
+                    {
+                      "text": "406: https://ffubefmikpkrxtueeusj.supabase.co/rest/v1/profiles?select=first_name%2Clast_name&user_id=eq.0f3a417b-077d-4868-acef-9d79ada0945b\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()\n"
+                    },
+                    {
+                      "text": "406: https://ffubefmikpkrxtueeusj.supabase.co/rest/v1/profiles?select=first_name%2Clast_name&user_id=eq.0f3a417b-077d-4868-acef-9d79ada0945b\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()\n"
+                    },
+                    {
+                      "text": "[E2E] Created test workout with ID: fd38690b-bf6c-423e-8707-be7ca1415c4e\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] log: [Client Instrumentation Hook] Slow execution detected: 40ms (Note: Code download overhead is not included in this measurement)\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] info: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold\n"
+                    },
+                    {
+                      "text": "406: https://ffubefmikpkrxtueeusj.supabase.co/rest/v1/profiles?select=first_name%2Clast_name&user_id=eq.0f3a417b-077d-4868-acef-9d79ada0945b\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()\n"
+                    },
+                    {
+                      "text": "[E2E] Available calendar events: [\n  {\n    id: \u001b[32m'97db1548-111c-494c-8636-52bf0f4af5f5'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Workout: Test Calendar Workout'\u001b[39m,\n    description: \u001b[32m'Test notes for calendar workout'\u001b[39m,\n    start_time: \u001b[32m'2025-08-08T02:47:42.254+00:00'\u001b[39m,\n    end_time: \u001b[1mnull\u001b[22m,\n    source: \u001b[32m'workout'\u001b[39m,\n    source_id: \u001b[32m'fd38690b-bf6c-423e-8707-be7ca1415c4e'\u001b[39m,\n    created_at: \u001b[32m'2025-08-08T02:47:42.353949+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-08T02:47:42.353949+00:00'\u001b[39m\n  }\n]\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] log: [Fast Refresh] rebuilding\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] log: [Fast Refresh] done in 1421ms\n"
+                    },
+                    {
+                      "text": "[E2E] Navigating directly to live workout page, filling form manually\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] log: [Fast Refresh] rebuilding\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] log: [Fast Refresh] done in 1053ms\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] log: [Client Instrumentation Hook] Slow execution detected: 41ms (Note: Code download overhead is not included in this measurement)\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] info: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold\n"
+                    },
+                    {
+                      "text": "406: https://ffubefmikpkrxtueeusj.supabase.co/rest/v1/profiles?select=first_name%2Clast_name&user_id=eq.0f3a417b-077d-4868-acef-9d79ada0945b\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()\n"
+                    },
+                    {
+                      "text": "[E2E] ✅ Calendar click behavior test completed successfully\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2025-08-08T02:47:39.240Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "543845632da372441ed5-0fefa672a23baa89b51f",
+          "file": "planned-fitness-events.spec.ts",
+          "line": 786,
+          "column": 5
+        },
+        {
+          "title": "Event List Click Behavior for Planned Fitness Events",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 60000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 12677,
+                  "errors": [],
+                  "stdout": [
+                    {
+                      "text": "[BROWSER LOG] log: [Client Instrumentation Hook] Slow execution detected: 44ms (Note: Code download overhead is not included in this measurement)\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] info: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()\n"
+                    },
+                    {
+                      "text": "[E2E] Created test workout for event list with ID: 71989eef-45e6-4fa8-95f3-f44d66a78e87\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] log: [Client Instrumentation Hook] Slow execution detected: 39ms (Note: Code download overhead is not included in this measurement)\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] info: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()\n"
+                    },
+                    {
+                      "text": "[E2E] ✅ Event list click behavior test completed successfully\n"
+                    }
+                  ],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2025-08-08T02:47:55.857Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "543845632da372441ed5-eef542138efe8b9e3553",
+          "file": "planned-fitness-events.spec.ts",
+          "line": 1061,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "sports-happy-path.spec.ts",
+      "file": "sports-happy-path.spec.ts",
       "column": 0,
       "line": 0,
       "specs": [],
       "suites": [
         {
-          "title": "Calendar Day Plus Button Functionality",
-          "file": "calendar-day-plus-button.spec.ts",
-          "line": 4,
+          "title": "Sports happy path",
+          "file": "sports-happy-path.spec.ts",
+          "line": 25,
           "column": 6,
           "specs": [
             {
-              "title": "Plus button appears on selected day and opens planning modal",
+              "title": "Complete Sports Session Lifecycle",
               "ok": true,
               "tags": [],
               "tests": [
@@ -97,12 +559,25 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2213,
+                      "duration": 35943,
                       "errors": [],
-                      "stdout": [],
+                      "stdout": [
+                        {
+                          "text": "[E2E] Available buttons on page: [\n  \u001b[32m'Sports In Progress: Basketball 1754621288603'\u001b[39m,\n  \u001b[32m''\u001b[39m,\n  \u001b[32m'Log Out'\u001b[39m,\n  \u001b[32m'End Activity'\u001b[39m,\n  \u001b[32m''\u001b[39m\n]\n"
+                        },
+                        {
+                          "text": "[E2E] Current URL: http://localhost:3000/fitness/sports/live\n"
+                        },
+                        {
+                          "text": "[E2E] ✅ Sports session verified in database\n"
+                        },
+                        {
+                          "text": "[E2E] ✅ Updated sports session verified in database: Test Basketball Edited\n"
+                        }
+                      ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-08T02:01:01.751Z",
+                      "startTime": "2025-08-08T02:48:08.551Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -110,179 +585,9 @@
                   "status": "expected"
                 }
               ],
-              "id": "09b582d0735f617f013b-f27e4fd9566c85e8a121",
-              "file": "calendar-day-plus-button.spec.ts",
-              "line": 14,
-              "column": 7
-            },
-            {
-              "title": "General Event option opens add event modal with pre-selected date",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 60000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 1052,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-08-08T02:01:04.149Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "09b582d0735f617f013b-23b4a07f779ca38a80d1",
-              "file": "calendar-day-plus-button.spec.ts",
-              "line": 57,
-              "column": 7
-            },
-            {
-              "title": "Meal option opens meal planning modal with selected date",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 60000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 1064,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-08-08T02:01:05.203Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "09b582d0735f617f013b-b16c7d181ef90d9b4c85",
-              "file": "calendar-day-plus-button.spec.ts",
-              "line": 88,
-              "column": 7
-            },
-            {
-              "title": "Workout option navigates to fitness planner with selected date",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 60000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 1057,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-08-08T02:01:06.270Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "09b582d0735f617f013b-072a13211f22b9c1ca79",
-              "file": "calendar-day-plus-button.spec.ts",
-              "line": 141,
-              "column": 7
-            },
-            {
-              "title": "Plus button only appears on selected day",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 60000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 1512,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-08-08T02:01:07.329Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "09b582d0735f617f013b-b7b82ddbef8d3178d4d7",
-              "file": "calendar-day-plus-button.spec.ts",
-              "line": 162,
-              "column": 7
-            },
-            {
-              "title": "Cancel button closes the modal",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 60000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 1008,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-08-08T02:01:08.843Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "09b582d0735f617f013b-5a3a7600c98ed116f270",
-              "file": "calendar-day-plus-button.spec.ts",
-              "line": 202,
+              "id": "e8d291aa59db1b0658e8-43bf961486ef6af74b27",
+              "file": "sports-happy-path.spec.ts",
+              "line": 26,
               "column": 7
             }
           ]
@@ -292,9 +597,9 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2025-08-08T02:00:37.208Z",
-    "duration": 32680.53,
-    "expected": 6,
+    "startTime": "2025-08-08T02:46:14.983Z",
+    "duration": 149574.308,
+    "expected": 5,
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0

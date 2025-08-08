@@ -57,15 +57,15 @@ test.describe('Sports happy path', () => {
     await page.getByRole('link', { name: /fitness/i }).click();
     await page.waitForURL((url) => /\/fitness(\/)?$/.test(url.pathname), { timeout: 10000 });
 
-    // Navigate to Sports section
-    await page.getByRole('link', { name: 'Sports & Activities Games,' }).click();
-    await page.waitForURL((url) => /\/fitness\/sports$/.test(url.pathname), { timeout: 10000 });
+    // Open Sports & Activities modal
+    await page.getByRole('button', { name: /Sports & Activities/i }).click();
+    await expect(page.getByTestId('sports-activities-modal')).toBeVisible();
 
-    // Verify the "Start Activity" button exists
-    await expect(page.getByRole('button', { name: /start activity/i })).toBeVisible();
+    // Verify the "Start New Activity" button exists
+    await expect(page.getByRole('button', { name: /Start New Activity/i })).toBeVisible();
 
-    // Click "Start Activity" button
-    await page.getByRole('button', { name: /start activity/i }).click();
+    // Click "Start New Activity" button
+    await page.getByRole('button', { name: /Start New Activity/i }).click();
     await page.waitForURL((url) => /\/fitness\/sports\/live$/.test(url.pathname), { timeout: 10000 });
 
     // Verify we're on the live sports page
@@ -414,11 +414,13 @@ test.describe('Sports happy path', () => {
     // --- END: Delete Sports Session Test ---
 
     // Test 8: Navigate back to sports list and try to start another session
-    await page.goto('http://localhost:3000/fitness/sports');
-    await expect(page.getByRole('heading', { name: 'Sports', level: 1 })).toBeVisible();
+    await page.goto('http://localhost:3000/fitness');
+    await expect(page.getByRole('heading', { name: /fitness dashboard/i })).toBeVisible();
+    await page.getByRole('button', { name: /sports & activities/i }).click();
+    await expect(page.getByTestId('sports-activities-modal')).toBeVisible();
     
     // Try to start another session and verify it works
-    await page.getByRole('button', { name: /start activity/i }).click();
+    await page.getByRole('button', { name: /start new activity/i }).click();
     await page.waitForURL((url) => /\/fitness\/sports\/live$/.test(url.pathname), { timeout: 10000 });
     
     // Verify we can start a new session

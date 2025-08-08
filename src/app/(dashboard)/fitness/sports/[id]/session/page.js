@@ -247,7 +247,7 @@ export default function SportsSessionPage() {
     // Show success message
     showSuccess('Sports session ended!');
     
-    // Redirect
-    router.push('/fitness/sports');
+    // Redirect to Fitness dashboard
+    router.push('/fitness');
   }
 } 

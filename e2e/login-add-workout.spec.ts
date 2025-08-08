@@ -68,12 +68,14 @@ test.describe('Login and add workout', () => {
         .eq('in_progress', true);
     });
 
-    // Navigate to workouts page first, then start a workout
-    await page.goto('http://localhost:3000/fitness/workouts');
-    await expect(page.getByRole('heading', { name: /workouts/i })).toBeVisible();
-    
-    // Click the "Start Workout" button to go to the live page
-    await page.getByRole('button', { name: /start workout/i }).click();
+    // Navigate to Fitness dashboard and open Workouts modal, then start a workout
+    await page.goto('http://localhost:3000/fitness');
+    await expect(page.getByRole('heading', { name: /fitness dashboard/i })).toBeVisible();
+    // Open Workouts modal
+    await page.getByRole('button', { name: /view workouts/i }).click();
+    await expect(page.getByTestId('workouts-modal')).toBeVisible();
+    // Click the "Start New Workout" button to go to the live page
+    await page.getByRole('button', { name: /start new workout/i }).click();
     await page.waitForURL(/\/fitness\/workouts\/live$/, { timeout: 10000 });
     await expect(page).toHaveURL(/\/fitness\/workouts\/live$/);
 
@@ -237,7 +239,7 @@ test.describe('Login and add workout', () => {
 
     // 6. End the workout
     await page.getByRole('button', { name: /end workout/i }).click();
-    await page.waitForURL((url) => /\/fitness\/workouts$/.test(url.pathname), { timeout: 10000 });
+    await page.waitForURL((url) => /\/fitness$/.test(url.pathname), { timeout: 10000 });
 
     // 7. Wait for user context and verify workout in database
     await waitForUserContext(page);

@@ -11,7 +11,19 @@ export function ToastProvider({ children }) {
   const [toasts, setToasts] = useState([]);
 
   const addToast = (message, type = 'success', duration = 5000) => {
-    const id = Date.now() + Math.random();
+    const generateId = () => {
+      try {
+        if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+          return crypto.randomUUID();
+        }
+      } catch (_) {
+        // ignore and fallback
+      }
+      const now = Date.now();
+      const rand = Math.random().toString(36).slice(2);
+      return `${now}-${rand}`;
+    };
+    const id = generateId();
     const newToast = { id, message, type, duration };
     setToasts(prev => [...prev, newToast]);
     

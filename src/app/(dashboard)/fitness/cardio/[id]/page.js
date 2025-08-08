@@ -59,7 +59,7 @@ export default function CardioDetailPage() {
     if (error) {
       showError("Failed to delete cardio entry");
     } else {
-      router.push("/fitness/cardio");
+      router.push("/fitness");
     }
   }
 

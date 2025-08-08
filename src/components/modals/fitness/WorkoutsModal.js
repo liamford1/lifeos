@@ -1,22 +1,16 @@
 "use client";
 
-import { useEffect, useState, useCallback, useMemo } from 'react';
-import Link from 'next/link';
-import { supabase } from '@/lib/supabaseClient';
-import { deleteEntityWithCalendarEvent, deleteWorkoutCascade } from '@/lib/utils/deleteUtils';
-import BackButton from '@/components/shared/BackButton';
-import Button from '@/components/shared/Button';
+import { useEffect, useState, useCallback, useMemo, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/context/UserContext';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
-import { useToast } from '@/components/client/Toast';
-import { MdOutlineCalendarToday } from 'react-icons/md';
-import dynamic from "next/dynamic";
-const Dumbbell = dynamic(() => import("lucide-react/dist/esm/icons/dumbbell"), { ssr: false });
-import { format } from 'date-fns';
+import Button from '@/components/shared/Button';
 import SharedDeleteButton from '@/components/SharedDeleteButton';
 import EditButton from '@/components/EditButton';
+import BaseModal from '@/components/shared/BaseModal';
 import { useWorkouts } from '@/lib/hooks/useWorkouts';
+import dynamic from "next/dynamic";
+const Dumbbell = dynamic(() => import("lucide-react/dist/esm/icons/dumbbell"), { ssr: false, loading: () => <span className="inline-block w-4 h-4" /> });
 
 // Skeleton component for workout items
 function WorkoutSkeleton() {
@@ -33,73 +27,61 @@ function WorkoutSkeleton() {
   );
 }
 
-export default function WorkoutsDashboard() {
-  const { user, loading: userLoading } = useUser();
+export default function WorkoutsModal({ isOpen, onClose }) {
+  const { user } = useUser();
   const router = useRouter();
   const [workouts, setWorkouts] = useState([]);
   const [workoutsLoading, setWorkoutsLoading] = useState(true);
   const [hasInitialized, setHasInitialized] = useState(false);
+  const fetchedRef = useRef({ userId: null, done: false });
   const { fetchWorkouts, deleteWorkout } = useWorkouts();
   
   // Memoize fetchWorkouts to avoid unnecessary effect reruns
-  const memoizedFetchWorkouts = useCallback(fetchWorkouts, []);
+  const memoizedFetchWorkouts = useCallback(fetchWorkouts, [fetchWorkouts]);
 
   // Memoize user ID to prevent unnecessary re-renders
   const userId = useMemo(() => user?.id, [user?.id]);
 
-  useEffect(() => {
-    if (!userLoading && !user) {
-      router.push('/auth');
-    }
-  }, [userLoading, user, router]);
-
-  useEffect(() => {
-    let isMounted = true;
-    
-    async function loadWorkouts() {
-      if (!userId) {
-        if (isMounted) {
-          setWorkoutsLoading(false);
-          setHasInitialized(true);
-        }
-        return;
-      }
-      
-      if (isMounted) {
-        setWorkoutsLoading(true);
-      }
-      
-      try {
-        const data = await memoizedFetchWorkouts(userId);
-        if (isMounted) {
-          setWorkouts(data || []);
-          setWorkoutsLoading(false);
-          setHasInitialized(true);
-        }
-      } catch (error) {
-        console.error('Error loading workouts:', error);
-        if (isMounted) {
-          setWorkoutsLoading(false);
-          setHasInitialized(true);
-        }
-      }
+  const loadWorkouts = useCallback(async () => {
+    if (!userId) {
+      setWorkoutsLoading(false);
+      setHasInitialized(true);
+      return;
     }
     
-    loadWorkouts();
+    setWorkoutsLoading(true);
     
-    return () => { 
-      isMounted = false; 
-    };
+    try {
+      const data = await memoizedFetchWorkouts(userId);
+      setWorkouts(data || []);
+      setWorkoutsLoading(false);
+      setHasInitialized(true);
+    } catch (error) {
+      console.error('Error loading workouts:', error);
+      setWorkoutsLoading(false);
+      setHasInitialized(true);
+    }
   }, [userId, memoizedFetchWorkouts]);
 
-  const handleDelete = async (id) => {
+  useEffect(() => {
+    if (!isOpen || !user) return;
+    if (fetchedRef.current.done && fetchedRef.current.userId === user.id) return;
+    fetchedRef.current = { userId: user.id, done: true };
+    loadWorkouts();
+  }, [isOpen, user, loadWorkouts]);
+
+  const handleDelete = useCallback(async (id) => {
     const confirm = window.confirm('Delete this workout?');
     if (!confirm) return;
     const success = await deleteWorkout(id);
     if (success) {
       setWorkouts((prev) => prev.filter((w) => w.id !== id));
     }
-  };
+  }, [deleteWorkout]);
+
+  const handleStartWorkout = useCallback(() => {
+    router.push('/fitness/workouts/live');
+  }, [router]);
 
   // Determine what to render - memoized to prevent unnecessary re-renders
   const content = useMemo(() => {
@@ -126,12 +108,14 @@ export default function WorkoutsDashboard() {
           <p className="text-muted-foreground text-sm mb-4" data-testid="workouts-empty">
             No entries yet. Click &quot;Start Workout&quot; to begin tracking your first session.
           </p>
-          <Link href="/fitness/workouts/live">
-            <Button variant="primary" className="flex items-center gap-2 mx-auto">
-              <Dumbbell className="w-4 h-4" />
-              Start Workout
-            </Button>
-          </Link>
+          <Button 
+            variant="primary" 
+            className="flex items-center gap-2 mx-auto"
+            onClick={handleStartWorkout}
+          >
+            <Dumbbell className="w-4 h-4" />
+            Start Workout
+          </Button>
         </div>
       );
     }
@@ -160,26 +144,39 @@ export default function WorkoutsDashboard() {
         </div>
       </li>
     ));
-  }, [hasInitialized, workoutsLoading, user, workouts, router]);
+  }, [hasInitialized, workoutsLoading, user, workouts, router, handleDelete, handleStartWorkout]);
+
+  if (!isOpen) return null;
 
   return (
-    <div className="max-w-6xl mx-auto p-4 space-y-4">
-      <BackButton />
-      <h1 className="text-2xl font-bold flex items-center">
-        <Dumbbell className="w-5 h-5 text-base mr-2 inline-block" />
-        Workouts
-      </h1>
-      <p className="text-base">Track your weightlifting and strength training sessions.</p>
+    <BaseModal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Workouts"
+      subtitle="Track your weightlifting and strength training sessions"
+      icon={Dumbbell}
+      iconBgColor="bg-blue-500/10"
+      iconColor="text-blue-500"
+      maxWidth="max-w-4xl"
+      data-testid="workouts-modal"
+    >
+      {/* Start Workout Button */}
+      <div className="flex justify-center">
+        <Button
+          onClick={handleStartWorkout}
+          variant="primary"
+          size="lg"
+          className="flex items-center gap-2"
+        >
+          <Dumbbell className="w-4 h-4" />
+          Start New Workout
+        </Button>
+      </div>
 
-      <h2 className="text-xl font-semibold mb-2">
-        <MdOutlineCalendarToday className="inline w-5 h-5 text-base align-text-bottom mr-2" />
-        Workout History
-      </h2>
-
-      {/* Stable container with consistent height */}
+      {/* Workout History */}
       <div className="space-y-3 min-h-[300px] relative" data-testid="workout-list">
         {content}
       </div>
-    </div>
+    </BaseModal>
   );
-}
+} 

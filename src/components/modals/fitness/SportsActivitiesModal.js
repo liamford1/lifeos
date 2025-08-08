@@ -1,23 +1,17 @@
 "use client";
 
-import { useEffect, useState, useCallback, useMemo } from 'react';
-import Link from 'next/link';
-import { supabase } from '@/lib/supabaseClient';
-import { deleteEntityWithCalendarEvent } from '@/lib/utils/deleteUtils';
-import BackButton from '@/components/shared/BackButton';
-import Button from '@/components/shared/Button';
+import { useEffect, useState, useCallback, useMemo, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/context/UserContext';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
-import { useToast } from '@/components/client/Toast';
-import { MdOutlineCalendarToday } from 'react-icons/md';
-import dynamic from "next/dynamic";
-const Goal = dynamic(() => import("lucide-react/dist/esm/icons/goal"), { ssr: false });
-import { format } from 'date-fns';
+import Button from '@/components/shared/Button';
 import SharedDeleteButton from '@/components/SharedDeleteButton';
 import EditButton from '@/components/EditButton';
+import BaseModal from '@/components/shared/BaseModal';
 import { useSportsSessions } from '@/lib/hooks/useSportsSessions';
 import { useSportsSession } from '@/context/SportsSessionContext';
+import dynamic from "next/dynamic";
+const Goal = dynamic(() => import("lucide-react/dist/esm/icons/goal"), { ssr: false, loading: () => <span className="inline-block w-4 h-4" /> });
 
 // Skeleton component for sports items
 function SportsSkeleton() {
@@ -35,67 +29,51 @@ function SportsSkeleton() {
   );
 }
 
-export default function SportsDashboard() {
-  const { user, loading: userLoading } = useUser();
+export default function SportsActivitiesModal({ isOpen, onClose }) {
+  const { user } = useUser();
   const { activeSportsId } = useSportsSession();
   const router = useRouter();
   const [sessions, setSessions] = useState([]);
   const [sessionsLoading, setSessionsLoading] = useState(true);
   const [hasInitialized, setHasInitialized] = useState(false);
+  const fetchedRef = useRef({ userId: null, done: false });
   const { fetchSportsSessions, deleteSportsSession } = useSportsSessions();
   
   // Memoize fetchSportsSessions to avoid unnecessary effect reruns
-  const memoizedFetchSportsSessions = useCallback(fetchSportsSessions, []);
+  const memoizedFetchSportsSessions = useCallback(fetchSportsSessions, [fetchSportsSessions]);
 
   // Memoize user ID to prevent unnecessary re-renders
   const userId = useMemo(() => user?.id, [user?.id]);
 
-  useEffect(() => {
-    if (!userLoading && !user) {
-      router.push('/auth');
-    }
-  }, [userLoading, user, router]);
-
-  useEffect(() => {
-    let isMounted = true;
-    
-    async function loadSessions() {
-      if (!userId) {
-        if (isMounted) {
-          setSessionsLoading(false);
-          setHasInitialized(true);
-        }
-        return;
-      }
-      
-      if (isMounted) {
-        setSessionsLoading(true);
-      }
-      
-      try {
-        const data = await memoizedFetchSportsSessions(userId);
-        if (isMounted) {
-          setSessions(data || []);
-          setSessionsLoading(false);
-          setHasInitialized(true);
-        }
-      } catch (error) {
-        console.error('Error loading sports sessions:', error);
-        if (isMounted) {
-          setSessionsLoading(false);
-          setHasInitialized(true);
-        }
-      }
+  const loadSessions = useCallback(async () => {
+    if (!userId) {
+      setSessionsLoading(false);
+      setHasInitialized(true);
+      return;
     }
     
-    loadSessions();
+    setSessionsLoading(true);
     
-    return () => { 
-      isMounted = false; 
-    };
+    try {
+      const data = await memoizedFetchSportsSessions(userId);
+      setSessions(data || []);
+      setSessionsLoading(false);
+      setHasInitialized(true);
+    } catch (error) {
+      console.error('Error loading sports sessions:', error);
+      setSessionsLoading(false);
+      setHasInitialized(true);
+    }
   }, [userId, memoizedFetchSportsSessions]);
 
-  const handleDelete = async (id) => {
+  useEffect(() => {
+    if (!isOpen || !user) return;
+    if (fetchedRef.current.done && fetchedRef.current.userId === user.id) return;
+    fetchedRef.current = { userId: user.id, done: true };
+    loadSessions();
+  }, [isOpen, user, loadSessions]);
+
+  const handleDelete = useCallback(async (id) => {
     const confirm = window.confirm('Delete this session?');
     if (!confirm) return;
     if (!user) return;
@@ -103,12 +81,12 @@ export default function SportsDashboard() {
     if (success) {
       setSessions((prev) => prev.filter((s) => s.id !== id));
     }
-  };
+  }, [deleteSportsSession, user]);
 
-  const handleStartActivity = () => {
+  const handleStartActivity = useCallback(() => {
     if (!user) return router.push('/auth');
     router.push('/fitness/sports/live');
-  };
+  }, [user, router]);
 
   // Determine what to render - memoized to prevent unnecessary re-renders
   const content = useMemo(() => {
@@ -177,46 +155,53 @@ export default function SportsDashboard() {
         </div>
       </li>
     ));
-  }, [hasInitialized, sessionsLoading, user, sessions, router]);
+  }, [hasInitialized, sessionsLoading, user, sessions, router, handleDelete]);
+
+  if (!isOpen) return null;
 
   return (
-    <div className="max-w-6xl mx-auto p-4 space-y-4">
-      <BackButton />
-      <h1 className="text-2xl font-bold flex items-center">
-        <Goal className="w-5 h-5 text-base mr-2 inline-block" />
-        Sports
-      </h1>
-      <p className="text-base">Track your sports activities and games.</p>
-
-      <div className="flex gap-4 mb-4">
+    <BaseModal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Sports & Activities"
+      subtitle="Track your sports activities and games"
+      icon={Goal}
+      iconBgColor="bg-green-500/10"
+      iconColor="text-green-500"
+      maxWidth="max-w-4xl"
+      data-testid="sports-activities-modal"
+    >
+      {/* Start Activity Button */}
+      <div className="flex justify-center">
         {activeSportsId ? (
           <Button
             variant="success"
+            size="lg"
             onClick={handleStartActivity}
             data-testid="sports-in-progress-button"
+            className="flex items-center gap-2"
           >
+            <Goal className="w-4 h-4" />
             Continue Activity
           </Button>
         ) : (
           <Button
             variant="primary"
+            size="lg"
             onClick={handleStartActivity}
             data-testid="start-activity-button"
+            className="flex items-center gap-2"
           >
-            Start Activity
+            <Goal className="w-4 h-4" />
+            Start New Activity
           </Button>
         )}
       </div>
 
-      <h2 className="text-xl font-semibold mb-2">
-        <MdOutlineCalendarToday className="inline w-5 h-5 text-base align-text-bottom mr-2" />
-        Sports History
-      </h2>
-
-      {/* Stable container with consistent height */}
+      {/* Sports History */}
       <div className="space-y-3 min-h-[300px] relative" data-testid="sports-list">
         {content}
       </div>
-    </div>
+    </BaseModal>
   );
-}
+} 
