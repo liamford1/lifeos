@@ -10,7 +10,7 @@ const ToastContext = createContext();
 export function ToastProvider({ children }) {
   const [toasts, setToasts] = useState([]);
 
-  const addToast = (message, type = 'success', duration = 5000) => {
+  const addToast = (message, type = 'success', duration = 5000, onUndo = null) => {
     const generateId = () => {
       try {
         if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
@@ -24,7 +24,7 @@ export function ToastProvider({ children }) {
       return `${now}-${rand}`;
     };
     const id = generateId();
-    const newToast = { id, message, type, duration };
+    const newToast = { id, message, type, duration, onUndo };
     setToasts(prev => [...prev, newToast]);
     
     if (duration > 0) {
@@ -38,7 +38,7 @@ export function ToastProvider({ children }) {
     setToasts(prev => prev.filter(toast => toast.id !== id));
   };
 
-  const showSuccess = (message, duration) => addToast(message, 'success', duration);
+  const showSuccess = (message, duration, onUndo) => addToast(message, 'success', duration, onUndo);
   const showError = (message, duration) => addToast(message, 'error', duration);
   const showWarning = (message, duration) => addToast(message, 'warning', duration);
   const showInfo = (message, duration) => addToast(message, 'info', duration);
@@ -74,6 +74,7 @@ export default function Toast({
   type = 'success', // 'success', 'error', 'warning', 'info'
   duration = 5000,
   onClose,
+  onUndo,
   position = 'top-right' // 'top-right', 'top-left', 'bottom-right', 'bottom-left', 'top-center', 'bottom-center'
 }) {
   const [isVisible, setIsVisible] = useState(true);
@@ -90,6 +91,12 @@ export default function Toast({
   }, [duration, onClose]);
 
   const handleClose = () => {
+    setIsVisible(false);
+    onClose?.();
+  };
+
+  const handleUndo = () => {
+    onUndo?.();
     setIsVisible(false);
     onClose?.();
   };
@@ -150,15 +157,28 @@ export default function Toast({
       <div className={`flex items-center p-4 rounded-lg shadow-lg border ${getTypeStyles()} animate-in slide-in-from-top-2 duration-300`}>
         <span className="mr-2 text-lg">{getIcon()}</span>
         <span className="flex-1 text-sm font-medium">{message}</span>
-        <Button
-          onClick={handleClose}
-          variant="secondary"
-          size="sm"
-          className="ml-2"
-          aria-label="Close toast"
-        >
-          ✕
-        </Button>
+        <div className="flex items-center gap-2 ml-2">
+          {onUndo && (
+            <Button
+              onClick={handleUndo}
+              variant="secondary"
+              size="sm"
+              className="text-xs px-2 py-1"
+              aria-label="Undo"
+            >
+              Undo
+            </Button>
+          )}
+          <Button
+            onClick={handleClose}
+            variant="secondary"
+            size="sm"
+            className="text-xs px-2 py-1"
+            aria-label="Close toast"
+          >
+            ✕
+          </Button>
+        </div>
       </div>
     </div>
   );
@@ -177,6 +197,7 @@ export function ToastContainer() {
           type={toast.type}
           duration={toast.duration}
           onClose={() => removeToast(toast.id)}
+          onUndo={toast.onUndo}
         />
       ))}
     </div>
