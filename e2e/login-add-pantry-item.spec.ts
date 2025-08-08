@@ -24,8 +24,8 @@ test('Complete pantry workflow with single item', async ({ page }) => {
   // Click the login button
   await page.getByRole('button', { name: /log in/i }).click();
 
-  // Wait for dashboard to load by checking for visible text "Planner"
-  await expect(page.locator('text=Planner')).toBeVisible({ timeout: 10000 });
+  // Wait for dashboard to load by checking for visible text "Calendar"
+  await expect(page.getByRole('heading', { name: 'Calendar' })).toBeVisible({ timeout: 10000 });
 
   // ✅ Sanity check: window.supabase is defined
   await page.evaluate(() => {

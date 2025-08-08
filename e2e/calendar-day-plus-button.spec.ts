@@ -13,7 +13,7 @@ test.describe('Calendar Day Plus Button Functionality', () => {
 
   test('Plus button appears on selected day and opens planning modal', async ({ page }) => {
     // Wait for the page to load
-    await page.waitForSelector('[data-testid="home-header"]');
+    await expect(page.getByRole('heading', { name: 'Calendar' })).toBeVisible({ timeout: 10000 });
     
     // Click on a day in the calendar (not today to avoid conflicts)
     const tomorrow = new Date();
@@ -55,7 +55,7 @@ test.describe('Calendar Day Plus Button Functionality', () => {
   });
 
   test('General Event option opens add event modal with pre-selected date', async ({ page }) => {
-    await page.waitForSelector('[data-testid="home-header"]');
+    await expect(page.getByRole('heading', { name: 'Calendar' })).toBeVisible({ timeout: 10000 });
     
     // Click on a day in the calendar
     const tomorrow = new Date();
@@ -86,15 +86,13 @@ test.describe('Calendar Day Plus Button Functionality', () => {
   });
 
   test('Meal option opens meal planning modal with selected date', async ({ page }) => {
-    await page.waitForSelector('[data-testid="home-header"]');
+    await expect(page.getByRole('heading', { name: 'Calendar' })).toBeVisible({ timeout: 10000 });
     
-    // Click on a day in the calendar
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    // Use a more reliable date formatting that accounts for timezone
-    const tomorrowStr = tomorrow.toLocaleDateString('en-CA'); // YYYY-MM-DD format
-    const tomorrowCell = page.locator('button.react-calendar__tile').filter({ hasText: tomorrow.getDate().toString() }).first();
-    await tomorrowCell.click();
+    // Click on a day in the calendar - use today's date to avoid month boundary issues
+    const today = new Date();
+    const todayStr = today.toLocaleDateString('en-CA'); // YYYY-MM-DD format
+    const todayCell = page.locator('button.react-calendar__tile').filter({ hasText: today.getDate().toString() }).first();
+    await todayCell.click();
     
     // Click the "+" button
     const plusButton = page.locator('div[aria-label="Add event for this day"]').first();
@@ -107,24 +105,22 @@ test.describe('Calendar Day Plus Button Functionality', () => {
     await expect(page.getByRole('heading', { name: 'Plan a Meal' })).toBeVisible();
     await expect(page.getByText('Schedule meals for the week ahead')).toBeVisible();
     
-    // Verify the date is pre-selected (should be tomorrow)
+    // Verify the date is pre-selected (should be today)
     const dateInput = page.locator('input[type="date"]');
-    await expect(dateInput).toHaveValue(tomorrowStr);
+    await expect(dateInput).toHaveValue(todayStr);
     
     // Close the modal
     await page.getByRole('button', { name: 'Close modal' }).click();
   });
 
   test('Workout option navigates to fitness planner with selected date', async ({ page }) => {
-    await page.waitForSelector('[data-testid="home-header"]');
+    await expect(page.getByRole('heading', { name: 'Calendar' })).toBeVisible({ timeout: 10000 });
     
-    // Click on a day in the calendar
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    // Use a more reliable date formatting that accounts for timezone
-    const tomorrowStr = tomorrow.toLocaleDateString('en-CA'); // YYYY-MM-DD format
-    const tomorrowCell = page.locator('button.react-calendar__tile').filter({ hasText: tomorrow.getDate().toString() }).first();
-    await tomorrowCell.click();
+    // Click on a day in the calendar - use today's date to avoid month boundary issues
+    const today = new Date();
+    const todayStr = today.toLocaleDateString('en-CA'); // YYYY-MM-DD format
+    const todayCell = page.locator('button.react-calendar__tile').filter({ hasText: today.getDate().toString() }).first();
+    await todayCell.click();
     
     // Click the "+" button
     const plusButton = page.locator('div[aria-label="Add event for this day"]').first();
@@ -139,7 +135,7 @@ test.describe('Calendar Day Plus Button Functionality', () => {
   });
 
   test('Plus button only appears on selected day', async ({ page }) => {
-    await page.waitForSelector('[data-testid="home-header"]');
+    await expect(page.getByRole('heading', { name: 'Calendar' })).toBeVisible({ timeout: 10000 });
     
     // Initially, check if there's already a "+" button visible
     const plusButtons = page.locator('div[aria-label="Add event for this day"]');
@@ -179,7 +175,7 @@ test.describe('Calendar Day Plus Button Functionality', () => {
   });
 
   test('Cancel button closes the modal', async ({ page }) => {
-    await page.waitForSelector('[data-testid="home-header"]');
+    await expect(page.getByRole('heading', { name: 'Calendar' })).toBeVisible({ timeout: 10000 });
     
     // Click on a day and open the modal
     const tomorrow = new Date();

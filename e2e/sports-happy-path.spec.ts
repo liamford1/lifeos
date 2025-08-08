@@ -41,8 +41,8 @@ test.describe('Sports happy path', () => {
     // Click the login button
     await page.getByRole('button', { name: /log in/i }).click();
 
-    // Wait for dashboard to load by checking for visible text "Planner"
-    await expect(page.locator('text=Planner')).toBeVisible({ timeout: 10000 });
+      // Wait for dashboard to load by checking for visible text "Calendar"
+  await expect(page.getByRole('heading', { name: 'Calendar' })).toBeVisible({ timeout: 10000 });
 
     // Clean up any existing test data after login
     await cleanupTestDataBeforeTest(page, testId);

@@ -16,7 +16,7 @@ test('Basic page load test', async ({ page }) => {
   await page.getByRole('button', { name: /log in/i }).click();
   
   // Wait for dashboard to load
-  await expect(page.locator('text=Planner')).toBeVisible({ timeout: 10000 });
+  await expect(page.getByRole('heading', { name: 'Calendar' })).toBeVisible({ timeout: 10000 });
   
   // Verify we're on the dashboard
   await expect(page).toHaveURL(/\/$/);

@@ -12,7 +12,7 @@ test.describe('Calendar Meal Click Behavior', () => {
     await page.getByPlaceholder('Email').fill('test@example.com');
     await page.getByPlaceholder('Password').fill('password123');
     await page.getByRole('button', { name: /log in/i }).click();
-    await expect(page.locator('text=Planner')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByRole('heading', { name: 'Calendar' })).toBeVisible({ timeout: 10000 });
     
     // Clean up any existing test data
     await cleanupTestMeal(page, testMealName);

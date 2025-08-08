@@ -90,12 +90,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1190,
+                  "duration": 1117,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2025-08-06T04:17:07.169Z",
+                  "startTime": "2025-08-08T01:40:24.782Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -139,12 +139,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2037,
+                      "duration": 1970,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-06T04:17:08.552Z",
+                      "startTime": "2025-08-08T01:40:25.989Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -173,12 +173,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 1002,
+                      "duration": 1057,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-06T04:17:10.592Z",
+                      "startTime": "2025-08-08T01:40:27.961Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -207,12 +207,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 982,
+                      "duration": 1015,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-06T04:17:11.597Z",
+                      "startTime": "2025-08-08T01:40:29.021Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -241,12 +241,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 975,
+                      "duration": 956,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-06T04:17:12.581Z",
+                      "startTime": "2025-08-08T01:40:30.038Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -256,7 +256,7 @@
               ],
               "id": "09b582d0735f617f013b-072a13211f22b9c1ca79",
               "file": "calendar-day-plus-button.spec.ts",
-              "line": 118,
+              "line": 116,
               "column": 7
             },
             {
@@ -275,12 +275,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 1023,
+                      "duration": 1546,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-06T04:17:13.558Z",
+                      "startTime": "2025-08-08T01:40:30.996Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -290,7 +290,7 @@
               ],
               "id": "09b582d0735f617f013b-b7b82ddbef8d3178d4d7",
               "file": "calendar-day-plus-button.spec.ts",
-              "line": 141,
+              "line": 137,
               "column": 7
             },
             {
@@ -309,12 +309,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 1013,
+                      "duration": 992,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-06T04:17:14.585Z",
+                      "startTime": "2025-08-08T01:40:32.544Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -324,7 +324,7 @@
               ],
               "id": "09b582d0735f617f013b-5a3a7600c98ed116f270",
               "file": "calendar-day-plus-button.spec.ts",
-              "line": 181,
+              "line": 177,
               "column": 7
             }
           ]
@@ -360,12 +360,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 5018,
+                      "duration": 4801,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-06T04:17:15.604Z",
+                      "startTime": "2025-08-08T01:40:33.543Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -394,12 +394,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 5323,
+                      "duration": 5190,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-06T04:17:20.626Z",
+                      "startTime": "2025-08-08T01:40:38.348Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -438,7 +438,7 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 25571,
+                  "duration": 25363,
                   "errors": [],
                   "stdout": [
                     {
@@ -492,7 +492,7 @@
                   ],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2025-08-06T04:17:25.964Z",
+                  "startTime": "2025-08-08T01:40:43.554Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -536,12 +536,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 822,
+                      "duration": 910,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-06T04:17:51.544Z",
+                      "startTime": "2025-08-08T01:41:08.924Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -570,12 +570,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 866,
+                      "duration": 956,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-06T04:17:52.369Z",
+                      "startTime": "2025-08-08T01:41:09.836Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -604,12 +604,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 956,
+                      "duration": 972,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-06T04:17:53.237Z",
+                      "startTime": "2025-08-08T01:41:10.794Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -638,12 +638,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 958,
+                      "duration": 957,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-06T04:17:54.195Z",
+                      "startTime": "2025-08-08T01:41:11.768Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -672,12 +672,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 857,
+                      "duration": 974,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-06T04:17:55.155Z",
+                      "startTime": "2025-08-08T01:41:12.727Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -706,12 +706,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 855,
+                      "duration": 937,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-06T04:17:56.014Z",
+                      "startTime": "2025-08-08T01:41:13.704Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -757,12 +757,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 15058,
+                      "duration": 13629,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-06T04:17:56.873Z",
+                      "startTime": "2025-08-08T01:41:14.647Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -801,12 +801,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 11224,
+                  "duration": 10519,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2025-08-06T04:18:11.938Z",
+                  "startTime": "2025-08-08T01:41:28.280Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -843,12 +843,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 13447,
+                  "duration": 12329,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2025-08-06T04:18:23.170Z",
+                  "startTime": "2025-08-08T01:41:38.808Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -892,7 +892,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 14488,
+                      "duration": 14364,
                       "errors": [],
                       "stdout": [
                         {
@@ -905,7 +905,7 @@
                           "text": "[BROWSER LOG] log: [E2E] Debug items in database: [Object, Object, Object]\n"
                         },
                         {
-                          "text": "[E2E] Debug items found: [\n  {\n    id: \u001b[32m'85a70871-8c24-43e5-825a-a02a27339d66'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    name: \u001b[32m'Test Milk'\u001b[39m,\n    quantity: \u001b[33m2\u001b[39m,\n    unit: \u001b[32m'gallons'\u001b[39m,\n    category: \u001b[1mnull\u001b[22m,\n    added_from: \u001b[32m'receipt'\u001b[39m,\n    expires_at: \u001b[1mnull\u001b[22m,\n    added_at: \u001b[32m'2025-08-06T04:18:40.406328+00:00'\u001b[39m,\n    receipt_id: \u001b[32m'38b65b8b-0be9-4697-be53-40588e115355'\u001b[39m\n  },\n  {\n    id: \u001b[32m'e07d57cf-84da-436a-bd3e-399aecb31949'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    name: \u001b[32m'Test Eggs'\u001b[39m,\n    quantity: \u001b[33m12\u001b[39m,\n    unit: \u001b[32m'count'\u001b[39m,\n    category: \u001b[1mnull\u001b[22m,\n    added_from: \u001b[32m'receipt'\u001b[39m,\n    expires_at: \u001b[1mnull\u001b[22m,\n    added_at: \u001b[32m'2025-08-06T04:18:40.406328+00:00'\u001b[39m,\n    receipt_id: \u001b[32m'38b65b8b-0be9-4697-be53-40588e115355'\u001b[39m\n  },\n  {\n    id: \u001b[32m'fc65c2e3-60f1-4d30-bb74-203ce3033847'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    name: \u001b[32m'Test Bread'\u001b[39m,\n    quantity: \u001b[33m1\u001b[39m,\n    unit: \u001b[32m'loaf'\u001b[39m,\n    category: \u001b[1mnull\u001b[22m,\n    added_from: \u001b[32m'receipt'\u001b[39m,\n    expires_at: \u001b[1mnull\u001b[22m,\n    added_at: \u001b[32m'2025-08-06T04:18:40.406328+00:00'\u001b[39m,\n    receipt_id: \u001b[32m'38b65b8b-0be9-4697-be53-40588e115355'\u001b[39m\n  }\n]\n"
+                          "text": "[E2E] Debug items found: [\n  {\n    id: \u001b[32m'd3219ad2-e7a2-4bbb-961a-bd733dacad92'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    name: \u001b[32m'Test Milk'\u001b[39m,\n    quantity: \u001b[33m2\u001b[39m,\n    unit: \u001b[32m'gallons'\u001b[39m,\n    category: \u001b[1mnull\u001b[22m,\n    added_from: \u001b[32m'receipt'\u001b[39m,\n    expires_at: \u001b[1mnull\u001b[22m,\n    added_at: \u001b[32m'2025-08-08T01:41:54.585774+00:00'\u001b[39m,\n    receipt_id: \u001b[32m'a4ba554b-7b35-4235-a2ba-00a52446c7a1'\u001b[39m\n  },\n  {\n    id: \u001b[32m'0796e7c4-0188-4a83-9f78-9bd1103c864f'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    name: \u001b[32m'Test Eggs'\u001b[39m,\n    quantity: \u001b[33m12\u001b[39m,\n    unit: \u001b[32m'count'\u001b[39m,\n    category: \u001b[1mnull\u001b[22m,\n    added_from: \u001b[32m'receipt'\u001b[39m,\n    expires_at: \u001b[1mnull\u001b[22m,\n    added_at: \u001b[32m'2025-08-08T01:41:54.585774+00:00'\u001b[39m,\n    receipt_id: \u001b[32m'a4ba554b-7b35-4235-a2ba-00a52446c7a1'\u001b[39m\n  },\n  {\n    id: \u001b[32m'ff79ed9f-7670-4440-adbf-f20c75774b88'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    name: \u001b[32m'Test Bread'\u001b[39m,\n    quantity: \u001b[33m1\u001b[39m,\n    unit: \u001b[32m'loaf'\u001b[39m,\n    category: \u001b[1mnull\u001b[22m,\n    added_from: \u001b[32m'receipt'\u001b[39m,\n    expires_at: \u001b[1mnull\u001b[22m,\n    added_at: \u001b[32m'2025-08-08T01:41:54.585774+00:00'\u001b[39m,\n    receipt_id: \u001b[32m'a4ba554b-7b35-4235-a2ba-00a52446c7a1'\u001b[39m\n  }\n]\n"
                         },
                         {
                           "text": "[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()\n"
@@ -913,7 +913,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-06T04:18:36.625Z",
+                      "startTime": "2025-08-08T01:41:51.146Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -959,7 +959,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 17709,
+                      "duration": 17097,
                       "errors": [],
                       "stdout": [
                         {
@@ -969,12 +969,12 @@
                           "text": "[E2E] ✅ Updated workout found in UI\n"
                         },
                         {
-                          "text": "[E2E] ✅ Final workout verification successful: Push Day 1754453931176 Edited\n"
+                          "text": "[E2E] ✅ Final workout verification successful: Push Day 1754617325569 Edited\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-06T04:18:51.123Z",
+                      "startTime": "2025-08-08T01:42:05.521Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1013,7 +1013,7 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 17477,
+                  "duration": 20091,
                   "errors": [],
                   "stdout": [
                     {
@@ -1033,6 +1033,9 @@
                     },
                     {
                       "text": "[E2E] Workout calendar events found: \u001b[33m1\u001b[39m\n"
+                    },
+                    {
+                      "text": "[BROWSER LOG] error: Failed to load resource: the server responded with a status of 429 ()\n"
                     },
                     {
                       "text": "[E2E] Planned cardio created successfully in database\n"
@@ -1062,7 +1065,13 @@
                       "text": "[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()\n"
                     },
                     {
-                      "text": "[E2E] All calendar events in database: [\n  {\n    id: \u001b[32m'9537ed60-5327-4698-99d9-6b1878e457e7'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Sport: Test Planned Sports'\u001b[39m,\n    description: \u001b[32m'Test planned sports notes'\u001b[39m,\n    start_time: \u001b[32m'2025-08-05T00:00:00+00:00'\u001b[39m,\n    end_time: \u001b[32m'2025-08-06T01:00:00+00:00'\u001b[39m,\n    source: \u001b[32m'sport'\u001b[39m,\n    source_id: \u001b[32m'cc2d7a4f-d202-4c22-bbce-84d31b10dcd9'\u001b[39m,\n    created_at: \u001b[32m'2025-08-06T04:19:15.653877+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-06T04:19:15.653877+00:00'\u001b[39m\n  },\n  {\n    id: \u001b[32m'9ac694d8-24f4-4e28-9891-44b79695c5c6'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Cardio: Test Planned Cardio'\u001b[39m,\n    description: \u001b[32m'Test planned cardio notes'\u001b[39m,\n    start_time: \u001b[32m'2025-08-05T00:00:00+00:00'\u001b[39m,\n    end_time: \u001b[32m'2025-08-06T00:00:00+00:00'\u001b[39m,\n    source: \u001b[32m'cardio'\u001b[39m,\n    source_id: \u001b[32m'33e7556d-758e-4846-8070-c774c081dcd3'\u001b[39m,\n    created_at: \u001b[32m'2025-08-06T04:19:14.30677+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-06T04:19:14.30677+00:00'\u001b[39m\n  },\n  {\n    id: \u001b[32m'5e6133a7-0f62-48b4-862a-be64559b587b'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Workout: Test Planned Workout'\u001b[39m,\n    description: \u001b[32m'Test planned workout notes'\u001b[39m,\n    start_time: \u001b[32m'2025-08-05T00:00:00+00:00'\u001b[39m,\n    end_time: \u001b[32m'2025-08-05T23:00:00+00:00'\u001b[39m,\n    source: \u001b[32m'workout'\u001b[39m,\n    source_id: \u001b[32m'c3e27262-f6fe-4edb-a8b8-e4206a78d898'\u001b[39m,\n    created_at: \u001b[32m'2025-08-06T04:19:12.978661+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-06T04:19:12.978661+00:00'\u001b[39m\n  },\n  {\n    id: \u001b[32m'088f1a41-59ea-4442-95b3-5e65c2269241'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Meal: Test Calendar Meal 1754453840678'\u001b[39m,\n    description: \u001b[32m'Test meal for calendar click behavior'\u001b[39m,\n    start_time: \u001b[32m'2025-07-28T12:00:00+00:00'\u001b[39m,\n    end_time: \u001b[1mnull\u001b[22m,\n    source: \u001b[32m'meal'\u001b[39m,\n    source_id: \u001b[32m'8a391417-2fcc-4c19-9b38-6072b70940c4'\u001b[39m,\n    created_at: \u001b[32m'2025-08-06T04:17:22.83341+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-06T04:17:22.83341+00:00'\u001b[39m\n  },\n  {\n    id: \u001b[32m'1424c427-8e95-450c-bdd6-921ce3dac40f'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Meal: Test Calendar Meal 1754453835644'\u001b[39m,\n    description: \u001b[32m'Test meal for calendar click behavior'\u001b[39m,\n    start_time: \u001b[32m'2025-07-28T12:00:00+00:00'\u001b[39m,\n    end_time: \u001b[1mnull\u001b[22m,\n    source: \u001b[32m'meal'\u001b[39m,\n    source_id: \u001b[32m'460deb36-926b-4a94-ae96-bbd7f3d69068'\u001b[39m,\n    created_at: \u001b[32m'2025-08-06T04:17:17.793731+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-06T04:17:17.793731+00:00'\u001b[39m\n  }\n]\n"
+                      "text": "[E2E] Error navigating to home page: \u001b[31mTimed out 5000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: locator('h1').filter({ hasText: /Planned Fitness Activities/i })\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('h1').filter({ hasText: /Planned Fitness Activities/i })\u001b[22m\n\n"
+                    },
+                    {
+                      "text": "[E2E] Skipping UI verification, proceeding with database check\n"
+                    },
+                    {
+                      "text": "[E2E] All calendar events in database: [\n  {\n    id: \u001b[32m'48bf3436-cd9b-417a-a4f1-b22cbc713a46'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Sport: Test Planned Sports'\u001b[39m,\n    description: \u001b[32m'Test planned sports notes'\u001b[39m,\n    start_time: \u001b[32m'2025-08-07T00:00:00+00:00'\u001b[39m,\n    end_time: \u001b[32m'2025-08-08T01:00:00+00:00'\u001b[39m,\n    source: \u001b[32m'sport'\u001b[39m,\n    source_id: \u001b[32m'ee01f2f6-6303-485d-9bcd-adaca108aa48'\u001b[39m,\n    created_at: \u001b[32m'2025-08-08T01:42:29.37465+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-08T01:42:29.37465+00:00'\u001b[39m\n  },\n  {\n    id: \u001b[32m'b6843c71-7ee3-4ea1-835b-6c2bccedfbdc'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Cardio: Test Planned Cardio'\u001b[39m,\n    description: \u001b[32m'Test planned cardio notes'\u001b[39m,\n    start_time: \u001b[32m'2025-08-07T00:00:00+00:00'\u001b[39m,\n    end_time: \u001b[32m'2025-08-08T00:00:00+00:00'\u001b[39m,\n    source: \u001b[32m'cardio'\u001b[39m,\n    source_id: \u001b[32m'7eff7cfc-bf41-4e63-b774-8a501d7dc485'\u001b[39m,\n    created_at: \u001b[32m'2025-08-08T01:42:28.027836+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-08T01:42:28.027836+00:00'\u001b[39m\n  },\n  {\n    id: \u001b[32m'b75a33f6-cf8f-409d-9564-508551757cc3'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Workout: Test Planned Workout'\u001b[39m,\n    description: \u001b[32m'Test planned workout notes'\u001b[39m,\n    start_time: \u001b[32m'2025-08-07T00:00:00+00:00'\u001b[39m,\n    end_time: \u001b[32m'2025-08-07T23:00:00+00:00'\u001b[39m,\n    source: \u001b[32m'workout'\u001b[39m,\n    source_id: \u001b[32m'88f1d30d-07a0-4619-96e6-14ffc9fc8952'\u001b[39m,\n    created_at: \u001b[32m'2025-08-08T01:42:26.685881+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-08T01:42:26.685881+00:00'\u001b[39m\n  },\n  {\n    id: \u001b[32m'7827357f-a793-4da5-bb1a-02e48a210cea'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Meal: Test Calendar Meal 1754617238398'\u001b[39m,\n    description: \u001b[32m'Test meal for calendar click behavior'\u001b[39m,\n    start_time: \u001b[32m'2025-07-28T12:00:00+00:00'\u001b[39m,\n    end_time: \u001b[1mnull\u001b[22m,\n    source: \u001b[32m'meal'\u001b[39m,\n    source_id: \u001b[32m'c1274061-515f-4bfb-8d34-e743f10d8ba2'\u001b[39m,\n    created_at: \u001b[32m'2025-08-08T01:40:40.42392+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-08T01:40:40.42392+00:00'\u001b[39m\n  },\n  {\n    id: \u001b[32m'241212d8-8553-4114-92eb-0dac26ca40bb'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Meal: Test Calendar Meal 1754617233579'\u001b[39m,\n    description: \u001b[32m'Test meal for calendar click behavior'\u001b[39m,\n    start_time: \u001b[32m'2025-07-28T12:00:00+00:00'\u001b[39m,\n    end_time: \u001b[1mnull\u001b[22m,\n    source: \u001b[32m'meal'\u001b[39m,\n    source_id: \u001b[32m'0470a982-0232-4332-8d93-3e98f9922c63'\u001b[39m,\n    created_at: \u001b[32m'2025-08-08T01:40:35.567922+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-08T01:40:35.567922+00:00'\u001b[39m\n  }\n]\n"
                     },
                     {
                       "text": "[E2E] Number of events found in list: \u001b[33m6\u001b[39m\n"
@@ -1100,7 +1109,7 @@
                   ],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2025-08-06T04:19:08.850Z",
+                  "startTime": "2025-08-08T01:42:22.637Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1129,7 +1138,7 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 13700,
+                  "duration": 13887,
                   "errors": [],
                   "stdout": [
                     {
@@ -1139,7 +1148,7 @@
                       "text": "[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()\n"
                     },
                     {
-                      "text": "[E2E] Created test workout with ID: fc853aa9-5bb0-43ab-b3e6-042c73cca77f\n"
+                      "text": "[E2E] Created test workout with ID: 1402e270-40e2-4572-9562-bb144e535486\n"
                     },
                     {
                       "text": "406: https://ffubefmikpkrxtueeusj.supabase.co/rest/v1/profiles?select=first_name%2Clast_name&user_id=eq.0f3a417b-077d-4868-acef-9d79ada0945b\n"
@@ -1148,7 +1157,7 @@
                       "text": "[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()\n"
                     },
                     {
-                      "text": "[E2E] Available calendar events: [\n  {\n    id: \u001b[32m'1424c427-8e95-450c-bdd6-921ce3dac40f'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Meal: Test Calendar Meal 1754453835644'\u001b[39m,\n    description: \u001b[32m'Test meal for calendar click behavior'\u001b[39m,\n    start_time: \u001b[32m'2025-07-28T12:00:00+00:00'\u001b[39m,\n    end_time: \u001b[1mnull\u001b[22m,\n    source: \u001b[32m'meal'\u001b[39m,\n    source_id: \u001b[32m'460deb36-926b-4a94-ae96-bbd7f3d69068'\u001b[39m,\n    created_at: \u001b[32m'2025-08-06T04:17:17.793731+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-06T04:17:17.793731+00:00'\u001b[39m\n  },\n  {\n    id: \u001b[32m'088f1a41-59ea-4442-95b3-5e65c2269241'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Meal: Test Calendar Meal 1754453840678'\u001b[39m,\n    description: \u001b[32m'Test meal for calendar click behavior'\u001b[39m,\n    start_time: \u001b[32m'2025-07-28T12:00:00+00:00'\u001b[39m,\n    end_time: \u001b[1mnull\u001b[22m,\n    source: \u001b[32m'meal'\u001b[39m,\n    source_id: \u001b[32m'8a391417-2fcc-4c19-9b38-6072b70940c4'\u001b[39m,\n    created_at: \u001b[32m'2025-08-06T04:17:22.83341+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-06T04:17:22.83341+00:00'\u001b[39m\n  },\n  {\n    id: \u001b[32m'd23af6bc-fbec-40d3-9f69-b73e3a747c9f'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Workout: Test Calendar Workout'\u001b[39m,\n    description: \u001b[32m'Test notes for calendar workout'\u001b[39m,\n    start_time: \u001b[32m'2025-08-06T04:19:28.982+00:00'\u001b[39m,\n    end_time: \u001b[1mnull\u001b[22m,\n    source: \u001b[32m'workout'\u001b[39m,\n    source_id: \u001b[32m'fc853aa9-5bb0-43ab-b3e6-042c73cca77f'\u001b[39m,\n    created_at: \u001b[32m'2025-08-06T04:19:29.12676+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-06T04:19:29.12676+00:00'\u001b[39m\n  }\n]\n"
+                      "text": "[E2E] Available calendar events: [\n  {\n    id: \u001b[32m'241212d8-8553-4114-92eb-0dac26ca40bb'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Meal: Test Calendar Meal 1754617233579'\u001b[39m,\n    description: \u001b[32m'Test meal for calendar click behavior'\u001b[39m,\n    start_time: \u001b[32m'2025-07-28T12:00:00+00:00'\u001b[39m,\n    end_time: \u001b[1mnull\u001b[22m,\n    source: \u001b[32m'meal'\u001b[39m,\n    source_id: \u001b[32m'0470a982-0232-4332-8d93-3e98f9922c63'\u001b[39m,\n    created_at: \u001b[32m'2025-08-08T01:40:35.567922+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-08T01:40:35.567922+00:00'\u001b[39m\n  },\n  {\n    id: \u001b[32m'7827357f-a793-4da5-bb1a-02e48a210cea'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Meal: Test Calendar Meal 1754617238398'\u001b[39m,\n    description: \u001b[32m'Test meal for calendar click behavior'\u001b[39m,\n    start_time: \u001b[32m'2025-07-28T12:00:00+00:00'\u001b[39m,\n    end_time: \u001b[1mnull\u001b[22m,\n    source: \u001b[32m'meal'\u001b[39m,\n    source_id: \u001b[32m'c1274061-515f-4bfb-8d34-e743f10d8ba2'\u001b[39m,\n    created_at: \u001b[32m'2025-08-08T01:40:40.42392+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-08T01:40:40.42392+00:00'\u001b[39m\n  },\n  {\n    id: \u001b[32m'bfb4b808-1ad9-4080-ac5d-6296df94cfcd'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Workout: Test Calendar Workout'\u001b[39m,\n    description: \u001b[32m'Test notes for calendar workout'\u001b[39m,\n    start_time: \u001b[32m'2025-08-08T01:42:45.427+00:00'\u001b[39m,\n    end_time: \u001b[1mnull\u001b[22m,\n    source: \u001b[32m'workout'\u001b[39m,\n    source_id: \u001b[32m'1402e270-40e2-4572-9562-bb144e535486'\u001b[39m,\n    created_at: \u001b[32m'2025-08-08T01:42:45.583547+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-08T01:42:45.583547+00:00'\u001b[39m\n  }\n]\n"
                     },
                     {
                       "text": "406: https://ffubefmikpkrxtueeusj.supabase.co/rest/v1/profiles?select=first_name%2Clast_name&user_id=eq.0f3a417b-077d-4868-acef-9d79ada0945b\n"
@@ -1162,7 +1171,7 @@
                   ],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2025-08-06T04:19:26.331Z",
+                  "startTime": "2025-08-08T01:42:42.730Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1191,14 +1200,14 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 11089,
+                  "duration": 11925,
                   "errors": [],
                   "stdout": [
                     {
                       "text": "[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()\n"
                     },
                     {
-                      "text": "[E2E] Created test workout for event list with ID: 0201a761-c535-4b3a-a2d2-3ad64a39a0eb\n"
+                      "text": "[E2E] Created test workout for event list with ID: 8396f49e-613c-4577-ab13-db9148bfd8a5\n"
                     },
                     {
                       "text": "[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()\n"
@@ -1209,7 +1218,7 @@
                   ],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2025-08-06T04:19:40.034Z",
+                  "startTime": "2025-08-08T01:42:56.620Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1238,14 +1247,14 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 11751,
+                  "duration": 11867,
                   "errors": [],
                   "stdout": [
                     {
                       "text": "[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()\n"
                     },
                     {
-                      "text": "[E2E] Created test workout for cleanup with ID: b5551598-d105-4842-a136-dc82146f120e\n"
+                      "text": "[E2E] Created test workout for cleanup with ID: 139a19d6-6703-4762-9053-f74fd8ff04da\n"
                     },
                     {
                       "text": "[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()\n"
@@ -1268,7 +1277,7 @@
                   ],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2025-08-06T04:19:51.126Z",
+                  "startTime": "2025-08-08T01:43:08.549Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1312,7 +1321,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 19813,
+                      "duration": 18834,
                       "errors": [],
                       "stdout": [
                         {
@@ -1321,7 +1330,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-06T04:20:02.890Z",
+                      "startTime": "2025-08-08T01:43:20.429Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1350,12 +1359,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 18294,
+                      "duration": 18205,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-06T04:20:22.706Z",
+                      "startTime": "2025-08-08T01:43:39.267Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1401,11 +1410,11 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 15693,
+                      "duration": 13410,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "[E2E] Available buttons on page: [\n  \u001b[32m'Sports In Progress: Basketball 1754454041059'\u001b[39m,\n  \u001b[32m''\u001b[39m,\n  \u001b[32m'Log Out'\u001b[39m,\n  \u001b[32m'End Activity'\u001b[39m\n]\n"
+                          "text": "[E2E] Available buttons on page: [\n  \u001b[32m'Sports In Progress: Basketball 1754617437525'\u001b[39m,\n  \u001b[32m''\u001b[39m,\n  \u001b[32m'Log Out'\u001b[39m,\n  \u001b[32m'End Activity'\u001b[39m\n]\n"
                         },
                         {
                           "text": "[E2E] Current URL: http://localhost:3000/fitness/sports/live\n"
@@ -1419,7 +1428,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-06T04:20:41.010Z",
+                      "startTime": "2025-08-08T01:43:57.483Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1439,8 +1448,8 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2025-08-06T04:16:42.598Z",
-    "duration": 254154.232,
+    "startTime": "2025-08-08T01:40:21.011Z",
+    "duration": 229917.774,
     "expected": 28,
     "skipped": 0,
     "unexpected": 0,

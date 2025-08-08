@@ -82,7 +82,7 @@ test('Planned Fitness Events - Complete Flow', async ({ page }) => {
   await page.getByRole('button', { name: /log in/i }).click();
 
   // Wait for dashboard to load by checking for visible text "Planner"
-  await expect(page.locator('text=Planner')).toBeVisible({ timeout: 10000 });
+  await expect(page.getByRole('heading', { name: 'Calendar' })).toBeVisible({ timeout: 10000 });
 
   // ✅ Step 1: Optimized cleanup - Clear ALL test data before starting with timeout
   await Promise.race([
@@ -517,7 +517,7 @@ test('Planned Fitness Events - Complete Flow', async ({ page }) => {
     await page.waitForURL((url) => /\/$/.test(url.pathname), { timeout: 5000 });
     
     // Wait for the main content to be visible
-    await expect(page.locator('h1').filter({ hasText: /Planner/i })).toBeVisible({ timeout: 5000 });
+    await expect(page.locator('h1').filter({ hasText: /Planned Fitness Activities/i })).toBeVisible({ timeout: 5000 });
     
     // Wait for calendar to load
     await page.waitForTimeout(2000);
@@ -814,7 +814,7 @@ test('Calendar Click Behavior for Planned Fitness Events', async ({ page }) => {
   await page.getByRole('button', { name: /log in/i }).click();
 
   // Wait for dashboard to load
-  await expect(page.locator('text=Planner')).toBeVisible({ timeout: 10000 });
+  await expect(page.getByRole('heading', { name: 'Calendar' })).toBeVisible({ timeout: 10000 });
 
   // Clean up any existing test data and clear any in-progress sessions
   try {
@@ -1074,7 +1074,7 @@ test('Event List Click Behavior for Planned Fitness Events', async ({ page }) =>
   await page.getByRole('button', { name: /log in/i }).click();
 
   // Wait for dashboard to load
-  await expect(page.locator('text=Planner')).toBeVisible({ timeout: 10000 });
+  await expect(page.getByRole('heading', { name: 'Calendar' })).toBeVisible({ timeout: 10000 });
 
   // Clean up any existing test data
   await page.evaluate(async () => {
@@ -1249,7 +1249,7 @@ test('Planned Session Cleanup After Completion', async ({ page }) => {
   await page.getByRole('button', { name: /log in/i }).click();
 
   // Wait for dashboard to load
-  await expect(page.locator('text=Planner')).toBeVisible({ timeout: 10000 });
+  await expect(page.getByRole('heading', { name: 'Calendar' })).toBeVisible({ timeout: 10000 });
 
   // Clean up any existing test data
   await page.evaluate(async () => {
