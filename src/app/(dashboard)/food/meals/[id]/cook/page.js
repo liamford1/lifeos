@@ -151,11 +151,11 @@ export default function CookMealPage() {
       {!isThisMealActive && (
         <Button
           type="button"
-          onClick={() => router.push(`/food/meals/${meal.id}`)}
+          onClick={() => router.push('/food/meals')}
           variant="secondary"
           className="mb-4"
         >
-          ← Back to meal
+          ← Back to meals
         </Button>
       )}
       <h1 className="text-3xl font-bold">{meal.name}</h1>
@@ -204,7 +204,7 @@ export default function CookMealPage() {
           <SharedDeleteButton
             onClick={() => {
               cancelCooking();
-              router.push(`/food/meals/${meal.id}`);
+              router.push('/food/meals');
             }}
             label="Cancel Cooking"
             icon={false}

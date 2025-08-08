@@ -61,6 +61,18 @@ jest.mock('@/components/modals/AddMealModal', () => {
   };
 });
 
+jest.mock('@/components/modals/MealDetailsModal', () => {
+  return function MockMealDetailsModal({ isOpen, onClose, mealId }) {
+    if (!isOpen) return null;
+    return (
+      <div data-testid="meal-details-modal">
+        <button onClick={onClose}>Close Meal Details</button>
+        <span>Meal ID: {mealId}</span>
+      </div>
+    );
+  };
+});
+
 describe('MealsModal', () => {
   const mockOnClose = jest.fn();
 

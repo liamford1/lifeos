@@ -79,8 +79,8 @@ export default function EditMealPage() {
                 console.error('Calendar event update failed:', calendarError);
               }
 
-              // Redirect to the meal view page
-              router.push(`/food/meals/${id}`);
+              // Redirect to the meals list page
+              router.push('/food/meals');
             },
             onError: (error) => {
               handleError(error, { 
@@ -141,7 +141,7 @@ export default function EditMealPage() {
   }
 
   function handleCancel() {
-    router.push(`/food/meals/${id}`);
+    router.push('/food/meals');
   }
 
   // Show loading spinner only when user is loading or when we don't have user data yet

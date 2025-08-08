@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { useUser } from '@/context/UserContext';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
-import Link from 'next/link';
 import dynamic from "next/dynamic";
 const UtensilsCrossed = dynamic(() => import("lucide-react/dist/esm/icons/utensils-crossed"), { ssr: false });
 const CirclePlus = dynamic(() => import("lucide-react/dist/esm/icons/circle-plus"), { ssr: false });
@@ -12,6 +11,7 @@ import SharedDeleteButton from '@/components/SharedDeleteButton';
 import { useMealsQuery, useDeleteMealMutation } from '@/lib/hooks/useMeals';
 import AddMealModal from '@/components/modals/AddMealModal';
 import AIMealSuggestionsModal from '@/components/forms/AIMealSuggestionsModal';
+import MealDetailsModal from '@/components/modals/MealDetailsModal';
 import BaseModal from '@/components/shared/BaseModal';
 import { MdLightbulb } from 'react-icons/md';
 
@@ -19,6 +19,8 @@ export default function MealsModal({ isOpen, onClose }) {
   const { user, loading: userLoading } = useUser();
   const [showAddMealModal, setShowAddMealModal] = useState(false);
   const [showAIModal, setShowAIModal] = useState(false);
+  const [showMealDetailsModal, setShowMealDetailsModal] = useState(false);
+  const [selectedMealId, setSelectedMealId] = useState(null);
   
   // Use React Query for data fetching
   const { data: meals = [], isLoading: mealsLoading, error, refetch } = useMealsQuery(user?.id);
@@ -69,6 +71,12 @@ export default function MealsModal({ isOpen, onClose }) {
   // Handle AI meal added
   const handleAIMealAdded = () => {
     refetch();
+  };
+
+  // Handle meal click to show details
+  const handleMealClick = (mealId) => {
+    setSelectedMealId(mealId);
+    setShowMealDetailsModal(true);
   };
 
   return (
@@ -131,20 +139,24 @@ export default function MealsModal({ isOpen, onClose }) {
           <ul className="space-y-4">
             {meals.map((meal) => (
               <li key={meal.id} className="group relative">
-                <Link href={`/food/meals/${meal.id}`} className="block">
-                  <div className="bg-card hover:bg-[#2e2e2e] transition p-4 rounded shadow cursor-pointer border border-border pr-12">
-                    <h2 className="text-xl font-semibold text-white truncate">{meal.name}</h2>
-                    {meal.description && (
-                      <p className="text-base mt-1">{meal.description}</p>
-                    )}
-                    <p className="text-sm text-gray-400 mt-2">
-                      Prep: {meal.prep_time || 0} min • Cook: {meal.cook_time || 0} min • Servings: {meal.servings || 1}
-                    </p>
-                  </div>
-                </Link>
+                <div 
+                  onClick={() => handleMealClick(meal.id)}
+                  className="bg-card hover:bg-[#2e2e2e] transition p-4 rounded shadow cursor-pointer border border-border pr-12"
+                >
+                  <h2 className="text-xl font-semibold text-white truncate">{meal.name}</h2>
+                  {meal.description && (
+                    <p className="text-base mt-1">{meal.description}</p>
+                  )}
+                  <p className="text-sm text-gray-400 mt-2">
+                    Prep: {meal.prep_time || 0} min • Cook: {meal.cook_time || 0} min • Servings: {meal.servings || 1}
+                  </p>
+                </div>
                 <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
                   <SharedDeleteButton
-                    onClick={() => handleDelete(meal.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDelete(meal.id);
+                    }}
                     label=""
                     size="sm"
                     disabled={deleteMealMutation.isPending}
@@ -173,6 +185,13 @@ export default function MealsModal({ isOpen, onClose }) {
           onMealAdded={handleAIMealAdded}
         />
       )}
+
+      {/* Meal Details Modal */}
+      <MealDetailsModal
+        isOpen={showMealDetailsModal}
+        onClose={() => setShowMealDetailsModal(false)}
+        mealId={selectedMealId}
+      />
     </BaseModal>
   );
 } 

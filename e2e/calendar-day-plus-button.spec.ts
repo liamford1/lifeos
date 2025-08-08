@@ -92,6 +92,31 @@ test.describe('Calendar Day Plus Button Functionality', () => {
     const today = new Date();
     const todayStr = today.toLocaleDateString('en-CA'); // YYYY-MM-DD format
     const todayCell = page.locator('button.react-calendar__tile').filter({ hasText: today.getDate().toString() }).first();
+    
+    // Get the actual date from the calendar tile before clicking
+    const actualDate = await todayCell.getAttribute('aria-label');
+    let expectedDate = todayStr;
+    
+    // If the calendar tile has an aria-label with the full date, use that
+    if (actualDate && actualDate.includes(',')) {
+      // Parse the aria-label format like "August 8, 2025"
+      const dateMatch = actualDate.match(/(\w+)\s+(\d+),\s+(\d+)/);
+      if (dateMatch) {
+        const month = dateMatch[1];
+        const day = dateMatch[2].padStart(2, '0');
+        const year = dateMatch[3];
+        const monthMap: { [key: string]: string } = {
+          'January': '01', 'February': '02', 'March': '03', 'April': '04',
+          'May': '05', 'June': '06', 'July': '07', 'August': '08',
+          'September': '09', 'October': '10', 'November': '11', 'December': '12'
+        };
+        const monthNum = monthMap[month];
+        if (monthNum) {
+          expectedDate = `${year}-${monthNum}-${day}`;
+        }
+      }
+    }
+    
     await todayCell.click();
     
     // Click the "+" button
@@ -105,9 +130,9 @@ test.describe('Calendar Day Plus Button Functionality', () => {
     await expect(page.getByRole('heading', { name: 'Plan a Meal' })).toBeVisible();
     await expect(page.getByText('Schedule meals for the week ahead')).toBeVisible();
     
-    // Verify the date is pre-selected (should be today)
+    // Verify the date is pre-selected (should match the clicked date)
     const dateInput = page.locator('input[type="date"]');
-    await expect(dateInput).toHaveValue(todayStr);
+    await expect(dateInput).toHaveValue(expectedDate);
     
     // Close the modal
     await page.getByRole('button', { name: 'Close modal' }).click();
