@@ -79,6 +79,106 @@ export const createCalendarEventForEntity = async (type, entity) => {
 };
 
 /**
+ * Updates a linked entity when its calendar event is rescheduled
+ * @param {Object} event - The calendar event with updated start_time/end_time
+ * @returns {Promise<Object|null>} - Returns any Supabase error encountered or null on success
+ */
+export const updateLinkedEntityOnCalendarChange = async (event) => {
+  try {
+    const newDate = new Date(event.start_time);
+    const newDateStr = newDate.toISOString().split('T')[0]; // YYYY-MM-DD format
+    
+    switch (event.source) {
+      case CALENDAR_SOURCES.MEAL:
+        // Update meal date
+        const { error: mealError } = await supabase
+          .from('meals')
+          .update({ date: newDateStr })
+          .eq('id', event.source_id)
+          .eq('user_id', event.user_id);
+        if (mealError) return mealError;
+        break;
+        
+      case CALENDAR_SOURCES.PLANNED_MEAL:
+        // Update planned meal date
+        const { error: plannedMealError } = await supabase
+          .from('planned_meals')
+          .update({ planned_date: newDateStr })
+          .eq('id', event.source_id)
+          .eq('user_id', event.user_id);
+        if (plannedMealError) return plannedMealError;
+        break;
+        
+      case CALENDAR_SOURCES.WORKOUT:
+        // Update workout date and times
+        const workoutUpdate = { date: newDateStr };
+        if (event.end_time) {
+          workoutUpdate.start_time = event.start_time;
+          workoutUpdate.end_time = event.end_time;
+        }
+        const { error: workoutError } = await supabase
+          .from('fitness_workouts')
+          .update(workoutUpdate)
+          .eq('id', event.source_id)
+          .eq('user_id', event.user_id);
+        if (workoutError) return workoutError;
+        break;
+        
+      case CALENDAR_SOURCES.CARDIO:
+        // Update cardio date and times
+        const cardioUpdate = { date: newDateStr };
+        if (event.end_time) {
+          cardioUpdate.start_time = event.start_time;
+          cardioUpdate.end_time = event.end_time;
+        }
+        const { error: cardioError } = await supabase
+          .from('fitness_cardio')
+          .update(cardioUpdate)
+          .eq('id', event.source_id)
+          .eq('user_id', event.user_id);
+        if (cardioError) return cardioError;
+        break;
+        
+      case CALENDAR_SOURCES.SPORT:
+        // Update sport date and times
+        const sportUpdate = { date: newDateStr };
+        if (event.end_time) {
+          sportUpdate.start_time = event.start_time;
+          sportUpdate.end_time = event.end_time;
+        }
+        const { error: sportError } = await supabase
+          .from('fitness_sports')
+          .update(sportUpdate)
+          .eq('id', event.source_id)
+          .eq('user_id', event.user_id);
+        if (sportError) return sportError;
+        break;
+        
+      case CALENDAR_SOURCES.EXPENSE:
+        // Update expense date
+        const { error: expenseError } = await supabase
+          .from('expenses')
+          .update({ date: newDateStr })
+          .eq('id', event.source_id)
+          .eq('user_id', event.user_id);
+        if (expenseError) return expenseError;
+        break;
+        
+      default:
+        // Unknown source type, don't update anything
+        return null;
+    }
+    
+    return null; // Success
+  } catch (error) {
+    if (process.env.NODE_ENV !== "production") {
+      console.error('Unexpected error in updateLinkedEntityOnCalendarChange:', error);
+    }
+    return error;
+  }
+};
+
+/**
  * Deletes a calendar event for a given source type and source_id.
  * @param {string} type - The source type (e.g., 'meal', 'planned_meal', 'workout', etc.)
  * @param {string|number} source_id - The ID of the source entity

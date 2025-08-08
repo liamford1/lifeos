@@ -1,6 +1,24 @@
 'use client';
 
-import React, { useState } from 'react';
+/**
+ * Calendar View Component with Drag-and-Drop Rescheduling
+ * 
+ * Features:
+ * - Drag handles (≡) appear on hover for each event
+ * - Events can be dragged to new days with optimistic updates
+ * - Snaps to day boundaries (midnight) for simplicity
+ * - Undo functionality via toast notifications
+ * - Keyboard accessible (Tab to handle, Enter to start drag)
+ * - Scroll-friendly: only drag handle captures pointer events
+ * - Linked entity sync: updates source entities (meals, workouts, etc.)
+ * 
+ * Drag Logic:
+ * - 5px movement threshold prevents accidental drags during scroll
+ * - Visual feedback: opacity/scale changes during drag
+ * - Target date computed from pointer position over calendar cells
+ */
+
+import React, { useState, useCallback, useMemo } from 'react';
 import { useUser } from '@/context/UserContext';
 import Calendar from "@/components/client/CalendarClient";
 import 'react-calendar/dist/Calendar.css';
@@ -11,12 +29,13 @@ import dayjs from 'dayjs';
 import { CALENDAR_SOURCES, getCalendarEventRoute } from '@/lib/utils/calendarUtils';
 import { getEventStyle } from '@/lib/utils/eventStyleMap';
 import Button from '@/components/shared/Button';
+import { useCalendarDragAndDrop } from '@/lib/hooks/useCalendarDragAndDrop';
 
 import { useApiError } from '@/lib/hooks/useApiError';
 import { MdOutlineCalendarToday } from 'react-icons/md';
 import SharedDeleteButton from '@/components/SharedDeleteButton';
 import { supabase } from '@/lib/supabaseClient';
-import { MdRestaurant, MdFitnessCenter, MdEvent, MdAdd } from 'react-icons/md';
+import { MdRestaurant, MdFitnessCenter, MdEvent, MdAdd, MdDragIndicator } from 'react-icons/md';
 import PlanMealModal from '@/components/modals/PlanMealModal';
 
 export default function CalendarView() {
@@ -51,10 +70,92 @@ export default function CalendarView() {
       }).then((r) => r.json()),
   });
 
-  const events = eventsQuery.data || [];
+  const events = useMemo(() => eventsQuery.data || [], [eventsQuery.data]);
   const eventsForSelectedDate = events.filter((event) =>
     dayjs(event.start_time).isSame(selectedDate, 'day')
   );
+
+  // Drag and drop functionality
+  const handleEventDrop = useCallback(async ({ id, newStartISO, originalStart, originalEnd }) => {
+    if (!user) return;
+
+    // Find the event to update
+    const eventIndex = events.findIndex(e => e.id === id);
+    if (eventIndex === -1) return;
+
+    const event = events[eventIndex];
+    const originalEvent = { ...event };
+
+    // Optimistic update: immediately update local state
+    const updatedEvents = [...events];
+    const updatedEvent = {
+      ...event,
+      start_time: newStartISO,
+      end_time: event.end_time ? 
+        dayjs(newStartISO).add(dayjs(event.end_time).diff(dayjs(event.start_time))).toISOString() : 
+        null
+    };
+    updatedEvents[eventIndex] = updatedEvent;
+
+    // Optimistically update the query cache
+    queryClient.setQueryData(["events", user?.id], updatedEvents);
+
+    try {
+      const response = await fetch("/api/calendar/update", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id,
+          userId: user.id,
+          newStart: newStartISO,
+          newEnd: updatedEvent.end_time,
+          updateLinkedEntity: true
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update event');
+      }
+
+      const result = await response.json();
+      
+      // Show success toast with undo option
+      const newDate = dayjs(newStartISO).format('ddd MMM D');
+      handleSuccess(`Event moved to ${newDate}`, 5000, () => {
+        // Undo function
+        handleEventDrop({
+          id,
+          newStartISO: originalStart,
+          originalStart: newStartISO,
+          originalEnd: originalEnd
+        });
+      });
+
+    } catch (error) {
+      // Rollback on error
+      queryClient.setQueryData(["events", user?.id], events);
+      handleError(error, { 
+        customMessage: 'Failed to move event. Changes reverted.' 
+      });
+    }
+  }, [events, user, queryClient, handleError, handleSuccess]);
+
+  const { draggingId, startDrag, moveDrag, endDrag, isDragging } = useCalendarDragAndDrop({
+    onDrop: handleEventDrop
+  });
+
+  // Compute target date from pointer position
+  const computeTargetDate = useCallback((evt) => {
+    const el = document.elementFromPoint(evt.clientX, evt.clientY);
+    if (!el) return null;
+    // Our calendar renders `data-date="YYYY-MM-DD"` on the inner daycell div.
+    const dayCell = el.closest('[data-date]');
+    if (!dayCell) return null;
+    const dateStr = dayCell.getAttribute('data-date'); // e.g., "2025-08-09"
+    if (!dateStr) return null;
+    // Normalize to start of that day (preserve duration elsewhere)
+    return dayjs(dateStr).startOf('day').toISOString();
+  }, []);
 
   const handleAddEvent = async () => {
     if (!user || !newEvent.title || !newEvent.start_time) return;
@@ -253,7 +354,6 @@ export default function CalendarView() {
     }
   
 
-
     // For workouts, use the cascade deletion function
     let error = null;
     if (event.source === CALENDAR_SOURCES.WORKOUT) {
@@ -329,7 +429,11 @@ export default function CalendarView() {
   };
 
   return (
-    <div className="relative w-full p-6 bg-surface text-white rounded shadow">
+    <div 
+      className="relative w-full p-6 bg-surface text-white rounded shadow"
+      onPointerMove={moveDrag}
+      onPointerUp={(e) => endDrag(e, { computeTargetDate })}
+    >
       <h2 className="text-xl font-semibold mb-4">
         <MdOutlineCalendarToday className="inline w-5 h-5 mr-2 align-text-bottom" />
         Calendar
@@ -385,9 +489,14 @@ export default function CalendarView() {
               );
 
               const isSelectedDay = dayjs(date).isSame(selectedDate, 'day');
+              const dateStr = dayjs(date).format('YYYY-MM-DD');
               
               return (
-                <div className="space-y-1 overflow-hidden w-full h-full max-w-full relative">
+                <div 
+                  className="space-y-1 overflow-hidden w-full h-full max-w-full relative"
+                  data-testid={`calendar-daycell-${dateStr}`}
+                  data-date={dateStr}
+                >
                   {eventsOnThisDay.slice(0, 2).map((event) => {
                     const { colorClass, Icon } = getEventStyle(event.source);
                     // Make meal, planned_meal, expense, workout, cardio, and sport events clickable
@@ -398,7 +507,10 @@ export default function CalendarView() {
                       event.source === CALENDAR_SOURCES.WORKOUT ||
                       event.source === CALENDAR_SOURCES.CARDIO ||
                       event.source === CALENDAR_SOURCES.SPORT;
-                                          const eventDivProps = isClickableEvent
+                    
+                    const isBeingDragged = draggingId === event.id;
+                    
+                    const eventDivProps = isClickableEvent
                       ? {
                           role: 'button',
                           tabIndex: 0,
@@ -444,17 +556,66 @@ export default function CalendarView() {
                               }
                             }
                           },
-                          style: { boxSizing: 'border-box', display: 'block', cursor: 'pointer' },
+                          style: { 
+                            boxSizing: 'border-box', 
+                            display: 'block', 
+                            cursor: 'pointer',
+                            opacity: isBeingDragged ? 0.5 : 1,
+                            transform: isBeingDragged ? 'scale(0.95)' : 'none',
+                            transition: 'opacity 0.2s, transform 0.2s'
+                          },
                         }
-                      : { style: { boxSizing: 'border-box', display: 'block' } };
+                      : { 
+                          style: { 
+                            boxSizing: 'border-box', 
+                            display: 'block',
+                            opacity: isBeingDragged ? 0.5 : 1,
+                            transform: isBeingDragged ? 'scale(0.95)' : 'none',
+                            transition: 'opacity 0.2s, transform 0.2s'
+                          } 
+                        };
                     return (
                       <div
                         key={event.id}
                         data-testid={`calendar-event-${event.id}`}
-                        className={`w-full h-5 text-xs truncate whitespace-nowrap overflow-hidden text-ellipsis rounded px-1 py-0.5 text-left ${colorClass}`}
+                        className={`w-full h-5 text-xs truncate whitespace-nowrap overflow-hidden text-ellipsis rounded px-1 py-0.5 text-left ${colorClass} relative group`}
                         {...eventDivProps}
                       >
-                        {Icon && <Icon className="inline mr-1 align-text-bottom" size={16} />} {event.title}
+                        <div className="flex items-center justify-between w-full">
+                          <div className="flex items-center min-w-0 flex-1">
+                            {Icon && <Icon className="inline mr-1 align-text-bottom flex-shrink-0" size={16} />} 
+                            <span className="truncate">{event.title}</span>
+                          </div>
+                          {/* Drag handle */}
+                          <div
+                            data-testid={`calendar-event-drag-handle-${event.id}`}
+                            className="opacity-0 group-hover:opacity-100 transition-opacity ml-1 flex-shrink-0 p-0.5 rounded hover:bg-black/20 cursor-grab active:cursor-grabbing w-4 h-4 flex items-center justify-center"
+                            onPointerDown={(e) => {
+                              e.stopPropagation();
+                              startDrag(e, { 
+                                id: event.id, 
+                                originalStart: event.start_time, 
+                                originalEnd: event.end_time 
+                              });
+                            }}
+                            aria-label="Drag to reschedule"
+                            role="button"
+                            tabIndex={0}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                startDrag(e, { 
+                                  id: event.id, 
+                                  originalStart: event.start_time, 
+                                  originalEnd: event.end_time 
+                                });
+                              }
+                            }}
+                          >
+                            <MdDragIndicator size={12} className="text-gray-400" />
+                          </div>
+                        </div>
                       </div>
                     );
                   })}
@@ -505,12 +666,19 @@ export default function CalendarView() {
           <ul className="mt-2 space-y-2">
             {eventsForSelectedDate.map((event) => {
               const { colorClass, Icon } = getEventStyle(event.source);
+              const isBeingDragged = draggingId === event.id;
+              
               return (
                 <li
                   key={event.id}
-                  className={`p-3 rounded hover:opacity-80 ${colorClass} cursor-pointer`}
+                  className={`p-3 rounded hover:opacity-80 ${colorClass} cursor-pointer relative group`}
                   role="button"
                   tabIndex={0}
+                  style={{
+                    opacity: isBeingDragged ? 0.5 : 1,
+                    transform: isBeingDragged ? 'scale(0.95)' : 'none',
+                    transition: 'opacity 0.2s, transform 0.2s'
+                  }}
                   onClick={() => {
                     if (!event.source || !event.source_id) return;
                     
@@ -558,15 +726,47 @@ export default function CalendarView() {
                   }}
                 >
                   <div className="flex justify-between items-center">
-                    <div className="font-semibold">
-                      {Icon && <Icon className="inline mr-1 align-text-bottom" size={18} />} {event.title}
+                    <div className="font-semibold flex items-center min-w-0 flex-1">
+                      {Icon && <Icon className="inline mr-1 align-text-bottom flex-shrink-0" size={18} />} 
+                      <span className="truncate">{event.title}</span>
                     </div>
-                    <SharedDeleteButton
-                      size="sm"
-                      onClick={() => handleDeleteEvent(event)}
-                      aria-label="Delete event"
-                      label="Delete"
-                    />
+                    <div className="flex items-center gap-2">
+                      {/* Drag handle */}
+                      <div
+                        data-testid={`calendar-event-drag-handle-${event.id}`}
+                        className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-black/20 cursor-grab active:cursor-grabbing w-6 h-6 flex items-center justify-center flex-shrink-0"
+                        onPointerDown={(e) => {
+                          e.stopPropagation();
+                          startDrag(e, { 
+                            id: event.id, 
+                            originalStart: event.start_time, 
+                            originalEnd: event.end_time 
+                          });
+                        }}
+                        aria-label="Drag to reschedule"
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            startDrag(e, { 
+                              id: event.id, 
+                              originalStart: event.start_time, 
+                              originalEnd: event.end_time 
+                            });
+                          }
+                        }}
+                      >
+                        <MdDragIndicator size={16} className="text-gray-400" />
+                      </div>
+                      <SharedDeleteButton
+                        size="sm"
+                        onClick={() => handleDeleteEvent(event)}
+                        aria-label="Delete event"
+                        label="Delete"
+                      />
+                    </div>
                   </div>
                   {event.description && (
                     <div className="text-sm opacity-90 mt-1">{event.description}</div>
