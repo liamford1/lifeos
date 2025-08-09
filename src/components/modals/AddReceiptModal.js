@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useUser } from '@/context/UserContext';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
 import Button from '@/components/shared/Button';
@@ -29,7 +29,7 @@ export default function AddReceiptModal({ isOpen, onClose, onSuccess }) {
   const [loadingReceipts, setLoadingReceipts] = useState(false);
   const [receiptsError, setReceiptsError] = useState('');
 
-  const fetchPastReceipts = async () => {
+  const fetchPastReceipts = useCallback(async () => {
     setLoadingReceipts(true);
     setReceiptsError('');
     
@@ -53,14 +53,14 @@ export default function AddReceiptModal({ isOpen, onClose, onSuccess }) {
     } finally {
       setLoadingReceipts(false);
     }
-  };
+  }, [user?.id]);
 
   // Fetch past receipts when modal opens
   useEffect(() => {
     if (isOpen && user?.id) {
       fetchPastReceipts();
     }
-  }, [isOpen, user]);
+  }, [isOpen, user, fetchPastReceipts]);
 
   // Don't render if not open
   if (!isOpen) return null;

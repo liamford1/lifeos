@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/context/UserContext';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
@@ -133,9 +133,9 @@ export default function FitnessHomeContent() {
     if (user) {
       loadFitnessData();
     }
-  }, [user]);
+  }, [user, loadFitnessData]);
 
-  const loadFitnessData = async () => {
+  const loadFitnessData = useCallback(async () => {
     setDataLoading(true);
     try {
       const [cardio, workouts, sports] = await Promise.all([
@@ -152,7 +152,7 @@ export default function FitnessHomeContent() {
     } finally {
       setDataLoading(false);
     }
-  };
+  }, [user?.id, fetchCardioSessions, fetchWorkouts, fetchSportsSessions]);
 
   // Calculate metrics
   const getThisWeekData = () => {

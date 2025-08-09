@@ -20,6 +20,7 @@ import { useUser } from '@/context/UserContext';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import AIMealSuggestionsModal from '@/components/forms/AIMealSuggestionsModal';
 import BaseModal from '@/components/shared/BaseModal';
+import { toYMD } from '@/lib/date';
 
 export default function PlanMealModal({ isOpen, onClose, onSuccess, selectedDate }) {
   const { showSuccess, showError } = useToast();
@@ -38,7 +39,7 @@ export default function PlanMealModal({ isOpen, onClose, onSuccess, selectedDate
   // Set default date to selected date or today when modal opens
   useEffect(() => {
     if (isOpen) {
-      const dateToUse = selectedDate || new Date().toISOString().split('T')[0];
+      const dateToUse = selectedDate || toYMD(new Date());
       setPlannedDate(dateToUse);
     }
   }, [isOpen, selectedDate]);
@@ -144,7 +145,7 @@ export default function PlanMealModal({ isOpen, onClose, onSuccess, selectedDate
       
       // Reset form
       setSelectedMealId('');
-      setPlannedDate(new Date().toISOString().split('T')[0]);
+      setPlannedDate(toYMD(new Date()));
       setMealTime('dinner');
       setMessage('');
 
