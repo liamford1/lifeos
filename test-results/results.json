@@ -69,22 +69,24 @@
   },
   "suites": [
     {
-      "title": "calendar-day-plus-button.spec.ts",
-      "file": "calendar-day-plus-button.spec.ts",
+      "title": "calendar-drag-and-drop.spec.ts",
+      "file": "calendar-drag-and-drop.spec.ts",
       "column": 0,
       "line": 0,
       "specs": [],
       "suites": [
         {
-          "title": "Calendar Day Plus Button Functionality",
-          "file": "calendar-day-plus-button.spec.ts",
-          "line": 15,
+          "title": "Calendar Drag and Drop Functionality",
+          "file": "calendar-drag-and-drop.spec.ts",
+          "line": 6,
           "column": 6,
           "specs": [
             {
-              "title": "Plus button appears on selected day and opens planning modal",
+              "title": "@calendar-dnd drag event to new day updates DB and UI",
               "ok": true,
-              "tags": [],
+              "tags": [
+                "calendar-dnd"
+              ],
               "tests": [
                 {
                   "timeout": 60000,
@@ -97,12 +99,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 5483,
+                      "duration": 3898,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-09T20:54:54.561Z",
+                      "startTime": "2025-08-09T21:12:37.695Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -110,15 +112,17 @@
                   "status": "expected"
                 }
               ],
-              "id": "09b582d0735f617f013b-f27e4fd9566c85e8a121",
-              "file": "calendar-day-plus-button.spec.ts",
-              "line": 25,
+              "id": "ec582333d3f1b334f03a-06f32644321c6d35681c",
+              "file": "calendar-drag-and-drop.spec.ts",
+              "line": 23,
               "column": 7
             },
             {
-              "title": "General Event option opens add event modal with pre-selected date",
+              "title": "@calendar-dnd undo reverts move",
               "ok": true,
-              "tags": [],
+              "tags": [
+                "calendar-dnd"
+              ],
               "tests": [
                 {
                   "timeout": 60000,
@@ -131,12 +135,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2004,
+                      "duration": 4828,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-09T20:55:00.297Z",
+                      "startTime": "2025-08-09T21:12:41.898Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -144,15 +148,17 @@
                   "status": "expected"
                 }
               ],
-              "id": "09b582d0735f617f013b-23b4a07f779ca38a80d1",
-              "file": "calendar-day-plus-button.spec.ts",
-              "line": 68,
+              "id": "ec582333d3f1b334f03a-80427b350e85817f643d",
+              "file": "calendar-drag-and-drop.spec.ts",
+              "line": 103,
               "column": 7
             },
             {
-              "title": "Meal option opens meal planning modal with selected date",
+              "title": "@calendar-dnd drag handle only appears on hover",
               "ok": true,
-              "tags": [],
+              "tags": [
+                "calendar-dnd"
+              ],
               "tests": [
                 {
                   "timeout": 60000,
@@ -165,12 +171,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 1637,
+                      "duration": 3136,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-09T20:55:02.303Z",
+                      "startTime": "2025-08-09T21:12:46.732Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -178,15 +184,17 @@
                   "status": "expected"
                 }
               ],
-              "id": "09b582d0735f617f013b-b16c7d181ef90d9b4c85",
-              "file": "calendar-day-plus-button.spec.ts",
-              "line": 99,
+              "id": "ec582333d3f1b334f03a-3b665a4509217cd76a88",
+              "file": "calendar-drag-and-drop.spec.ts",
+              "line": 193,
               "column": 7
             },
             {
-              "title": "Workout option navigates to fitness planner with selected date",
+              "title": "@calendar-dnd keyboard accessibility",
               "ok": true,
-              "tags": [],
+              "tags": [
+                "calendar-dnd"
+              ],
               "tests": [
                 {
                   "timeout": 60000,
@@ -199,12 +207,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 8444,
+                      "duration": 2854,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-09T20:55:03.943Z",
+                      "startTime": "2025-08-09T21:12:49.873Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -212,15 +220,17 @@
                   "status": "expected"
                 }
               ],
-              "id": "09b582d0735f617f013b-072a13211f22b9c1ca79",
-              "file": "calendar-day-plus-button.spec.ts",
-              "line": 158,
+              "id": "ec582333d3f1b334f03a-a18414109427a33e04e4",
+              "file": "calendar-drag-and-drop.spec.ts",
+              "line": 249,
               "column": 7
             },
             {
-              "title": "Plus button only appears on selected day",
-              "ok": true,
-              "tags": [],
+              "title": "@drag-handle-visibility drag handle appears only on hover/focus/drag",
+              "ok": false,
+              "tags": [
+                "drag-handle-visibility"
+              ],
               "tests": [
                 {
                   "timeout": 60000,
@@ -232,29 +242,61 @@
                     {
                       "workerIndex": 0,
                       "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 2020,
-                      "errors": [],
+                      "status": "failed",
+                      "duration": 8721,
+                      "error": {
+                        "message": "Error: \u001b[31mTimed out 5000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: getByTestId('calendar-event-bcba06c4-86ce-4c6b-9310-686e7fd40f88')\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('calendar-event-bcba06c4-86ce-4c6b-9310-686e7fd40f88')\u001b[22m\n",
+                        "stack": "Error: \u001b[31mTimed out 5000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: getByTestId('calendar-event-bcba06c4-86ce-4c6b-9310-686e7fd40f88')\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('calendar-event-bcba06c4-86ce-4c6b-9310-686e7fd40f88')\u001b[22m\n\n    at /Users/liamford/Documents/plannerapp/e2e/calendar-drag-and-drop.spec.ts:354:32",
+                        "location": {
+                          "file": "/Users/liamford/Documents/plannerapp/e2e/calendar-drag-and-drop.spec.ts",
+                          "column": 32,
+                          "line": 354
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 352 |\u001b[39m     \n \u001b[90m 353 |\u001b[39m     \u001b[90m// Wait for the event to be visible in the day view\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 354 |\u001b[39m     \u001b[36mawait\u001b[39m expect(eventElement)\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m5000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 355 |\u001b[39m     \n \u001b[90m 356 |\u001b[39m     \u001b[90m// Initially, drag handle should be hidden (opacity-0)\u001b[39m\n \u001b[90m 357 |\u001b[39m     \u001b[36mawait\u001b[39m expect(dragHandle)\u001b[33m.\u001b[39mtoHaveCSS(\u001b[32m'opacity'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m'0'\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/Users/liamford/Documents/plannerapp/e2e/calendar-drag-and-drop.spec.ts",
+                            "column": 32,
+                            "line": 354
+                          },
+                          "message": "Error: \u001b[31mTimed out 5000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: getByTestId('calendar-event-bcba06c4-86ce-4c6b-9310-686e7fd40f88')\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByTestId('calendar-event-bcba06c4-86ce-4c6b-9310-686e7fd40f88')\u001b[22m\n\n\n\u001b[0m \u001b[90m 352 |\u001b[39m     \n \u001b[90m 353 |\u001b[39m     \u001b[90m// Wait for the event to be visible in the day view\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 354 |\u001b[39m     \u001b[36mawait\u001b[39m expect(eventElement)\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m5000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 355 |\u001b[39m     \n \u001b[90m 356 |\u001b[39m     \u001b[90m// Initially, drag handle should be hidden (opacity-0)\u001b[39m\n \u001b[90m 357 |\u001b[39m     \u001b[36mawait\u001b[39m expect(dragHandle)\u001b[33m.\u001b[39mtoHaveCSS(\u001b[32m'opacity'\u001b[39m\u001b[33m,\u001b[39m \u001b[32m'0'\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at /Users/liamford/Documents/plannerapp/e2e/calendar-drag-and-drop.spec.ts:354:32\u001b[22m"
+                        }
+                      ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-09T20:55:12.389Z",
+                      "startTime": "2025-08-09T21:12:52.731Z",
                       "annotations": [],
-                      "attachments": []
+                      "attachments": [
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "/Users/liamford/Documents/plannerapp/test-results/calendar-drag-and-drop-Cal-044f2-rs-only-on-hover-focus-drag-chromium/error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "/Users/liamford/Documents/plannerapp/e2e/calendar-drag-and-drop.spec.ts",
+                        "column": 32,
+                        "line": 354
+                      }
                     }
                   ],
-                  "status": "expected"
+                  "status": "unexpected"
                 }
               ],
-              "id": "09b582d0735f617f013b-b7b82ddbef8d3178d4d7",
-              "file": "calendar-day-plus-button.spec.ts",
-              "line": 198,
+              "id": "ec582333d3f1b334f03a-44f16826ca0bbaaacf70",
+              "file": "calendar-drag-and-drop.spec.ts",
+              "line": 304,
               "column": 7
             },
             {
-              "title": "Cancel button closes the modal",
+              "title": "@drag-handle-keyboard keyboard navigation works for drag handle",
               "ok": true,
-              "tags": [],
+              "tags": [
+                "drag-handle-keyboard"
+              ],
               "tests": [
                 {
                   "timeout": 60000,
@@ -264,15 +306,15 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 0,
+                      "workerIndex": 1,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 1543,
+                      "duration": 3808,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-09T20:55:14.413Z",
+                      "startTime": "2025-08-09T21:13:01.869Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -280,230 +322,9 @@
                   "status": "expected"
                 }
               ],
-              "id": "09b582d0735f617f013b-5a3a7600c98ed116f270",
-              "file": "calendar-day-plus-button.spec.ts",
-              "line": 238,
-              "column": 7
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "title": "enhanced-plus-button.spec.ts",
-      "file": "enhanced-plus-button.spec.ts",
-      "column": 0,
-      "line": 0,
-      "specs": [],
-      "suites": [
-        {
-          "title": "Enhanced Plus Button Functionality",
-          "file": "enhanced-plus-button.spec.ts",
-          "line": 4,
-          "column": 6,
-          "specs": [
-            {
-              "title": "Plus button shows selection modal with three options",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 60000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 1458,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-08-09T20:55:15.964Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "143b09e0edc26e068f10-3935b29b4138958d9d61",
-              "file": "enhanced-plus-button.spec.ts",
-              "line": 14,
-              "column": 7
-            },
-            {
-              "title": "General Event option opens existing add event modal",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 60000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 1509,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-08-09T20:55:17.425Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "143b09e0edc26e068f10-5baa3d8fe9fae9a33671",
-              "file": "enhanced-plus-button.spec.ts",
-              "line": 37,
-              "column": 7
-            },
-            {
-              "title": "Meal option opens meal planning modal",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 60000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 1601,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-08-09T20:55:18.937Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "143b09e0edc26e068f10-755315080f122f888f9b",
-              "file": "enhanced-plus-button.spec.ts",
-              "line": 53,
-              "column": 7
-            },
-            {
-              "title": "Workout option navigates to fitness planner page",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 60000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 3891,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-08-09T20:55:20.542Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "143b09e0edc26e068f10-bdc69e2472c2bd890d90",
-              "file": "enhanced-plus-button.spec.ts",
-              "line": 76,
-              "column": 7
-            },
-            {
-              "title": "Cancel button closes selection modal",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 60000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 1553,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-08-09T20:55:24.436Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "143b09e0edc26e068f10-0dfccc18f8f2e532c699",
-              "file": "enhanced-plus-button.spec.ts",
-              "line": 110,
-              "column": 7
-            },
-            {
-              "title": "Modal can be closed by clicking outside",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 60000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 1545,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-08-09T20:55:25.991Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "143b09e0edc26e068f10-48a2d3371b2bf0ec2500",
-              "file": "enhanced-plus-button.spec.ts",
-              "line": 127,
+              "id": "ec582333d3f1b334f03a-082ed65e08063bc50e42",
+              "file": "calendar-drag-and-drop.spec.ts",
+              "line": 383,
               "column": 7
             }
           ]
@@ -513,11 +334,11 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2025-08-09T20:54:39.896Z",
-    "duration": 47665.432,
-    "expected": 12,
+    "startTime": "2025-08-09T21:12:32.932Z",
+    "duration": 33233.142,
+    "expected": 5,
     "skipped": 0,
-    "unexpected": 0,
+    "unexpected": 1,
     "flaky": 0
   }
 }

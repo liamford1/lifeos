@@ -1,0 +1,148 @@
+# Page snapshot
+
+```yaml
+- alert
+- navigation:
+  - text: LifeOS
+  - button "Profile":
+    - img
+  - paragraph:
+    - text: Signed in as
+    - strong: test@example.com
+  - button "Log Out"
+- complementary:
+  - navigation:
+    - list:
+      - listitem:
+        - link "Home":
+          - /url: /
+          - img
+          - text: Home
+      - listitem:
+        - link "Food":
+          - /url: /food
+          - img
+          - text: Food
+      - listitem:
+        - link "Fitness":
+          - /url: /fitness
+          - img
+          - text: Fitness
+      - listitem:
+        - link "Finances":
+          - /url: /finances
+          - img
+          - text: Finances
+      - listitem:
+        - link "Scratchpad":
+          - /url: /scratchpad
+          - img
+          - text: Scratchpad
+      - listitem:
+        - link "Profile":
+          - /url: /profile
+          - img
+          - text: Profile
+- main:
+  - heading "Calendar" [level=2]:
+    - img
+    - text: Calendar
+  - button "Add Event":
+    - img
+    - text: Add Event
+  - button "Add Meal":
+    - img
+    - text: Add Meal
+  - button "Start Workout":
+    - img
+    - text: Start Workout
+  - button "Inventory":
+    - img
+    - text: Inventory
+  - button "«"
+  - button "‹"
+  - button "August 2025"
+  - button "›"
+  - button "»"
+  - text: Mon Tue Wed Thu Fri Sat Sun
+  - button "July 28, 2025": "28"
+  - button "July 29, 2025": "29"
+  - button "July 30, 2025": "30"
+  - button "July 31, 2025": "31"
+  - button "August 1, 2025": "1"
+  - button "August 2, 2025": "2"
+  - button "August 3, 2025": "3"
+  - button "August 4, 2025": "4"
+  - button "August 5, 2025": "5"
+  - button "August 6, 2025": "6"
+  - button "August 7, 2025": "7"
+  - button "August 8, 2025": "8"
+  - button "August 9, 2025 Test Hover Event 1754773968084 Drag event Test Keyboard Event 1754773971189 Drag event +1 more Add event for this day":
+    - text: "9"
+    - img
+    - text: Test Hover Event 1754773968084
+    - button "Drag event":
+      - img
+    - img
+    - text: Test Keyboard Event 1754773971189
+    - button "Drag event":
+      - img
+    - text: +1 more
+    - button "Add event for this day": +
+  - button "August 10, 2025 Test Drag Event 1754773959544 Drag event":
+    - text: "10"
+    - img
+    - text: Test Drag Event 1754773959544
+    - button "Drag event":
+      - img
+  - button "August 11, 2025": "11"
+  - button "August 12, 2025": "12"
+  - button "August 13, 2025": "13"
+  - button "August 14, 2025": "14"
+  - button "August 15, 2025": "15"
+  - button "August 16, 2025": "16"
+  - button "August 17, 2025": "17"
+  - button "August 18, 2025": "18"
+  - button "August 19, 2025": "19"
+  - button "August 20, 2025": "20"
+  - button "August 21, 2025": "21"
+  - button "August 22, 2025": "22"
+  - button "August 23, 2025": "23"
+  - button "August 24, 2025": "24"
+  - button "August 25, 2025": "25"
+  - button "August 26, 2025": "26"
+  - button "August 27, 2025": "27"
+  - button "August 28, 2025": "28"
+  - button "August 29, 2025": "29"
+  - button "August 30, 2025": "30"
+  - button "August 31, 2025": "31"
+  - heading "Events on August 9, 2025" [level=3]
+  - list:
+    - button "Test Hover Event 1754773968084 Drag event Delete event Test event for hover functionality":
+      - img
+      - text: Test Hover Event 1754773968084
+      - button "Drag event":
+        - img
+      - button "Delete event":
+        - img "delete": 🗑️
+        - text: Delete
+      - text: Test event for hover functionality
+    - button "Test Keyboard Event 1754773971189 Drag event Delete event Test event for keyboard accessibility":
+      - img
+      - text: Test Keyboard Event 1754773971189
+      - button "Drag event":
+        - img
+      - button "Delete event":
+        - img "delete": 🗑️
+        - text: Delete
+      - text: Test event for keyboard accessibility
+    - button "Test-Hover-Event-1754773974118-lgavdz Drag event Delete event Test event for hover functionality":
+      - img
+      - text: Test-Hover-Event-1754773974118-lgavdz
+      - button "Drag event":
+        - img
+      - button "Delete event":
+        - img "delete": 🗑️
+        - text: Delete
+      - text: Test event for hover functionality
+```
