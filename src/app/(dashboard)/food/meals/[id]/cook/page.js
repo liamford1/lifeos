@@ -1,6 +1,6 @@
 'use client';
 // src/app/(dashboard)/food/meals/[id]/cook/page.js
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useMemo } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Button from '@/components/shared/Button';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
@@ -40,11 +40,13 @@ export default function CookMealPage() {
   } = useCookingSession();
 
   // Parse instructions as string array (must be before any conditional returns)
-  const parsedInstructions = Array.isArray(meal?.instructions)
-    ? meal.instructions
-    : (typeof meal?.instructions === 'string' && meal.instructions.trim()
-        ? meal.instructions.split('\n').map(s => s.trim()).filter(Boolean)
-        : []);
+  const parsedInstructions = useMemo(() => {
+    return Array.isArray(meal?.instructions)
+      ? meal.instructions
+      : (typeof meal?.instructions === 'string' && meal.instructions.trim()
+          ? meal.instructions.split('\n').map(s => s.trim()).filter(Boolean)
+          : []);
+  }, [meal?.instructions]);
 
   const isThisMealActive = isCooking && cookingMealId === meal?.id;
 

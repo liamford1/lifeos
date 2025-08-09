@@ -22,7 +22,7 @@ const config = {
     },
   ],
   webServer: {
-    command: 'npm run e2e:start',
+    command: 'npm run start',
     url: 'http://localhost:3000',
     timeout: 120000,
     reuseExistingServer: !process.env.CI,

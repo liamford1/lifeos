@@ -1,5 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { generateUniqueTitle } from './test-utils';
+import { uniq } from './utils/dataGen';
+import { cleanupCalendarEventsByPrefix } from './utils/cleanup';
 
 test.describe('Calendar Drag and Drop Functionality', () => {
   test.beforeEach(async ({ page }) => {
@@ -9,6 +11,13 @@ test.describe('Calendar Drag and Drop Functionality', () => {
     await page.getByPlaceholder('Password').fill('password123');
     await page.getByRole('button', { name: /log in/i }).click();
     await page.waitForURL('/');
+  });
+
+  test.afterEach(async ({ page }) => {
+    // Clean up test data
+    await cleanupCalendarEventsByPrefix(page, 'Test-Undo-Event');
+    await cleanupCalendarEventsByPrefix(page, 'Test-Hover-Event');
+    await cleanupCalendarEventsByPrefix(page, 'Test-Keyboard-Event');
   });
 
   test('@calendar-dnd drag event to new day updates DB and UI', async ({ page }) => {
@@ -91,7 +100,7 @@ test.describe('Calendar Drag and Drop Functionality', () => {
     await expect(page.getByRole('heading', { name: 'Calendar' })).toBeVisible({ timeout: 10000 });
     
     // Create a test event for today
-    const testEventTitle = generateUniqueTitle('Test Undo Event');
+    const testEventTitle = uniq('Test-Undo-Event');
     
     // Create event via API and get the event ID
     const eventId = await page.evaluate(async (title) => {
@@ -208,14 +217,14 @@ test.describe('Calendar Drag and Drop Functionality', () => {
     
     // Initially, drag handle should not be visible (check the one in the day view list)
     const dragHandle = page.locator('li').filter({ hasText: testEventTitle }).getByTestId(`calendar-event-drag-handle-${eventId}`);
-    await expect(dragHandle).not.toBeVisible();
+    await expect(dragHandle).toHaveCSS('opacity', '0');
     
     // Hover over the event in the day view list
     const eventElement = page.locator('li').filter({ hasText: testEventTitle });
     await eventElement.hover();
     
     // Now drag handle should be visible
-    await expect(dragHandle).toBeVisible();
+    await expect(dragHandle).toHaveCSS('opacity', '1');
   });
 
   test('@calendar-dnd keyboard accessibility', async ({ page }) => {
@@ -276,5 +285,126 @@ test.describe('Calendar Drag and Drop Functionality', () => {
     
     // Verify drag state is active (event should have opacity change)
     await expect(eventElement).toHaveCSS('opacity', '0.5');
+  });
+
+  test('@drag-handle-visibility drag handle appears only on hover/focus/drag', async ({ page }) => {
+    // Wait for the page to load
+    await expect(page.getByRole('heading', { name: 'Calendar' })).toBeVisible({ timeout: 10000 });
+    
+    // Create a test event for today
+    const testEventTitle = uniq('Test-Hover-Event');
+    
+    // Create event via API and get the event ID
+    const eventId = await page.evaluate(async (title) => {
+      const supabase = window.supabase;
+      const { data: session } = await supabase.auth.getSession();
+      const userId = session.session.user.id;
+      
+      const today = new Date().toISOString().split('T')[0];
+      
+      // Create calendar event
+      const { data, error } = await supabase
+        .from('calendar_events')
+        .insert({
+          user_id: userId,
+          title: title,
+          description: 'Test event for hover functionality',
+          start_time: `${today}T12:00:00.000Z`,
+          source: 'note'
+        })
+        .select('id')
+        .single();
+      
+      if (error) throw error;
+      return data.id;
+    }, testEventTitle);
+
+    // Refresh the page to ensure the event appears
+    await page.reload();
+    await expect(page.getByRole('heading', { name: 'Calendar' })).toBeVisible({ timeout: 10000 });
+    
+    // Wait for the event to appear in the day view list
+    await expect(page.locator('li').filter({ hasText: testEventTitle })).toBeVisible({ timeout: 10000 });
+    
+    // Find the event and drag handle
+    const eventElement = page.locator('li').filter({ hasText: testEventTitle });
+    const dragHandle = page.getByTestId(`calendar-event-drag-handle-${eventId}`).first();
+    
+    // Initially, drag handle should be hidden (opacity-0)
+    await expect(dragHandle).toHaveCSS('opacity', '0');
+    
+    // Hover the event: expect handle visible
+    await eventElement.hover();
+    await expect(dragHandle).toHaveCSS('opacity', '1');
+    
+    // Move mouse away (blur): expect hidden
+    await page.mouse.move(0, 0);
+    await page.waitForTimeout(500); // Wait for transition
+    await expect(dragHandle).toHaveCSS('opacity', '0');
+    
+    // Keyboard focus (Tab to handle): expect visible
+    await dragHandle.focus();
+    await expect(dragHandle).toHaveCSS('opacity', '1');
+    
+    // Verify aria-label
+    await expect(dragHandle).toHaveAttribute('aria-label', 'Drag event');
+    
+    // Blur focus: expect hidden
+    await page.keyboard.press('Escape'); // Blur the focused element
+    await page.waitForTimeout(500); // Wait for transition
+    await expect(dragHandle).toHaveCSS('opacity', '0');
+  });
+
+  test('@drag-handle-keyboard keyboard navigation works for drag handle', async ({ page }) => {
+    // Wait for the page to load
+    await expect(page.getByRole('heading', { name: 'Calendar' })).toBeVisible({ timeout: 10000 });
+    
+    // Create a test event for today
+    const testEventTitle = uniq('Test-Keyboard-Event');
+    
+    // Create event via API and get the event ID
+    const eventId = await page.evaluate(async (title) => {
+      const supabase = window.supabase;
+      const { data: session } = await supabase.auth.getSession();
+      const userId = session.session.user.id;
+      
+      const today = new Date().toISOString().split('T')[0];
+      
+      // Create calendar event
+      const { data, error } = await supabase
+        .from('calendar_events')
+        .insert({
+          user_id: userId,
+          title: title,
+          description: 'Test event for keyboard accessibility',
+          start_time: `${today}T12:00:00.000Z`,
+          source: 'note'
+        })
+        .select('id')
+        .single();
+      
+      if (error) throw error;
+      return data.id;
+    }, testEventTitle);
+
+    // Refresh the page to ensure the event appears
+    await page.reload();
+    await expect(page.getByRole('heading', { name: 'Calendar' })).toBeVisible({ timeout: 10000 });
+    
+    // Wait for the event to appear in the day view list
+    await expect(page.locator('li').filter({ hasText: testEventTitle })).toBeVisible({ timeout: 10000 });
+    
+    // Find the drag handle
+    const dragHandle = page.getByTestId(`calendar-event-drag-handle-${eventId}`).first();
+    
+    // Tab to the drag handle
+    await dragHandle.focus();
+    await expect(dragHandle).toBeFocused();
+    await expect(dragHandle).toBeVisible();
+    
+    // Verify it has proper accessibility attributes
+    await expect(dragHandle).toHaveAttribute('role', 'button');
+    await expect(dragHandle).toHaveAttribute('tabindex', '0');
+    await expect(dragHandle).toHaveAttribute('aria-label', 'Drag event');
   });
 }); 

@@ -40,7 +40,7 @@
     "projects": [
       {
         "outputDir": "/Users/liamford/Documents/plannerapp/test-results",
-        "repeatEach": 2,
+        "repeatEach": 1,
         "retries": 0,
         "metadata": {
           "actualWorkers": 1
@@ -61,7 +61,7 @@
     "version": "1.54.1",
     "workers": 1,
     "webServer": {
-      "command": "npm run e2e:start",
+      "command": "npm run start",
       "url": "http://localhost:3000",
       "timeout": 120000,
       "reuseExistingServer": true
@@ -69,24 +69,22 @@
   },
   "suites": [
     {
-      "title": "calendar-drag-and-drop.spec.ts",
-      "file": "calendar-drag-and-drop.spec.ts",
+      "title": "calendar-day-plus-button.spec.ts",
+      "file": "calendar-day-plus-button.spec.ts",
       "column": 0,
       "line": 0,
       "specs": [],
       "suites": [
         {
-          "title": "Calendar Drag and Drop Functionality",
-          "file": "calendar-drag-and-drop.spec.ts",
-          "line": 4,
+          "title": "Calendar Day Plus Button Functionality",
+          "file": "calendar-day-plus-button.spec.ts",
+          "line": 15,
           "column": 6,
           "specs": [
             {
-              "title": "@calendar-dnd drag event to new day updates DB and UI",
+              "title": "Plus button appears on selected day and opens planning modal",
               "ok": true,
-              "tags": [
-                "calendar-dnd"
-              ],
+              "tags": [],
               "tests": [
                 {
                   "timeout": 60000,
@@ -99,12 +97,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 7435,
+                      "duration": 5483,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-08T16:04:14.780Z",
+                      "startTime": "2025-08-09T20:54:54.561Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -112,17 +110,15 @@
                   "status": "expected"
                 }
               ],
-              "id": "ec582333d3f1b334f03a-06f32644321c6d35681c",
-              "file": "calendar-drag-and-drop.spec.ts",
-              "line": 14,
+              "id": "09b582d0735f617f013b-f27e4fd9566c85e8a121",
+              "file": "calendar-day-plus-button.spec.ts",
+              "line": 25,
               "column": 7
             },
             {
-              "title": "@calendar-dnd drag event to new day updates DB and UI",
+              "title": "General Event option opens add event modal with pre-selected date",
               "ok": true,
-              "tags": [
-                "calendar-dnd"
-              ],
+              "tags": [],
               "tests": [
                 {
                   "timeout": 60000,
@@ -132,15 +128,15 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 1,
+                      "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 3532,
+                      "duration": 2004,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-08T16:04:22.707Z",
+                      "startTime": "2025-08-09T20:55:00.297Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -148,9 +144,366 @@
                   "status": "expected"
                 }
               ],
-              "id": "ec582333d3f1b334f03a-58d66dfbb68768377a26",
-              "file": "calendar-drag-and-drop.spec.ts",
+              "id": "09b582d0735f617f013b-23b4a07f779ca38a80d1",
+              "file": "calendar-day-plus-button.spec.ts",
+              "line": 68,
+              "column": 7
+            },
+            {
+              "title": "Meal option opens meal planning modal with selected date",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1637,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-09T20:55:02.303Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "09b582d0735f617f013b-b16c7d181ef90d9b4c85",
+              "file": "calendar-day-plus-button.spec.ts",
+              "line": 99,
+              "column": 7
+            },
+            {
+              "title": "Workout option navigates to fitness planner with selected date",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 8444,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-09T20:55:03.943Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "09b582d0735f617f013b-072a13211f22b9c1ca79",
+              "file": "calendar-day-plus-button.spec.ts",
+              "line": 158,
+              "column": 7
+            },
+            {
+              "title": "Plus button only appears on selected day",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2020,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-09T20:55:12.389Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "09b582d0735f617f013b-b7b82ddbef8d3178d4d7",
+              "file": "calendar-day-plus-button.spec.ts",
+              "line": 198,
+              "column": 7
+            },
+            {
+              "title": "Cancel button closes the modal",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1543,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-09T20:55:14.413Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "09b582d0735f617f013b-5a3a7600c98ed116f270",
+              "file": "calendar-day-plus-button.spec.ts",
+              "line": 238,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "enhanced-plus-button.spec.ts",
+      "file": "enhanced-plus-button.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Enhanced Plus Button Functionality",
+          "file": "enhanced-plus-button.spec.ts",
+          "line": 4,
+          "column": 6,
+          "specs": [
+            {
+              "title": "Plus button shows selection modal with three options",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1458,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-09T20:55:15.964Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "143b09e0edc26e068f10-3935b29b4138958d9d61",
+              "file": "enhanced-plus-button.spec.ts",
               "line": 14,
+              "column": 7
+            },
+            {
+              "title": "General Event option opens existing add event modal",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1509,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-09T20:55:17.425Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "143b09e0edc26e068f10-5baa3d8fe9fae9a33671",
+              "file": "enhanced-plus-button.spec.ts",
+              "line": 37,
+              "column": 7
+            },
+            {
+              "title": "Meal option opens meal planning modal",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1601,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-09T20:55:18.937Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "143b09e0edc26e068f10-755315080f122f888f9b",
+              "file": "enhanced-plus-button.spec.ts",
+              "line": 53,
+              "column": 7
+            },
+            {
+              "title": "Workout option navigates to fitness planner page",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3891,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-09T20:55:20.542Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "143b09e0edc26e068f10-bdc69e2472c2bd890d90",
+              "file": "enhanced-plus-button.spec.ts",
+              "line": 76,
+              "column": 7
+            },
+            {
+              "title": "Cancel button closes selection modal",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1553,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-09T20:55:24.436Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "143b09e0edc26e068f10-0dfccc18f8f2e532c699",
+              "file": "enhanced-plus-button.spec.ts",
+              "line": 110,
+              "column": 7
+            },
+            {
+              "title": "Modal can be closed by clicking outside",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 60000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1545,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-08-09T20:55:25.991Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "143b09e0edc26e068f10-48a2d3371b2bf0ec2500",
+              "file": "enhanced-plus-button.spec.ts",
+              "line": 127,
               "column": 7
             }
           ]
@@ -160,9 +513,9 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2025-08-08T16:03:46.272Z",
-    "duration": 40102.822,
-    "expected": 2,
+    "startTime": "2025-08-09T20:54:39.896Z",
+    "duration": 47665.432,
+    "expected": 12,
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0

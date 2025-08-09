@@ -7,6 +7,8 @@ import {
   cleanupTestDataBeforeTest,
   waitForDatabaseOperation 
 } from './test-utils';
+import { uniq } from './utils/dataGen';
+import { cleanupByPrefix } from './utils/cleanup';
 
 // Helper to get today's date in yyyy-mm-dd format
 function today() {
@@ -20,10 +22,15 @@ declare global {
   }
 }
 
+test.describe('Cardio Session Tests', () => {
+  test.afterEach(async ({ page }) => {
+    // Clean up test data
+    await cleanupByPrefix(page, 'fitness_cardio', 'activity_type', 'Test-Run');
+  });
+
 test('Complete Cardio Session Lifecycle', async ({ page }) => {
   // Generate unique test data
-  const testId = `cardio_${Date.now()}`;
-  const activityType = `Test Run ${testId}`;
+  const activityType = uniq('Test-Run');
   
   // Capture browser console logs
   page.on('console', msg => {
@@ -44,7 +51,7 @@ test('Complete Cardio Session Lifecycle', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Calendar' })).toBeVisible({ timeout: 10000 });
 
   // Clean up any leftover test data from previous runs
-  await cleanupTestDataBeforeTest(page, testId);
+  await cleanupTestDataBeforeTest(page, activityType);
   
   // Wait for user context to be ready and verify authentication
   await page.waitForTimeout(2000);
@@ -436,4 +443,6 @@ test('Complete Cardio Session Lifecycle', async ({ page }) => {
   await cleanupTestCardio(page, newActivityType); // Clean up the edited activity type too
   
   await waitForDatabaseOperation(page, 500);
-}); 
+});
+
+}); // Close describe block 

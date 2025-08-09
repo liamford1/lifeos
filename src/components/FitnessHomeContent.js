@@ -123,18 +123,6 @@ export default function FitnessHomeContent() {
   const [formLoading, setFormLoading] = useState(false);
   const [formError, setFormError] = useState('');
 
-  useEffect(() => {
-    if (!loading && !user) {
-      router.push('/auth');
-    }
-  }, [loading, user, router]);
-
-  useEffect(() => {
-    if (user) {
-      loadFitnessData();
-    }
-  }, [user, loadFitnessData]);
-
   const loadFitnessData = useCallback(async () => {
     setDataLoading(true);
     try {
@@ -153,6 +141,18 @@ export default function FitnessHomeContent() {
       setDataLoading(false);
     }
   }, [user?.id, fetchCardioSessions, fetchWorkouts, fetchSportsSessions]);
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/auth');
+    }
+  }, [loading, user, router]);
+
+  useEffect(() => {
+    if (user) {
+      loadFitnessData();
+    }
+  }, [user, loadFitnessData]);
 
   // Calculate metrics
   const getThisWeekData = () => {

@@ -37,6 +37,7 @@ import SharedDeleteButton from '@/components/SharedDeleteButton';
 import { supabase } from '@/lib/supabaseClient';
 import { MdRestaurant, MdFitnessCenter, MdEvent, MdAdd, MdDragIndicator } from 'react-icons/md';
 import PlanMealModal from '@/components/modals/PlanMealModal';
+import { toYMD } from '@/lib/date';
 
 export default function CalendarView() {
   const { handleError, handleSuccess } = useApiError();
@@ -579,6 +580,7 @@ export default function CalendarView() {
                         key={event.id}
                         data-testid={`calendar-event-${event.id}`}
                         className={`w-full h-5 text-xs truncate whitespace-nowrap overflow-hidden text-ellipsis rounded px-1 py-0.5 text-left ${colorClass} relative group`}
+                        data-dragging={isBeingDragged}
                         {...eventDivProps}
                       >
                         <div className="flex items-center justify-between w-full">
@@ -589,7 +591,7 @@ export default function CalendarView() {
                           {/* Drag handle */}
                           <div
                             data-testid={`calendar-event-drag-handle-${event.id}`}
-                            className="opacity-0 group-hover:opacity-100 transition-opacity ml-1 flex-shrink-0 p-0.5 rounded hover:bg-black/20 cursor-grab active:cursor-grabbing w-4 h-4 flex items-center justify-center"
+                            className="opacity-0 group-hover:opacity-100 focus-visible:opacity-100 data-[dragging=true]:opacity-100 transition-opacity ml-1 flex-shrink-0 p-0.5 rounded hover:bg-black/20 cursor-grab active:cursor-grabbing w-4 h-4 flex items-center justify-center"
                             onPointerDown={(e) => {
                               e.stopPropagation();
                               startDrag(e, { 
@@ -598,9 +600,10 @@ export default function CalendarView() {
                                 originalEnd: event.end_time 
                               });
                             }}
-                            aria-label="Drag to reschedule"
+                            aria-label="Drag event"
                             role="button"
                             tabIndex={0}
+                            data-dragging={isBeingDragged}
                             onKeyDown={(e) => {
                               if (e.key === 'Enter' || e.key === ' ') {
                                 e.preventDefault();
@@ -630,13 +633,13 @@ export default function CalendarView() {
                     <div
                       onClick={(e) => {
                         e.stopPropagation();
-                        setShowSelectionModalForDate(date);
+                        setShowSelectionModalForDate(toYMD(date));
                       }}
                       onKeyDown={(e) => {
                         if (e.key === 'Enter' || e.key === ' ') {
                           e.preventDefault();
                           e.stopPropagation();
-                          setShowSelectionModalForDate(date);
+                          setShowSelectionModalForDate(toYMD(date));
                         }
                       }}
                       className="absolute bottom-0 right-0 w-5 h-5 bg-primary text-white rounded-full text-xs flex items-center justify-center hover:bg-primary/80 transition-colors shadow-sm z-10 cursor-pointer"
@@ -674,6 +677,7 @@ export default function CalendarView() {
                   className={`p-3 rounded hover:opacity-80 ${colorClass} cursor-pointer relative group`}
                   role="button"
                   tabIndex={0}
+                  data-dragging={isBeingDragged}
                   style={{
                     opacity: isBeingDragged ? 0.5 : 1,
                     transform: isBeingDragged ? 'scale(0.95)' : 'none',
@@ -734,7 +738,7 @@ export default function CalendarView() {
                       {/* Drag handle */}
                       <div
                         data-testid={`calendar-event-drag-handle-${event.id}`}
-                        className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-black/20 cursor-grab active:cursor-grabbing w-6 h-6 flex items-center justify-center flex-shrink-0"
+                        className="opacity-0 group-hover:opacity-100 focus-visible:opacity-100 data-[dragging=true]:opacity-100 transition-opacity p-1 rounded hover:bg-black/20 cursor-grab active:cursor-grabbing w-6 h-6 flex items-center justify-center flex-shrink-0"
                         onPointerDown={(e) => {
                           e.stopPropagation();
                           startDrag(e, { 
@@ -743,9 +747,10 @@ export default function CalendarView() {
                             originalEnd: event.end_time 
                           });
                         }}
-                        aria-label="Drag to reschedule"
+                        aria-label="Drag event"
                         role="button"
                         tabIndex={0}
+                        data-dragging={isBeingDragged}
                         onKeyDown={(e) => {
                           if (e.key === 'Enter' || e.key === ' ') {
                             e.preventDefault();
