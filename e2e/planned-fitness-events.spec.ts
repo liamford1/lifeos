@@ -1,5 +1,6 @@
 /// <reference types="@playwright/test" />
 import { test, expect } from '@playwright/test';
+import { ensureTestProfile } from './test-utils';
 
 // Helper to get today's date in yyyy-mm-dd format
 function today() {
@@ -50,6 +51,24 @@ declare global {
   }
 }
 
+test.beforeEach(async ({ page }) => {
+  // Go to /auth
+  await page.goto('http://localhost:3000/auth');
+
+  // Fill in login credentials
+  await page.getByPlaceholder('Email').fill('test@example.com');
+  await page.getByPlaceholder('Password').fill('password123');
+
+  // Click the login button
+  await page.getByRole('button', { name: /log in/i }).click();
+
+  // Wait for dashboard to load
+  await expect(page.getByRole('heading', { name: 'Calendar' })).toBeVisible({ timeout: 10000 });
+
+  // Ensure test profile exists to prevent 406 errors
+  await ensureTestProfile(page);
+});
+
 test('Planned Fitness Events - Complete Flow', async ({ page }) => {
   // Capture browser console logs
   page.on('console', msg => {
@@ -70,19 +89,6 @@ test('Planned Fitness Events - Complete Flow', async ({ page }) => {
       originalError.apply(console, args);
     };
   });
-
-  // Go to /auth
-  await page.goto('http://localhost:3000/auth');
-
-  // Fill in login credentials
-  await page.getByPlaceholder('Email').fill('test@example.com');
-  await page.getByPlaceholder('Password').fill('password123');
-
-  // Click the login button
-  await page.getByRole('button', { name: /log in/i }).click();
-
-  // Wait for dashboard to load by checking for visible text "Planner"
-  await expect(page.getByRole('heading', { name: 'Calendar' })).toBeVisible({ timeout: 10000 });
 
   // ✅ Step 1: Optimized cleanup - Clear ALL test data before starting with timeout
   await Promise.race([
@@ -804,19 +810,6 @@ test('Calendar Click Behavior for Planned Fitness Events', async ({ page }) => {
     };
   });
 
-  // Go to /auth
-  await page.goto('http://localhost:3000/auth');
-
-  // Fill in login credentials
-  await page.getByPlaceholder('Email').fill('test@example.com');
-  await page.getByPlaceholder('Password').fill('password123');
-
-  // Click the login button
-  await page.getByRole('button', { name: /log in/i }).click();
-
-  // Wait for dashboard to load
-  await expect(page.getByRole('heading', { name: 'Calendar' })).toBeVisible({ timeout: 10000 });
-
   // Clean up any existing test data and clear any in-progress sessions
   try {
     await page.evaluate(async () => {
@@ -1064,19 +1057,6 @@ test('Event List Click Behavior for Planned Fitness Events', async ({ page }) =>
     console.log(`[BROWSER LOG] ${msg.type()}: ${msg.text()}`);
   });
 
-  // Go to /auth
-  await page.goto('http://localhost:3000/auth');
-
-  // Fill in login credentials
-  await page.getByPlaceholder('Email').fill('test@example.com');
-  await page.getByPlaceholder('Password').fill('password123');
-
-  // Click the login button
-  await page.getByRole('button', { name: /log in/i }).click();
-
-  // Wait for dashboard to load
-  await expect(page.getByRole('heading', { name: 'Calendar' })).toBeVisible({ timeout: 10000 });
-
   // Clean up any existing test data
   await page.evaluate(async () => {
     const supabase = window.supabase;
@@ -1238,19 +1218,6 @@ test('Planned Session Cleanup After Completion', async ({ page }) => {
   page.on('console', msg => {
     console.log(`[BROWSER LOG] ${msg.type()}: ${msg.text()}`);
   });
-
-  // Go to /auth
-  await page.goto('http://localhost:3000/auth');
-
-  // Fill in login credentials
-  await page.getByPlaceholder('Email').fill('test@example.com');
-  await page.getByPlaceholder('Password').fill('password123');
-
-  // Click the login button
-  await page.getByRole('button', { name: /log in/i }).click();
-
-  // Wait for dashboard to load
-  await expect(page.getByRole('heading', { name: 'Calendar' })).toBeVisible({ timeout: 10000 });
 
   // Clean up any existing test data
   await page.evaluate(async () => {

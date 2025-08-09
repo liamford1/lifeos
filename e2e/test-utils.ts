@@ -437,3 +437,25 @@ export async function waitForPageReady(page: Page, pageType: 'workouts' | 'sport
   
   throw new Error(`${pageType} page not ready within ${timeoutMs}ms`);
 } 
+
+/**
+ * Ensure the test user has a profile row in the database to prevent 406 errors
+ * This should be called in beforeEach of tests that touch fitness/cardio/sports flows
+ */
+export async function ensureTestProfile(page: Page): Promise<void> {
+  await page.evaluate(async () => {
+    // @ts-ignore
+    const supabase = window.supabase;
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    
+    const { data } = await supabase.from('profiles').select('user_id').eq('user_id', user.id).single();
+    if (!data) {
+      await supabase.from('profiles').insert({ 
+        user_id: user.id, 
+        first_name: 'Test', 
+        last_name: 'User' 
+      });
+    }
+  });
+} 

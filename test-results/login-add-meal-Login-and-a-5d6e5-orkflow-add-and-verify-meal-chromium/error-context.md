@@ -1,0 +1,87 @@
+# Page snapshot
+
+```yaml
+- alert
+- navigation:
+  - text: LifeOS
+  - button "Profile":
+    - img
+  - paragraph:
+    - text: Signed in as
+    - strong: test@example.com
+  - button "Log Out"
+- complementary:
+  - navigation:
+    - list:
+      - listitem:
+        - link "Home":
+          - /url: /
+          - img
+          - text: Home
+      - listitem:
+        - link "Food":
+          - /url: /food
+          - img
+          - text: Food
+      - listitem:
+        - link "Fitness":
+          - /url: /fitness
+          - img
+          - text: Fitness
+      - listitem:
+        - link "Finances":
+          - /url: /finances
+          - img
+          - text: Finances
+      - listitem:
+        - link "Scratchpad":
+          - /url: /scratchpad
+          - img
+          - text: Scratchpad
+      - listitem:
+        - link "Profile":
+          - /url: /profile
+          - img
+          - text: Profile
+- main:
+  - heading "Food & Diet Dashboard" [level=1]
+  - heading "Recently Cooked" [level=2]
+  - paragraph: You haven't cooked any meals yet.
+  - heading "Upcoming Meals" [level=2]
+  - paragraph: No meals planned. Let's fix that!
+  - heading "Quick Actions" [level=2]
+  - button "Add a Meal Create new recipe":
+    - heading "Add a Meal" [level=3]
+    - paragraph: Create new recipe
+  - button "Plan Weekly Meals Schedule your week":
+    - heading "Plan Weekly Meals" [level=3]
+    - paragraph: Schedule your week
+  - button "View Pantry Check inventory":
+    - heading "View Pantry" [level=3]
+    - paragraph: Check inventory
+  - button "Recipe Search Browse recipes":
+    - heading "Recipe Search" [level=3]
+    - paragraph: Browse recipes
+  - button "Add a Receipt Scan grocery receipt":
+    - heading "Add a Receipt" [level=3]
+    - paragraph: Scan grocery receipt
+  - heading "Suggestion" [level=2]
+  - paragraph: Need help planning this week's dinners?
+  - button "Ask AI"
+- dialog "Meals":
+  - heading "Meals" [level=2]
+  - paragraph: Browse and manage your saved meal recipes
+  - button "Close modal":
+    - img
+  - button "AI Suggestions":
+    - img
+    - text: AI Suggestions
+  - button "Add Meal"
+  - list:
+    - listitem:
+      - heading "Test Chicken Parmesan 1754782534399" [level=2]
+      - paragraph: A classic Italian-American dish
+      - paragraph: "Prep: 15 min • Cook: 25 min • Servings: 4"
+      - button "delete":
+        - img "delete": 🗑️
+```

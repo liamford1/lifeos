@@ -1,0 +1,75 @@
+# Page snapshot
+
+```yaml
+- alert
+- navigation:
+  - text: LifeOS
+  - button "Profile":
+    - img
+  - paragraph: Test User
+  - button "Log Out"
+- complementary:
+  - navigation:
+    - list:
+      - listitem:
+        - link "Home":
+          - /url: /
+          - img
+          - text: Home
+      - listitem:
+        - link "Food":
+          - /url: /food
+          - img
+          - text: Food
+      - listitem:
+        - link "Fitness":
+          - /url: /fitness
+          - img
+          - text: Fitness
+      - listitem:
+        - link "Finances":
+          - /url: /finances
+          - img
+          - text: Finances
+      - listitem:
+        - link "Scratchpad":
+          - /url: /scratchpad
+          - img
+          - text: Scratchpad
+      - listitem:
+        - link "Profile":
+          - /url: /profile
+          - img
+          - text: Profile
+- main:
+  - heading "Fitness Dashboard" [level=1]
+  - button "Start Workout"
+  - button "Start Cardio"
+  - heading "Calories Burned" [level=2]
+  - text: "0"
+  - paragraph: Chart placeholder
+  - paragraph: Calories over time visualization
+  - heading "Workout Consistency" [level=2]
+  - text: "7"
+  - paragraph: Chart placeholder
+  - paragraph: Workouts per week visualization
+  - paragraph: This Week
+  - paragraph: "7"
+  - paragraph: Workouts
+  - paragraph: This Week
+  - paragraph: "0"
+  - paragraph: Calories Burned
+  - paragraph: Most Common
+  - paragraph: No activities yet
+  - paragraph: Activity Type
+  - paragraph: This Week
+  - paragraph: "0"
+  - paragraph: Cardio & Sports
+  - heading "Fitness Tools & History" [level=2]
+  - button "View Workouts Past workouts & exercises"
+  - button "Cardio History Past cardio sessions"
+  - button "Sports & Activities Games, hikes, other active things"
+  - button "Stretching / Mobility Yoga, rehab, cooldowns"
+  - button "Daily Activity Steps, mood, energy"
+  - button "Plan Workouts Schedule fitness sessions"
+```

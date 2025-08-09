@@ -1,0 +1,91 @@
+# Page snapshot
+
+```yaml
+- text: ✅ Cardio session ended!
+- button "Close toast": ✕
+- alert
+- navigation:
+  - text: LifeOS
+  - button "Profile":
+    - img
+  - paragraph:
+    - text: Signed in as
+    - strong: test@example.com
+  - button "Log Out"
+- complementary:
+  - navigation:
+    - list:
+      - listitem:
+        - link "Home":
+          - /url: /
+          - img
+          - text: Home
+      - listitem:
+        - link "Food":
+          - /url: /food
+          - img
+          - text: Food
+      - listitem:
+        - link "Fitness":
+          - /url: /fitness
+          - img
+          - text: Fitness
+      - listitem:
+        - link "Finances":
+          - /url: /finances
+          - img
+          - text: Finances
+      - listitem:
+        - link "Scratchpad":
+          - /url: /scratchpad
+          - img
+          - text: Scratchpad
+      - listitem:
+        - link "Profile":
+          - /url: /profile
+          - img
+          - text: Profile
+- main:
+  - heading "Fitness Dashboard" [level=1]
+  - button "Start Workout"
+  - button "Start Cardio"
+  - heading "Calories Burned" [level=2]
+  - text: "0"
+  - paragraph: Chart placeholder
+  - paragraph: Calories over time visualization
+  - heading "Workout Consistency" [level=2]
+  - text: "0"
+  - paragraph: Chart placeholder
+  - paragraph: Workouts per week visualization
+  - paragraph: This Week
+  - paragraph: "0"
+  - paragraph: Workouts
+  - paragraph: This Week
+  - paragraph: "0"
+  - paragraph: Calories Burned
+  - paragraph: Most Common
+  - paragraph: Test-Run-1754782509853-4umi96
+  - paragraph: Activity Type
+  - paragraph: This Week
+  - paragraph: "1"
+  - paragraph: Cardio & Sports
+  - heading "Fitness Tools & History" [level=2]
+  - button "View Workouts Past workouts & exercises"
+  - button "Cardio History Past cardio sessions"
+  - button "Sports & Activities Games, hikes, other active things"
+  - button "Stretching / Mobility Yoga, rehab, cooldowns"
+  - button "Daily Activity Steps, mood, energy"
+  - button "Plan Workouts Schedule fitness sessions"
+- dialog "Cardio History":
+  - heading "Cardio History" [level=2]
+  - paragraph: Track your running, cycling, and other cardio activities
+  - button "Close modal":
+    - img
+  - button "Start New Cardio Session"
+  - listitem:
+    - text: Test-Run-1754782509853-4umi96 2025-08-09 ⏱️ 0 min 📍 Test Park Test cardio session for E2E testing
+    - button "✏️ Edit"
+    - button "Delete cardio session":
+      - img "delete": 🗑️
+      - text: Delete
+```

@@ -77,22 +77,22 @@
   - button "August 6, 2025": "6"
   - button "August 7, 2025": "7"
   - button "August 8, 2025": "8"
-  - button "August 9, 2025 Test Hover Event 1754773968084 Drag event Test Keyboard Event 1754773971189 Drag event +1 more Add event for this day":
+  - button "August 9, 2025 Test Hover Event 1754782483826 Drag event Test Keyboard Event 1754782486462 Drag event +1 more Add event for this day":
     - text: "9"
     - img
-    - text: Test Hover Event 1754773968084
+    - text: Test Hover Event 1754782483826
     - button "Drag event":
       - img
     - img
-    - text: Test Keyboard Event 1754773971189
+    - text: Test Keyboard Event 1754782486462
     - button "Drag event":
       - img
     - text: +1 more
     - button "Add event for this day": +
-  - button "August 10, 2025 Test Drag Event 1754773959544 Drag event":
+  - button "August 10, 2025 Test Drag Event 1754782476660 Drag event":
     - text: "10"
     - img
-    - text: Test Drag Event 1754773959544
+    - text: Test Drag Event 1754782476660
     - button "Drag event":
       - img
   - button "August 11, 2025": "11"
@@ -118,27 +118,27 @@
   - button "August 31, 2025": "31"
   - heading "Events on August 9, 2025" [level=3]
   - list:
-    - button "Test Hover Event 1754773968084 Drag event Delete event Test event for hover functionality":
+    - button "Test Hover Event 1754782483826 Drag event Delete event Test event for hover functionality":
       - img
-      - text: Test Hover Event 1754773968084
+      - text: Test Hover Event 1754782483826
       - button "Drag event":
         - img
       - button "Delete event":
         - img "delete": 🗑️
         - text: Delete
       - text: Test event for hover functionality
-    - button "Test Keyboard Event 1754773971189 Drag event Delete event Test event for keyboard accessibility":
+    - button "Test Keyboard Event 1754782486462 Drag event Delete event Test event for keyboard accessibility":
       - img
-      - text: Test Keyboard Event 1754773971189
+      - text: Test Keyboard Event 1754782486462
       - button "Drag event":
         - img
       - button "Delete event":
         - img "delete": 🗑️
         - text: Delete
       - text: Test event for keyboard accessibility
-    - button "Test-Hover-Event-1754773974118-lgavdz Drag event Delete event Test event for hover functionality":
+    - button "Test-Hover-Event-1754782488815-yw7xfv Drag event Delete event Test event for hover functionality":
       - img
-      - text: Test-Hover-Event-1754773974118-lgavdz
+      - text: Test-Hover-Event-1754782488815-yw7xfv
       - button "Drag event":
         - img
       - button "Delete event":
