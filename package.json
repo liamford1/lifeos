@@ -9,8 +9,6 @@
     "start": "next start -p 3000",
     "lint": "next lint",
     "test": "jest",
-    "e2e:start": "next build && next start -p 3000",
-    "test:e2e": "playwright test",
     "type-check": "tsc --noEmit",
     "tsc": "tsc",
     "analyze": "ANALYZE=true npm run build:profile"
@@ -40,7 +38,6 @@
     "@eslint/eslintrc": "^3",
     "@next/bundle-analyzer": "^15.4.2",
     "@opentelemetry/instrumentation": "^0.46.0",
-    "@playwright/test": "^1.54.1",
     "@sentry/nextjs": "^9.40.0",
     "@tanstack/react-query-devtools": "^5.83.0",
     "@testing-library/jest-dom": "^6.6.3",

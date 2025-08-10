@@ -29,7 +29,6 @@
       }
     ],
     "types": [
-      "@playwright/test",
       "node"
     ]
   },
@@ -39,9 +38,6 @@
   ],
   "exclude": [
     "node_modules",
-    ".next",
-    "e2e",
-    "playwright-report",
-    "test-results"
+    ".next"
   ]
 }
