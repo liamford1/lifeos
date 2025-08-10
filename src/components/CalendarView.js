@@ -32,6 +32,7 @@ import Button from '@/components/shared/Button';
 import { useCalendarDragAndDrop } from '@/lib/hooks/useCalendarDragAndDrop';
 
 import { useApiError } from '@/lib/hooks/useApiError';
+import { useToast } from '@/components/client/Toast';
 import { MdOutlineCalendarToday } from 'react-icons/md';
 import SharedDeleteButton from '@/components/SharedDeleteButton';
 import { supabase } from '@/lib/supabaseClient';
@@ -41,6 +42,7 @@ import { toYMD } from '@/lib/date';
 
 export default function CalendarView() {
   const { handleError, handleSuccess } = useApiError();
+  const { showSuccess } = useToast();
   const queryClient = useQueryClient();
   const [selectedDate, setSelectedDate] = useState(new Date());
   // Remove local events state, use eventsQuery.data
@@ -122,7 +124,7 @@ export default function CalendarView() {
       
       // Show success toast with undo option
       const newDate = dayjs(newStartISO).format('ddd MMM D');
-      handleSuccess(`Event moved to ${newDate}`, 5000, () => {
+      showSuccess(`Event moved to ${newDate}`, 5000, () => {
         // Undo function
         handleEventDrop({
           id,
@@ -130,6 +132,8 @@ export default function CalendarView() {
           originalStart: newStartISO,
           originalEnd: originalEnd
         });
+        // Invalidate the query cache to ensure UI updates
+        queryClient.invalidateQueries({ queryKey: ["events", user?.id] });
       });
 
     } catch (error) {

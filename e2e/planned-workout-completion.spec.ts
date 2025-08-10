@@ -186,8 +186,8 @@ test.describe('Planned Workout Completion Flow', () => {
     // Step 8: End the workout
     await page.getByRole('button', { name: /end workout/i }).click();
 
-    // Step 9: Verify we're redirected back to workouts page
-    await expect(page.getByRole('heading', { name: /workouts/i })).toBeVisible({ timeout: 10000 });
+    // Step 9: Verify we're redirected back to fitness dashboard
+    await expect(page.getByRole('heading', { name: 'Fitness Dashboard' })).toBeVisible({ timeout: 10000 });
 
     // Step 10: Wait for cleanup operations to complete
     await waitForDatabaseOperation(page, 2000);
@@ -466,8 +466,8 @@ test.describe('Planned Workout Completion Flow', () => {
     // Step 7: End the workout
     await page.getByRole('button', { name: /end workout/i }).click();
 
-    // Step 8: Verify we're redirected back to workouts page
-    await expect(page.getByRole('heading', { name: /workouts/i })).toBeVisible({ timeout: 10000 });
+    // Step 8: Verify we're redirected back to fitness dashboard
+    await expect(page.getByRole('heading', { name: 'Fitness Dashboard' })).toBeVisible({ timeout: 10000 });
 
     // Step 9: Wait for cleanup operations to complete
     await waitForDatabaseOperation(page, 2000);

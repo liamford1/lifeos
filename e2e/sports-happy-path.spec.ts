@@ -211,11 +211,11 @@ test.describe('Sports happy path', () => {
       throw new Error('No end button found');
     }
     
-    // Wait for redirect to sports dashboard
-    await page.waitForURL((url) => /\/fitness\/sports$/.test(url.pathname), { timeout: 10000 });
+    // Wait for redirect to fitness dashboard
+    await page.waitForURL((url) => /\/fitness(\/)?$/.test(url.pathname), { timeout: 10000 });
 
-    // Verify we're back on the sports dashboard
-    await expect(page).toHaveURL(/\/fitness\/sports$/);
+    // Verify we're back on the fitness dashboard
+    await expect(page).toHaveURL(/\/fitness(\/)?$/);
 
     // Wait for user context and verify session in database
     await waitForUserContext(page);

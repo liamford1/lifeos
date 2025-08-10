@@ -206,6 +206,52 @@ module.exports = async () => {
     console.warn('Warning: Error cleaning up profiles:', err.message);
   }
 
+  // CRITICAL: Clear all in-progress sessions to prevent test conflicts
+  try {
+    console.log('🧹 Clearing all in-progress sessions...');
+    
+    // Clear in-progress workouts
+    const { error: workoutError } = await supabase
+      .from('fitness_workouts')
+      .update({ in_progress: false, status: 'completed' })
+      .eq('user_id', user.id)
+      .eq('in_progress', true);
+    
+    if (workoutError) {
+      console.warn('Warning: Could not clear in-progress workouts:', workoutError.message);
+    } else {
+      console.log('✅ Cleared in-progress workouts');
+    }
+
+    // Clear in-progress cardio sessions
+    const { error: cardioError } = await supabase
+      .from('fitness_cardio')
+      .update({ in_progress: false, status: 'completed' })
+      .eq('user_id', user.id)
+      .eq('in_progress', true);
+    
+    if (cardioError) {
+      console.warn('Warning: Could not clear in-progress cardio sessions:', cardioError.message);
+    } else {
+      console.log('✅ Cleared in-progress cardio sessions');
+    }
+
+    // Clear in-progress sports sessions
+    const { error: sportsError } = await supabase
+      .from('fitness_sports')
+      .update({ in_progress: false, status: 'completed' })
+      .eq('user_id', user.id)
+      .eq('in_progress', true);
+    
+    if (sportsError) {
+      console.warn('Warning: Could not clear in-progress sports sessions:', sportsError.message);
+    } else {
+      console.log('✅ Cleared in-progress sports sessions');
+    }
+  } catch (err) {
+    console.warn('Warning: Error clearing in-progress sessions:', err.message);
+  }
+
   console.log('🧹 Test data cleanup completed');
 
   // Add a small delay to ensure all cleanup operations are complete

@@ -70,7 +70,7 @@ test.describe('Login and add workout', () => {
 
     // Navigate to Fitness dashboard and open Workouts modal, then start a workout
     await page.goto('http://localhost:3000/fitness');
-    await expect(page.getByRole('heading', { name: /fitness dashboard/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Fitness Dashboard' })).toBeVisible();
     // Open Workouts modal
     await page.getByRole('button', { name: /view workouts/i }).click();
     await expect(page.getByTestId('workouts-modal')).toBeVisible();
@@ -338,11 +338,11 @@ test.describe('Login and add workout', () => {
     const saveButton = page.getByRole('button', { name: /update workout/i });
     await expect(saveButton).toBeVisible();
     await saveButton.click();
-    // Wait for navigation to workouts list page
-    await page.waitForURL(/\/fitness\/workouts$/, { timeout: 10000 });
+    // Wait for navigation to fitness dashboard
+    await page.waitForURL(/\/fitness(\/)?$/, { timeout: 10000 });
 
-    // 8. Confirm we're on the workouts list page and the updated workout shows new title
-    await expect(page.getByRole('heading', { name: /workouts/i })).toBeVisible();
+    // 8. Confirm we're on the fitness dashboard
+    await expect(page.getByRole('heading', { name: 'Fitness Dashboard' })).toBeVisible();
     
     // Try to find the updated workout in the UI, with fallback to database verification
     try {

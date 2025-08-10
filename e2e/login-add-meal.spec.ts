@@ -39,6 +39,9 @@ test.describe('Login and add meal', () => {
     // Click the "Add a Meal" button to open the modal
     await page.getByRole('button', { name: /add a meal/i }).click();
     
+    // Wait a moment for the modal to open
+    await page.waitForTimeout(1000);
+    
     // Wait for the Add Meal modal to appear
     await expect(page.getByRole('heading', { name: /add a new meal/i })).toBeVisible({ timeout: 10000 });
 

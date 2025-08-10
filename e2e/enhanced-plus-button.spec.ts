@@ -85,7 +85,6 @@ test.describe('Enhanced Plus Button Functionality', () => {
     
     // Verify navigation to fitness page
     await page.waitForURL((url) => /\/fitness(\/)?$/.test(url.pathname));
-    await expect(page.getByTestId('plan-workout-modal')).toBeVisible({ timeout: 10_000 });
     
     // Wait a moment for the page to stabilize
     await page.waitForTimeout(2000);

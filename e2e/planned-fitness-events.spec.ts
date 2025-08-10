@@ -1188,8 +1188,8 @@ test('Event List Click Behavior for Planned Fitness Events', async ({ page }) =>
   // End the workout
   await page.getByRole('button', { name: /end workout/i }).click();
 
-  // Verify we're redirected back to workouts page
-  await expect(page.getByRole('heading', { name: /workouts/i })).toBeVisible({ timeout: 10000 });
+  // Verify we're redirected back to fitness dashboard
+  await expect(page.getByRole('heading', { name: 'Fitness Dashboard' })).toBeVisible({ timeout: 10000 });
 
   // Clean up test data
   await page.evaluate(async () => {
@@ -1387,8 +1387,8 @@ test('Planned Session Cleanup After Completion', async ({ page }) => {
   // End the workout
   await page.getByRole('button', { name: /end workout/i }).click();
 
-  // Verify we're redirected back to workouts page
-  await expect(page.getByRole('heading', { name: /workouts/i })).toBeVisible({ timeout: 10000 });
+  // Verify we're redirected back to fitness dashboard
+  await expect(page.getByRole('heading', { name: 'Fitness Dashboard' })).toBeVisible({ timeout: 10000 });
 
   // Wait a moment for cleanup to complete
   await page.waitForTimeout(2000);

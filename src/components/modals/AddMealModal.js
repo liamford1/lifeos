@@ -104,6 +104,7 @@ export default function AddMealModal({ isOpen, onClose, onSuccess }) {
       iconBgColor="bg-green-500/10"
       iconColor="text-green-500"
       disabled={createMealMutation.isPending}
+      data-testid="add-meal-modal"
     >
       <MealForm
         onSubmit={handleSaveMeal}
