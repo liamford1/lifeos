@@ -35,15 +35,15 @@ jobs:
       - name: Unit tests (Jest)
         run: npm test -- --ci
 
+      # ---------- Production build ----------
+      - name: Build Next.js app
+        run: npm run build
+
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
       - name: E2E tests (Playwright)
         run: npx playwright test
-
-      # ---------- Production build ----------
-      - name: Build Next.js app
-        run: npm run build
 
       # ---------- Deploy (only on main, only if above succeeded) ----------
       - name: Deploy to Vercel
