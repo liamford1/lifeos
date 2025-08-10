@@ -70,7 +70,7 @@ test.describe('Login and add workout', () => {
 
     // Navigate to Fitness dashboard and open Workouts modal, then start a workout
     await page.goto('http://localhost:3000/fitness');
-    await expect(page.getByRole('heading', { name: 'Fitness Dashboard' })).toBeVisible();
+    await expect(page.getByTestId('home-header')).toBeVisible();
     // Open Workouts modal
     await page.getByRole('button', { name: /view workouts/i }).click();
     await expect(page.getByTestId('workouts-modal')).toBeVisible();
