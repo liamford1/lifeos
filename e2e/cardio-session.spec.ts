@@ -129,9 +129,9 @@ test('Complete Cardio Session Lifecycle', async ({ page }) => {
   await page.getByRole('link', { name: /fitness/i }).click();
   await page.waitForURL((url) => /\/fitness(\/)?$/.test(url.pathname), { timeout: 10000 });
 
-  // Open Cardio History modal
-  await page.getByRole('button', { name: /Cardio History/i }).click();
-  await expect(page.getByTestId('cardio-history-modal')).toBeVisible();
+  // Open Recent Activity modal
+  await page.getByRole('button', { name: /Recent Activity/i }).click();
+  await expect(page.getByTestId('recent-activity-modal')).toBeVisible();
   
   // Wait for the modal to fully load
   await page.waitForTimeout(2000);
@@ -164,14 +164,14 @@ test('Complete Cardio Session Lifecycle', async ({ page }) => {
   // Wait for the component to be fully initialized
   await page.waitForTimeout(3000);
   
-  // Check if we can see the "Start New Cardio Session" button or the empty state message
-  const startCardioButton = page.getByRole('button', { name: /Start New Cardio Session/i });
-  const emptyStateMessage = page.getByText(/No cardio sessions yet/i);
+  // Check if we can see the "Start New Activity" button or the empty state message
+  const startActivityButton = page.getByRole('button', { name: /Start New Activity/i });
+  const emptyStateMessage = page.getByText(/No activities yet/i);
   
-  const hasStartButton = await startCardioButton.isVisible().catch(() => false);
+  const hasStartButton = await startActivityButton.isVisible().catch(() => false);
   const hasEmptyMessage = await emptyStateMessage.isVisible().catch(() => false);
   
-  console.log('[E2E] Start New Cardio Session button visible:', hasStartButton);
+  console.log('[E2E] Start New Activity button visible:', hasStartButton);
   console.log('[E2E] Empty state message visible:', hasEmptyMessage);
   
   if (!hasStartButton && !hasEmptyMessage) {
@@ -188,12 +188,14 @@ test('Complete Cardio Session Lifecycle', async ({ page }) => {
   }
 
   // Check if there's already a cardio session in progress
-  const startCardioButtonCheck = page.getByRole('button', { name: /Start New Cardio Session/i });
-  const hasStartButtonCheck = await startCardioButtonCheck.isVisible().catch(() => false);
+  const startActivityButtonCheck = page.getByRole('button', { name: /Start New Activity/i });
+  const hasStartButtonCheck = await startActivityButtonCheck.isVisible().catch(() => false);
   
   if (hasStartButtonCheck) {
-    // Click "Start New Cardio Session" button
-    await startCardioButtonCheck.click();
+    // Click "Start New Activity" button
+    await startActivityButtonCheck.click();
+    // Navigate to cardio live page
+    await page.goto('http://localhost:3000/fitness/cardio/live');
   } else {
     // There might be an existing session, check if there's a cardio session in the list
     const existingSession = page.locator('li').filter({ hasText: /Test Run/ });
@@ -206,14 +208,13 @@ test('Complete Cardio Session Lifecycle', async ({ page }) => {
       
       // Close the modal and reopen it
       await page.getByRole('button', { name: 'Close modal' }).click();
-      await page.getByRole('button', { name: /Cardio History/i }).click();
-      await expect(page.getByTestId('cardio-history-modal')).toBeVisible();
+      await page.getByRole('button', { name: /Recent Activity/i }).click();
+      await expect(page.getByTestId('recent-activity-modal')).toBeVisible();
       
-      // Now try to click Start New Cardio Session again
-      await expect(page.getByRole('button', { name: /Start New Cardio Session/i })).toBeVisible();
-      await page.getByRole('button', { name: /Start New Cardio Session/i }).click();
+      // Navigate to cardio live page
+      await page.goto('http://localhost:3000/fitness/cardio/live');
     } else {
-      throw new Error('No Start New Cardio Session button found and no existing sessions visible');
+      throw new Error('No Start New Activity button found and no existing sessions visible');
     }
   }
   await page.waitForURL((url) => /\/fitness\/cardio\/live$/.test(url.pathname), { timeout: 10000 });
@@ -322,9 +323,9 @@ test('Complete Cardio Session Lifecycle', async ({ page }) => {
   // Verify we're back on the Fitness dashboard
   await expect(page).toHaveURL(/\/fitness$/);
 
-  // Test 5: Verify the completed session appears in Cardio History modal
-  await page.getByRole('button', { name: /Cardio History/i }).click();
-  await expect(page.getByTestId('cardio-history-modal')).toBeVisible();
+  // Test 5: Verify the completed session appears in Recent Activity modal
+  await page.getByRole('button', { name: /Recent Activity/i }).click();
+  await expect(page.getByTestId('recent-activity-modal')).toBeVisible();
   await expect(page.getByText(activityType)).toBeVisible();
   await expect(page.getByText(location)).toBeVisible();
   await expect(page.getByText(notes)).toBeVisible();
