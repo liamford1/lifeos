@@ -25,12 +25,12 @@ const plannedWorkoutSchema = z.object({
   notes: z.string().optional(),
 })
 
-export default function PlannedWorkoutForm({ onSuccess }) {
+export default function PlannedWorkoutForm({ onSuccess, selectedDate }) {
   const { handleError, handleSuccess } = useApiError();
   const queryClient = useQueryClient();
   const [type, setType] = useState('workout') // workout | cardio | sports
   const [title, setTitle] = useState('')
-  const [startTime, setStartTime] = useState('')
+  const [startTime, setStartTime] = useState(selectedDate ? `${selectedDate}T10:00` : '')
   const [endTime, setEndTime] = useState('')
   const [notes, setNotes] = useState('')
 
