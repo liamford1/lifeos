@@ -392,28 +392,25 @@ test.describe('Calendar Drag and Drop Functionality', () => {
     await page.reload();
     await expect(page.getByRole('heading', { name: 'Calendar' })).toBeVisible({ timeout: 10000 });
     
-    // Wait for the event to appear in the calendar with additional wait
-    await page.waitForTimeout(2000); // Longer wait for page to settle
+    // Click the day cell for today to open the day event list (avoid month truncation)
+    await page.getByTestId(`calendar-daycell-${today}`).click();
     
-    // Wait for the event to appear in the calendar (look by title since test ID might not be available in grid view)
-    await expect(page.getByText(testEventTitle, { exact: true }).first()).toBeVisible({ timeout: 15000 });
+    // Wait for the event to appear in the day list
+    const eventItem = page.locator('li').filter({ hasText: testEventTitle }).first();
+    await expect(eventItem).toBeVisible({ timeout: 15000 });
     
     // Ensure starting state is clean (no hover/focus lingering from prior tests)
     await resetCalendarUI(page);
 
-    // Hover over the event to make drag handle visible
-    await page.getByText(testEventTitle, { exact: true }).first().hover();
+    // Hover the event row to make drag handle visible
+    await eventItem.hover();
+    const dragHandle = eventItem.getByRole('button', { name: 'Drag event' }).first();
+    await expect(dragHandle).toHaveCSS('opacity', '1');
     
-    // Now check for the drag handle - it should be visible as a "Drag event" button
-    await expect(page.getByRole('button', { name: 'Drag event' }).first()).toBeVisible({ timeout: 5000 });
-    
-    // Verify that the calendar has events visible (this confirms the month view is working)
-    const eventsInCalendar = page.locator('[data-testid^="calendar-event-"]');
-    const eventCount = await eventsInCalendar.count();
-    console.log(`Events in calendar: ${eventCount}`);
-    
-    // Verify drag handle is visible after hover
-    expect(eventCount).toBeGreaterThan(0);
+    // Clear hover to confirm it hides again
+    await page.mouse.move(0, 0);
+    await page.waitForTimeout(150);
+    await expect(dragHandle).toHaveCSS('opacity', '0');
   });
 
   test('@drag-handle-keyboard keyboard navigation works for drag handle', async ({ page }) => {

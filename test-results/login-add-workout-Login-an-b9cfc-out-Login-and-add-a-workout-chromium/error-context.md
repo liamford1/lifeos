@@ -1,8 +1,6 @@
 # Page snapshot
 
 ```yaml
-- text: ✅ Cardio session ended!
-- button "Close toast": ✕
 - alert
 - navigation:
   - text: LifeOS
@@ -64,10 +62,10 @@
   - paragraph: "0"
   - paragraph: Calories Burned
   - paragraph: Most Common
-  - paragraph: Test-Run-1754789469593-22mz9r
+  - paragraph: No activities yet
   - paragraph: Activity Type
   - paragraph: This Week
-  - paragraph: "1"
+  - paragraph: "0"
   - paragraph: Cardio & Sports
   - heading "Fitness Tools & History" [level=2]
   - button "View Workouts Past workouts & exercises"
@@ -76,16 +74,9 @@
   - button "Stretching / Mobility Yoga, rehab, cooldowns"
   - button "Daily Activity Steps, mood, energy"
   - button "Plan Workouts Schedule fitness sessions"
-- dialog "Cardio History":
-  - heading "Cardio History" [level=2]
-  - paragraph: Track your running, cycling, and other cardio activities
-  - button "Close modal":
-    - img
-  - button "Start New Cardio Session"
-  - listitem:
-    - text: Test-Run-1754789469593-22mz9r 2025-08-10 ⏱️ 0 min 📍 Test Park Test cardio session for E2E testing
-    - button "✏️ Edit"
-    - button "Delete cardio session":
-      - img "delete": 🗑️
-      - text: Delete
+  - heading "Welcome to your Fitness Dashboard!" [level=3]
+  - paragraph: Start tracking your fitness journey by logging your first workout, cardio session, or sports activity.
+  - button "Start Workout"
+  - button "Start Cardio"
+  - button "Add Sports"
 ```

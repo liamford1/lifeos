@@ -98,12 +98,12 @@ test.describe('Login and add meal', () => {
     await expect(page.getByRole('heading', { name: 'Meals', exact: true })).toBeVisible({ timeout: 10000 });
 
     // Verify the meal appears in the list with the unique name
-    const mealLink = page.getByRole('link', { name: mealName });
-    await expect(mealLink).toBeVisible({ timeout: 10000 });
+    const mealHeading = page.getByRole('heading', { name: new RegExp(`^${mealName}$`) }).first();
+    await expect(mealHeading).toBeVisible({ timeout: 15000 });
 
-    // Click on the meal to go to its detail view
-    await mealLink.click();
-    await expect(page.getByRole('heading', { name: mealName, level: 1 })).toBeVisible({ timeout: 10000 });
+    // Click on the meal to open its detail modal
+    await mealHeading.click();
+    await expect(page.getByRole('heading', { name: mealName, level: 2 })).toBeVisible({ timeout: 10000 });
 
     // Assert description is present
     await expect(page.getByText(mealDescription)).toBeVisible();
@@ -154,22 +154,21 @@ test.describe('Login and add meal', () => {
     // Submit the edit form
     await page.getByRole('button', { name: /update meal/i }).click();
 
-    // Wait for navigation back to the detail view (this indicates success)
-    await page.waitForURL((url) => /\/food\/meals\/.+/.test(url.pathname), { timeout: 20000 });
-    await expect(page.getByRole('heading', { name: updatedMealName, level: 1 })).toBeVisible({ timeout: 10000 });
-
-    // Navigate back to the Meals list to verify the updated meal
+    // Wait for navigation back to the meals list (this indicates success)
+    await page.waitForURL((url) => /\/food\/meals$/.test(url.pathname), { timeout: 20000 });
+    
+    // Navigate to the food page and open the meals list
     await page.goto('http://localhost:3000/food');
     await page.getByRole('button', { name: /recipe search/i }).click();
     await expect(page.getByRole('heading', { name: 'Meals', exact: true })).toBeVisible({ timeout: 10000 });
 
     // Verify the updated meal appears in the list (use the unique updated name)
-    const updatedMealLink = page.getByRole('link', { name: updatedMealName });
-    await expect(updatedMealLink).toBeVisible({ timeout: 10000 });
+    const updatedMealHeading = page.getByRole('heading', { name: updatedMealName });
+    await expect(updatedMealHeading).toBeVisible({ timeout: 10000 });
 
-    // Click on the updated meal to go to its detail view
-    await updatedMealLink.click();
-    await expect(page.getByRole('heading', { name: updatedMealName, level: 1 })).toBeVisible({ timeout: 10000 });
+    // Click on the updated meal to open its detail modal
+    await updatedMealHeading.click();
+    await expect(page.getByRole('heading', { name: updatedMealName, level: 2 })).toBeVisible({ timeout: 10000 });
 
     // Assert updated description and step are present
     await expect(page.getByText(updatedDescription)).toBeVisible();

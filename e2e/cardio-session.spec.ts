@@ -50,6 +50,18 @@ test('Complete Cardio Session Lifecycle', async ({ page }) => {
   // Wait for dashboard to load by checking for visible text "Calendar"
   await expect(page.getByRole('heading', { name: 'Calendar' })).toBeVisible({ timeout: 10000 });
 
+  // Ensure profile + cleanup at test start (idempotent)
+  await page.evaluate(async () => {
+    const sb = window.supabase;
+    const { data } = await sb.auth.getSession();
+    const uid = data?.session?.user?.id;
+    if (!uid) return;
+    // End any in-progress sessions to avoid UI gating
+    await sb.from('fitness_cardio').update({ in_progress: false, status: 'completed' }).eq('user_id', uid).eq('in_progress', true);
+    await sb.from('fitness_workouts').update({ in_progress: false, status: 'completed' }).eq('user_id', uid).eq('in_progress', true);
+    await sb.from('fitness_sports').update({ in_progress: false, status: 'completed' }).eq('user_id', uid).eq('in_progress', true);
+  });
+
   // Clean up any leftover test data from previous runs
   await cleanupTestDataBeforeTest(page, activityType);
   
@@ -318,7 +330,9 @@ test('Complete Cardio Session Lifecycle', async ({ page }) => {
   await expect(page.getByText(notes)).toBeVisible();
 
   // Test 6: Click on the completed session to view details
-  await page.getByText(activityType).click();
+  const list = page.getByTestId('cardio-list');
+  await expect(list).toBeVisible();
+  await list.getByText(activityType, { exact: true }).first().click();
   await page.waitForURL(/\/fitness\/cardio\/[\w-]+$/);
 
   // Verify we're on the details page
@@ -413,30 +427,12 @@ test('Complete Cardio Session Lifecycle', async ({ page }) => {
   // --- END: Delete Cardio Session Test ---
 
   // Test 8: Try to start another session and verify it works
-  // Navigate back to cardio dashboard first
-  // Navigate to Fitness dashboard instead of old cardio page
+  // Navigate back to fitness dashboard
   await page.goto('http://localhost:3000/fitness');
   await page.waitForLoadState('networkidle');
-  await page.waitForTimeout(2000);
   
-  // Wait for the page to be ready
-  await page.waitForFunction(() => {
-    return document.querySelectorAll('.animate-pulse').length === 0;
-  }, { timeout: 10000 });
-  
-  // Check if we can see the "Start Cardio" button
-  const finalStartButton = page.getByRole('button', { name: /Start Cardio/i });
-  const finalStartButtonVisible = await finalStartButton.isVisible().catch(() => false);
-  
-  if (finalStartButtonVisible) {
-    await finalStartButton.click();
-    await page.waitForURL((url) => /\/fitness\/cardio\/live$/.test(url.pathname), { timeout: 10000 });
-    
-    // Verify we can start a new session
-    await expect(page.getByRole('heading', { name: /start a new cardio session/i })).toBeVisible();
-  } else {
-    console.log('[E2E] Start Cardio button not visible on final test, skipping');
-  }
+  // Verify we can see the "Start Cardio" button (this confirms the session was properly ended)
+  await expect(page.getByRole('button', { name: /Start Cardio/i })).toBeVisible({ timeout: 10000 });
 
   // Clean up test data
   await cleanupTestCardio(page, activityType);
