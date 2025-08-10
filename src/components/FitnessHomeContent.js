@@ -106,6 +106,7 @@ export default function FitnessHomeContent() {
   const [showStretchingMobilityModal, setShowStretchingMobilityModal] = useState(false);
   const [stretchingModalMode, setStretchingModalMode] = useState('list');
   const [stretchingModalSessionId, setStretchingModalSessionId] = useState(null);
+
   const [showDailyActivityModal, setShowDailyActivityModal] = useState(false);
   const [showPlanWorkoutModal, setShowPlanWorkoutModal] = useState(false);
   const [showStartActivityModal, setShowStartActivityModal] = useState(false);
@@ -412,7 +413,6 @@ export default function FitnessHomeContent() {
               <button
                 onClick={() => {
                   setShowStartActivityModal(false);
-                  setStretchingModalMode('create');
                   setShowStretchingMobilityModal(true);
                 }}
                 className="w-full p-4 bg-gray-800 rounded-lg hover:bg-gray-700 transition-all duration-200 border border-gray-600 hover:border-blue-500 group text-left"
@@ -679,17 +679,7 @@ export default function FitnessHomeContent() {
               <div className="text-sm text-gray-400">All workouts, cardio & sports</div>
             </button>
             
-            <button 
-              onClick={() => {
-                setStretchingModalMode('list');
-                setShowStretchingMobilityModal(true);
-              }}
-              className="block p-5 bg-gray-800 rounded-lg hover:bg-gray-700 transition-all duration-200 border border-gray-600 hover:border-purple-500 group text-left w-full"
-            >
-              <StretchHorizontal className="w-6 h-6 text-purple-500 mb-3 group-hover:scale-110 transition-transform" />
-              <span className="font-semibold text-lg block mb-1">Stretching / Mobility</span>
-              <div className="text-sm text-gray-400">Yoga, rehab, cooldowns</div>
-            </button>
+
             
             <button 
               onClick={() => setShowDailyActivityModal(true)}
