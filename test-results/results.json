@@ -90,12 +90,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 1741,
+                  "duration": 1244,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2025-08-10T04:44:37.527Z",
+                  "startTime": "2025-08-10T17:53:15.785Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -139,12 +139,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 1623,
+                      "duration": 1067,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-10T04:44:39.537Z",
+                      "startTime": "2025-08-10T17:53:17.257Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -173,12 +173,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 1626,
+                      "duration": 1115,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-10T04:44:41.163Z",
+                      "startTime": "2025-08-10T17:53:18.326Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -207,12 +207,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 1594,
+                      "duration": 1096,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-10T04:44:42.792Z",
+                      "startTime": "2025-08-10T17:53:19.443Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -241,12 +241,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 4008,
+                      "duration": 3116,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-10T04:44:44.388Z",
+                      "startTime": "2025-08-10T17:53:20.541Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -275,12 +275,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2139,
+                      "duration": 1123,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-10T04:44:48.399Z",
+                      "startTime": "2025-08-10T17:53:23.660Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -309,12 +309,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 1627,
+                      "duration": 1089,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-10T04:44:50.542Z",
+                      "startTime": "2025-08-10T17:53:24.785Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -362,12 +362,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 4295,
+                      "duration": 3413,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-10T04:44:52.181Z",
+                      "startTime": "2025-08-10T17:53:25.884Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -398,12 +398,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 7384,
+                      "duration": 5642,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-10T04:44:56.479Z",
+                      "startTime": "2025-08-10T17:53:29.300Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -434,12 +434,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 3879,
+                      "duration": 3213,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-10T04:45:03.869Z",
+                      "startTime": "2025-08-10T17:53:34.949Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -470,12 +470,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 3383,
+                      "duration": 2725,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-10T04:45:07.753Z",
+                      "startTime": "2025-08-10T17:53:38.167Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -506,12 +506,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 4360,
+                      "duration": 2696,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-10T04:45:11.140Z",
+                      "startTime": "2025-08-10T17:53:40.898Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -542,12 +542,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 5482,
+                      "duration": 2970,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-10T04:45:15.506Z",
+                      "startTime": "2025-08-10T17:53:43.600Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -593,12 +593,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 14484,
+                      "duration": 4910,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-10T04:45:21.007Z",
+                      "startTime": "2025-08-10T17:53:46.579Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -627,12 +627,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 7512,
+                      "duration": 5187,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-10T04:45:35.497Z",
+                      "startTime": "2025-08-10T17:53:51.494Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -678,7 +678,7 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "failed",
-                      "duration": 29631,
+                      "duration": 23343,
                       "error": {
                         "message": "Error: \u001b[31mTimed out 5000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: getByText('Test cardio session for E2E testing')\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Test cardio session for E2E testing')\u001b[22m\n",
                         "stack": "Error: \u001b[31mTimed out 5000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: getByText('Test cardio session for E2E testing')\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Test cardio session for E2E testing')\u001b[22m\n\n    at /Users/liamford/Documents/plannerapp/e2e/cardio-session.spec.ts:331:39",
@@ -701,25 +701,16 @@
                       ],
                       "stdout": [
                         {
-                          "text": "[BROWSER LOG] log: [Client Instrumentation Hook] Slow execution detected: 44ms (Note: Code download overhead is not included in this measurement)\n"
-                        },
-                        {
-                          "text": "[BROWSER LOG] info: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold\n"
-                        },
-                        {
                           "text": "[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()\n"
                         },
                         {
-                          "text": "[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()\n"
+                          "text": "[BROWSER LOG] error: Failed to load resource: the server responded with a status of 429 ()\n"
                         },
                         {
                           "text": "[BROWSER LOG] log: [E2E] Cleaning up cardio sessions for user: 0f3a417b-077d-4868-acef-9d79ada0945b\n"
                         },
                         {
                           "text": "[BROWSER LOG] log: [E2E] All cardio sessions before cleanup: []\n"
-                        },
-                        {
-                          "text": "[BROWSER LOG] error: Failed to load resource: the server responded with a status of 429 ()\n"
                         },
                         {
                           "text": "[BROWSER LOG] log: [E2E] Successfully cleaned up ALL cardio sessions\n"
@@ -740,19 +731,13 @@
                           "text": "[E2E] Empty state message visible: \u001b[33mfalse\u001b[39m\n"
                         },
                         {
-                          "text": "[BROWSER LOG] log: [Client Instrumentation Hook] Slow execution detected: 41ms (Note: Code download overhead is not included in this measurement)\n"
-                        },
-                        {
-                          "text": "[BROWSER LOG] info: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold\n"
-                        },
-                        {
                           "text": "[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()\n"
                         },
                         {
-                          "text": "[BROWSER LOG] log: [Client Instrumentation Hook] Slow execution detected: 40ms (Note: Code download overhead is not included in this measurement)\n"
+                          "text": "[BROWSER LOG] error: Error fetching planned meals: {message: TypeError: Failed to fetch (ffubefmikpkrxtueeusj.supabase.co), details: TypeError: Failed to fetch\n    at http://localhost…t/static/chunks/5647-84631fd367f02df5.js:6:19582), hint: , code: }\n"
                         },
                         {
-                          "text": "[BROWSER LOG] info: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold\n"
+                          "text": "[BROWSER LOG] error: Error fetching cooked meals: {message: TypeError: Failed to fetch (ffubefmikpkrxtueeusj.supabase.co), details: TypeError: Failed to fetch\n    at http://localhost…t/static/chunks/5647-84631fd367f02df5.js:6:19582), hint: , code: }\n"
                         },
                         {
                           "text": "[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()\n"
@@ -760,7 +745,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-10T04:45:43.028Z",
+                      "startTime": "2025-08-10T17:53:56.694Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -817,12 +802,12 @@
                       "workerIndex": 1,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2144,
+                      "duration": 1032,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-10T04:46:13.159Z",
+                      "startTime": "2025-08-10T17:54:20.327Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -851,12 +836,12 @@
                       "workerIndex": 1,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 1544,
+                      "duration": 973,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-10T04:46:15.454Z",
+                      "startTime": "2025-08-10T17:54:21.461Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -885,12 +870,12 @@
                       "workerIndex": 1,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 1552,
+                      "duration": 1017,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-10T04:46:17.001Z",
+                      "startTime": "2025-08-10T17:54:22.436Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -919,12 +904,12 @@
                       "workerIndex": 1,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 3759,
+                      "duration": 3023,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-10T04:46:18.555Z",
+                      "startTime": "2025-08-10T17:54:23.455Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -953,12 +938,12 @@
                       "workerIndex": 1,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 1556,
+                      "duration": 959,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-10T04:46:22.316Z",
+                      "startTime": "2025-08-10T17:54:26.481Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -987,12 +972,12 @@
                       "workerIndex": 1,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2094,
+                      "duration": 1019,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-10T04:46:23.875Z",
+                      "startTime": "2025-08-10T17:54:27.442Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1038,12 +1023,12 @@
                       "workerIndex": 1,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 39780,
+                      "duration": 14416,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-10T04:46:25.980Z",
+                      "startTime": "2025-08-10T17:54:28.469Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1082,12 +1067,12 @@
                   "workerIndex": 1,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 21318,
+                  "duration": 10790,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2025-08-10T04:47:05.773Z",
+                  "startTime": "2025-08-10T17:54:42.893Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1110,7 +1095,7 @@
       "specs": [
         {
           "title": "Meal planning workflow: plan and verify meal",
-          "ok": true,
+          "ok": false,
           "tags": [],
           "tests": [
             {
@@ -1123,18 +1108,48 @@
                 {
                   "workerIndex": 1,
                   "parallelIndex": 0,
-                  "status": "passed",
-                  "duration": 22617,
-                  "errors": [],
+                  "status": "failed",
+                  "duration": 10942,
+                  "error": {
+                    "message": "Error: expect.toBeVisible: Error: strict mode violation: getByText('Test Planned Meal 1754848493743') resolved to 3 elements:\n    1) <h3 class=\"font-medium\">Test Planned Meal 1754848493743</h3> aka getByRole('link', { name: 'Test Planned Meal' })\n    2) <option value=\"12a8712b-6d63-4797-9db8-74d4df2a60b1\">Test Planned Meal 1754848493743</option> aka getByTestId('meal-select')\n    3) <div class=\"font-medium\">Test Planned Meal 1754848493743</div> aka getByTestId('planned-meal-card-3b4b7bcf-4d09-40db-8f1a-8c46f7f873d6').getByText('Test Planned Meal')\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Test Planned Meal 1754848493743')\u001b[22m\n",
+                    "stack": "Error: expect.toBeVisible: Error: strict mode violation: getByText('Test Planned Meal 1754848493743') resolved to 3 elements:\n    1) <h3 class=\"font-medium\">Test Planned Meal 1754848493743</h3> aka getByRole('link', { name: 'Test Planned Meal' })\n    2) <option value=\"12a8712b-6d63-4797-9db8-74d4df2a60b1\">Test Planned Meal 1754848493743</option> aka getByTestId('meal-select')\n    3) <div class=\"font-medium\">Test Planned Meal 1754848493743</div> aka getByTestId('planned-meal-card-3b4b7bcf-4d09-40db-8f1a-8c46f7f873d6').getByText('Test Planned Meal')\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Test Planned Meal 1754848493743')\u001b[22m\n\n    at /Users/liamford/Documents/plannerapp/e2e/login-add-planned-meal.spec.ts:192:48",
+                    "location": {
+                      "file": "/Users/liamford/Documents/plannerapp/e2e/login-add-planned-meal.spec.ts",
+                      "column": 48,
+                      "line": 192
+                    },
+                    "snippet": "\u001b[0m \u001b[90m 190 |\u001b[39m     \u001b[90m// We're on the food page, which is fine since we're using the modal\u001b[39m\n \u001b[90m 191 |\u001b[39m     \u001b[90m// The modal approach doesn't navigate to detail pages, so we just verify the meal exists\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 192 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mgetByText(testMealName))\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m10000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 193 |\u001b[39m   } \u001b[36melse\u001b[39m {\n \u001b[90m 194 |\u001b[39m     \u001b[90m// Some other page, log what we find\u001b[39m\n \u001b[90m 195 |\u001b[39m     \u001b[36mconst\u001b[39m pageText \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mtextContent(\u001b[32m'body'\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Users/liamford/Documents/plannerapp/e2e/login-add-planned-meal.spec.ts",
+                        "column": 48,
+                        "line": 192
+                      },
+                      "message": "Error: expect.toBeVisible: Error: strict mode violation: getByText('Test Planned Meal 1754848493743') resolved to 3 elements:\n    1) <h3 class=\"font-medium\">Test Planned Meal 1754848493743</h3> aka getByRole('link', { name: 'Test Planned Meal' })\n    2) <option value=\"12a8712b-6d63-4797-9db8-74d4df2a60b1\">Test Planned Meal 1754848493743</option> aka getByTestId('meal-select')\n    3) <div class=\"font-medium\">Test Planned Meal 1754848493743</div> aka getByTestId('planned-meal-card-3b4b7bcf-4d09-40db-8f1a-8c46f7f873d6').getByText('Test Planned Meal')\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Test Planned Meal 1754848493743')\u001b[22m\n\n\n\u001b[0m \u001b[90m 190 |\u001b[39m     \u001b[90m// We're on the food page, which is fine since we're using the modal\u001b[39m\n \u001b[90m 191 |\u001b[39m     \u001b[90m// The modal approach doesn't navigate to detail pages, so we just verify the meal exists\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 192 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mgetByText(testMealName))\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m10000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 193 |\u001b[39m   } \u001b[36melse\u001b[39m {\n \u001b[90m 194 |\u001b[39m     \u001b[90m// Some other page, log what we find\u001b[39m\n \u001b[90m 195 |\u001b[39m     \u001b[36mconst\u001b[39m pageText \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mtextContent(\u001b[32m'body'\u001b[39m)\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at /Users/liamford/Documents/plannerapp/e2e/login-add-planned-meal.spec.ts:192:48\u001b[22m"
+                    }
+                  ],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2025-08-10T04:47:27.104Z",
+                  "startTime": "2025-08-10T17:54:53.692Z",
                   "annotations": [],
-                  "attachments": []
+                  "attachments": [
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Users/liamford/Documents/plannerapp/test-results/login-add-planned-meal-Mea-2d323-rkflow-plan-and-verify-meal-chromium/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Users/liamford/Documents/plannerapp/e2e/login-add-planned-meal.spec.ts",
+                    "column": 48,
+                    "line": 192
+                  }
                 }
               ],
-              "status": "expected"
+              "status": "unexpected"
             }
           ],
           "id": "9db1369e966a90199969-4baf10e5bbdf87dc4cc4",
@@ -1170,18 +1185,12 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 1,
+                      "workerIndex": 2,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 16561,
+                      "duration": 14330,
                       "errors": [],
                       "stdout": [
-                        {
-                          "text": "[BROWSER LOG] log: [Client Instrumentation Hook] Slow execution detected: 44ms (Note: Code download overhead is not included in this measurement)\n"
-                        },
-                        {
-                          "text": "[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()\n"
-                        },
                         {
                           "text": "[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()\n"
                         },
@@ -1192,10 +1201,7 @@
                           "text": "[BROWSER LOG] log: [E2E] Debug items in database: [Object, Object, Object]\n"
                         },
                         {
-                          "text": "[E2E] Debug items found: [\n  {\n    id: \u001b[32m'5e5d77fe-bf28-4c46-ac0f-42c4db0f415e'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    name: \u001b[32m'Test Milk'\u001b[39m,\n    quantity: \u001b[33m2\u001b[39m,\n    unit: \u001b[32m'gallons'\u001b[39m,\n    category: \u001b[1mnull\u001b[22m,\n    added_from: \u001b[32m'receipt'\u001b[39m,\n    expires_at: \u001b[1mnull\u001b[22m,\n    added_at: \u001b[32m'2025-08-10T04:47:53.724136+00:00'\u001b[39m,\n    receipt_id: \u001b[32m'e9ca0c1c-95ce-451c-b9ed-ffd858dbc187'\u001b[39m\n  },\n  {\n    id: \u001b[32m'c51257e2-98d0-47eb-8bae-48f713bb8f1b'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    name: \u001b[32m'Test Eggs'\u001b[39m,\n    quantity: \u001b[33m12\u001b[39m,\n    unit: \u001b[32m'count'\u001b[39m,\n    category: \u001b[1mnull\u001b[22m,\n    added_from: \u001b[32m'receipt'\u001b[39m,\n    expires_at: \u001b[1mnull\u001b[22m,\n    added_at: \u001b[32m'2025-08-10T04:47:53.724136+00:00'\u001b[39m,\n    receipt_id: \u001b[32m'e9ca0c1c-95ce-451c-b9ed-ffd858dbc187'\u001b[39m\n  },\n  {\n    id: \u001b[32m'07309215-b90b-4413-959e-00298498dfbe'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    name: \u001b[32m'Test Bread'\u001b[39m,\n    quantity: \u001b[33m1\u001b[39m,\n    unit: \u001b[32m'loaf'\u001b[39m,\n    category: \u001b[1mnull\u001b[22m,\n    added_from: \u001b[32m'receipt'\u001b[39m,\n    expires_at: \u001b[1mnull\u001b[22m,\n    added_at: \u001b[32m'2025-08-10T04:47:53.724136+00:00'\u001b[39m,\n    receipt_id: \u001b[32m'e9ca0c1c-95ce-451c-b9ed-ffd858dbc187'\u001b[39m\n  }\n]\n"
-                        },
-                        {
-                          "text": "[BROWSER LOG] log: [Client Instrumentation Hook] Slow execution detected: 46ms (Note: Code download overhead is not included in this measurement)\n"
+                          "text": "[E2E] Debug items found: [\n  {\n    id: \u001b[32m'092eda80-b99b-4b3d-9019-be66203696db'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    name: \u001b[32m'Test Milk'\u001b[39m,\n    quantity: \u001b[33m2\u001b[39m,\n    unit: \u001b[32m'gallons'\u001b[39m,\n    category: \u001b[1mnull\u001b[22m,\n    added_from: \u001b[32m'receipt'\u001b[39m,\n    expires_at: \u001b[1mnull\u001b[22m,\n    added_at: \u001b[32m'2025-08-10T17:55:08.547414+00:00'\u001b[39m,\n    receipt_id: \u001b[32m'2d71342a-66c0-49de-b826-61c9879091a1'\u001b[39m\n  },\n  {\n    id: \u001b[32m'14ad2f5f-d78e-42ad-a43a-35a23ba86a24'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    name: \u001b[32m'Test Eggs'\u001b[39m,\n    quantity: \u001b[33m12\u001b[39m,\n    unit: \u001b[32m'count'\u001b[39m,\n    category: \u001b[1mnull\u001b[22m,\n    added_from: \u001b[32m'receipt'\u001b[39m,\n    expires_at: \u001b[1mnull\u001b[22m,\n    added_at: \u001b[32m'2025-08-10T17:55:08.547414+00:00'\u001b[39m,\n    receipt_id: \u001b[32m'2d71342a-66c0-49de-b826-61c9879091a1'\u001b[39m\n  },\n  {\n    id: \u001b[32m'bcdcc61f-0636-4d35-b86e-ba384e45cd8b'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    name: \u001b[32m'Test Bread'\u001b[39m,\n    quantity: \u001b[33m1\u001b[39m,\n    unit: \u001b[32m'loaf'\u001b[39m,\n    category: \u001b[1mnull\u001b[22m,\n    added_from: \u001b[32m'receipt'\u001b[39m,\n    expires_at: \u001b[1mnull\u001b[22m,\n    added_at: \u001b[32m'2025-08-10T17:55:08.547414+00:00'\u001b[39m,\n    receipt_id: \u001b[32m'2d71342a-66c0-49de-b826-61c9879091a1'\u001b[39m\n  }\n]\n"
                         },
                         {
                           "text": "[BROWSER LOG] error: Failed to load resource: the server responded with a status of 406 ()\n"
@@ -1203,7 +1209,7 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-10T04:47:49.738Z",
+                      "startTime": "2025-08-10T17:55:04.915Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1246,10 +1252,10 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 1,
+                      "workerIndex": 2,
                       "parallelIndex": 0,
                       "status": "failed",
-                      "duration": 16421,
+                      "duration": 13750,
                       "error": {
                         "message": "TimeoutError: page.waitForURL: Timeout 10000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation until \"load\"\n============================================================",
                         "stack": "TimeoutError: page.waitForURL: Timeout 10000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation until \"load\"\n============================================================\n    at /Users/liamford/Documents/plannerapp/e2e/login-add-workout.spec.ts:78:16",
@@ -1273,7 +1279,7 @@
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-10T04:48:06.315Z",
+                      "startTime": "2025-08-10T17:55:19.363Z",
                       "annotations": [],
                       "attachments": [
                         {
@@ -1320,10 +1326,10 @@
               "projectName": "chromium",
               "results": [
                 {
-                  "workerIndex": 2,
+                  "workerIndex": 3,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 38100,
+                  "duration": 32983,
                   "errors": [],
                   "stdout": [
                     {
@@ -1345,9 +1351,6 @@
                       "text": "[E2E] Cardio calendar events found: \u001b[33m1\u001b[39m\n"
                     },
                     {
-                      "text": "[E2E] Form did not hide, waiting longer...\n"
-                    },
-                    {
                       "text": "[E2E] Sports form error: \n"
                     },
                     {
@@ -1363,22 +1366,16 @@
                       "text": "[E2E] Sports calendar events found: \u001b[33m1\u001b[39m\n"
                     },
                     {
-                      "text": "[BROWSER LOG] log: [Client Instrumentation Hook] Slow execution detected: 43ms (Note: Code download overhead is not included in this measurement)\n"
-                    },
-                    {
-                      "text": "[BROWSER LOG] info: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold\n"
-                    },
-                    {
                       "text": "[E2E] Error navigating to home page: \u001b[31mTimed out 5000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: locator('h1').filter({ hasText: /Planned Fitness Activities/i })\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('h1').filter({ hasText: /Planned Fitness Activities/i })\u001b[22m\n\n"
                     },
                     {
                       "text": "[E2E] Skipping UI verification, proceeding with database check\n"
                     },
                     {
-                      "text": "[E2E] All calendar events in database: [\n  {\n    id: \u001b[32m'e956b971-7f4c-4442-865f-eeec1f97490b'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Sport: Test Planned Sports'\u001b[39m,\n    description: \u001b[32m'Test planned sports notes'\u001b[39m,\n    start_time: \u001b[32m'2025-08-09T00:00:00+00:00'\u001b[39m,\n    end_time: \u001b[32m'2025-08-10T01:00:00+00:00'\u001b[39m,\n    source: \u001b[32m'sport'\u001b[39m,\n    source_id: \u001b[32m'5e399407-48af-4a33-8f59-976298b37497'\u001b[39m,\n    created_at: \u001b[32m'2025-08-10T04:48:40.526321+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-10T04:48:40.526321+00:00'\u001b[39m\n  },\n  {\n    id: \u001b[32m'be0ed2a7-cdaa-4533-9f3c-582613b185be'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Cardio: Test Planned Cardio'\u001b[39m,\n    description: \u001b[32m'Test planned cardio notes'\u001b[39m,\n    start_time: \u001b[32m'2025-08-09T00:00:00+00:00'\u001b[39m,\n    end_time: \u001b[32m'2025-08-10T00:00:00+00:00'\u001b[39m,\n    source: \u001b[32m'cardio'\u001b[39m,\n    source_id: \u001b[32m'a8b119a8-7448-430a-8964-d2e6cd378a58'\u001b[39m,\n    created_at: \u001b[32m'2025-08-10T04:48:35.042977+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-10T04:48:35.042977+00:00'\u001b[39m\n  },\n  {\n    id: \u001b[32m'a7b27a5b-08c6-47fc-8226-4ce6b609679a'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Workout: Test Planned Workout'\u001b[39m,\n    description: \u001b[32m'Test planned workout notes'\u001b[39m,\n    start_time: \u001b[32m'2025-08-09T00:00:00+00:00'\u001b[39m,\n    end_time: \u001b[32m'2025-08-09T23:00:00+00:00'\u001b[39m,\n    source: \u001b[32m'workout'\u001b[39m,\n    source_id: \u001b[32m'be64f4cc-8ed5-4fc7-870f-e10b8bd35dde'\u001b[39m,\n    created_at: \u001b[32m'2025-08-10T04:48:29.709579+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-10T04:48:29.709579+00:00'\u001b[39m\n  },\n  {\n    id: \u001b[32m'48ba4f48-1ca9-4fda-b8a3-c002d9bfa2cf'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Meal: Test Calendar Meal 1754801135554'\u001b[39m,\n    description: \u001b[32m'Test meal for calendar click behavior'\u001b[39m,\n    start_time: \u001b[32m'2025-07-28T12:00:00+00:00'\u001b[39m,\n    end_time: \u001b[1mnull\u001b[22m,\n    source: \u001b[32m'meal'\u001b[39m,\n    source_id: \u001b[32m'ab7d0896-6459-4f12-b617-f6fdecc87b34'\u001b[39m,\n    created_at: \u001b[32m'2025-08-10T04:45:38.885299+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-10T04:45:38.885299+00:00'\u001b[39m\n  },\n  {\n    id: \u001b[32m'6bd961b2-15e5-4842-9d2a-e97ed16345e8'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Meal: Test Calendar Meal 1754801121063'\u001b[39m,\n    description: \u001b[32m'Test meal for calendar click behavior'\u001b[39m,\n    start_time: \u001b[32m'2025-07-28T12:00:00+00:00'\u001b[39m,\n    end_time: \u001b[1mnull\u001b[22m,\n    source: \u001b[32m'meal'\u001b[39m,\n    source_id: \u001b[32m'5c2a48f4-65ab-4fa1-95b7-4f4a6db2faff'\u001b[39m,\n    created_at: \u001b[32m'2025-08-10T04:45:23.54227+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-10T04:45:23.54227+00:00'\u001b[39m\n  },\n  {\n    id: \u001b[32m'9bfdd118-dc0c-4dea-9152-633c2a27d91d'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Test Hover Event 1754801112571'\u001b[39m,\n    description: \u001b[32m'Test event for hover functionality'\u001b[39m,\n    start_time: \u001b[32m'2025-08-10T12:00:00+00:00'\u001b[39m,\n    end_time: \u001b[1mnull\u001b[22m,\n    source: \u001b[32m'note'\u001b[39m,\n    source_id: \u001b[1mnull\u001b[22m,\n    created_at: \u001b[32m'2025-08-10T04:45:12.711177+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-10T04:45:12.711177+00:00'\u001b[39m\n  },\n  {\n    id: \u001b[32m'b877f298-4f02-4b24-832c-09734965893c'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Test Keyboard Event 1754801109199'\u001b[39m,\n    description: \u001b[32m'Test event for keyboard accessibility'\u001b[39m,\n    start_time: \u001b[32m'2025-08-10T12:00:00+00:00'\u001b[39m,\n    end_time: \u001b[1mnull\u001b[22m,\n    source: \u001b[32m'note'\u001b[39m,\n    source_id: \u001b[1mnull\u001b[22m,\n    created_at: \u001b[32m'2025-08-10T04:45:09.319618+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-10T04:45:09.319618+00:00'\u001b[39m\n  },\n  {\n    id: \u001b[32m'944ddea2-f9ca-41bf-a077-6eb92d9b3870'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Test Hover Event 1754801105413'\u001b[39m,\n    description: \u001b[32m'Test event for hover functionality'\u001b[39m,\n    start_time: \u001b[32m'2025-08-10T12:00:00+00:00'\u001b[39m,\n    end_time: \u001b[1mnull\u001b[22m,\n    source: \u001b[32m'note'\u001b[39m,\n    source_id: \u001b[1mnull\u001b[22m,\n    created_at: \u001b[32m'2025-08-10T04:45:05.537631+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-10T04:45:05.537631+00:00'\u001b[39m\n  },\n  {\n    id: \u001b[32m'f7a9a099-7c93-4deb-abaa-9b4f92d9b0cc'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Test Drag Event 1754801093584'\u001b[39m,\n    description: \u001b[32m'Test event for drag and drop'\u001b[39m,\n    start_time: \u001b[32m'2025-08-11T07:00:00+00:00'\u001b[39m,\n    end_time: \u001b[1mnull\u001b[22m,\n    source: \u001b[32m'note'\u001b[39m,\n    source_id: \u001b[1mnull\u001b[22m,\n    created_at: \u001b[32m'2025-08-10T04:44:53.709776+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-10T04:44:54.793+00:00'\u001b[39m\n  }\n]\n"
+                      "text": "[E2E] All calendar events in database: [\n  {\n    id: \u001b[32m'aefb5a2a-ed22-4549-aeef-e73e206f1239'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Sport: Test Planned Sports'\u001b[39m,\n    description: \u001b[32m'Test planned sports notes'\u001b[39m,\n    start_time: \u001b[32m'2025-08-10T00:00:00+00:00'\u001b[39m,\n    end_time: \u001b[32m'2025-08-11T01:00:00+00:00'\u001b[39m,\n    source: \u001b[32m'sport'\u001b[39m,\n    source_id: \u001b[32m'167b447a-dab9-4f39-b1de-362f524f8c10'\u001b[39m,\n    created_at: \u001b[32m'2025-08-10T17:55:49.851544+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-10T17:55:49.851544+00:00'\u001b[39m\n  },\n  {\n    id: \u001b[32m'51fbe784-af45-42c4-920f-c4793162a0fa'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Cardio: Test Planned Cardio'\u001b[39m,\n    description: \u001b[32m'Test planned cardio notes'\u001b[39m,\n    start_time: \u001b[32m'2025-08-10T00:00:00+00:00'\u001b[39m,\n    end_time: \u001b[32m'2025-08-11T00:00:00+00:00'\u001b[39m,\n    source: \u001b[32m'cardio'\u001b[39m,\n    source_id: \u001b[32m'8e993d9c-e3e0-4a56-9adf-e23951e43051'\u001b[39m,\n    created_at: \u001b[32m'2025-08-10T17:55:44.431888+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-10T17:55:44.431888+00:00'\u001b[39m\n  },\n  {\n    id: \u001b[32m'e9eaae86-de56-453f-93bc-aafc0d4a7e6f'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Workout: Test Planned Workout'\u001b[39m,\n    description: \u001b[32m'Test planned workout notes'\u001b[39m,\n    start_time: \u001b[32m'2025-08-10T00:00:00+00:00'\u001b[39m,\n    end_time: \u001b[32m'2025-08-10T23:00:00+00:00'\u001b[39m,\n    source: \u001b[32m'workout'\u001b[39m,\n    source_id: \u001b[32m'7d9f8f87-c6f9-4a07-9c40-0ca1be39c379'\u001b[39m,\n    created_at: \u001b[32m'2025-08-10T17:55:39.111241+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-10T17:55:39.111241+00:00'\u001b[39m\n  },\n  {\n    id: \u001b[32m'0bcac2a9-1e66-4e2e-ae8c-db1e7ece4b6e'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Dinner: Test Planned Meal 1754848493743'\u001b[39m,\n    description: \u001b[32m''\u001b[39m,\n    start_time: \u001b[32m'2025-08-11T00:00:00+00:00'\u001b[39m,\n    end_time: \u001b[1mnull\u001b[22m,\n    source: \u001b[32m'planned_meal'\u001b[39m,\n    source_id: \u001b[32m'3b4b7bcf-4d09-40db-8f1a-8c46f7f873d6'\u001b[39m,\n    created_at: \u001b[32m'2025-08-10T17:54:58.7844+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-10T17:54:58.7844+00:00'\u001b[39m\n  },\n  {\n    id: \u001b[32m'69940186-7a07-4fbf-860f-0f7ba415d6ec'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Meal: Test Calendar Meal 1754848431546'\u001b[39m,\n    description: \u001b[32m'Test meal for calendar click behavior'\u001b[39m,\n    start_time: \u001b[32m'2025-07-28T12:00:00+00:00'\u001b[39m,\n    end_time: \u001b[1mnull\u001b[22m,\n    source: \u001b[32m'meal'\u001b[39m,\n    source_id: \u001b[32m'2d48ce32-91e1-4ede-a9ff-8effc5aacbae'\u001b[39m,\n    created_at: \u001b[32m'2025-08-10T17:53:53.581265+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-10T17:53:53.581265+00:00'\u001b[39m\n  },\n  {\n    id: \u001b[32m'2e371780-4aa1-4e06-bb13-baaf4abe69a0'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Meal: Test Calendar Meal 1754848426623'\u001b[39m,\n    description: \u001b[32m'Test meal for calendar click behavior'\u001b[39m,\n    start_time: \u001b[32m'2025-07-28T12:00:00+00:00'\u001b[39m,\n    end_time: \u001b[1mnull\u001b[22m,\n    source: \u001b[32m'meal'\u001b[39m,\n    source_id: \u001b[32m'67dd41b1-eb78-481c-889a-c677e531f23c'\u001b[39m,\n    created_at: \u001b[32m'2025-08-10T17:53:48.713385+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-10T17:53:48.713385+00:00'\u001b[39m\n  },\n  {\n    id: \u001b[32m'a7d75e3c-1356-4f24-8d8b-8bb30f9f93a6'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Test Hover Event 1754848421796'\u001b[39m,\n    description: \u001b[32m'Test event for hover functionality'\u001b[39m,\n    start_time: \u001b[32m'2025-08-10T12:00:00+00:00'\u001b[39m,\n    end_time: \u001b[1mnull\u001b[22m,\n    source: \u001b[32m'note'\u001b[39m,\n    source_id: \u001b[1mnull\u001b[22m,\n    created_at: \u001b[32m'2025-08-10T17:53:41.932157+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-10T17:53:41.932157+00:00'\u001b[39m\n  },\n  {\n    id: \u001b[32m'2f7661a5-ccba-44d0-b231-63cc28b64d28'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Test Keyboard Event 1754848419144'\u001b[39m,\n    description: \u001b[32m'Test event for keyboard accessibility'\u001b[39m,\n    start_time: \u001b[32m'2025-08-10T12:00:00+00:00'\u001b[39m,\n    end_time: \u001b[1mnull\u001b[22m,\n    source: \u001b[32m'note'\u001b[39m,\n    source_id: \u001b[1mnull\u001b[22m,\n    created_at: \u001b[32m'2025-08-10T17:53:39.291035+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-10T17:53:39.291035+00:00'\u001b[39m\n  },\n  {\n    id: \u001b[32m'8712820f-caba-4fdd-a6f0-180cf3d346a0'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Test Hover Event 1754848415984'\u001b[39m,\n    description: \u001b[32m'Test event for hover functionality'\u001b[39m,\n    start_time: \u001b[32m'2025-08-10T12:00:00+00:00'\u001b[39m,\n    end_time: \u001b[1mnull\u001b[22m,\n    source: \u001b[32m'note'\u001b[39m,\n    source_id: \u001b[1mnull\u001b[22m,\n    created_at: \u001b[32m'2025-08-10T17:53:36.187723+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-10T17:53:36.187723+00:00'\u001b[39m\n  },\n  {\n    id: \u001b[32m'30ac32ce-927b-4229-9c80-a0956cd7f454'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Test Drag Event 1754848406818'\u001b[39m,\n    description: \u001b[32m'Test event for drag and drop'\u001b[39m,\n    start_time: \u001b[32m'2025-08-11T07:00:00+00:00'\u001b[39m,\n    end_time: \u001b[1mnull\u001b[22m,\n    source: \u001b[32m'note'\u001b[39m,\n    source_id: \u001b[1mnull\u001b[22m,\n    created_at: \u001b[32m'2025-08-10T17:53:26.975757+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-10T17:53:27.599+00:00'\u001b[39m\n  }\n]\n"
                     },
                     {
-                      "text": "[E2E] Number of events found in list: \u001b[33m6\u001b[39m\n"
+                      "text": "[E2E] Number of events found in list: \u001b[33m10\u001b[39m\n"
                     },
                     {
                       "text": "[E2E] Verification attempt 1: { workout: \u001b[33mfalse\u001b[39m, cardio: \u001b[33mfalse\u001b[39m, sports: \u001b[33mfalse\u001b[39m }\n"
@@ -1413,7 +1410,7 @@
                   ],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2025-08-10T04:48:23.174Z",
+                  "startTime": "2025-08-10T17:55:33.406Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1439,32 +1436,17 @@
               "projectName": "chromium",
               "results": [
                 {
-                  "workerIndex": 2,
+                  "workerIndex": 3,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 34426,
+                  "duration": 13821,
                   "errors": [],
                   "stdout": [
                     {
-                      "text": "[E2E] Created test workout with ID: 4c1d7830-c0b9-4465-bd17-29d496f89996\n"
+                      "text": "[E2E] Created test workout with ID: 4c524be2-33f6-46b9-9401-c72c78383249\n"
                     },
                     {
-                      "text": "[BROWSER LOG] log: [Client Instrumentation Hook] Slow execution detected: 51ms (Note: Code download overhead is not included in this measurement)\n"
-                    },
-                    {
-                      "text": "[BROWSER LOG] info: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold\n"
-                    },
-                    {
-                      "text": "[E2E] Available calendar events: [\n  {\n    id: \u001b[32m'f7a9a099-7c93-4deb-abaa-9b4f92d9b0cc'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Test Drag Event 1754801093584'\u001b[39m,\n    description: \u001b[32m'Test event for drag and drop'\u001b[39m,\n    start_time: \u001b[32m'2025-08-11T07:00:00+00:00'\u001b[39m,\n    end_time: \u001b[1mnull\u001b[22m,\n    source: \u001b[32m'note'\u001b[39m,\n    source_id: \u001b[1mnull\u001b[22m,\n    created_at: \u001b[32m'2025-08-10T04:44:53.709776+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-10T04:44:54.793+00:00'\u001b[39m\n  },\n  {\n    id: \u001b[32m'944ddea2-f9ca-41bf-a077-6eb92d9b3870'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Test Hover Event 1754801105413'\u001b[39m,\n    description: \u001b[32m'Test event for hover functionality'\u001b[39m,\n    start_time: \u001b[32m'2025-08-10T12:00:00+00:00'\u001b[39m,\n    end_time: \u001b[1mnull\u001b[22m,\n    source: \u001b[32m'note'\u001b[39m,\n    source_id: \u001b[1mnull\u001b[22m,\n    created_at: \u001b[32m'2025-08-10T04:45:05.537631+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-10T04:45:05.537631+00:00'\u001b[39m\n  },\n  {\n    id: \u001b[32m'b877f298-4f02-4b24-832c-09734965893c'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Test Keyboard Event 1754801109199'\u001b[39m,\n    description: \u001b[32m'Test event for keyboard accessibility'\u001b[39m,\n    start_time: \u001b[32m'2025-08-10T12:00:00+00:00'\u001b[39m,\n    end_time: \u001b[1mnull\u001b[22m,\n    source: \u001b[32m'note'\u001b[39m,\n    source_id: \u001b[1mnull\u001b[22m,\n    created_at: \u001b[32m'2025-08-10T04:45:09.319618+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-10T04:45:09.319618+00:00'\u001b[39m\n  },\n  {\n    id: \u001b[32m'9bfdd118-dc0c-4dea-9152-633c2a27d91d'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Test Hover Event 1754801112571'\u001b[39m,\n    description: \u001b[32m'Test event for hover functionality'\u001b[39m,\n    start_time: \u001b[32m'2025-08-10T12:00:00+00:00'\u001b[39m,\n    end_time: \u001b[1mnull\u001b[22m,\n    source: \u001b[32m'note'\u001b[39m,\n    source_id: \u001b[1mnull\u001b[22m,\n    created_at: \u001b[32m'2025-08-10T04:45:12.711177+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-10T04:45:12.711177+00:00'\u001b[39m\n  },\n  {\n    id: \u001b[32m'6bd961b2-15e5-4842-9d2a-e97ed16345e8'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Meal: Test Calendar Meal 1754801121063'\u001b[39m,\n    description: \u001b[32m'Test meal for calendar click behavior'\u001b[39m,\n    start_time: \u001b[32m'2025-07-28T12:00:00+00:00'\u001b[39m,\n    end_time: \u001b[1mnull\u001b[22m,\n    source: \u001b[32m'meal'\u001b[39m,\n    source_id: \u001b[32m'5c2a48f4-65ab-4fa1-95b7-4f4a6db2faff'\u001b[39m,\n    created_at: \u001b[32m'2025-08-10T04:45:23.54227+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-10T04:45:23.54227+00:00'\u001b[39m\n  },\n  {\n    id: \u001b[32m'48ba4f48-1ca9-4fda-b8a3-c002d9bfa2cf'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Meal: Test Calendar Meal 1754801135554'\u001b[39m,\n    description: \u001b[32m'Test meal for calendar click behavior'\u001b[39m,\n    start_time: \u001b[32m'2025-07-28T12:00:00+00:00'\u001b[39m,\n    end_time: \u001b[1mnull\u001b[22m,\n    source: \u001b[32m'meal'\u001b[39m,\n    source_id: \u001b[32m'ab7d0896-6459-4f12-b617-f6fdecc87b34'\u001b[39m,\n    created_at: \u001b[32m'2025-08-10T04:45:38.885299+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-10T04:45:38.885299+00:00'\u001b[39m\n  },\n  {\n    id: \u001b[32m'f66b91be-179a-40c5-9e24-82e4c1b08e93'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Workout: Test Calendar Workout'\u001b[39m,\n    description: \u001b[32m'Test notes for calendar workout'\u001b[39m,\n    start_time: \u001b[32m'2025-08-10T04:49:04.752+00:00'\u001b[39m,\n    end_time: \u001b[1mnull\u001b[22m,\n    source: \u001b[32m'workout'\u001b[39m,\n    source_id: \u001b[32m'4c1d7830-c0b9-4465-bd17-29d496f89996'\u001b[39m,\n    created_at: \u001b[32m'2025-08-10T04:49:04.852139+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-10T04:49:04.852139+00:00'\u001b[39m\n  }\n]\n"
-                    },
-                    {
-                      "text": "[E2E] Navigating directly to live workout page, filling form manually\n"
-                    },
-                    {
-                      "text": "[BROWSER LOG] log: [Client Instrumentation Hook] Slow execution detected: 43ms (Note: Code download overhead is not included in this measurement)\n"
-                    },
-                    {
-                      "text": "[BROWSER LOG] info: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold\n"
+                      "text": "[E2E] Available calendar events: [\n  {\n    id: \u001b[32m'30ac32ce-927b-4229-9c80-a0956cd7f454'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Test Drag Event 1754848406818'\u001b[39m,\n    description: \u001b[32m'Test event for drag and drop'\u001b[39m,\n    start_time: \u001b[32m'2025-08-11T07:00:00+00:00'\u001b[39m,\n    end_time: \u001b[1mnull\u001b[22m,\n    source: \u001b[32m'note'\u001b[39m,\n    source_id: \u001b[1mnull\u001b[22m,\n    created_at: \u001b[32m'2025-08-10T17:53:26.975757+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-10T17:53:27.599+00:00'\u001b[39m\n  },\n  {\n    id: \u001b[32m'4101ce4e-dba5-4649-af4c-b01bd713ccd8'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Workout: Test Calendar Workout'\u001b[39m,\n    description: \u001b[32m'Test notes for calendar workout'\u001b[39m,\n    start_time: \u001b[32m'2025-08-10T17:56:09.228+00:00'\u001b[39m,\n    end_time: \u001b[1mnull\u001b[22m,\n    source: \u001b[32m'workout'\u001b[39m,\n    source_id: \u001b[32m'4c524be2-33f6-46b9-9401-c72c78383249'\u001b[39m,\n    created_at: \u001b[32m'2025-08-10T17:56:09.352966+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-10T17:56:09.352966+00:00'\u001b[39m\n  },\n  {\n    id: \u001b[32m'8712820f-caba-4fdd-a6f0-180cf3d346a0'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Test Hover Event 1754848415984'\u001b[39m,\n    description: \u001b[32m'Test event for hover functionality'\u001b[39m,\n    start_time: \u001b[32m'2025-08-10T12:00:00+00:00'\u001b[39m,\n    end_time: \u001b[1mnull\u001b[22m,\n    source: \u001b[32m'note'\u001b[39m,\n    source_id: \u001b[1mnull\u001b[22m,\n    created_at: \u001b[32m'2025-08-10T17:53:36.187723+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-10T17:53:36.187723+00:00'\u001b[39m\n  },\n  {\n    id: \u001b[32m'2f7661a5-ccba-44d0-b231-63cc28b64d28'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Test Keyboard Event 1754848419144'\u001b[39m,\n    description: \u001b[32m'Test event for keyboard accessibility'\u001b[39m,\n    start_time: \u001b[32m'2025-08-10T12:00:00+00:00'\u001b[39m,\n    end_time: \u001b[1mnull\u001b[22m,\n    source: \u001b[32m'note'\u001b[39m,\n    source_id: \u001b[1mnull\u001b[22m,\n    created_at: \u001b[32m'2025-08-10T17:53:39.291035+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-10T17:53:39.291035+00:00'\u001b[39m\n  },\n  {\n    id: \u001b[32m'a7d75e3c-1356-4f24-8d8b-8bb30f9f93a6'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Test Hover Event 1754848421796'\u001b[39m,\n    description: \u001b[32m'Test event for hover functionality'\u001b[39m,\n    start_time: \u001b[32m'2025-08-10T12:00:00+00:00'\u001b[39m,\n    end_time: \u001b[1mnull\u001b[22m,\n    source: \u001b[32m'note'\u001b[39m,\n    source_id: \u001b[1mnull\u001b[22m,\n    created_at: \u001b[32m'2025-08-10T17:53:41.932157+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-10T17:53:41.932157+00:00'\u001b[39m\n  },\n  {\n    id: \u001b[32m'2e371780-4aa1-4e06-bb13-baaf4abe69a0'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Meal: Test Calendar Meal 1754848426623'\u001b[39m,\n    description: \u001b[32m'Test meal for calendar click behavior'\u001b[39m,\n    start_time: \u001b[32m'2025-07-28T12:00:00+00:00'\u001b[39m,\n    end_time: \u001b[1mnull\u001b[22m,\n    source: \u001b[32m'meal'\u001b[39m,\n    source_id: \u001b[32m'67dd41b1-eb78-481c-889a-c677e531f23c'\u001b[39m,\n    created_at: \u001b[32m'2025-08-10T17:53:48.713385+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-10T17:53:48.713385+00:00'\u001b[39m\n  },\n  {\n    id: \u001b[32m'69940186-7a07-4fbf-860f-0f7ba415d6ec'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Meal: Test Calendar Meal 1754848431546'\u001b[39m,\n    description: \u001b[32m'Test meal for calendar click behavior'\u001b[39m,\n    start_time: \u001b[32m'2025-07-28T12:00:00+00:00'\u001b[39m,\n    end_time: \u001b[1mnull\u001b[22m,\n    source: \u001b[32m'meal'\u001b[39m,\n    source_id: \u001b[32m'2d48ce32-91e1-4ede-a9ff-8effc5aacbae'\u001b[39m,\n    created_at: \u001b[32m'2025-08-10T17:53:53.581265+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-10T17:53:53.581265+00:00'\u001b[39m\n  },\n  {\n    id: \u001b[32m'0bcac2a9-1e66-4e2e-ae8c-db1e7ece4b6e'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Dinner: Test Planned Meal 1754848493743'\u001b[39m,\n    description: \u001b[32m''\u001b[39m,\n    start_time: \u001b[32m'2025-08-11T00:00:00+00:00'\u001b[39m,\n    end_time: \u001b[1mnull\u001b[22m,\n    source: \u001b[32m'planned_meal'\u001b[39m,\n    source_id: \u001b[32m'3b4b7bcf-4d09-40db-8f1a-8c46f7f873d6'\u001b[39m,\n    created_at: \u001b[32m'2025-08-10T17:54:58.7844+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-10T17:54:58.7844+00:00'\u001b[39m\n  }\n]\n"
                     },
                     {
                       "text": "[E2E] ✅ Calendar click behavior test completed successfully\n"
@@ -1472,7 +1454,7 @@
                   ],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2025-08-10T04:49:01.395Z",
+                  "startTime": "2025-08-10T17:56:06.471Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1498,20 +1480,14 @@
               "projectName": "chromium",
               "results": [
                 {
-                  "workerIndex": 2,
+                  "workerIndex": 3,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 12842,
+                  "duration": 11806,
                   "errors": [],
                   "stdout": [
                     {
-                      "text": "[E2E] Created test workout for event list with ID: da7dee6b-5b3c-422b-a96d-c6a3a85de4d2\n"
-                    },
-                    {
-                      "text": "[BROWSER LOG] log: [Client Instrumentation Hook] Slow execution detected: 42ms (Note: Code download overhead is not included in this measurement)\n"
-                    },
-                    {
-                      "text": "[BROWSER LOG] info: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold\n"
+                      "text": "[E2E] Created test workout for event list with ID: 75395c29-b668-4413-803b-8f70014c8cd4\n"
                     },
                     {
                       "text": "[E2E] ✅ Event list click behavior test completed successfully\n"
@@ -1519,7 +1495,7 @@
                   ],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2025-08-10T04:49:35.826Z",
+                  "startTime": "2025-08-10T17:56:20.296Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1545,29 +1521,38 @@
               "projectName": "chromium",
               "results": [
                 {
-                  "workerIndex": 2,
+                  "workerIndex": 3,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 12641,
+                  "duration": 13255,
                   "errors": [],
                   "stdout": [
                     {
-                      "text": "[E2E] Created test workout for cleanup with ID: f88e87c1-2421-4c05-b834-156032e14bf2\n"
+                      "text": "[E2E] Created test workout for cleanup with ID: c3b7d378-4756-4da6-a84e-0ce2b060f177\n"
                     },
                     {
-                      "text": "[BROWSER LOG] log: [Client Instrumentation Hook] Slow execution detected: 40ms (Note: Code download overhead is not included in this measurement)\n"
+                      "text": "[E2E] Calendar event not found, checking database...\n"
                     },
                     {
-                      "text": "[BROWSER LOG] info: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold\n"
+                      "text": "[E2E] Calendar events found: [\n  {\n    id: \u001b[32m'c4dd9872-ebbf-4950-8372-c69eed0144dd'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Workout: Test Cleanup Workout'\u001b[39m,\n    description: \u001b[32m'Test notes for cleanup workout'\u001b[39m,\n    start_time: \u001b[32m'2025-08-10T17:56:33.878+00:00'\u001b[39m,\n    end_time: \u001b[1mnull\u001b[22m,\n    source: \u001b[32m'workout'\u001b[39m,\n    source_id: \u001b[32m'c3b7d378-4756-4da6-a84e-0ce2b060f177'\u001b[39m,\n    created_at: \u001b[32m'2025-08-10T17:56:34.022168+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-10T17:56:34.022168+00:00'\u001b[39m\n  }\n]\n"
                     },
                     {
-                      "text": "[E2E] Workout status after completion: { status: \u001b[32m'completed'\u001b[39m, in_progress: \u001b[33mfalse\u001b[39m }\n"
+                      "text": "[E2E] Calendar event exists in database but not visible in UI. Skipping calendar interaction.\n"
                     },
                     {
-                      "text": "[E2E] Calendar events after cleanup: []\n"
+                      "text": "[E2E] Navigating directly to live workout page, filling form manually\n"
                     },
                     {
-                      "text": "[E2E] Calendar event was cleaned up (unexpected when navigating directly)\n"
+                      "text": "[E2E] Workout status after completion: \u001b[1mnull\u001b[22m\n"
+                    },
+                    {
+                      "text": "[E2E] Planned workout status: { status: \u001b[32m'planned'\u001b[39m, in_progress: \u001b[33mfalse\u001b[39m }\n"
+                    },
+                    {
+                      "text": "[E2E] Calendar events after cleanup: [\n  {\n    id: \u001b[32m'c4dd9872-ebbf-4950-8372-c69eed0144dd'\u001b[39m,\n    user_id: \u001b[32m'0f3a417b-077d-4868-acef-9d79ada0945b'\u001b[39m,\n    title: \u001b[32m'Workout: Test Cleanup Workout'\u001b[39m,\n    description: \u001b[32m'Test notes for cleanup workout'\u001b[39m,\n    start_time: \u001b[32m'2025-08-10T17:56:33.878+00:00'\u001b[39m,\n    end_time: \u001b[1mnull\u001b[22m,\n    source: \u001b[32m'workout'\u001b[39m,\n    source_id: \u001b[32m'c3b7d378-4756-4da6-a84e-0ce2b060f177'\u001b[39m,\n    created_at: \u001b[32m'2025-08-10T17:56:34.022168+00:00'\u001b[39m,\n    updated_at: \u001b[32m'2025-08-10T17:56:34.022168+00:00'\u001b[39m\n  }\n]\n"
+                    },
+                    {
+                      "text": "[E2E] Calendar event still exists (expected when navigating directly)\n"
                     },
                     {
                       "text": "[E2E] ✅ Planned session cleanup test completed successfully\n"
@@ -1575,7 +1560,7 @@
                   ],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2025-08-10T04:49:48.672Z",
+                  "startTime": "2025-08-10T17:56:32.106Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1616,19 +1601,19 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 2,
+                      "workerIndex": 3,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 22287,
+                      "duration": 18981,
                       "errors": [],
                       "stdout": [
                         {
-                          "text": "[E2E] Calendar event found, clicking on it\n"
+                          "text": "[E2E] Calendar event exists in database but not visible in UI. Navigating directly.\n"
                         }
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-10T04:50:01.331Z",
+                      "startTime": "2025-08-10T17:56:45.379Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1654,15 +1639,15 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 2,
+                      "workerIndex": 3,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 19297,
+                      "duration": 18407,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-10T04:50:23.625Z",
+                      "startTime": "2025-08-10T17:57:04.365Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1705,15 +1690,15 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 2,
+                      "workerIndex": 3,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 4292,
+                      "duration": 3364,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-10T04:50:42.933Z",
+                      "startTime": "2025-08-10T17:57:22.782Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1739,15 +1724,15 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 2,
+                      "workerIndex": 3,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 6101,
+                      "duration": 3796,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-10T04:50:47.227Z",
+                      "startTime": "2025-08-10T17:57:26.148Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1773,15 +1758,15 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 2,
+                      "workerIndex": 3,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 4523,
+                      "duration": 4064,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-10T04:50:53.332Z",
+                      "startTime": "2025-08-10T17:57:29.946Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1813,7 +1798,7 @@
           "specs": [
             {
               "title": "Complete Sports Session Lifecycle",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -1824,30 +1809,14 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 2,
+                      "workerIndex": 3,
                       "parallelIndex": 0,
-                      "status": "timedOut",
-                      "duration": 60013,
-                      "error": {
-                        "message": "\u001b[31mTest timeout of 60000ms exceeded.\u001b[39m",
-                        "stack": "\u001b[31mTest timeout of 60000ms exceeded.\u001b[39m"
-                      },
-                      "errors": [
-                        {
-                          "message": "\u001b[31mTest timeout of 60000ms exceeded.\u001b[39m"
-                        },
-                        {
-                          "location": {
-                            "file": "/Users/liamford/Documents/plannerapp/e2e/test-utils.ts",
-                            "column": 14,
-                            "line": 92
-                          },
-                          "message": "Error: page.evaluate: Test timeout of 60000ms exceeded.\n\n\u001b[90m   at \u001b[39mtest-utils.ts:92\n\n\u001b[0m \u001b[90m 90 |\u001b[39m\n \u001b[90m 91 |\u001b[39m \u001b[36mexport\u001b[39m \u001b[36masync\u001b[39m \u001b[36mfunction\u001b[39m cleanupTestSports(page\u001b[33m:\u001b[39m \u001b[33mPage\u001b[39m\u001b[33m,\u001b[39m activityType\u001b[33m:\u001b[39m string) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 92 |\u001b[39m   \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mevaluate(\u001b[36masync\u001b[39m (type) \u001b[33m=>\u001b[39m {\n \u001b[90m    |\u001b[39m              \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 93 |\u001b[39m     \u001b[36mconst\u001b[39m supabase \u001b[33m=\u001b[39m window\u001b[33m.\u001b[39msupabase\u001b[33m;\u001b[39m\n \u001b[90m 94 |\u001b[39m     \u001b[36mconst\u001b[39m { data\u001b[33m:\u001b[39m session } \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m supabase\u001b[33m.\u001b[39mauth\u001b[33m.\u001b[39mgetSession()\u001b[33m;\u001b[39m\n \u001b[90m 95 |\u001b[39m     \u001b[36mconst\u001b[39m userId \u001b[33m=\u001b[39m session\u001b[33m.\u001b[39msession\u001b[33m.\u001b[39muser\u001b[33m.\u001b[39mid\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at cleanupTestSports (/Users/liamford/Documents/plannerapp/e2e/test-utils.ts:92:14)\u001b[22m\n\u001b[2m    at /Users/liamford/Documents/plannerapp/e2e/sports-happy-path.spec.ts:427:28\u001b[22m"
-                        }
-                      ],
+                      "status": "passed",
+                      "duration": 13620,
+                      "errors": [],
                       "stdout": [
                         {
-                          "text": "[E2E] Available buttons on page: [\n  \u001b[32m'Sports In Progress: Basketball 1754801457907'\u001b[39m,\n  \u001b[32m''\u001b[39m,\n  \u001b[32m'Log Out'\u001b[39m,\n  \u001b[32m'End Activity'\u001b[39m,\n  \u001b[32m''\u001b[39m\n]\n"
+                          "text": "[E2E] Available buttons on page: [\n  \u001b[32m'Sports In Progress: Basketball 1754848654054'\u001b[39m,\n  \u001b[32m''\u001b[39m,\n  \u001b[32m'Log Out'\u001b[39m,\n  \u001b[32m'End Activity'\u001b[39m\n]\n"
                         },
                         {
                           "text": "[E2E] Current URL: http://localhost:3000/fitness/sports/live\n"
@@ -1861,18 +1830,12 @@
                       ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-10T04:50:57.866Z",
+                      "startTime": "2025-08-10T17:57:34.016Z",
                       "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "error-context",
-                          "contentType": "text/markdown",
-                          "path": "/Users/liamford/Documents/plannerapp/test-results/sports-happy-path-Sports-h-9aefa-te-Sports-Session-Lifecycle-chromium/error-context.md"
-                        }
-                      ]
+                      "attachments": []
                     }
                   ],
-                  "status": "unexpected"
+                  "status": "expected"
                 }
               ],
               "id": "e8d291aa59db1b0658e8-43bf961486ef6af74b27",
@@ -1913,12 +1876,12 @@
                       "workerIndex": 3,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 3629,
+                      "duration": 3075,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-10T04:51:58.278Z",
+                      "startTime": "2025-08-10T17:57:47.643Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1946,18 +1909,42 @@
                     {
                       "workerIndex": 3,
                       "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 4921,
-                      "errors": [],
+                      "status": "interrupted",
+                      "duration": 597,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: getByRole('heading', { name: 'Calendar' })\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading', { name: 'Calendar' })\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: getByRole('heading', { name: 'Calendar' })\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading', { name: 'Calendar' })\u001b[22m\n\n    at /Users/liamford/Documents/plannerapp/e2e/start-activity-button.spec.ts:15:67",
+                        "location": {
+                          "file": "/Users/liamford/Documents/plannerapp/e2e/start-activity-button.spec.ts",
+                          "column": 67,
+                          "line": 15
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 13 |\u001b[39m     \n \u001b[90m 14 |\u001b[39m     \u001b[90m// Wait for dashboard to load\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 15 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'heading'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[32m'Calendar'\u001b[39m }))\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m10000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                                   \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 16 |\u001b[39m     \n \u001b[90m 17 |\u001b[39m     \u001b[90m// Clean up any existing test data after login\u001b[39m\n \u001b[90m 18 |\u001b[39m     \u001b[36mawait\u001b[39m cleanupTestDataBeforeTest(page\u001b[33m,\u001b[39m testId)\u001b[33m;\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "/Users/liamford/Documents/plannerapp/e2e/start-activity-button.spec.ts",
+                            "column": 67,
+                            "line": 15
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: getByRole('heading', { name: 'Calendar' })\nExpected: visible\nReceived: <element(s) not found>\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 10000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading', { name: 'Calendar' })\u001b[22m\n\n\n\u001b[0m \u001b[90m 13 |\u001b[39m     \n \u001b[90m 14 |\u001b[39m     \u001b[90m// Wait for dashboard to load\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 15 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'heading'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[32m'Calendar'\u001b[39m }))\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m10000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                                   \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 16 |\u001b[39m     \n \u001b[90m 17 |\u001b[39m     \u001b[90m// Clean up any existing test data after login\u001b[39m\n \u001b[90m 18 |\u001b[39m     \u001b[36mawait\u001b[39m cleanupTestDataBeforeTest(page\u001b[33m,\u001b[39m testId)\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at /Users/liamford/Documents/plannerapp/e2e/start-activity-button.spec.ts:15:67\u001b[22m"
+                        }
+                      ],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-10T04:52:02.038Z",
+                      "startTime": "2025-08-10T17:57:50.722Z",
                       "annotations": [],
-                      "attachments": []
+                      "attachments": [],
+                      "errorLocation": {
+                        "file": "/Users/liamford/Documents/plannerapp/e2e/start-activity-button.spec.ts",
+                        "column": 67,
+                        "line": 15
+                      }
                     }
                   ],
-                  "status": "expected"
+                  "status": "skipped"
                 }
               ],
               "id": "2a14daa34c5044297df3-6ee792b1e26058c67968",
@@ -1976,22 +1963,8 @@
                   "expectedStatus": "passed",
                   "projectId": "chromium",
                   "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 3,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 4911,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-08-10T04:52:06.961Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
+                  "results": [],
+                  "status": "skipped"
                 }
               ],
               "id": "2a14daa34c5044297df3-f8450429e5268390cb43",
@@ -2010,22 +1983,8 @@
                   "expectedStatus": "passed",
                   "projectId": "chromium",
                   "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 3,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 3679,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-08-10T04:52:11.874Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
+                  "results": [],
+                  "status": "skipped"
                 }
               ],
               "id": "2a14daa34c5044297df3-e92ba0d33065360c0bfb",
@@ -2044,22 +2003,8 @@
                   "expectedStatus": "passed",
                   "projectId": "chromium",
                   "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 3,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 3759,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-08-10T04:52:15.555Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
+                  "results": [],
+                  "status": "skipped"
                 }
               ],
               "id": "2a14daa34c5044297df3-b5ee56451eb7f13d8141",
@@ -2069,7 +2014,7 @@
             },
             {
               "title": "should close modal when X button is clicked",
-              "ok": false,
+              "ok": true,
               "tags": [],
               "tests": [
                 {
@@ -2078,52 +2023,8 @@
                   "expectedStatus": "passed",
                   "projectId": "chromium",
                   "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 3,
-                      "parallelIndex": 0,
-                      "status": "failed",
-                      "duration": 8722,
-                      "error": {
-                        "message": "Error: \u001b[31mTimed out 5000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mnot\u001b[2m.\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: getByText('Start New Activity')\nExpected: not visible\nReceived: visible\nCall log:\n\u001b[2m  - Expect \"not toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Start New Activity')\u001b[22m\n\u001b[2m    9 × locator resolved to <h2 class=\"text-xl font-semibold flex items-center\">…</h2>\u001b[22m\n\u001b[2m      - unexpected value \"visible\"\u001b[22m\n",
-                        "stack": "Error: \u001b[31mTimed out 5000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mnot\u001b[2m.\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: getByText('Start New Activity')\nExpected: not visible\nReceived: visible\nCall log:\n\u001b[2m  - Expect \"not toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Start New Activity')\u001b[22m\n\u001b[2m    9 × locator resolved to <h2 class=\"text-xl font-semibold flex items-center\">…</h2>\u001b[22m\n\u001b[2m      - unexpected value \"visible\"\u001b[22m\n\n    at /Users/liamford/Documents/plannerapp/e2e/start-activity-button.spec.ts:89:60",
-                        "location": {
-                          "file": "/Users/liamford/Documents/plannerapp/e2e/start-activity-button.spec.ts",
-                          "column": 60,
-                          "line": 89
-                        },
-                        "snippet": "\u001b[0m \u001b[90m 87 |\u001b[39m\n \u001b[90m 88 |\u001b[39m     \u001b[90m// Verify modal is closed\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 89 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mgetByText(\u001b[32m'Start New Activity'\u001b[39m))\u001b[33m.\u001b[39mnot\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                            \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 90 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 91 |\u001b[39m\n \u001b[90m 92 |\u001b[39m   test(\u001b[32m'should show Start Activity button in empty state'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\u001b[0m"
-                      },
-                      "errors": [
-                        {
-                          "location": {
-                            "file": "/Users/liamford/Documents/plannerapp/e2e/start-activity-button.spec.ts",
-                            "column": 60,
-                            "line": 89
-                          },
-                          "message": "Error: \u001b[31mTimed out 5000ms waiting for \u001b[39m\u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mnot\u001b[2m.\u001b[22mtoBeVisible\u001b[2m()\u001b[22m\n\nLocator: getByText('Start New Activity')\nExpected: not visible\nReceived: visible\nCall log:\n\u001b[2m  - Expect \"not toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText('Start New Activity')\u001b[22m\n\u001b[2m    9 × locator resolved to <h2 class=\"text-xl font-semibold flex items-center\">…</h2>\u001b[22m\n\u001b[2m      - unexpected value \"visible\"\u001b[22m\n\n\n\u001b[0m \u001b[90m 87 |\u001b[39m\n \u001b[90m 88 |\u001b[39m     \u001b[90m// Verify modal is closed\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 89 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mgetByText(\u001b[32m'Start New Activity'\u001b[39m))\u001b[33m.\u001b[39mnot\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                            \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 90 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 91 |\u001b[39m\n \u001b[90m 92 |\u001b[39m   test(\u001b[32m'should show Start Activity button in empty state'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\u001b[0m\n\u001b[2m    at /Users/liamford/Documents/plannerapp/e2e/start-activity-button.spec.ts:89:60\u001b[22m"
-                        }
-                      ],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-08-10T04:52:19.316Z",
-                      "annotations": [],
-                      "attachments": [
-                        {
-                          "name": "error-context",
-                          "contentType": "text/markdown",
-                          "path": "/Users/liamford/Documents/plannerapp/test-results/start-activity-button-Star-16312-al-when-X-button-is-clicked-chromium/error-context.md"
-                        }
-                      ],
-                      "errorLocation": {
-                        "file": "/Users/liamford/Documents/plannerapp/e2e/start-activity-button.spec.ts",
-                        "column": 60,
-                        "line": 89
-                      }
-                    }
-                  ],
-                  "status": "unexpected"
+                  "results": [],
+                  "status": "skipped"
                 }
               ],
               "id": "2a14daa34c5044297df3-0a71b28fb6fc5c045615",
@@ -2142,22 +2043,8 @@
                   "expectedStatus": "passed",
                   "projectId": "chromium",
                   "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 4,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 4502,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-08-10T04:52:28.466Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
+                  "results": [],
+                  "status": "skipped"
                 }
               ],
               "id": "2a14daa34c5044297df3-20463078dccac5ea2ca0",
@@ -2172,11 +2059,11 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2025-08-10T04:44:33.162Z",
-    "duration": 479987.003,
-    "expected": 40,
-    "skipped": 0,
-    "unexpected": 4,
+    "startTime": "2025-08-10T17:53:09.912Z",
+    "duration": 281446.41599999997,
+    "expected": 35,
+    "skipped": 6,
+    "unexpected": 3,
     "flaky": 0
   }
 }

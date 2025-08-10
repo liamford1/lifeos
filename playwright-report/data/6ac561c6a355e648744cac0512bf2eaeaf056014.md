@@ -1,0 +1,102 @@
+# Page snapshot
+
+```yaml
+- alert
+- navigation:
+  - text: LifeOS
+  - button "Profile":
+    - img
+  - paragraph:
+    - text: Signed in as
+    - strong: test@example.com
+  - button "Log Out"
+- complementary:
+  - navigation:
+    - list:
+      - listitem:
+        - link "Home":
+          - /url: /
+          - img
+          - text: Home
+      - listitem:
+        - link "Food":
+          - /url: /food
+          - img
+          - text: Food
+      - listitem:
+        - link "Fitness":
+          - /url: /fitness
+          - img
+          - text: Fitness
+      - listitem:
+        - link "Finances":
+          - /url: /finances
+          - img
+          - text: Finances
+      - listitem:
+        - link "Scratchpad":
+          - /url: /scratchpad
+          - img
+          - text: Scratchpad
+      - listitem:
+        - link "Profile":
+          - /url: /profile
+          - img
+          - text: Profile
+- main:
+  - heading "Food & Diet Dashboard" [level=1]
+  - heading "Recently Cooked" [level=2]
+  - paragraph: You haven't cooked any meals yet.
+  - heading "Upcoming Meals" [level=2]
+  - link "Test Planned Meal 1754848493743 Mon, Aug 11 • dinner":
+    - /url: /food/planner/3b4b7bcf-4d09-40db-8f1a-8c46f7f873d6
+    - heading "Test Planned Meal 1754848493743" [level=3]
+    - paragraph: Mon, Aug 11 • dinner
+  - heading "Quick Actions" [level=2]
+  - button "Add a Meal Create new recipe":
+    - heading "Add a Meal" [level=3]
+    - paragraph: Create new recipe
+  - button "Plan Weekly Meals Schedule your week":
+    - heading "Plan Weekly Meals" [level=3]
+    - paragraph: Schedule your week
+  - button "View Pantry Check inventory":
+    - heading "View Pantry" [level=3]
+    - paragraph: Check inventory
+  - button "Recipe Search Browse recipes":
+    - heading "Recipe Search" [level=3]
+    - paragraph: Browse recipes
+  - button "Add a Receipt Scan grocery receipt":
+    - heading "Add a Receipt" [level=3]
+    - paragraph: Scan grocery receipt
+  - heading "Suggestion" [level=2]
+  - paragraph: Need help planning this week's dinners?
+  - button "Ask AI"
+- dialog "Plan a Meal":
+  - img
+  - heading "Plan a Meal" [level=2]
+  - paragraph: Schedule meals for the week ahead
+  - button "Close modal":
+    - img
+  - button "AI Suggest Meals":
+    - img
+    - text: AI Suggest Meals
+  - img
+  - heading "Plan a New Meal" [level=2]
+  - text: Meal
+  - combobox "Meal":
+    - option "-- Choose a meal --" [selected]
+    - option "Test Planned Meal 1754848493743"
+  - text: Date
+  - textbox "Date": 2025-08-10
+  - text: Meal Time
+  - combobox "Meal Time":
+    - option "Breakfast"
+    - option "Lunch"
+    - option "Dinner" [selected]
+    - option "Snack"
+  - button "Plan Meal"
+  - heading "Upcoming Planned Meals" [level=2]
+  - heading "August 11, 2025" [level=3]
+  - text: Test Planned Meal 1754848493743 dinner
+  - button "Delete"
+```

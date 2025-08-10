@@ -2,8 +2,6 @@
 
 ```yaml
 - alert
-- button "Open Next.js Dev Tools":
-  - img
 - navigation:
   - text: LifeOS
   - button "Profile":

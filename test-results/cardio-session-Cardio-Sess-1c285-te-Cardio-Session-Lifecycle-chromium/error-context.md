@@ -2,8 +2,6 @@
 
 ```yaml
 - alert
-- button "Open Next.js Dev Tools":
-  - img
 - navigation:
   - text: LifeOS
   - button "Profile":
@@ -63,7 +61,7 @@
   - paragraph: "0"
   - paragraph: Calories Burned
   - paragraph: Most Common
-  - paragraph: Test-Run-1754801143079-h9jc73
+  - paragraph: Test-Run-1754848436739-6ab3ux
   - paragraph: Activity Type
   - paragraph: This Week
   - paragraph: "1"
@@ -79,7 +77,7 @@
   - button "Close modal":
     - img
   - button "Start New Activity"
-  - heading "Test-Run-1754801143079-h9jc73" [level=3]
+  - heading "Test-Run-1754848436739-6ab3ux" [level=3]
   - text: Cardio
   - paragraph: 2025-08-10
   - text: 0 min Test Park
