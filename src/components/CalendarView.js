@@ -36,7 +36,7 @@ import { useToast } from '@/components/client/Toast';
 import { MdOutlineCalendarToday } from 'react-icons/md';
 import SharedDeleteButton from '@/components/SharedDeleteButton';
 import { supabase } from '@/lib/supabaseClient';
-import { MdRestaurant, MdFitnessCenter, MdEvent, MdAdd, MdDragIndicator } from 'react-icons/md';
+import { MdRestaurant, MdFitnessCenter, MdEvent, MdAdd, MdDragIndicator, MdFlashOn } from 'react-icons/md';
 import PlanMealModal from '@/components/modals/PlanMealModal';
 import { toYMD } from '@/lib/date';
 
@@ -447,7 +447,10 @@ export default function CalendarView() {
     <>
       {/* Quick Actions */}
       <div className="mb-8">
-        <h3 className="text-lg font-semibold mb-3 text-gray-300">Quick Actions</h3>
+        <h3 className="text-lg font-semibold mb-3 text-gray-300 flex items-center">
+          <MdFlashOn className="w-5 h-5 mr-2" />
+          Quick Actions
+        </h3>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           <button
             onClick={() => setShowSelectionModal(true)}
@@ -484,23 +487,23 @@ export default function CalendarView() {
       </div>
       
                 <div
-            className="relative w-full p-6 text-white rounded"
+            className="relative w-full text-white"
             onPointerMove={moveDrag}
             onPointerUp={(e) => endDrag(e, { computeTargetDate })}
           >
-                    <h2 className="text-xl font-semibold mb-4 flex items-center">
+                    <h3 className="text-lg font-semibold mb-3 text-gray-300 flex items-center">
               <MdOutlineCalendarToday className="w-5 h-5 mr-2" />
               Calendar
-            </h2>
+            </h3>
       
-      <div className="w-full flex justify-center my-6">
-        <div className="w-[90rem]">
+      <div className="w-full my-6">
+        <div className="w-full">
           <div className="p-2 rounded">
             <Calendar
             onChange={setSelectedDate}
             value={selectedDate}
             locale="en-US"
-            className="!w-full !bg-surface !text-white rounded-lg"
+            className="!w-full !text-white !max-w-none"
             tileContent={({ date, view }) => {
               if (view !== 'month') return null;
 
