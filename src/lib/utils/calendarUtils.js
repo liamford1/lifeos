@@ -26,7 +26,7 @@ export const getCalendarEventRoute = (source, source_id) => {
     case CALENDAR_SOURCES.WORKOUT:
       return `/fitness` // Redirect to fitness page since workout details are now in modal
     case CALENDAR_SOURCES.CARDIO:
-      return `/fitness/cardio/${source_id}`
+      return `/fitness` // Redirect to fitness page since cardio details are now in modal
     case CALENDAR_SOURCES.SPORT:
       return `/fitness/sports/${source_id}`
     case CALENDAR_SOURCES.EXPENSE:

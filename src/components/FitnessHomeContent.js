@@ -29,6 +29,7 @@ import RecentActivityModal from '@/components/modals/fitness/RecentActivityModal
 import StretchingMobilityModal from '@/components/modals/fitness/StretchingMobilityModal';
 import DailyActivityModal from '@/components/modals/fitness/DailyActivityModal';
 import PlanWorkoutModal from '@/components/modals/fitness/PlanWorkoutModal';
+import WorkoutSessionModal from '@/components/modals/fitness/WorkoutSessionModal';
 import { useSportsSession } from '@/context/SportsSessionContext';
 
 // Skeleton components for dashboard sections
@@ -106,6 +107,7 @@ export default function FitnessHomeContent() {
   const [showDailyActivityModal, setShowDailyActivityModal] = useState(false);
   const [showPlanWorkoutModal, setShowPlanWorkoutModal] = useState(false);
   const [showStartActivityModal, setShowStartActivityModal] = useState(false);
+  const [showWorkoutSessionModal, setShowWorkoutSessionModal] = useState(false);
 
   // Inline form states
   const [showWorkoutForm, setShowWorkoutForm] = useState(false);
@@ -242,15 +244,13 @@ export default function FitnessHomeContent() {
     
     setFormLoading(false);
     if (!error && data) {
-      showSuccess('Workout created! Redirecting to workout...');
+      showSuccess('Workout created! Opening workout session...');
       setShowWorkoutForm(false);
       setWorkoutFormData({ title: '', notes: '' });
       // Refresh the workout session context to update navbar
       await refreshWorkout();
-      // Redirect directly to the session page
-      setTimeout(() => {
-        router.push(`/fitness/workouts/${data.id}/session`);
-      }, 1500);
+      // Open the workout session modal
+      setShowWorkoutSessionModal(true);
     } else {
       setFormError(error?.message || 'Failed to start workout');
     }
@@ -730,6 +730,11 @@ export default function FitnessHomeContent() {
       <PlanWorkoutModal 
         isOpen={showPlanWorkoutModal} 
         onClose={() => setShowPlanWorkoutModal(false)} 
+      />
+      
+      <WorkoutSessionModal 
+        isOpen={showWorkoutSessionModal} 
+        onClose={() => setShowWorkoutSessionModal(false)} 
       />
     </div>
   );

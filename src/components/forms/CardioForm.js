@@ -75,7 +75,7 @@ export default function CardioForm({ initialData = null, isEdit = false }) {
           });
         }
         handleSuccess("Cardio entry updated!");
-        router.push(`/fitness/cardio/${initialData.id}`);
+        router.push(`/fitness`);
       } else {
         // Create new cardio entry
         const { data, error } = await supabase
@@ -86,7 +86,7 @@ export default function CardioForm({ initialData = null, isEdit = false }) {
         if (error) throw error;
 
         handleSuccess("Cardio entry created!");
-        router.push(`/fitness/cardio/${data.id}`);
+        router.push(`/fitness`);
       }
     } catch (err) {
       handleError(err, { 

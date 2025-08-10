@@ -9,6 +9,7 @@ import SharedDeleteButton from "@/components/SharedDeleteButton";
 import EditButton from "@/components/EditButton";
 import BaseModal from "@/components/shared/BaseModal";
 import WorkoutDetailsModal from "./WorkoutDetailsModal";
+import CardioDetailsModal from "./CardioDetailsModal";
 import { useWorkouts } from "@/lib/hooks/useWorkouts";
 import { useCardioSessions } from "@/lib/hooks/useCardioSessions";
 import { useSportsSessions } from "@/lib/hooks/useSportsSessions";
@@ -76,6 +77,10 @@ export default function RecentActivityModal({ isOpen, onClose }) {
   // Workout details modal state
   const [selectedWorkoutId, setSelectedWorkoutId] = useState(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
+  
+  // Cardio details modal state
+  const [selectedCardioId, setSelectedCardioId] = useState(null);
+  const [showCardioDetailsModal, setShowCardioDetailsModal] = useState(false);
   
   const fetchedRef = useRef({ userId: null, done: false });
   
@@ -168,15 +173,20 @@ export default function RecentActivityModal({ isOpen, onClose }) {
     setShowDetailsModal(true);
   }, []);
 
+  const handleCardioClick = useCallback((cardioId) => {
+    setSelectedCardioId(cardioId);
+    setShowCardioDetailsModal(true);
+  }, []);
+
   const handleCloseDetailsModal = useCallback(() => {
     setShowDetailsModal(false);
     setSelectedWorkoutId(null);
   }, []);
 
-  const handleStartActivity = useCallback(() => {
-    if (!user) return router.push("/auth");
-    router.push("/fitness");
-  }, [user, router]);
+  const handleCloseCardioDetailsModal = useCallback(() => {
+    setShowCardioDetailsModal(false);
+    setSelectedCardioId(null);
+  }, []);
 
   // Combine and sort all activities by date
   const allActivities = useMemo(() => {
@@ -205,7 +215,7 @@ export default function RecentActivityModal({ isOpen, onClose }) {
       iconColor: "text-red-500",
       bgColor: "bg-red-500/10",
       label: "Cardio",
-      onClick: (id) => router.push(`/fitness/cardio/${id}`),
+      onClick: handleCardioClick,
       onDelete: handleDeleteCardio,
       onEdit: (id) => router.push(`/fitness/cardio/${id}/edit`)
     },
@@ -218,7 +228,7 @@ export default function RecentActivityModal({ isOpen, onClose }) {
       onDelete: handleDeleteSports,
       onEdit: (id) => router.push(`/fitness/sports/${id}/edit`)
     }
-  }), [handleWorkoutClick, handleDeleteWorkout, handleDeleteCardio, handleDeleteSports, router]);
+  }), [handleWorkoutClick, handleCardioClick, handleDeleteWorkout, handleDeleteCardio, handleDeleteSports, router]);
 
 
 
@@ -365,33 +375,6 @@ export default function RecentActivityModal({ isOpen, onClose }) {
       data-testid="recent-activity-modal"
     >
       <div className="space-y-6">
-        {/* Start Activity Button */}
-        <div className="flex justify-end gap-3">
-          {activeSportsId ? (
-            <Button
-              variant="secondary"
-              size="md"
-              onClick={() => router.push('/fitness/sports/live')}
-              data-testid="sports-in-progress-button"
-              className="flex items-center justify-center gap-2"
-            >
-              <Goal className="w-4 h-4" />
-              Continue Sports Activity
-            </Button>
-          ) : (
-            <Button
-              variant="secondary"
-              size="md"
-              onClick={handleStartActivity}
-              data-testid="start-activity-button"
-              className="flex items-center justify-center gap-2"
-            >
-              <Activity className="w-4 h-4" />
-              Start New Activity
-            </Button>
-          )}
-        </div>
-
         {/* Activity History */}
         <div
           className="space-y-4 min-h-[300px] relative"
@@ -406,6 +389,13 @@ export default function RecentActivityModal({ isOpen, onClose }) {
         isOpen={showDetailsModal}
         onClose={handleCloseDetailsModal}
         workoutId={selectedWorkoutId}
+      />
+      
+      {/* Cardio Details Modal */}
+      <CardioDetailsModal
+        isOpen={showCardioDetailsModal}
+        onClose={handleCloseCardioDetailsModal}
+        cardioId={selectedCardioId}
       />
     </BaseModal>
   );

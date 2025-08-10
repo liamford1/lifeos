@@ -13,6 +13,7 @@ import { useWorkoutSession } from '@/context/WorkoutSessionContext';
 import { useCardioSession } from '@/context/CardioSessionContext';
 import { useSportsSession } from '@/context/SportsSessionContext';
 import { useCookingSession } from '@/context/CookingSessionContext';
+import WorkoutSessionModal from '@/components/modals/fitness/WorkoutSessionModal';
 
 export default function AppBar() {
   const { user, loading, session } = useUser();
@@ -21,6 +22,7 @@ export default function AppBar() {
   const { activeSportsId, sportsData } = useSportsSession();
   const { mealId, currentStep, instructions, loading: cookingSessionLoading } = useCookingSession();
   const [profile, setProfile] = useState(null);
+  const [showWorkoutSessionModal, setShowWorkoutSessionModal] = useState(false);
   const router = useRouter();
 
   // Fetch user profile data when user is available
@@ -70,7 +72,7 @@ export default function AppBar() {
         {/* Workout in progress button */}
         {activeWorkoutId && (
           <Button
-            onClick={() => router.push(`/fitness/workouts/${activeWorkoutId}/session`)}
+            onClick={() => setShowWorkoutSessionModal(true)}
             variant="success"
             size="sm"
             className="flex items-center gap-1"
@@ -162,6 +164,12 @@ export default function AppBar() {
           </Link>
         )}
       </div>
+      
+      {/* Workout Session Modal */}
+      <WorkoutSessionModal 
+        isOpen={showWorkoutSessionModal} 
+        onClose={() => setShowWorkoutSessionModal(false)} 
+      />
     </nav>
   );
 }
