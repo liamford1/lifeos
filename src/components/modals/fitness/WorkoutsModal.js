@@ -8,6 +8,7 @@ import Button from "@/components/shared/Button";
 import SharedDeleteButton from "@/components/SharedDeleteButton";
 import EditButton from "@/components/EditButton";
 import BaseModal from "@/components/shared/BaseModal";
+import WorkoutDetailsModal from "./WorkoutDetailsModal";
 import { useWorkouts } from "@/lib/hooks/useWorkouts";
 import dynamic from "next/dynamic";
 const Dumbbell = dynamic(() => import("lucide-react/dist/esm/icons/dumbbell"), {
@@ -18,7 +19,7 @@ const Dumbbell = dynamic(() => import("lucide-react/dist/esm/icons/dumbbell"), {
 // Skeleton component for workout items
 function WorkoutSkeleton() {
   return (
-    <div className="border p-3 rounded shadow-sm animate-pulse">
+    <div className="bg-card border border-border rounded-lg p-4 animate-pulse">
       <div className="h-6 bg-gray-700 rounded mb-2 w-3/4"></div>
       <div className="h-4 bg-gray-700 rounded mb-2 w-1/4"></div>
       <div className="h-4 bg-gray-700 rounded mb-2 w-1/2"></div>
@@ -36,6 +37,8 @@ export default function WorkoutsModal({ isOpen, onClose }) {
   const [workouts, setWorkouts] = useState([]);
   const [workoutsLoading, setWorkoutsLoading] = useState(true);
   const [hasInitialized, setHasInitialized] = useState(false);
+  const [selectedWorkoutId, setSelectedWorkoutId] = useState(null);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
   const fetchedRef = useRef({ userId: null, done: false });
   const { fetchWorkouts, deleteWorkout } = useWorkouts();
 
@@ -86,23 +89,37 @@ export default function WorkoutsModal({ isOpen, onClose }) {
     [deleteWorkout],
   );
 
-  const handleStartWorkout = useCallback(() => {
-    router.push("/fitness/workouts/live");
-  }, [router]);
+  const handleWorkoutClick = useCallback((workoutId) => {
+    setSelectedWorkoutId(workoutId);
+    setShowDetailsModal(true);
+  }, []);
+
+  const handleCloseDetailsModal = useCallback(() => {
+    setShowDetailsModal(false);
+    setSelectedWorkoutId(null);
+  }, []);
 
   // Determine what to render - memoized to prevent unnecessary re-renders
   const content = useMemo(() => {
     // Don't render anything until we've initialized
     if (!hasInitialized) {
-      return Array.from({ length: 3 }).map((_, index) => (
-        <WorkoutSkeleton key={`skeleton-${index}`} />
-      ));
+      return (
+        <div className="space-y-3">
+          {Array.from({ length: 3 }).map((_, index) => (
+            <WorkoutSkeleton key={`skeleton-${index}`} />
+          ))}
+        </div>
+      );
     }
 
     if (workoutsLoading) {
-      return Array.from({ length: 3 }).map((_, index) => (
-        <WorkoutSkeleton key={`skeleton-${index}`} />
-      ));
+      return (
+        <div className="space-y-3">
+          {Array.from({ length: 3 }).map((_, index) => (
+            <WorkoutSkeleton key={`skeleton-${index}`} />
+          ))}
+        </div>
+      );
     }
 
     if (!user) {
@@ -111,50 +128,68 @@ export default function WorkoutsModal({ isOpen, onClose }) {
 
     if (workouts.length === 0) {
       return (
-        <div className="border p-8 rounded shadow-sm text-center">
-          <p
-            className="text-muted-foreground text-sm mb-4"
-            data-testid="workouts-empty"
-          >
-            No entries yet. Click &quot;Start Workout&quot; to begin tracking
-            your first session.
-          </p>
-          <Button
-            variant="primary"
-            className="flex items-center gap-2 mx-auto"
-            onClick={handleStartWorkout}
-          >
-            <Dumbbell className="w-4 h-4" />
-            Start Workout
-          </Button>
+        <div className="text-center py-12 space-y-4">
+          <div className="w-16 h-16 bg-gray-700/20 rounded-xl flex items-center justify-center mx-auto">
+            <Dumbbell className="w-8 h-8 text-gray-400" />
+          </div>
+          <div className="space-y-2">
+            <h3 className="text-xl font-semibold text-white">No workouts yet</h3>
+            <p className="text-sm text-gray-400 max-w-sm mx-auto">
+              Start your first workout to begin tracking your strength training progress
+            </p>
+          </div>
         </div>
       );
     }
 
-    return workouts.map((w) => (
-      <li key={w.id} className="border p-3 rounded shadow-sm">
-        <div
-          onClick={() => router.push(`/fitness/workouts/${w.id}`)}
-          className="cursor-pointer hover:underline"
-        >
-          <div className="font-semibold text-lg">{w.title}</div>
-          <div className="text-sm text-base">{w.date}</div>
-          {w.notes && <div className="text-sm text-base mt-1">{w.notes}</div>}
-        </div>
-
-        <div className="flex gap-4 mt-2 text-sm">
-          <EditButton
-            onClick={() => router.push(`/fitness/workouts/${w.id}/edit`)}
-          />
-          <SharedDeleteButton
-            onClick={() => handleDelete(w.id)}
-            size="sm"
-            aria-label="Delete workout"
-            label="Delete"
-          />
-        </div>
-      </li>
-    ));
+    return (
+      <ul className="space-y-3">
+        {workouts.map((w) => (
+          <li key={w.id} className="group">
+            <div 
+              onClick={() => handleWorkoutClick(w.id)}
+              className="relative bg-card hover:bg-gray-700/50 transition-all duration-200 p-4 rounded-lg border border-border cursor-pointer group-hover:border-gray-600"
+            >
+              <div className="flex items-start justify-between">
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-lg font-semibold text-white truncate mb-1">
+                    {w.title}
+                  </h3>
+                  <p className="text-sm text-gray-400">
+                    {w.date}
+                  </p>
+                  {w.notes && (
+                    <p className="text-sm text-gray-300 mt-2 line-clamp-2">
+                      {w.notes}
+                    </p>
+                  )}
+                </div>
+                <div className="flex items-center gap-2 ml-4 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  <EditButton
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      window.open(`/fitness/workouts/${w.id}/edit`, '_blank');
+                    }}
+                    size="sm"
+                    iconOnly={true}
+                    className="w-8 h-8"
+                  />
+                  <SharedDeleteButton
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDelete(w.id);
+                    }}
+                    size="sm"
+                    iconOnly={true}
+                    className="w-8 h-8"
+                  />
+                </div>
+              </div>
+            </div>
+          </li>
+        ))}
+      </ul>
+    );
   }, [
     hasInitialized,
     workoutsLoading,
@@ -162,7 +197,7 @@ export default function WorkoutsModal({ isOpen, onClose }) {
     workouts,
     router,
     handleDelete,
-    handleStartWorkout,
+    handleWorkoutClick,
   ]);
 
   if (!isOpen) return null;
@@ -179,26 +214,22 @@ export default function WorkoutsModal({ isOpen, onClose }) {
       maxWidth="max-w-4xl"
       data-testid="workouts-modal"
     >
-      {/* Start Workout Button */}
-      <div className="flex justify-end gap-3">
-        <Button
-          onClick={handleStartWorkout}
-          variant="primary"
-          size="md"
-          className="flex items-center gap-2"
+      <div className="space-y-6">
+        {/* Workout History */}
+        <div
+          className="min-h-[300px] relative"
+          data-testid="workout-list"
         >
-          <Dumbbell className="w-4 h-4" />
-          Start New Workout
-        </Button>
+          {content}
+        </div>
       </div>
-
-      {/* Workout History */}
-      <div
-        className="space-y-3 min-h-[300px] relative"
-        data-testid="workout-list"
-      >
-        {content}
-      </div>
+      
+      {/* Workout Details Modal */}
+      <WorkoutDetailsModal
+        isOpen={showDetailsModal}
+        onClose={handleCloseDetailsModal}
+        workoutId={selectedWorkoutId}
+      />
     </BaseModal>
   );
 }

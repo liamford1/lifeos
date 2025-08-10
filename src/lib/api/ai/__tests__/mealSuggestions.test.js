@@ -186,7 +186,9 @@ describe('handleMealSuggestions', () => {
       error: null,
     });
 
-    mockGetStructuredResponse.mockRejectedValue(new Error('OPENAI_API_KEY environment variable is required'));
+    // Mock the error to be thrown properly
+    const mockError = new Error('OPENAI_API_KEY environment variable is required');
+    mockGetStructuredResponse.mockRejectedValue(mockError);
 
     const request = createMockRequest({
       pantryItems: [],
@@ -207,7 +209,9 @@ describe('handleMealSuggestions', () => {
       error: null,
     });
 
-    mockGetStructuredResponse.mockRejectedValue(new Error('Rate limit exceeded'));
+    // Mock the error to be thrown properly
+    const mockError = new Error('Rate limit exceeded');
+    mockGetStructuredResponse.mockRejectedValue(mockError);
 
     const request = createMockRequest({
       pantryItems: [],
