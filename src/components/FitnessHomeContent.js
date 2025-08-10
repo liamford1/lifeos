@@ -25,9 +25,7 @@ import FormTextarea from '@/components/shared/FormTextarea';
 import { supabase } from '@/lib/supabaseClient';
 import { useWorkoutSession } from '@/context/WorkoutSessionContext';
 import { useCardioSession } from '@/context/CardioSessionContext';
-import WorkoutsModal from '@/components/modals/fitness/WorkoutsModal';
-import CardioHistoryModal from '@/components/modals/fitness/CardioHistoryModal';
-import SportsActivitiesModal from '@/components/modals/fitness/SportsActivitiesModal';
+import RecentActivityModal from '@/components/modals/fitness/RecentActivityModal';
 import StretchingMobilityModal from '@/components/modals/fitness/StretchingMobilityModal';
 import DailyActivityModal from '@/components/modals/fitness/DailyActivityModal';
 import PlanWorkoutModal from '@/components/modals/fitness/PlanWorkoutModal';
@@ -103,9 +101,7 @@ export default function FitnessHomeContent() {
   const [dataLoading, setDataLoading] = useState(true);
 
   // Modal states
-  const [showWorkoutsModal, setShowWorkoutsModal] = useState(false);
-  const [showCardioHistoryModal, setShowCardioHistoryModal] = useState(false);
-  const [showSportsActivitiesModal, setShowSportsActivitiesModal] = useState(false);
+  const [showRecentActivityModal, setShowRecentActivityModal] = useState(false);
   const [showStretchingMobilityModal, setShowStretchingMobilityModal] = useState(false);
   const [showDailyActivityModal, setShowDailyActivityModal] = useState(false);
   const [showPlanWorkoutModal, setShowPlanWorkoutModal] = useState(false);
@@ -652,34 +648,16 @@ export default function FitnessHomeContent() {
         <div className="bg-surface rounded-xl p-6 shadow-lg border border-gray-700">
           <h2 className="text-xl font-semibold mb-4 flex items-center">
             <Activity className="w-5 h-5 text-blue-500 mr-2" />
-            Fitness Tools & History
+            Fitness Tools
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <button 
-              onClick={() => setShowWorkoutsModal(true)}
+              onClick={() => setShowRecentActivityModal(true)}
               className="block p-5 bg-gray-800 rounded-lg hover:bg-gray-700 transition-all duration-200 border border-gray-600 hover:border-blue-500 group text-left w-full"
             >
-              <Dumbbell className="w-6 h-6 text-blue-500 mb-3 group-hover:scale-110 transition-transform" />
-              <span className="font-semibold text-lg block mb-1">View Workouts</span>
-              <div className="text-sm text-gray-400">Past workouts & exercises</div>
-            </button>
-            
-            <button 
-              onClick={() => setShowCardioHistoryModal(true)}
-              className="block p-5 bg-gray-800 rounded-lg hover:bg-gray-700 transition-all duration-200 border border-gray-600 hover:border-red-500 group text-left w-full"
-            >
-              <HeartPulse className="w-6 h-6 text-red-500 mb-3 group-hover:scale-110 transition-transform" />
-              <span className="font-semibold text-lg block mb-1">Cardio History</span>
-              <div className="text-sm text-gray-400">Past cardio sessions</div>
-            </button>
-            
-            <button 
-              onClick={() => setShowSportsActivitiesModal(true)}
-              className="block p-5 bg-gray-800 rounded-lg hover:bg-gray-700 transition-all duration-200 border border-gray-600 hover:border-green-500 group text-left w-full"
-            >
-              <Goal className="w-6 h-6 text-green-500 mb-3 group-hover:scale-110 transition-transform" />
-              <span className="font-semibold text-lg block mb-1">Sports & Activities</span>
-              <div className="text-sm text-gray-400">Games, hikes, other active things</div>
+              <Activity className="w-6 h-6 text-blue-500 mb-3 group-hover:scale-110 transition-transform" />
+              <span className="font-semibold text-lg block mb-1">Recent Activity</span>
+              <div className="text-sm text-gray-400">All workouts, cardio & sports</div>
             </button>
             
             <button 
@@ -734,19 +712,9 @@ export default function FitnessHomeContent() {
       )}
 
       {/* Fitness Modals */}
-      <WorkoutsModal 
-        isOpen={showWorkoutsModal} 
-        onClose={() => setShowWorkoutsModal(false)} 
-      />
-      
-      <CardioHistoryModal 
-        isOpen={showCardioHistoryModal} 
-        onClose={() => setShowCardioHistoryModal(false)} 
-      />
-      
-      <SportsActivitiesModal 
-        isOpen={showSportsActivitiesModal} 
-        onClose={() => setShowSportsActivitiesModal(false)} 
+      <RecentActivityModal 
+        isOpen={showRecentActivityModal} 
+        onClose={() => setShowRecentActivityModal(false)} 
       />
       
       <StretchingMobilityModal 

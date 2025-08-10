@@ -1,18 +1,10 @@
-<testsuites id="" name="" tests="7" failures="0" skipped="0" errors="0" time="25.881772">
-<testsuite name="start-activity-button.spec.ts" timestamp="2025-08-10T04:13:32.970Z" hostname="chromium" tests="7" failures="0" skipped="0" time="20.698" errors="0">
-<testcase name="Start Activity Button › should display Start Activity button on fitness dashboard" classname="start-activity-button.spec.ts" time="2.915">
+<testsuites id="" name="" tests="3" failures="0" skipped="0" errors="0" time="21.520009">
+<testsuite name="recent-activity-modal.spec.ts" timestamp="2025-08-10T04:27:09.592Z" hostname="chromium" tests="3" failures="0" skipped="0" time="16.011" errors="0">
+<testcase name="Recent Activity Modal › should display unified recent activity modal with all activity types" classname="recent-activity-modal.spec.ts" time="5.084">
 </testcase>
-<testcase name="Start Activity Button › should open activity selection modal when clicked" classname="start-activity-button.spec.ts" time="2.842">
+<testcase name="Recent Activity Modal › should show activity type icons and labels correctly" classname="recent-activity-modal.spec.ts" time="5.765">
 </testcase>
-<testcase name="Start Activity Button › should open workout form when Start Workout is selected" classname="start-activity-button.spec.ts" time="2.926">
-</testcase>
-<testcase name="Start Activity Button › should open cardio form when Start Cardio is selected" classname="start-activity-button.spec.ts" time="2.834">
-</testcase>
-<testcase name="Start Activity Button › should navigate to sports live page when Start Sports is selected" classname="start-activity-button.spec.ts" time="3.034">
-</testcase>
-<testcase name="Start Activity Button › should close modal when X button is clicked" classname="start-activity-button.spec.ts" time="3.358">
-</testcase>
-<testcase name="Start Activity Button › should show Start Activity button in empty state" classname="start-activity-button.spec.ts" time="2.789">
+<testcase name="Recent Activity Modal › should handle different activity click behaviors correctly" classname="recent-activity-modal.spec.ts" time="5.162">
 </testcase>
 </testsuite>
 </testsuites>

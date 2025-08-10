@@ -69,20 +69,20 @@
   },
   "suites": [
     {
-      "title": "start-activity-button.spec.ts",
-      "file": "start-activity-button.spec.ts",
+      "title": "recent-activity-modal.spec.ts",
+      "file": "recent-activity-modal.spec.ts",
       "column": 0,
       "line": 0,
       "specs": [],
       "suites": [
         {
-          "title": "Start Activity Button",
-          "file": "start-activity-button.spec.ts",
-          "line": 4,
+          "title": "Recent Activity Modal",
+          "file": "recent-activity-modal.spec.ts",
+          "line": 11,
           "column": 6,
           "specs": [
             {
-              "title": "should display Start Activity button on fitness dashboard",
+              "title": "should display unified recent activity modal with all activity types",
               "ok": true,
               "tags": [],
               "tests": [
@@ -97,12 +97,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2915,
+                      "duration": 5084,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-10T04:13:33.231Z",
+                      "startTime": "2025-08-10T04:27:09.883Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -110,13 +110,13 @@
                   "status": "expected"
                 }
               ],
-              "id": "2a14daa34c5044297df3-8253b350623231cc30de",
-              "file": "start-activity-button.spec.ts",
-              "line": 25,
+              "id": "32c8ed2d52a4aaa51e39-bb88f8ee3ea67dbf5f92",
+              "file": "recent-activity-modal.spec.ts",
+              "line": 12,
               "column": 7
             },
             {
-              "title": "should open activity selection modal when clicked",
+              "title": "should show activity type icons and labels correctly",
               "ok": true,
               "tags": [],
               "tests": [
@@ -131,12 +131,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2842,
+                      "duration": 5765,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-10T04:13:36.247Z",
+                      "startTime": "2025-08-10T04:27:15.082Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -144,13 +144,13 @@
                   "status": "expected"
                 }
               ],
-              "id": "2a14daa34c5044297df3-6ee792b1e26058c67968",
-              "file": "start-activity-button.spec.ts",
-              "line": 31,
+              "id": "32c8ed2d52a4aaa51e39-85c615b8b37687c4f221",
+              "file": "recent-activity-modal.spec.ts",
+              "line": 59,
               "column": 7
             },
             {
-              "title": "should open workout form when Start Workout is selected",
+              "title": "should handle different activity click behaviors correctly",
               "ok": true,
               "tags": [],
               "tests": [
@@ -165,12 +165,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2926,
+                      "duration": 5162,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2025-08-10T04:13:39.092Z",
+                      "startTime": "2025-08-10T04:27:20.850Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -178,145 +178,9 @@
                   "status": "expected"
                 }
               ],
-              "id": "2a14daa34c5044297df3-f8450429e5268390cb43",
-              "file": "start-activity-button.spec.ts",
-              "line": 42,
-              "column": 7
-            },
-            {
-              "title": "should open cardio form when Start Cardio is selected",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 60000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 2834,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-08-10T04:13:42.021Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "2a14daa34c5044297df3-e92ba0d33065360c0bfb",
-              "file": "start-activity-button.spec.ts",
-              "line": 54,
-              "column": 7
-            },
-            {
-              "title": "should navigate to sports live page when Start Sports is selected",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 60000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 3034,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-08-10T04:13:44.857Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "2a14daa34c5044297df3-b5ee56451eb7f13d8141",
-              "file": "start-activity-button.spec.ts",
-              "line": 66,
-              "column": 7
-            },
-            {
-              "title": "should close modal when X button is clicked",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 60000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 3358,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-08-10T04:13:47.894Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "2a14daa34c5044297df3-0a71b28fb6fc5c045615",
-              "file": "start-activity-button.spec.ts",
-              "line": 78,
-              "column": 7
-            },
-            {
-              "title": "should show Start Activity button in empty state",
-              "ok": true,
-              "tags": [],
-              "tests": [
-                {
-                  "timeout": 60000,
-                  "annotations": [],
-                  "expectedStatus": "passed",
-                  "projectId": "chromium",
-                  "projectName": "chromium",
-                  "results": [
-                    {
-                      "workerIndex": 0,
-                      "parallelIndex": 0,
-                      "status": "passed",
-                      "duration": 2789,
-                      "errors": [],
-                      "stdout": [],
-                      "stderr": [],
-                      "retry": 0,
-                      "startTime": "2025-08-10T04:13:51.255Z",
-                      "annotations": [],
-                      "attachments": []
-                    }
-                  ],
-                  "status": "expected"
-                }
-              ],
-              "id": "2a14daa34c5044297df3-20463078dccac5ea2ca0",
-              "file": "start-activity-button.spec.ts",
-              "line": 92,
+              "id": "32c8ed2d52a4aaa51e39-474f1d626bd04f859ea3",
+              "file": "recent-activity-modal.spec.ts",
+              "line": 151,
               "column": 7
             }
           ]
@@ -326,9 +190,9 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2025-08-10T04:13:28.202Z",
-    "duration": 25881.772,
-    "expected": 7,
+    "startTime": "2025-08-10T04:27:04.516Z",
+    "duration": 21520.009000000002,
+    "expected": 3,
     "skipped": 0,
     "unexpected": 0,
     "flaky": 0
