@@ -623,16 +623,16 @@ export default function PlanWorkoutModal({ isOpen, onClose }) {
                 <Button onClick={handleAddEvent} variant="primary">
                   Add Event
                 </Button>
-                <Button 
+          <Button
                   onClick={() => {
                     setShowAddModal(false);
                     setShowSelectionModalForDate(null);
                   }} 
-                  variant="secondary"
-                >
+            variant="secondary"
+          >
                   Cancel
-                </Button>
-              </div>
+          </Button>
+        </div>
             </div>
           </div>
         )}
