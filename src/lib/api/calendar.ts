@@ -1,5 +1,6 @@
 import { createSupabaseServerClient } from "@/lib/supabaseServer";
 import { updateLinkedEntityOnCalendarChange } from "@/lib/calendarSync";
+import dayjs from 'dayjs';
 
 const supabase = createSupabaseServerClient();
 
@@ -13,7 +14,13 @@ export async function listEvents(userId: string) {
 }
 
 export async function insertEvent(event: any) {
-  const { error } = await supabase.from("calendar_events").insert([event]);
+  // Set default end time to 1 hour after start time if not provided
+  let finalEvent = { ...event };
+  if (!finalEvent.end_time && finalEvent.start_time) {
+    finalEvent.end_time = dayjs(finalEvent.start_time).add(1, 'hour').toISOString();
+  }
+
+  const { error } = await supabase.from("calendar_events").insert([finalEvent]);
   if (error) throw error;
 }
 

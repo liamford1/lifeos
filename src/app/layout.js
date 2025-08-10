@@ -7,6 +7,7 @@ import { ToastContainer, ToastProvider } from '@/components/client/Toast';
 import { WorkoutSessionProvider } from '@/context/WorkoutSessionContext';
 import { CardioSessionProvider } from '@/context/CardioSessionContext';
 import { SportsSessionProvider } from '@/context/SportsSessionContext';
+import { StretchingSessionProvider } from '@/context/StretchingSessionContext';
 import { CookingSessionProvider } from '@/context/CookingSessionContext';
 import { supabase } from '@/lib/supabaseClient';
 import ErrorBoundary from "@/components/shared/ErrorBoundary";
@@ -35,15 +36,17 @@ export default function RootLayout({ children }) {
                 <WorkoutSessionProvider>
                   <CardioSessionProvider>
                     <SportsSessionProvider>
-                      <CookingSessionProvider>
+                      <StretchingSessionProvider>
+                        <CookingSessionProvider>
                         <ErrorBoundary>
                           <ToastContainer />
                           {children}
                         </ErrorBoundary>
                       </CookingSessionProvider>
-                    </SportsSessionProvider>
-                  </CardioSessionProvider>
-                </WorkoutSessionProvider>
+                    </StretchingSessionProvider>
+                  </SportsSessionProvider>
+                </CardioSessionProvider>
+              </WorkoutSessionProvider>
               </ToastProvider>
             </UserProvider>
           </SupabaseProvider>

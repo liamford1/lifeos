@@ -1,5 +1,6 @@
 import { supabase } from './supabaseClient';
 import { CALENDAR_SOURCES } from './utils/calendarUtils';
+import dayjs from 'dayjs';
 
 /**
  * Creates a calendar event for a given entity type and entity data.
@@ -52,13 +53,19 @@ export const createCalendarEventForEntity = async (type, entity) => {
         start_time = entity.start_time || new Date().toISOString();
         description = entity.description || '';
     }
+    // Set default end time to 1 hour after start time if not provided
+    let finalEndTime = end_time;
+    if (!finalEndTime && start_time) {
+      finalEndTime = dayjs(start_time).add(1, 'hour').toISOString();
+    }
+
     const { error } = await supabase.from('calendar_events').insert([
       {
         user_id: entity.user_id,
         title,
         description,
         start_time,
-        end_time,
+        end_time: finalEndTime,
         source: type,
         source_id: entity.id,
       },

@@ -1,4 +1,5 @@
 import { supabase } from '../supabaseClient'
+import dayjs from 'dayjs'
 
 // Constants for consistent source values
 export const CALENDAR_SOURCES = {
@@ -7,6 +8,7 @@ export const CALENDAR_SOURCES = {
   WORKOUT: 'workout',
   CARDIO: 'cardio',
   SPORT: 'sport',
+  STRETCHING: 'stretching',
   EXPENSE: 'expense',
   NOTE: 'note'
 }
@@ -29,6 +31,8 @@ export const getCalendarEventRoute = (source, source_id) => {
       return `/fitness` // Redirect to fitness page since cardio details are now in modal
     case CALENDAR_SOURCES.SPORT:
       return `/fitness/sports/${source_id}`
+    case CALENDAR_SOURCES.STRETCHING:
+      return `/fitness` // Redirect to fitness page since stretching details are now in modal
     case CALENDAR_SOURCES.EXPENSE:
       return `/finances/expenses/${source_id}`
     case CALENDAR_SOURCES.NOTE:
@@ -93,6 +97,8 @@ export const updateCalendarEventFromSource = async (source, source_id, updatedFi
   }
 }
 
+
+
 export const addCalendarEvent = async ({
   userId,
   title,
@@ -108,13 +114,19 @@ export const addCalendarEvent = async ({
     return { error: `Invalid source value: ${source}` }
   }
 
+  // Set default end time to 1 hour after start time if not provided
+  let finalEndTime = endTime;
+  if (!finalEndTime && startTime) {
+    finalEndTime = dayjs(startTime).add(1, 'hour').toISOString();
+  }
+
   const { error } = await supabase.from('calendar_events').insert([
     {
       user_id: userId,
       title,
       description,
       start_time: startTime,
-      end_time: endTime,
+      end_time: finalEndTime,
       source,
       source_id: sourceId,
     },

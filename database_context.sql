@@ -107,6 +107,23 @@ CREATE TABLE public.fitness_sports (
   CONSTRAINT fitness_sports_pkey PRIMARY KEY (id),
   CONSTRAINT fitness_sports_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id)
 );
+CREATE TABLE public.fitness_stretching (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  user_id uuid,
+  session_type text NOT NULL,
+  date date NOT NULL,
+  duration_minutes integer,
+  intensity_level text,
+  body_parts text,
+  notes text,
+  inserted_at timestamp with time zone DEFAULT timezone('utc'::text, now()),
+  status text DEFAULT 'completed'::text CHECK (status = ANY (ARRAY['planned'::text, 'completed'::text])),
+  start_time timestamp with time zone,
+  end_time timestamp with time zone,
+  in_progress boolean DEFAULT false,
+  CONSTRAINT fitness_stretching_pkey PRIMARY KEY (id),
+  CONSTRAINT fitness_stretching_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id)
+);
 CREATE TABLE public.fitness_workouts (
   id uuid NOT NULL DEFAULT uuid_generate_v4(),
   user_id uuid NOT NULL,
@@ -282,6 +299,9 @@ CREATE POLICY "User can access their own cardio sessions" ON public.fitness_card
 
 -- Fitness Sports
 CREATE POLICY "User can access their own sports logs" ON public.fitness_sports FOR ALL TO public USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+
+-- Fitness Stretching
+CREATE POLICY "User can access their own stretching sessions" ON public.fitness_stretching FOR ALL TO public USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 
 -- Profiles
 CREATE POLICY "Users can manage their own profile" ON public.profiles FOR ALL TO public USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);

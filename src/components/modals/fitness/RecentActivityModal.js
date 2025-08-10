@@ -13,6 +13,7 @@ import CardioDetailsModal from "./CardioDetailsModal";
 import { useWorkouts } from "@/lib/hooks/useWorkouts";
 import { useCardioSessions } from "@/lib/hooks/useCardioSessions";
 import { useSportsSessions } from "@/lib/hooks/useSportsSessions";
+import { useStretchingSessions } from "@/lib/hooks/useStretchingSessions";
 import { useSportsSession } from "@/context/SportsSessionContext";
 import dynamic from "next/dynamic";
 
@@ -30,6 +31,10 @@ const HeartPulse = dynamic(() => import("lucide-react/dist/esm/icons/heart-pulse
   loading: () => <span className="inline-block w-4 h-4" />,
 });
 const Goal = dynamic(() => import("lucide-react/dist/esm/icons/goal"), {
+  ssr: false,
+  loading: () => <span className="inline-block w-4 h-4" />,
+});
+const StretchHorizontal = dynamic(() => import("lucide-react/dist/esm/icons/stretch-horizontal"), {
   ssr: false,
   loading: () => <span className="inline-block w-4 h-4" />,
 });
@@ -62,7 +67,7 @@ function ActivitySkeleton() {
   );
 }
 
-export default function RecentActivityModal({ isOpen, onClose }) {
+export default function RecentActivityModal({ isOpen, onClose, onOpenStretchingModal }) {
   const { user } = useUser();
   const { activeSportsId } = useSportsSession();
   const router = useRouter();
@@ -71,6 +76,7 @@ export default function RecentActivityModal({ isOpen, onClose }) {
   const [workouts, setWorkouts] = useState([]);
   const [cardioSessions, setCardioSessions] = useState([]);
   const [sportsSessions, setSportsSessions] = useState([]);
+  const [stretchingSessions, setStretchingSessions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [hasInitialized, setHasInitialized] = useState(false);
   
@@ -88,6 +94,7 @@ export default function RecentActivityModal({ isOpen, onClose }) {
   const { fetchWorkouts, deleteWorkout } = useWorkouts();
   const { fetchCardioSessions, deleteCardioSession } = useCardioSessions();
   const { fetchSportsSessions, deleteSportsSession } = useSportsSessions();
+  const { fetchStretchingSessions, deleteStretchingSession } = useStretchingSessions();
 
   // Memoize user ID to prevent unnecessary re-renders
   const userId = useMemo(() => user?.id, [user?.id]);
@@ -102,15 +109,17 @@ export default function RecentActivityModal({ isOpen, onClose }) {
     setLoading(true);
 
     try {
-      const [workoutsData, cardioData, sportsData] = await Promise.all([
+      const [workoutsData, cardioData, sportsData, stretchingData] = await Promise.all([
         fetchWorkouts(userId),
         fetchCardioSessions(userId),
-        fetchSportsSessions(userId)
+        fetchSportsSessions(userId),
+        fetchStretchingSessions(userId)
       ]);
       
       setWorkouts(workoutsData || []);
       setCardioSessions(cardioData || []);
       setSportsSessions(sportsData || []);
+      setStretchingSessions(stretchingData || []);
       setLoading(false);
       setHasInitialized(true);
     } catch (error) {
@@ -118,7 +127,7 @@ export default function RecentActivityModal({ isOpen, onClose }) {
       setLoading(false);
       setHasInitialized(true);
     }
-  }, [userId, fetchWorkouts, fetchCardioSessions, fetchSportsSessions]);
+  }, [userId, fetchWorkouts, fetchCardioSessions, fetchSportsSessions, fetchStretchingSessions]);
 
   useEffect(() => {
     if (!isOpen || !user) return;
@@ -167,6 +176,19 @@ export default function RecentActivityModal({ isOpen, onClose }) {
     [deleteSportsSession, user],
   );
 
+  const handleDeleteStretching = useCallback(
+    async (id) => {
+      const confirm = window.confirm("Delete this stretching session?");
+      if (!confirm) return;
+      if (!user) return;
+      const success = await deleteStretchingSession(id, user.id);
+      if (success) {
+        setStretchingSessions((prev) => prev.filter((s) => s.id !== id));
+      }
+    },
+    [deleteStretchingSession, user],
+  );
+
   // Click handlers
   const handleWorkoutClick = useCallback((workoutId) => {
     setSelectedWorkoutId(workoutId);
@@ -193,11 +215,12 @@ export default function RecentActivityModal({ isOpen, onClose }) {
     const activities = [
       ...workouts.map(w => ({ ...w, type: 'workout', date: new Date(w.date), displayDate: w.date })),
       ...cardioSessions.map(c => ({ ...c, type: 'cardio', date: new Date(c.date), displayDate: c.date })),
-      ...sportsSessions.map(s => ({ ...s, type: 'sports', date: new Date(s.date), displayDate: s.date }))
+      ...sportsSessions.map(s => ({ ...s, type: 'sports', date: new Date(s.date), displayDate: s.date })),
+      ...stretchingSessions.map(s => ({ ...s, type: 'stretching', date: new Date(s.date), displayDate: s.date }))
     ];
     
     return activities.sort((a, b) => b.date - a.date);
-  }, [workouts, cardioSessions, sportsSessions]);
+  }, [workouts, cardioSessions, sportsSessions, stretchingSessions]);
 
   // Activity type configuration
   const activityConfig = useMemo(() => ({
@@ -227,8 +250,25 @@ export default function RecentActivityModal({ isOpen, onClose }) {
       onClick: (id) => router.push(`/fitness/sports/${id}`),
       onDelete: handleDeleteSports,
       onEdit: (id) => router.push(`/fitness/sports/${id}/edit`)
+    },
+    stretching: {
+      icon: StretchHorizontal,
+      iconColor: "text-blue-500",
+      bgColor: "bg-blue-500/10",
+      label: "Stretching",
+      onClick: (id) => {
+        if (onOpenStretchingModal) {
+          onOpenStretchingModal('view', id);
+        }
+      },
+      onDelete: handleDeleteStretching,
+      onEdit: (id) => {
+        if (onOpenStretchingModal) {
+          onOpenStretchingModal('edit', id);
+        }
+      }
     }
-  }), [handleWorkoutClick, handleCardioClick, handleDeleteWorkout, handleDeleteCardio, handleDeleteSports, router]);
+  }), [handleWorkoutClick, handleCardioClick, handleDeleteWorkout, handleDeleteCardio, handleDeleteSports, handleDeleteStretching, router, onOpenStretchingModal]);
 
 
 
@@ -326,6 +366,20 @@ export default function RecentActivityModal({ isOpen, onClose }) {
                         {activity.location && <p className="text-base mt-1">📍 {activity.location}</p>}
                         {activity.performance_notes && (
                           <p className="text-base mt-2">{activity.performance_notes}</p>
+                        )}
+                      </div>
+                    )}
+                    
+                    {activity.type === 'stretching' && (
+                      <div className="flex items-center gap-4 mt-2 text-sm text-gray-300">
+                        <span className="flex items-center gap-1">
+                          <Clock className="w-4 h-4" />
+                          {activity.duration_minutes ?? "-"} min
+                        </span>
+                        {activity.intensity_level && (
+                          <span className="text-xs px-2 py-1 rounded-full bg-gray-700">
+                            {activity.intensity_level}
+                          </span>
                         )}
                       </div>
                     )}

@@ -104,6 +104,8 @@ export default function FitnessHomeContent() {
   // Modal states
   const [showRecentActivityModal, setShowRecentActivityModal] = useState(false);
   const [showStretchingMobilityModal, setShowStretchingMobilityModal] = useState(false);
+  const [stretchingModalMode, setStretchingModalMode] = useState('list');
+  const [stretchingModalSessionId, setStretchingModalSessionId] = useState(null);
   const [showDailyActivityModal, setShowDailyActivityModal] = useState(false);
   const [showPlanWorkoutModal, setShowPlanWorkoutModal] = useState(false);
   const [showStartActivityModal, setShowStartActivityModal] = useState(false);
@@ -406,6 +408,23 @@ export default function FitnessHomeContent() {
                   </div>
                 </div>
               </button>
+              
+              <button
+                onClick={() => {
+                  setShowStartActivityModal(false);
+                  setStretchingModalMode('create');
+                  setShowStretchingMobilityModal(true);
+                }}
+                className="w-full p-4 bg-gray-800 rounded-lg hover:bg-gray-700 transition-all duration-200 border border-gray-600 hover:border-blue-500 group text-left"
+              >
+                <div className="flex items-center">
+                  <StretchHorizontal className="w-6 h-6 text-blue-500 mr-3 group-hover:scale-110 transition-transform" />
+                  <div>
+                    <span className="font-semibold text-lg block">Start Stretching</span>
+                    <div className="text-sm text-gray-400">Yoga, mobility, flexibility work</div>
+                  </div>
+                </div>
+              </button>
             </div>
           </div>
         </div>
@@ -661,7 +680,10 @@ export default function FitnessHomeContent() {
             </button>
             
             <button 
-              onClick={() => setShowStretchingMobilityModal(true)}
+              onClick={() => {
+                setStretchingModalMode('list');
+                setShowStretchingMobilityModal(true);
+              }}
               className="block p-5 bg-gray-800 rounded-lg hover:bg-gray-700 transition-all duration-200 border border-gray-600 hover:border-purple-500 group text-left w-full"
             >
               <StretchHorizontal className="w-6 h-6 text-purple-500 mb-3 group-hover:scale-110 transition-transform" />
@@ -714,12 +736,20 @@ export default function FitnessHomeContent() {
       {/* Fitness Modals */}
       <RecentActivityModal 
         isOpen={showRecentActivityModal} 
-        onClose={() => setShowRecentActivityModal(false)} 
+        onClose={() => setShowRecentActivityModal(false)}
+        onOpenStretchingModal={(mode, sessionId) => {
+          setStretchingModalMode(mode);
+          setStretchingModalSessionId(sessionId);
+          setShowRecentActivityModal(false);
+          setShowStretchingMobilityModal(true);
+        }}
       />
       
       <StretchingMobilityModal 
         isOpen={showStretchingMobilityModal} 
-        onClose={() => setShowStretchingMobilityModal(false)} 
+        onClose={() => setShowStretchingMobilityModal(false)}
+        initialMode={stretchingModalMode}
+        initialSessionId={stretchingModalSessionId}
       />
       
       <DailyActivityModal 

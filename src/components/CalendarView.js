@@ -168,12 +168,22 @@ export default function CalendarView() {
     // Use the date from the selection modal if available, otherwise use selectedDate
     const dateToUse = showSelectionModalForDate || selectedDate;
     const dateStr = dayjs(dateToUse).format('YYYY-MM-DD');
+    const startTime = `${dateStr}T${newEvent.start_time}`;
+    
+    // Set default end time to 1 hour after start time if not provided
+    let endTime = null;
+    if (newEvent.end_time) {
+      endTime = `${dateStr}T${newEvent.end_time}`;
+    } else {
+      endTime = dayjs(startTime).add(1, 'hour').toISOString();
+    }
+    
     const payload = {
       user_id: user.id,
       title: newEvent.title,
       description: newEvent.description || null,
-      start_time: `${dateStr}T${newEvent.start_time}`,
-      end_time: newEvent.end_time ? `${dateStr}T${newEvent.end_time}` : null,
+      start_time: startTime,
+      end_time: endTime,
     };
 
     try {

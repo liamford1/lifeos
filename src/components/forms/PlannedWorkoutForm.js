@@ -89,6 +89,12 @@ export default function PlannedWorkoutForm({ onSuccess }) {
           throw error
       }
 
+      // Set default end time to 1 hour after start time if not provided
+      let finalEndTime = formData.endTime;
+      if (!finalEndTime && formData.startTime) {
+        finalEndTime = dayjs(formData.startTime).add(1, 'hour').toISOString();
+      }
+
       // Create calendar event
       const calendarSource = formData.type === 'workout' ? CALENDAR_SOURCES.WORKOUT
                           : formData.type === 'cardio' ? CALENDAR_SOURCES.CARDIO
@@ -106,7 +112,7 @@ export default function PlannedWorkoutForm({ onSuccess }) {
               performance_notes: formData.type === 'sports' ? formData.notes : undefined,
               date: formData.startTime ? formData.startTime.split('T')[0] : new Date().toISOString().split('T')[0],
               start_time: formData.startTime || null,
-              end_time: formData.endTime || null,
+              end_time: finalEndTime,
           }
       )
 
