@@ -34,12 +34,14 @@
     ]
   },
   "include": [
-    "e2e/**/*",
     "src/**/*",
     ".next/types/**/*.ts"
   ],
   "exclude": [
     "node_modules",
-    ".next"
+    ".next",
+    "e2e",
+    "playwright-report",
+    "test-results"
   ]
 }

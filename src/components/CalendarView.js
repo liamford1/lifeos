@@ -143,7 +143,7 @@ export default function CalendarView() {
         customMessage: 'Failed to move event. Changes reverted.' 
       });
     }
-  }, [events, user, queryClient, handleError, handleSuccess]);
+  }, [events, user, queryClient, handleError, showSuccess]);
 
   const { draggingId, startDrag, moveDrag, endDrag, isDragging } = useCalendarDragAndDrop({
     onDrop: handleEventDrop
