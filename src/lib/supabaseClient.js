@@ -5,7 +5,7 @@ export const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 );
 
-// ✅ Expose in browser context for Playwright
+// ✅ Expose in browser context for testing
 if (typeof window !== 'undefined' && !window.supabase) {
   window.supabase = supabase;
 }

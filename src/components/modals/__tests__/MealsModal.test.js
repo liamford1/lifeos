@@ -155,7 +155,16 @@ describe('MealsModal', () => {
       />
     );
 
-    const deleteButtons = screen.getAllByLabelText('delete');
+    // Check that there are meal items with delete functionality
+    const mealItems = screen.getAllByText(/Test Meal/);
+    expect(mealItems).toHaveLength(2);
+    
+    // Check that delete buttons are present (they have trash icons)
+    const allButtons = screen.getAllByRole('button');
+    const deleteButtons = allButtons.filter(button => 
+      button.querySelector('svg') && 
+      button.querySelector('svg').innerHTML.includes('M3 6h18')
+    );
     expect(deleteButtons).toHaveLength(2);
   });
 }); 
