@@ -1,16 +1,19 @@
 "use client";
 
-import { useEffect, useState, useCallback, useMemo, useRef } from 'react';
-import { useRouter } from 'next/navigation';
-import { useUser } from '@/context/UserContext';
-import LoadingSpinner from '@/components/shared/LoadingSpinner';
-import Button from '@/components/shared/Button';
-import SharedDeleteButton from '@/components/SharedDeleteButton';
-import EditButton from '@/components/EditButton';
-import BaseModal from '@/components/shared/BaseModal';
-import { useWorkouts } from '@/lib/hooks/useWorkouts';
+import { useEffect, useState, useCallback, useMemo, useRef } from "react";
+import { useRouter } from "next/navigation";
+import { useUser } from "@/context/UserContext";
+import LoadingSpinner from "@/components/shared/LoadingSpinner";
+import Button from "@/components/shared/Button";
+import SharedDeleteButton from "@/components/SharedDeleteButton";
+import EditButton from "@/components/EditButton";
+import BaseModal from "@/components/shared/BaseModal";
+import { useWorkouts } from "@/lib/hooks/useWorkouts";
 import dynamic from "next/dynamic";
-const Dumbbell = dynamic(() => import("lucide-react/dist/esm/icons/dumbbell"), { ssr: false, loading: () => <span className="inline-block w-4 h-4" /> });
+const Dumbbell = dynamic(() => import("lucide-react/dist/esm/icons/dumbbell"), {
+  ssr: false,
+  loading: () => <span className="inline-block w-4 h-4" />,
+});
 
 // Skeleton component for workout items
 function WorkoutSkeleton() {
@@ -35,7 +38,7 @@ export default function WorkoutsModal({ isOpen, onClose }) {
   const [hasInitialized, setHasInitialized] = useState(false);
   const fetchedRef = useRef({ userId: null, done: false });
   const { fetchWorkouts, deleteWorkout } = useWorkouts();
-  
+
   // Memoize fetchWorkouts to avoid unnecessary effect reruns
   const memoizedFetchWorkouts = useCallback(fetchWorkouts, [fetchWorkouts]);
 
@@ -48,16 +51,16 @@ export default function WorkoutsModal({ isOpen, onClose }) {
       setHasInitialized(true);
       return;
     }
-    
+
     setWorkoutsLoading(true);
-    
+
     try {
       const data = await memoizedFetchWorkouts(userId);
       setWorkouts(data || []);
       setWorkoutsLoading(false);
       setHasInitialized(true);
     } catch (error) {
-      console.error('Error loading workouts:', error);
+      console.error("Error loading workouts:", error);
       setWorkoutsLoading(false);
       setHasInitialized(true);
     }
@@ -65,22 +68,26 @@ export default function WorkoutsModal({ isOpen, onClose }) {
 
   useEffect(() => {
     if (!isOpen || !user) return;
-    if (fetchedRef.current.done && fetchedRef.current.userId === user.id) return;
+    if (fetchedRef.current.done && fetchedRef.current.userId === user.id)
+      return;
     fetchedRef.current = { userId: user.id, done: true };
     loadWorkouts();
   }, [isOpen, user, loadWorkouts]);
 
-  const handleDelete = useCallback(async (id) => {
-    const confirm = window.confirm('Delete this workout?');
-    if (!confirm) return;
-    const success = await deleteWorkout(id);
-    if (success) {
-      setWorkouts((prev) => prev.filter((w) => w.id !== id));
-    }
-  }, [deleteWorkout]);
+  const handleDelete = useCallback(
+    async (id) => {
+      const confirm = window.confirm("Delete this workout?");
+      if (!confirm) return;
+      const success = await deleteWorkout(id);
+      if (success) {
+        setWorkouts((prev) => prev.filter((w) => w.id !== id));
+      }
+    },
+    [deleteWorkout],
+  );
 
   const handleStartWorkout = useCallback(() => {
-    router.push('/fitness/workouts/live');
+    router.push("/fitness/workouts/live");
   }, [router]);
 
   // Determine what to render - memoized to prevent unnecessary re-renders
@@ -91,25 +98,29 @@ export default function WorkoutsModal({ isOpen, onClose }) {
         <WorkoutSkeleton key={`skeleton-${index}`} />
       ));
     }
-    
+
     if (workoutsLoading) {
       return Array.from({ length: 3 }).map((_, index) => (
         <WorkoutSkeleton key={`skeleton-${index}`} />
       ));
     }
-    
+
     if (!user) {
       return <div data-testid="workouts-no-user" />;
     }
-    
+
     if (workouts.length === 0) {
       return (
         <div className="border p-8 rounded shadow-sm text-center">
-          <p className="text-muted-foreground text-sm mb-4" data-testid="workouts-empty">
-            No entries yet. Click &quot;Start Workout&quot; to begin tracking your first session.
+          <p
+            className="text-muted-foreground text-sm mb-4"
+            data-testid="workouts-empty"
+          >
+            No entries yet. Click &quot;Start Workout&quot; to begin tracking
+            your first session.
           </p>
-          <Button 
-            variant="primary" 
+          <Button
+            variant="primary"
             className="flex items-center gap-2 mx-auto"
             onClick={handleStartWorkout}
           >
@@ -119,7 +130,7 @@ export default function WorkoutsModal({ isOpen, onClose }) {
         </div>
       );
     }
-    
+
     return workouts.map((w) => (
       <li key={w.id} className="border p-3 rounded shadow-sm">
         <div
@@ -144,7 +155,15 @@ export default function WorkoutsModal({ isOpen, onClose }) {
         </div>
       </li>
     ));
-  }, [hasInitialized, workoutsLoading, user, workouts, router, handleDelete, handleStartWorkout]);
+  }, [
+    hasInitialized,
+    workoutsLoading,
+    user,
+    workouts,
+    router,
+    handleDelete,
+    handleStartWorkout,
+  ]);
 
   if (!isOpen) return null;
 
@@ -155,17 +174,17 @@ export default function WorkoutsModal({ isOpen, onClose }) {
       title="Workouts"
       subtitle="Track your weightlifting and strength training sessions"
       icon={Dumbbell}
-      iconBgColor="bg-blue-500/10"
-      iconColor="text-blue-500"
+      iconBgColor="bg-green-500/10"
+      iconColor="text-green-500"
       maxWidth="max-w-4xl"
       data-testid="workouts-modal"
     >
       {/* Start Workout Button */}
-      <div className="flex justify-center">
+      <div className="flex justify-end gap-3">
         <Button
           onClick={handleStartWorkout}
           variant="primary"
-          size="lg"
+          size="md"
           className="flex items-center gap-2"
         >
           <Dumbbell className="w-4 h-4" />
@@ -174,9 +193,12 @@ export default function WorkoutsModal({ isOpen, onClose }) {
       </div>
 
       {/* Workout History */}
-      <div className="space-y-3 min-h-[300px] relative" data-testid="workout-list">
+      <div
+        className="space-y-3 min-h-[300px] relative"
+        data-testid="workout-list"
+      >
         {content}
       </div>
     </BaseModal>
   );
-} 
+}
