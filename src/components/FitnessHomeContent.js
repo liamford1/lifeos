@@ -31,6 +31,7 @@ import SportsActivitiesModal from '@/components/modals/fitness/SportsActivitiesM
 import StretchingMobilityModal from '@/components/modals/fitness/StretchingMobilityModal';
 import DailyActivityModal from '@/components/modals/fitness/DailyActivityModal';
 import PlanWorkoutModal from '@/components/modals/fitness/PlanWorkoutModal';
+import { useSportsSession } from '@/context/SportsSessionContext';
 
 // Skeleton components for dashboard sections
 function MetricsSkeleton() {
@@ -94,6 +95,7 @@ export default function FitnessHomeContent() {
   const { showSuccess, showError } = useToast();
   const { refreshWorkout } = useWorkoutSession();
   const { refreshCardio } = useCardioSession();
+  const { refreshSports } = useSportsSession();
   
   const [cardioData, setCardioData] = useState([]);
   const [workoutData, setWorkoutData] = useState([]);
@@ -107,6 +109,7 @@ export default function FitnessHomeContent() {
   const [showStretchingMobilityModal, setShowStretchingMobilityModal] = useState(false);
   const [showDailyActivityModal, setShowDailyActivityModal] = useState(false);
   const [showPlanWorkoutModal, setShowPlanWorkoutModal] = useState(false);
+  const [showStartActivityModal, setShowStartActivityModal] = useState(false);
 
   // Inline form states
   const [showWorkoutForm, setShowWorkoutForm] = useState(false);
@@ -328,26 +331,89 @@ export default function FitnessHomeContent() {
           Fitness Dashboard
         </h1>
         
-        {/* Quick Start Buttons */}
+        {/* Start Activity Button */}
         <div className="flex gap-3">
           <Button 
-            onClick={() => setShowWorkoutForm(true)}
+            onClick={() => setShowStartActivityModal(true)}
             variant="primary"
             className="flex items-center gap-2"
+            data-testid="start-activity-button"
           >
-            <Dumbbell className="w-4 h-4" />
-            Start Workout
-          </Button>
-          <Button 
-            onClick={() => setShowCardioForm(true)}
-            variant="success"
-            className="flex items-center gap-2"
-          >
-            <HeartPulse className="w-4 h-4" />
-            Start Cardio
+            <Activity className="w-4 h-4" />
+            Start Activity
           </Button>
         </div>
       </div>
+
+      {/* Start Activity Modal */}
+      {showStartActivityModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-surface rounded-xl p-6 w-full max-w-md border border-gray-700">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-semibold flex items-center">
+                <Activity className="w-5 h-5 text-blue-500 mr-2" />
+                Start New Activity
+              </h2>
+              <button
+                onClick={() => setShowStartActivityModal(false)}
+                className="text-gray-400 hover:text-white"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="space-y-3">
+              <button
+                onClick={() => {
+                  setShowStartActivityModal(false);
+                  setShowWorkoutForm(true);
+                }}
+                className="w-full p-4 bg-gray-800 rounded-lg hover:bg-gray-700 transition-all duration-200 border border-gray-600 hover:border-blue-500 group text-left"
+              >
+                <div className="flex items-center">
+                  <Dumbbell className="w-6 h-6 text-blue-500 mr-3 group-hover:scale-110 transition-transform" />
+                  <div>
+                    <span className="font-semibold text-lg block">Start Workout</span>
+                    <div className="text-sm text-gray-400">Weight training, strength exercises</div>
+                  </div>
+                </div>
+              </button>
+              
+              <button
+                onClick={() => {
+                  setShowStartActivityModal(false);
+                  setShowCardioForm(true);
+                }}
+                className="w-full p-4 bg-gray-800 rounded-lg hover:bg-gray-700 transition-all duration-200 border border-gray-600 hover:border-red-500 group text-left"
+              >
+                <div className="flex items-center">
+                  <HeartPulse className="w-6 h-6 text-red-500 mr-3 group-hover:scale-110 transition-transform" />
+                  <div>
+                    <span className="font-semibold text-lg block">Start Cardio</span>
+                    <div className="text-sm text-gray-400">Running, cycling, swimming</div>
+                  </div>
+                </div>
+              </button>
+              
+              <button
+                onClick={() => {
+                  setShowStartActivityModal(false);
+                  router.push('/fitness/sports/live');
+                }}
+                className="w-full p-4 bg-gray-800 rounded-lg hover:bg-gray-700 transition-all duration-200 border border-gray-600 hover:border-green-500 group text-left"
+              >
+                <div className="flex items-center">
+                  <Goal className="w-6 h-6 text-green-500 mr-3 group-hover:scale-110 transition-transform" />
+                  <div>
+                    <span className="font-semibold text-lg block">Start Sports</span>
+                    <div className="text-sm text-gray-400">Basketball, soccer, tennis, golf</div>
+                  </div>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Inline Workout Form Modal */}
       {showWorkoutForm && (
@@ -656,28 +722,12 @@ export default function FitnessHomeContent() {
           </p>
           <div className="flex flex-wrap justify-center gap-3">
             <Button 
-              onClick={() => setShowWorkoutForm(true)}
+              onClick={() => setShowStartActivityModal(true)}
               variant="primary"
               className="flex items-center gap-2"
             >
-              <Dumbbell className="w-4 h-4" />
-              Start Workout
-            </Button>
-            <Button 
-              onClick={() => setShowCardioForm(true)}
-              variant="success"
-              className="flex items-center gap-2"
-            >
-              <HeartPulse className="w-4 h-4" />
-              Start Cardio
-            </Button>
-            <Button 
-              onClick={() => setShowSportsActivitiesModal(true)}
-              variant="success"
-              className="flex items-center gap-2"
-            >
-              <Goal className="w-4 h-4" />
-              Add Sports
+              <Activity className="w-4 h-4" />
+              Start Activity
             </Button>
           </div>
         </div>

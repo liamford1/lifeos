@@ -1,4 +1,5 @@
 import Button from '@/components/shared/Button';
+import { Pencil } from 'lucide-react';
 
 export default function EditButton({ href, onClick, size = "sm", className = "", iconOnly = false }) {
   return (
@@ -10,10 +11,10 @@ export default function EditButton({ href, onClick, size = "sm", className = "",
       aria-label={iconOnly ? "Edit" : undefined}
     >
       {iconOnly ? (
-        <span role="img" aria-label="edit" className="text-sm">✏️</span>
+        <Pencil className="w-3 h-3" />
       ) : (
         <>
-          <span role="img" aria-label="edit" className="mr-1">✏️</span>
+          <Pencil className="w-3 h-3 mr-1" />
           Edit
         </>
       )}

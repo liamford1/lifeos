@@ -1,5 +1,6 @@
 import React from 'react';
 import Button from './shared/Button';
+import { Trash2 } from 'lucide-react';
 
 export default function SharedDeleteButton({
   onClick,
@@ -20,10 +21,10 @@ export default function SharedDeleteButton({
       {...rest}
     >
       {iconOnly ? (
-        <span role="img" aria-label="delete" className="text-sm">🗑️</span>
+        <Trash2 className="w-3 h-3" />
       ) : (
         <>
-          {icon && <span role="img" aria-label="delete" className="mr-1">🗑️</span>}
+          {icon && <Trash2 className="w-3 h-3 mr-1" />}
           {label}
         </>
       )}
