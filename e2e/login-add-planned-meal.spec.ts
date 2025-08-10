@@ -91,7 +91,9 @@ test('Meal planning workflow: plan and verify meal', async ({ page }) => {
   await expect(page.locator('text=Meal planned successfully!')).toBeVisible({ timeout: 5000 });
   
   // Wait for the planned meal to appear in the Upcoming Planned Meals section
-  const plannedMealCard = page.getByTestId(/planned-meal-card-/).filter({ hasText: testMealName }).first();
+  // Scope to the modal to avoid strict-mode violations with multiple matches
+  const modal = page.getByRole('dialog');
+  const plannedMealCard = modal.getByTestId(/planned-meal-card-/).filter({ hasText: testMealName }).first();
   await expect(plannedMealCard).toBeVisible({ timeout: 10000 });
   await expect(plannedMealCard.locator('div.font-medium')).toHaveText(testMealName);
   await expect(plannedMealCard.locator('div.text-sm.text-gray-400')).toHaveText(/Dinner/i);
@@ -112,7 +114,9 @@ test('Meal planning workflow: plan and verify meal', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Plan a Meal' })).toBeVisible();
   
   // Wait for the planned meal to appear in the Upcoming Planned Meals section
-  const plannedMealCardAfterReload = page.getByTestId(/planned-meal-card-/).filter({ hasText: testMealName }).first();
+  // Scope to the modal to avoid strict-mode violations with multiple matches
+  const modalAfterReload = page.getByRole('dialog');
+  const plannedMealCardAfterReload = modalAfterReload.getByTestId(/planned-meal-card-/).filter({ hasText: testMealName }).first();
   await expect(plannedMealCardAfterReload).toBeVisible({ timeout: 10000 });
   await expect(plannedMealCardAfterReload.locator('div.font-medium')).toHaveText(testMealName);
   await expect(plannedMealCardAfterReload.locator('div.text-sm.text-gray-400')).toHaveText(/Dinner/i);
@@ -158,7 +162,8 @@ test('Meal planning workflow: plan and verify meal', async ({ page }) => {
       await page.goto('http://localhost:3000/food');
       await page.getByRole('button', { name: /plan weekly meals/i }).click();
       await expect(page.getByRole('heading', { name: 'Plan a Meal' })).toBeVisible();
-      const plannedMealCard = page.getByTestId(/planned-meal-card-/).filter({ hasText: testMealName }).first();
+      const modalForCalendar = page.getByRole('dialog');
+      const plannedMealCard = modalForCalendar.getByTestId(/planned-meal-card-/).filter({ hasText: testMealName }).first();
       await expect(plannedMealCard).toBeVisible({ timeout: 10000 });
       // Note: We can't click on the planned meal card in the modal to navigate to detail page
       // The modal doesn't support navigation to detail pages
@@ -197,7 +202,8 @@ test('Meal planning workflow: plan and verify meal', async ({ page }) => {
   await expect(page.getByRole('heading', { name: 'Plan a Meal' })).toBeVisible();
   
   // Look for the specific meal card
-  const plannedMealCardForDelete = page.getByTestId(/planned-meal-card-/).filter({ hasText: testMealName }).first();
+  const modalForDelete = page.getByRole('dialog');
+  const plannedMealCardForDelete = modalForDelete.getByTestId(/planned-meal-card-/).filter({ hasText: testMealName }).first();
   await expect(plannedMealCardForDelete).toBeVisible({ timeout: 10000 });
   const deleteButton = plannedMealCardForDelete.getByRole('button', { name: /delete/i });
   await expect(deleteButton).toBeVisible({ timeout: 5000 });
@@ -213,7 +219,8 @@ test('Meal planning workflow: plan and verify meal', async ({ page }) => {
   }
   
   // Wait for the planned meal to be removed
-  await expect(page.getByTestId(/planned-meal-card-/).filter({ hasText: testMealName })).not.toBeVisible({ timeout: 10000 });
+  const modalForCheck = page.getByRole('dialog');
+  await expect(modalForCheck.getByTestId(/planned-meal-card-/).filter({ hasText: testMealName })).not.toBeVisible({ timeout: 10000 });
 
   // Skip the complex meal deletion from meals modal - use cleanup function instead
   // The test has successfully verified the meal planning workflow
@@ -223,7 +230,8 @@ test('Meal planning workflow: plan and verify meal', async ({ page }) => {
   await page.getByRole('button', { name: /plan weekly meals/i }).click();
   await expect(page.getByRole('heading', { name: 'Plan a Meal' })).toBeVisible();
   await expect(page.getByRole('heading', { name: /upcoming planned meals/i })).toBeVisible({ timeout: 10000 });
-  await expect(page.getByTestId(/planned-meal-card-/)).not.toBeVisible({ timeout: 10000 });
+  const finalModal = page.getByRole('dialog');
+  await expect(finalModal.getByTestId(/planned-meal-card-/)).not.toBeVisible({ timeout: 10000 });
 
   // Clean up test data
   await cleanupTestMeal(page, testMealName);

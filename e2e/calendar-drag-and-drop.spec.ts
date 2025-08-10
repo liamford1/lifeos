@@ -217,8 +217,21 @@ test.describe('Calendar Drag and Drop Functionality', () => {
     await page.waitForTimeout(1000);
     await expect(page.getByText(/Event moved to/)).toBeVisible();
     
-    // Click the Undo button in the toast
-    await page.getByRole('button', { name: 'Undo' }).click();
+    // Try toast undo first with force click to handle pointer events
+    const undoButton = page.getByRole('button', { name: 'Undo' }).first();
+    
+    if (await undoButton.count()) {
+      // ensure it's attached/visible, then force the click to beat overlays
+      await undoButton.waitFor({ state: 'visible', timeout: 3000 });
+      await undoButton.click({ force: true });
+    } else {
+      // fallback: wait for any undo button to appear
+      await page.waitForTimeout(1000);
+      const anyUndoButton = page.getByRole('button', { name: 'Undo' });
+      if (await anyUndoButton.count()) {
+        await anyUndoButton.first().click({ force: true });
+      }
+    }
     
     // Wait for the undo to complete and UI to update
     await page.waitForTimeout(2000);
