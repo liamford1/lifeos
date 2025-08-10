@@ -68,14 +68,13 @@ test.describe('Login and add workout', () => {
         .eq('in_progress', true);
     });
 
-    // Navigate to Fitness dashboard and open Workouts modal, then start a workout
+    // Navigate to Fitness dashboard and start a workout directly
     await page.goto('http://localhost:3000/fitness');
     await expect(page.getByTestId('home-header')).toBeVisible();
-    // Open Workouts modal
-    await page.getByRole('button', { name: /view workouts/i }).click();
-    await expect(page.getByTestId('workouts-modal')).toBeVisible();
-    // Click the "Start New Workout" button to go to the live page
-    await page.getByRole('button', { name: /start new workout/i }).click();
+    // Click the "Start Activity" button to open the activity selection modal
+    await page.getByTestId('start-activity-button').click();
+    // Click "Start Workout" from the activity selection modal
+    await page.getByRole('button', { name: /Start Workout/i }).click();
     await page.waitForURL(/\/fitness\/workouts\/live$/, { timeout: 10000 });
     await expect(page).toHaveURL(/\/fitness\/workouts\/live$/);
 

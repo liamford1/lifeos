@@ -1,0 +1,88 @@
+# Page snapshot
+
+```yaml
+- alert
+- button "Open Next.js Dev Tools":
+  - img
+- navigation:
+  - text: LifeOS
+  - button "Profile":
+    - img
+  - paragraph:
+    - text: Signed in as
+    - strong: test@example.com
+  - button "Log Out"
+- complementary:
+  - navigation:
+    - list:
+      - listitem:
+        - link "Home":
+          - /url: /
+          - img
+          - text: Home
+      - listitem:
+        - link "Food":
+          - /url: /food
+          - img
+          - text: Food
+      - listitem:
+        - link "Fitness":
+          - /url: /fitness
+          - img
+          - text: Fitness
+      - listitem:
+        - link "Finances":
+          - /url: /finances
+          - img
+          - text: Finances
+      - listitem:
+        - link "Scratchpad":
+          - /url: /scratchpad
+          - img
+          - text: Scratchpad
+      - listitem:
+        - link "Profile":
+          - /url: /profile
+          - img
+          - text: Profile
+- main:
+  - heading "Fitness Dashboard" [level=1]
+  - button "Start Activity"
+  - heading "Calories Burned" [level=2]
+  - text: "0"
+  - paragraph: Chart placeholder
+  - paragraph: Calories over time visualization
+  - heading "Workout Consistency" [level=2]
+  - text: "0"
+  - paragraph: Chart placeholder
+  - paragraph: Workouts per week visualization
+  - paragraph: This Week
+  - paragraph: "0"
+  - paragraph: Workouts
+  - paragraph: This Week
+  - paragraph: "0"
+  - paragraph: Calories Burned
+  - paragraph: Most Common
+  - paragraph: Test-Run-1754801143079-h9jc73
+  - paragraph: Activity Type
+  - paragraph: This Week
+  - paragraph: "1"
+  - paragraph: Cardio & Sports
+  - heading "Fitness Tools" [level=2]
+  - button "Recent Activity All workouts, cardio & sports"
+  - button "Stretching / Mobility Yoga, rehab, cooldowns"
+  - button "Daily Activity Steps, mood, energy"
+  - button "Plan Workouts Schedule fitness sessions"
+- dialog "Recent Activity":
+  - heading "Recent Activity" [level=2]
+  - paragraph: View your workouts, cardio sessions, and sports activities
+  - button "Close modal":
+    - img
+  - button "Start New Activity"
+  - heading "Test-Run-1754801143079-h9jc73" [level=3]
+  - text: Cardio
+  - paragraph: 2025-08-10
+  - text: 0 min Test Park
+  - button "Edit"
+  - button "Delete cardio entry"
+```
