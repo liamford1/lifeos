@@ -289,7 +289,7 @@ export default function CalendarView() {
       } else {
         // If it's completed/in-progress, route to the overview page
         const routeMap = {
-          'workout': `/fitness/workouts/${event.source_id}`,
+          'workout': `/fitness`, // Redirect to fitness page since workout details are now in modal
           'cardio': `/fitness/cardio/${event.source_id}`,
           'sport': `/fitness/sports/${event.source_id}`
         };

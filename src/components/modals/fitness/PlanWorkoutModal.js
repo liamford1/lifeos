@@ -45,9 +45,9 @@ export default function PlanWorkoutModal({ isOpen, onClose }) {
         <div className="flex justify-end gap-3">
           <Button
             onClick={() => setShowForm(!showForm)}
-            variant="primary"
+            variant="secondary"
             size="md"
-            className="flex items-center gap-2"
+            className="flex items-center justify-center gap-2"
           >
             <Calendar className="w-4 h-4" />
             {showForm ? "Cancel" : "+ Add Planned Activity"}

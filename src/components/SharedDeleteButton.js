@@ -7,6 +7,7 @@ export default function SharedDeleteButton({
   icon = true,
   size = 'sm',
   className = '',
+  iconOnly = false,
   ...rest
 }) {
   return (
@@ -14,11 +15,18 @@ export default function SharedDeleteButton({
       variant="danger"
       size={size}
       onClick={onClick}
-      className={className}
+      className={`${iconOnly ? 'p-2 min-w-0' : ''} ${className}`}
+      aria-label={iconOnly ? "Delete" : undefined}
       {...rest}
     >
-      {icon && <span role="img" aria-label="delete" className="mr-1">🗑️</span>}
-      {label}
+      {iconOnly ? (
+        <span role="img" aria-label="delete" className="text-sm">🗑️</span>
+      ) : (
+        <>
+          {icon && <span role="img" aria-label="delete" className="mr-1">🗑️</span>}
+          {label}
+        </>
+      )}
     </Button>
   );
 } 

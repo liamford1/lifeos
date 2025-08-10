@@ -1,0 +1,514 @@
+<testsuites id="" name="" tests="34" failures="1" skipped="0" errors="0" time="367.703182">
+<testsuite name="basic-test.spec.ts" timestamp="2025-08-10T03:21:24.068Z" hostname="chromium" tests="1" failures="0" skipped="0" time="2.886" errors="0">
+<testcase name="Basic page load test" classname="basic-test.spec.ts" time="2.886">
+</testcase>
+</testsuite>
+<testsuite name="calendar-day-plus-button.spec.ts" timestamp="2025-08-10T03:21:24.068Z" hostname="chromium" tests="6" failures="0" skipped="0" time="15.929" errors="0">
+<testcase name="Calendar Day Plus Button Functionality › Plus button appears on selected day and opens planning modal" classname="calendar-day-plus-button.spec.ts" time="5.013">
+</testcase>
+<testcase name="Calendar Day Plus Button Functionality › General Event option opens add event modal with pre-selected date" classname="calendar-day-plus-button.spec.ts" time="1.615">
+</testcase>
+<testcase name="Calendar Day Plus Button Functionality › Meal option opens meal planning modal with selected date" classname="calendar-day-plus-button.spec.ts" time="1.562">
+</testcase>
+<testcase name="Calendar Day Plus Button Functionality › Workout option navigates to fitness planner with selected date" classname="calendar-day-plus-button.spec.ts" time="3.998">
+</testcase>
+<testcase name="Calendar Day Plus Button Functionality › Plus button only appears on selected day" classname="calendar-day-plus-button.spec.ts" time="2.173">
+</testcase>
+<testcase name="Calendar Day Plus Button Functionality › Cancel button closes the modal" classname="calendar-day-plus-button.spec.ts" time="1.568">
+</testcase>
+</testsuite>
+<testsuite name="calendar-drag-and-drop.spec.ts" timestamp="2025-08-10T03:21:24.068Z" hostname="chromium" tests="6" failures="0" skipped="0" time="25.718" errors="0">
+<testcase name="Calendar Drag and Drop Functionality › @calendar-dnd drag event to new day updates DB and UI" classname="calendar-drag-and-drop.spec.ts" time="4.396">
+</testcase>
+<testcase name="Calendar Drag and Drop Functionality › @calendar-dnd undo reverts move" classname="calendar-drag-and-drop.spec.ts" time="6.462">
+</testcase>
+<testcase name="Calendar Drag and Drop Functionality › @calendar-dnd drag handle only appears on hover" classname="calendar-drag-and-drop.spec.ts" time="3.742">
+</testcase>
+<testcase name="Calendar Drag and Drop Functionality › @calendar-dnd keyboard accessibility" classname="calendar-drag-and-drop.spec.ts" time="3.378">
+</testcase>
+<testcase name="Calendar Drag and Drop Functionality › @drag-handle-visibility drag handle appears only on hover/focus/drag" classname="calendar-drag-and-drop.spec.ts" time="3.767">
+</testcase>
+<testcase name="Calendar Drag and Drop Functionality › @drag-handle-keyboard keyboard navigation works for drag handle" classname="calendar-drag-and-drop.spec.ts" time="3.973">
+</testcase>
+</testsuite>
+<testsuite name="calendar-meal-click.spec.ts" timestamp="2025-08-10T03:21:24.068Z" hostname="chromium" tests="2" failures="0" skipped="0" time="14.545" errors="0">
+<testcase name="Calendar Meal Click Behavior › Clicking meal event on calendar navigates to cook page" classname="calendar-meal-click.spec.ts" time="7.398">
+</testcase>
+<testcase name="Calendar Meal Click Behavior › Clicking meal event in day view list navigates to cook page" classname="calendar-meal-click.spec.ts" time="7.147">
+</testcase>
+</testsuite>
+<testsuite name="cardio-session.spec.ts" timestamp="2025-08-10T03:21:24.068Z" hostname="chromium" tests="1" failures="0" skipped="0" time="34.637" errors="0">
+<testcase name="Cardio Session Tests › Complete Cardio Session Lifecycle" classname="cardio-session.spec.ts" time="34.637">
+<system-out>
+<![CDATA[[BROWSER LOG] log: [Client Instrumentation Hook] Slow execution detected: 41ms (Note: Code download overhead is not included in this measurement)
+[BROWSER LOG] info: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[BROWSER LOG] log: [E2E] Cleaning up cardio sessions for user: 0f3a417b-077d-4868-acef-9d79ada0945b
+[BROWSER LOG] log: [E2E] All cardio sessions before cleanup: []
+[BROWSER LOG] log: [E2E] Successfully cleaned up ALL cardio sessions
+[BROWSER LOG] log: [E2E] Remaining cardio sessions after cleanup: []
+[E2E] Sessions in database after cleanup: []
+[E2E] Number of sessions shown in UI: [33m0[39m
+[E2E] Start New Cardio Session button visible: [33mtrue[39m
+[E2E] Empty state message visible: [33mtrue[39m
+[BROWSER LOG] log: [Fast Refresh] rebuilding
+[BROWSER LOG] log: [Fast Refresh] done in 875ms
+[BROWSER LOG] log: [Fast Refresh] rebuilding
+[BROWSER LOG] log: [Fast Refresh] done in 1095ms
+[BROWSER LOG] log: [Fast Refresh] rebuilding
+[BROWSER LOG] log: [Fast Refresh] done in 825ms
+[BROWSER LOG] log: [Client Instrumentation Hook] Slow execution detected: 40ms (Note: Code download overhead is not included in this measurement)
+[BROWSER LOG] info: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[BROWSER LOG] log: [Fast Refresh] rebuilding
+[BROWSER LOG] log: [Fast Refresh] done in 884ms
+[BROWSER LOG] log: [Fast Refresh] rebuilding
+[BROWSER LOG] log: [Fast Refresh] done in 925ms
+[BROWSER LOG] log: [Client Instrumentation Hook] Slow execution detected: 43ms (Note: Code download overhead is not included in this measurement)
+[BROWSER LOG] info: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[BROWSER LOG] log: [Client Instrumentation Hook] Slow execution detected: 38ms (Note: Code download overhead is not included in this measurement)
+[BROWSER LOG] info: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="enhanced-plus-button.spec.ts" timestamp="2025-08-10T03:21:24.068Z" hostname="chromium" tests="6" failures="0" skipped="0" time="12.022" errors="0">
+<testcase name="Enhanced Plus Button Functionality › Plus button shows selection modal with three options" classname="enhanced-plus-button.spec.ts" time="2.187">
+</testcase>
+<testcase name="Enhanced Plus Button Functionality › General Event option opens existing add event modal" classname="enhanced-plus-button.spec.ts" time="1.587">
+</testcase>
+<testcase name="Enhanced Plus Button Functionality › Meal option opens meal planning modal" classname="enhanced-plus-button.spec.ts" time="1.52">
+</testcase>
+<testcase name="Enhanced Plus Button Functionality › Workout option navigates to fitness planner page" classname="enhanced-plus-button.spec.ts" time="3.692">
+</testcase>
+<testcase name="Enhanced Plus Button Functionality › Cancel button closes selection modal" classname="enhanced-plus-button.spec.ts" time="1.524">
+</testcase>
+<testcase name="Enhanced Plus Button Functionality › Modal can be closed by clicking outside" classname="enhanced-plus-button.spec.ts" time="1.512">
+</testcase>
+</testsuite>
+<testsuite name="login-add-meal.spec.ts" timestamp="2025-08-10T03:21:24.068Z" hostname="chromium" tests="1" failures="0" skipped="0" time="21.354" errors="0">
+<testcase name="Login and add meal › Basic meal workflow: add and verify meal" classname="login-add-meal.spec.ts" time="21.354">
+</testcase>
+</testsuite>
+<testsuite name="login-add-pantry-item.spec.ts" timestamp="2025-08-10T03:21:24.068Z" hostname="chromium" tests="1" failures="0" skipped="0" time="15.294" errors="0">
+<testcase name="Complete pantry workflow with single item" classname="login-add-pantry-item.spec.ts" time="15.294">
+</testcase>
+</testsuite>
+<testsuite name="login-add-planned-meal.spec.ts" timestamp="2025-08-10T03:21:24.068Z" hostname="chromium" tests="1" failures="1" skipped="0" time="15.808" errors="0">
+<testcase name="Meal planning workflow: plan and verify meal" classname="login-add-planned-meal.spec.ts" time="15.808">
+<failure message="login-add-planned-meal.spec.ts:12:5 Meal planning workflow: plan and verify meal" type="FAILURE">
+<![CDATA[  [chromium] › login-add-planned-meal.spec.ts:12:5 › Meal planning workflow: plan and verify meal ──
+
+    Error: expect.toBeVisible: Error: strict mode violation: getByText('Test Planned Meal 1754796227175') resolved to 3 elements:
+        1) <h3 class="font-medium">Test Planned Meal 1754796227175</h3> aka getByRole('link', { name: 'Test Planned Meal' })
+        2) <option value="caf57b2e-ac76-4be0-bb7b-5fa0efa7d3f2">Test Planned Meal 1754796227175</option> aka getByTestId('meal-select')
+        3) <div class="font-medium">Test Planned Meal 1754796227175</div> aka getByTestId('planned-meal-card-a7d02da6-3580-4289-b91d-d8477e674073').getByText('Test Planned Meal')
+
+    Call log:
+      - Expect "toBeVisible" with timeout 10000ms
+      - waiting for getByText('Test Planned Meal 1754796227175')
+
+
+      190 |     // We're on the food page, which is fine since we're using the modal
+      191 |     // The modal approach doesn't navigate to detail pages, so we just verify the meal exists
+    > 192 |     await expect(page.getByText(testMealName)).toBeVisible({ timeout: 10000 });
+          |                                                ^
+      193 |   } else {
+      194 |     // Some other page, log what we find
+      195 |     const pageText = await page.textContent('body');
+        at /Users/liamford/Documents/plannerapp/e2e/login-add-planned-meal.spec.ts:192:48
+
+    Error Context: ../test-results/login-add-planned-meal-Mea-2d323-rkflow-plan-and-verify-meal-chromium/error-context.md
+]]>
+</failure>
+<system-out>
+<![CDATA[
+[[ATTACHMENT|login-add-planned-meal-Mea-2d323-rkflow-plan-and-verify-meal-chromium/error-context.md]]
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="login-add-receipt.spec.ts" timestamp="2025-08-10T03:21:24.068Z" hostname="chromium" tests="1" failures="0" skipped="0" time="15.965" errors="0">
+<testcase name="Login and add receipt › Complete receipt workflow with multiple items" classname="login-add-receipt.spec.ts" time="15.965">
+<system-out>
+<![CDATA[[BROWSER LOG] log: [Client Instrumentation Hook] Slow execution detected: 41ms (Note: Code download overhead is not included in this measurement)
+[BROWSER LOG] log: [E2E] ✅ window.supabase is defined
+[BROWSER LOG] error: Failed to load resource: the server responded with a status of 429 ()
+[BROWSER LOG] log: [E2E] Debug items in database: [Object, Object, Object]
+[E2E] Debug items found: [
+  {
+    id: [32m'12c559a5-fd8b-42a6-a885-b8a3abc282b5'[39m,
+    user_id: [32m'0f3a417b-077d-4868-acef-9d79ada0945b'[39m,
+    name: [32m'Test Milk'[39m,
+    quantity: [33m2[39m,
+    unit: [32m'gallons'[39m,
+    category: [1mnull[22m,
+    added_from: [32m'receipt'[39m,
+    expires_at: [1mnull[22m,
+    added_at: [32m'2025-08-10T03:24:07.455255+00:00'[39m,
+    receipt_id: [32m'46c126f9-1e8c-4085-80b2-d9899c7d9a4a'[39m
+  },
+  {
+    id: [32m'b69b998c-7650-410f-af7b-8a0f00a36dd2'[39m,
+    user_id: [32m'0f3a417b-077d-4868-acef-9d79ada0945b'[39m,
+    name: [32m'Test Eggs'[39m,
+    quantity: [33m12[39m,
+    unit: [32m'count'[39m,
+    category: [1mnull[22m,
+    added_from: [32m'receipt'[39m,
+    expires_at: [1mnull[22m,
+    added_at: [32m'2025-08-10T03:24:07.455255+00:00'[39m,
+    receipt_id: [32m'46c126f9-1e8c-4085-80b2-d9899c7d9a4a'[39m
+  },
+  {
+    id: [32m'2dcdf4b6-13fa-466d-9284-f16e9693cb21'[39m,
+    user_id: [32m'0f3a417b-077d-4868-acef-9d79ada0945b'[39m,
+    name: [32m'Test Bread'[39m,
+    quantity: [33m1[39m,
+    unit: [32m'loaf'[39m,
+    category: [1mnull[22m,
+    added_from: [32m'receipt'[39m,
+    expires_at: [1mnull[22m,
+    added_at: [32m'2025-08-10T03:24:07.455255+00:00'[39m,
+    receipt_id: [32m'46c126f9-1e8c-4085-80b2-d9899c7d9a4a'[39m
+  }
+]
+[BROWSER LOG] log: [Client Instrumentation Hook] Slow execution detected: 38ms (Note: Code download overhead is not included in this measurement)
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="login-add-workout.spec.ts" timestamp="2025-08-10T03:21:24.068Z" hostname="chromium" tests="1" failures="0" skipped="0" time="34.521" errors="0">
+<testcase name="Login and add workout › Login and add a workout" classname="login-add-workout.spec.ts" time="34.521">
+<system-out>
+<![CDATA[[E2E] ✅ Workout verified in database, navigating directly
+[E2E] ⚠️ Updated workout not found in UI, using database verification as fallback
+[E2E] ✅ Updated workout verified in database
+[E2E] ✅ Final workout verification successful: Push Day 1754796259443 Edited
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="planned-fitness-events.spec.ts" timestamp="2025-08-10T03:21:24.068Z" hostname="chromium" tests="4" failures="0" skipped="0" time="81.204" errors="0">
+<testcase name="Planned Fitness Events - Complete Flow" classname="planned-fitness-events.spec.ts" time="33.997">
+<system-out>
+<![CDATA[[BROWSER LOG] log: [E2E] ✅ window.supabase is defined
+[E2E] Form error: 
+[E2E] Planned workout created successfully in database
+[E2E] Workout calendar events found: [33m1[39m
+[E2E] Planned cardio created successfully in database
+[E2E] Cardio calendar events found: [33m1[39m
+[E2E] Sports form error: 
+[BROWSER LOG] log: [E2E] All sports sessions found: [Object]
+[BROWSER LOG] log: [E2E] Planned sports sessions found: [Object]
+[E2E] Planned sports created successfully
+[E2E] Sports calendar events found: [33m1[39m
+[BROWSER LOG] log: [Client Instrumentation Hook] Slow execution detected: 45ms (Note: Code download overhead is not included in this measurement)
+[BROWSER LOG] info: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[E2E] Error navigating to home page: [31mTimed out 5000ms waiting for [39m[2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m()[22m
+
+Locator: locator('h1').filter({ hasText: /Planned Fitness Activities/i })
+Expected: visible
+Received: <element(s) not found>
+Call log:
+[2m  - Expect "toBeVisible" with timeout 5000ms[22m
+[2m  - waiting for locator('h1').filter({ hasText: /Planned Fitness Activities/i })[22m
+
+[E2E] Skipping UI verification, proceeding with database check
+[E2E] All calendar events in database: [
+  {
+    id: [32m'dea3a483-a53e-4a4b-bdd3-a3f87e0e3bd8'[39m,
+    user_id: [32m'0f3a417b-077d-4868-acef-9d79ada0945b'[39m,
+    title: [32m'Sport: Test Planned Sports'[39m,
+    description: [32m'Test planned sports notes'[39m,
+    start_time: [32m'2025-08-09T00:00:00+00:00'[39m,
+    end_time: [32m'2025-08-10T01:00:00+00:00'[39m,
+    source: [32m'sport'[39m,
+    source_id: [32m'12147538-6a9d-4b2c-af4e-39b5faad4d1b'[39m,
+    created_at: [32m'2025-08-10T03:25:10.501567+00:00'[39m,
+    updated_at: [32m'2025-08-10T03:25:10.501567+00:00'[39m
+  },
+  {
+    id: [32m'be168529-f4e8-4449-ada7-6c85421de790'[39m,
+    user_id: [32m'0f3a417b-077d-4868-acef-9d79ada0945b'[39m,
+    title: [32m'Cardio: Test Planned Cardio'[39m,
+    description: [32m'Test planned cardio notes'[39m,
+    start_time: [32m'2025-08-09T00:00:00+00:00'[39m,
+    end_time: [32m'2025-08-10T00:00:00+00:00'[39m,
+    source: [32m'cardio'[39m,
+    source_id: [32m'6e7f131b-b3af-44f1-8f58-e864e8f7c1ac'[39m,
+    created_at: [32m'2025-08-10T03:25:05.135184+00:00'[39m,
+    updated_at: [32m'2025-08-10T03:25:05.135184+00:00'[39m
+  },
+  {
+    id: [32m'458e5e12-4831-4acd-9cf5-91347e5c0168'[39m,
+    user_id: [32m'0f3a417b-077d-4868-acef-9d79ada0945b'[39m,
+    title: [32m'Workout: Test Planned Workout'[39m,
+    description: [32m'Test planned workout notes'[39m,
+    start_time: [32m'2025-08-09T00:00:00+00:00'[39m,
+    end_time: [32m'2025-08-09T23:00:00+00:00'[39m,
+    source: [32m'workout'[39m,
+    source_id: [32m'7bcc1a5a-66c9-453c-8fd6-303bc2cb2f33'[39m,
+    created_at: [32m'2025-08-10T03:24:59.841592+00:00'[39m,
+    updated_at: [32m'2025-08-10T03:24:59.841592+00:00'[39m
+  },
+  {
+    id: [32m'ae1ee232-c373-4a55-8cdf-ef5b2dfbb665'[39m,
+    user_id: [32m'0f3a417b-077d-4868-acef-9d79ada0945b'[39m,
+    title: [32m'Dinner: Test Planned Meal 1754796227175'[39m,
+    description: [32m''[39m,
+    start_time: [32m'2025-08-10T00:00:00+00:00'[39m,
+    end_time: [1mnull[22m,
+    source: [32m'planned_meal'[39m,
+    source_id: [32m'a7d02da6-3580-4289-b91d-d8477e674073'[39m,
+    created_at: [32m'2025-08-10T03:23:54.604402+00:00'[39m,
+    updated_at: [32m'2025-08-10T03:23:54.604402+00:00'[39m
+  },
+  {
+    id: [32m'f4b8c0bf-1f5e-4079-98d5-c8652db12351'[39m,
+    user_id: [32m'0f3a417b-077d-4868-acef-9d79ada0945b'[39m,
+    title: [32m'Meal: Test Calendar Meal 1754796136654'[39m,
+    description: [32m'Test meal for calendar click behavior'[39m,
+    start_time: [32m'2025-07-28T12:00:00+00:00'[39m,
+    end_time: [1mnull[22m,
+    source: [32m'meal'[39m,
+    source_id: [32m'dfe92e97-3cdf-4fe3-a9de-42e080d45924'[39m,
+    created_at: [32m'2025-08-10T03:22:19.602935+00:00'[39m,
+    updated_at: [32m'2025-08-10T03:22:19.602935+00:00'[39m
+  },
+  {
+    id: [32m'613e1c9a-9509-4a95-8ab7-e8177a57e8c1'[39m,
+    user_id: [32m'0f3a417b-077d-4868-acef-9d79ada0945b'[39m,
+    title: [32m'Meal: Test Calendar Meal 1754796129232'[39m,
+    description: [32m'Test meal for calendar click behavior'[39m,
+    start_time: [32m'2025-07-28T12:00:00+00:00'[39m,
+    end_time: [1mnull[22m,
+    source: [32m'meal'[39m,
+    source_id: [32m'55ea08f6-7046-4034-b6a0-eb4f5c8d4341'[39m,
+    created_at: [32m'2025-08-10T03:22:11.586506+00:00'[39m,
+    updated_at: [32m'2025-08-10T03:22:11.586506+00:00'[39m
+  },
+  {
+    id: [32m'd6358554-ea86-421d-9a39-ba7de1e8db49'[39m,
+    user_id: [32m'0f3a417b-077d-4868-acef-9d79ada0945b'[39m,
+    title: [32m'Test Hover Event 1754796122822'[39m,
+    description: [32m'Test event for hover functionality'[39m,
+    start_time: [32m'2025-08-10T12:00:00+00:00'[39m,
+    end_time: [1mnull[22m,
+    source: [32m'note'[39m,
+    source_id: [1mnull[22m,
+    created_at: [32m'2025-08-10T03:22:02.962357+00:00'[39m,
+    updated_at: [32m'2025-08-10T03:22:02.962357+00:00'[39m
+  },
+  {
+    id: [32m'3f848fc5-9c95-4210-b04c-80bcae84c84f'[39m,
+    user_id: [32m'0f3a417b-077d-4868-acef-9d79ada0945b'[39m,
+    title: [32m'Test Keyboard Event 1754796119449'[39m,
+    description: [32m'Test event for keyboard accessibility'[39m,
+    start_time: [32m'2025-08-10T12:00:00+00:00'[39m,
+    end_time: [1mnull[22m,
+    source: [32m'note'[39m,
+    source_id: [1mnull[22m,
+    created_at: [32m'2025-08-10T03:21:59.578406+00:00'[39m,
+    updated_at: [32m'2025-08-10T03:21:59.578406+00:00'[39m
+  },
+  {
+    id: [32m'ce0120d4-4a48-4966-b38e-4665f1f73a07'[39m,
+    user_id: [32m'0f3a417b-077d-4868-acef-9d79ada0945b'[39m,
+    title: [32m'Test Hover Event 1754796115694'[39m,
+    description: [32m'Test event for hover functionality'[39m,
+    start_time: [32m'2025-08-10T12:00:00+00:00'[39m,
+    end_time: [1mnull[22m,
+    source: [32m'note'[39m,
+    source_id: [1mnull[22m,
+    created_at: [32m'2025-08-10T03:21:55.824329+00:00'[39m,
+    updated_at: [32m'2025-08-10T03:21:55.824329+00:00'[39m
+  },
+  {
+    id: [32m'2e389a68-83f5-48cf-b9c1-fdf9b4a33f89'[39m,
+    user_id: [32m'0f3a417b-077d-4868-acef-9d79ada0945b'[39m,
+    title: [32m'Test Drag Event 1754796104899'[39m,
+    description: [32m'Test event for drag and drop'[39m,
+    start_time: [32m'2025-08-11T07:00:00+00:00'[39m,
+    end_time: [1mnull[22m,
+    source: [32m'note'[39m,
+    source_id: [1mnull[22m,
+    created_at: [32m'2025-08-10T03:21:45.021362+00:00'[39m,
+    updated_at: [32m'2025-08-10T03:21:46.185+00:00'[39m
+  }
+]
+[E2E] Number of events found in list: [33m7[39m
+[E2E] Verification attempt 1: { workout: [33mfalse[39m, cardio: [33mfalse[39m, sports: [33mfalse[39m }
+[E2E] Not all events found, retry 1/2
+[E2E] Verification attempt 2: { workout: [33mfalse[39m, cardio: [33mfalse[39m, sports: [33mfalse[39m }
+[E2E] Not all events found, retry 2/2
+[E2E] Final UI verification: { workout: [33mfalse[39m, cardio: [33mfalse[39m, sports: [33mfalse[39m }
+[E2E] Some events not visible in UI, checking database...
+[E2E] Database fallback check: { workoutExists: [33mtrue[39m, cardioExists: [33mtrue[39m, sportsExists: [33mtrue[39m }
+[E2E] 3/3 events exist in database - test successful!
+[E2E] Final database state: { workoutCount: [33m1[39m, cardioCount: [33m1[39m, sportsCount: [33m1[39m, calendarCount: [33m3[39m }
+[E2E] ✅ Planned fitness events test completed successfully
+]]>
+</system-out>
+</testcase>
+<testcase name="Calendar Click Behavior for Planned Fitness Events" classname="planned-fitness-events.spec.ts" time="15.789">
+<system-out>
+<![CDATA[[E2E] Created test workout with ID: 73e3c0ed-4178-46e7-8978-ebf57a2238c5
+[BROWSER LOG] log: [Client Instrumentation Hook] Slow execution detected: 38ms (Note: Code download overhead is not included in this measurement)
+[BROWSER LOG] info: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[E2E] Available calendar events: [
+  {
+    id: [32m'2e389a68-83f5-48cf-b9c1-fdf9b4a33f89'[39m,
+    user_id: [32m'0f3a417b-077d-4868-acef-9d79ada0945b'[39m,
+    title: [32m'Test Drag Event 1754796104899'[39m,
+    description: [32m'Test event for drag and drop'[39m,
+    start_time: [32m'2025-08-11T07:00:00+00:00'[39m,
+    end_time: [1mnull[22m,
+    source: [32m'note'[39m,
+    source_id: [1mnull[22m,
+    created_at: [32m'2025-08-10T03:21:45.021362+00:00'[39m,
+    updated_at: [32m'2025-08-10T03:21:46.185+00:00'[39m
+  },
+  {
+    id: [32m'ce0120d4-4a48-4966-b38e-4665f1f73a07'[39m,
+    user_id: [32m'0f3a417b-077d-4868-acef-9d79ada0945b'[39m,
+    title: [32m'Test Hover Event 1754796115694'[39m,
+    description: [32m'Test event for hover functionality'[39m,
+    start_time: [32m'2025-08-10T12:00:00+00:00'[39m,
+    end_time: [1mnull[22m,
+    source: [32m'note'[39m,
+    source_id: [1mnull[22m,
+    created_at: [32m'2025-08-10T03:21:55.824329+00:00'[39m,
+    updated_at: [32m'2025-08-10T03:21:55.824329+00:00'[39m
+  },
+  {
+    id: [32m'3f848fc5-9c95-4210-b04c-80bcae84c84f'[39m,
+    user_id: [32m'0f3a417b-077d-4868-acef-9d79ada0945b'[39m,
+    title: [32m'Test Keyboard Event 1754796119449'[39m,
+    description: [32m'Test event for keyboard accessibility'[39m,
+    start_time: [32m'2025-08-10T12:00:00+00:00'[39m,
+    end_time: [1mnull[22m,
+    source: [32m'note'[39m,
+    source_id: [1mnull[22m,
+    created_at: [32m'2025-08-10T03:21:59.578406+00:00'[39m,
+    updated_at: [32m'2025-08-10T03:21:59.578406+00:00'[39m
+  },
+  {
+    id: [32m'd6358554-ea86-421d-9a39-ba7de1e8db49'[39m,
+    user_id: [32m'0f3a417b-077d-4868-acef-9d79ada0945b'[39m,
+    title: [32m'Test Hover Event 1754796122822'[39m,
+    description: [32m'Test event for hover functionality'[39m,
+    start_time: [32m'2025-08-10T12:00:00+00:00'[39m,
+    end_time: [1mnull[22m,
+    source: [32m'note'[39m,
+    source_id: [1mnull[22m,
+    created_at: [32m'2025-08-10T03:22:02.962357+00:00'[39m,
+    updated_at: [32m'2025-08-10T03:22:02.962357+00:00'[39m
+  },
+  {
+    id: [32m'613e1c9a-9509-4a95-8ab7-e8177a57e8c1'[39m,
+    user_id: [32m'0f3a417b-077d-4868-acef-9d79ada0945b'[39m,
+    title: [32m'Meal: Test Calendar Meal 1754796129232'[39m,
+    description: [32m'Test meal for calendar click behavior'[39m,
+    start_time: [32m'2025-07-28T12:00:00+00:00'[39m,
+    end_time: [1mnull[22m,
+    source: [32m'meal'[39m,
+    source_id: [32m'55ea08f6-7046-4034-b6a0-eb4f5c8d4341'[39m,
+    created_at: [32m'2025-08-10T03:22:11.586506+00:00'[39m,
+    updated_at: [32m'2025-08-10T03:22:11.586506+00:00'[39m
+  },
+  {
+    id: [32m'f4b8c0bf-1f5e-4079-98d5-c8652db12351'[39m,
+    user_id: [32m'0f3a417b-077d-4868-acef-9d79ada0945b'[39m,
+    title: [32m'Meal: Test Calendar Meal 1754796136654'[39m,
+    description: [32m'Test meal for calendar click behavior'[39m,
+    start_time: [32m'2025-07-28T12:00:00+00:00'[39m,
+    end_time: [1mnull[22m,
+    source: [32m'meal'[39m,
+    source_id: [32m'dfe92e97-3cdf-4fe3-a9de-42e080d45924'[39m,
+    created_at: [32m'2025-08-10T03:22:19.602935+00:00'[39m,
+    updated_at: [32m'2025-08-10T03:22:19.602935+00:00'[39m
+  },
+  {
+    id: [32m'ae1ee232-c373-4a55-8cdf-ef5b2dfbb665'[39m,
+    user_id: [32m'0f3a417b-077d-4868-acef-9d79ada0945b'[39m,
+    title: [32m'Dinner: Test Planned Meal 1754796227175'[39m,
+    description: [32m''[39m,
+    start_time: [32m'2025-08-10T00:00:00+00:00'[39m,
+    end_time: [1mnull[22m,
+    source: [32m'planned_meal'[39m,
+    source_id: [32m'a7d02da6-3580-4289-b91d-d8477e674073'[39m,
+    created_at: [32m'2025-08-10T03:23:54.604402+00:00'[39m,
+    updated_at: [32m'2025-08-10T03:23:54.604402+00:00'[39m
+  },
+  {
+    id: [32m'abdd95bc-db6d-4a69-9a26-b18369242fcd'[39m,
+    user_id: [32m'0f3a417b-077d-4868-acef-9d79ada0945b'[39m,
+    title: [32m'Workout: Test Calendar Workout'[39m,
+    description: [32m'Test notes for calendar workout'[39m,
+    start_time: [32m'2025-08-10T03:25:31.367+00:00'[39m,
+    end_time: [1mnull[22m,
+    source: [32m'workout'[39m,
+    source_id: [32m'73e3c0ed-4178-46e7-8978-ebf57a2238c5'[39m,
+    created_at: [32m'2025-08-10T03:25:31.514099+00:00'[39m,
+    updated_at: [32m'2025-08-10T03:25:31.514099+00:00'[39m
+  }
+]
+[BROWSER LOG] error: Error fetching cardio sessions: {message: TypeError: Failed to fetch (ffubefmikpkrxtueeusj.supabase.co), details: TypeError: Failed to fetch
+    at eval (webpack-in…abase/supabase-js/dist/module/lib/fetch.js:11:58), hint: , code: }
+[BROWSER LOG] error: Error fetching sports sessions: {message: TypeError: Failed to fetch (ffubefmikpkrxtueeusj.supabase.co), details: TypeError: Failed to fetch
+    at eval (webpack-in…abase/supabase-js/dist/module/lib/fetch.js:11:58), hint: , code: }
+[BROWSER LOG] log: [Client Instrumentation Hook] Slow execution detected: 37ms (Note: Code download overhead is not included in this measurement)
+[BROWSER LOG] info: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[E2E] ✅ Calendar click behavior test completed successfully
+]]>
+</system-out>
+</testcase>
+<testcase name="Event List Click Behavior for Planned Fitness Events" classname="planned-fitness-events.spec.ts" time="18.71">
+<system-out>
+<![CDATA[[E2E] Created test workout for event list with ID: 203a3fa1-16b0-4051-8ccf-0ed8a2753c91
+[BROWSER LOG] log: [Client Instrumentation Hook] Slow execution detected: 52ms (Note: Code download overhead is not included in this measurement)
+[BROWSER LOG] info: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[E2E] ✅ Event list click behavior test completed successfully
+]]>
+</system-out>
+</testcase>
+<testcase name="Planned Session Cleanup After Completion" classname="planned-fitness-events.spec.ts" time="12.708">
+<system-out>
+<![CDATA[[E2E] Created test workout for cleanup with ID: 2f96d003-4361-47f3-b12c-1cc271a29d6e
+[BROWSER LOG] log: [Client Instrumentation Hook] Slow execution detected: 37ms (Note: Code download overhead is not included in this measurement)
+[BROWSER LOG] info: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[E2E] Workout status after completion: { status: [32m'completed'[39m, in_progress: [33mfalse[39m }
+[E2E] Calendar events after cleanup: []
+[E2E] Calendar event was cleaned up (unexpected when navigating directly)
+[E2E] ✅ Planned session cleanup test completed successfully
+]]>
+</system-out>
+</testcase>
+</testsuite>
+<testsuite name="planned-workout-completion.spec.ts" timestamp="2025-08-10T03:21:24.068Z" hostname="chromium" tests="2" failures="0" skipped="0" time="39.983" errors="0">
+<testcase name="Planned Workout Completion Flow › Complete planned workout from calendar - full flow" classname="planned-workout-completion.spec.ts" time="21.392">
+<system-out>
+<![CDATA[[E2E] Calendar event found, clicking on it
+]]>
+</system-out>
+</testcase>
+<testcase name="Planned Workout Completion Flow › Complete planned workout from day event list - full flow" classname="planned-workout-completion.spec.ts" time="18.591">
+</testcase>
+</testsuite>
+<testsuite name="sports-happy-path.spec.ts" timestamp="2025-08-10T03:21:24.068Z" hostname="chromium" tests="1" failures="0" skipped="0" time="30.455" errors="0">
+<testcase name="Sports happy path › Complete Sports Session Lifecycle" classname="sports-happy-path.spec.ts" time="30.455">
+<system-out>
+<![CDATA[[E2E] Available buttons on page: [
+  [32m'Sports In Progress: Basketball 1754796415224'[39m,
+  [32m''[39m,
+  [32m'Log Out'[39m,
+  [32m'End Activity'[39m,
+  [32m''[39m
+]
+[E2E] Current URL: http://localhost:3000/fitness/sports/live
+[E2E] ✅ Sports session verified in database
+[E2E] ✅ Updated sports session verified in database: Test Basketball Edited
+]]>
+</system-out>
+</testcase>
+</testsuite>
+</testsuites>

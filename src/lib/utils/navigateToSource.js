@@ -15,7 +15,7 @@ export function navigateToSource(source, sourceId, router) {
       path = `/fitness/cardio/${sourceId}`;
       break;
     case 'workout':
-      path = `/fitness/workouts/${sourceId}`;
+      path = `/fitness`; // Redirect to fitness page since workout details are now in modal
       break;
     case 'scratchpad':
       path = `/scratchpad/${sourceId}`;
