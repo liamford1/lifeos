@@ -504,6 +504,19 @@ export default function CalendarView() {
             value={selectedDate}
             locale="en-US"
             className="!w-full !text-white !max-w-none"
+            tileClassName={({ date, view }) => {
+              if (view !== 'month') return '';
+              const isSelectedDay = dayjs(date).isSame(selectedDate, 'day');
+              return isSelectedDay ? 'selected-day' : '';
+            }}
+            tileProps={({ date, view }) => {
+              if (view !== 'month') return {};
+              const isSelectedDay = dayjs(date).isSame(selectedDate, 'day');
+              return {
+                'data-selected': isSelectedDay,
+                className: isSelectedDay ? 'selected-day' : ''
+              };
+            }}
             tileContent={({ date, view }) => {
               if (view !== 'month') return null;
 
@@ -519,6 +532,7 @@ export default function CalendarView() {
                   className="space-y-1 overflow-hidden w-full h-full max-w-full relative"
                   data-testid={`calendar-daycell-${dateStr}`}
                   data-date={dateStr}
+                  data-selected={isSelectedDay}
                 >
                   {eventsOnThisDay.slice(0, 2).map((event) => {
                     const { colorClass, Icon } = getEventStyle(event.source);
