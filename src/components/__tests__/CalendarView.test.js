@@ -214,4 +214,17 @@ describe('CalendarView', () => {
     const addButton = todayElement.querySelector('[aria-label="Add event for this day"]');
     expect(addButton).toBeInTheDocument();
   });
+
+  it('should show 3-line button on each day', () => {
+    render(<CalendarView />);
+    
+    // Find today's date element
+    const today = new Date();
+    const todayString = today.toISOString().split('T')[0];
+    const todayElement = screen.getByTestId(`calendar-day-${todayString}`);
+    
+    // Check that the 3-line button is present
+    const threeLineButton = todayElement.querySelector('[aria-label="View events for this day"]');
+    expect(threeLineButton).toBeInTheDocument();
+  });
 });

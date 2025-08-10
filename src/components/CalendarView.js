@@ -52,6 +52,8 @@ export default function CalendarView() {
   const [showSelectionModalForDate, setShowSelectionModalForDate] = useState(null);
   const [showPlanMealModal, setShowPlanMealModal] = useState(false);
   const [selectedDateForMealPlanning, setSelectedDateForMealPlanning] = useState(null);
+  const [showDayEventsModal, setShowDayEventsModal] = useState(false);
+  const [selectedDayForEvents, setSelectedDayForEvents] = useState(null);
   const [newEvent, setNewEvent] = useState({
     title: '',
     start_time: '',
@@ -491,10 +493,10 @@ export default function CalendarView() {
             onPointerMove={moveDrag}
             onPointerUp={(e) => endDrag(e, { computeTargetDate })}
           >
-                    <h3 className="text-lg font-semibold mb-3 text-gray-300 flex items-center">
-              <MdOutlineCalendarToday className="w-5 h-5 mr-2" />
-              Calendar
-            </h3>
+                    <h3 className="text-lg font-semibold mb-2 text-gray-300 flex items-center">
+                      <MdOutlineCalendarToday className="w-5 h-5 mr-2" />
+                      Calendar
+                    </h3>
       
       <div className="w-full my-6">
         <div className="w-full">
@@ -534,135 +536,117 @@ export default function CalendarView() {
                   data-date={dateStr}
                   data-selected={isSelectedDay}
                 >
-                  {eventsOnThisDay.slice(0, 2).map((event) => {
-                    const { colorClass, Icon } = getEventStyle(event.source);
-                    // Make meal, planned_meal, expense, workout, cardio, and sport events clickable
-                    const isClickableEvent =
-                      event.source === CALENDAR_SOURCES.MEAL ||
-                      event.source === CALENDAR_SOURCES.PLANNED_MEAL ||
-                      event.source === CALENDAR_SOURCES.EXPENSE ||
-                      event.source === CALENDAR_SOURCES.WORKOUT ||
-                      event.source === CALENDAR_SOURCES.CARDIO ||
-                      event.source === CALENDAR_SOURCES.SPORT;
-                    
-                    const isBeingDragged = draggingId === event.id;
-                    
-                    const eventDivProps = isClickableEvent
-                      ? {
-                          role: 'button',
-                          tabIndex: 0,
-                          onClick: (e) => {
+                  {/* Date Number and Menu Button */}
+                  <div className="flex items-center justify-between mb-1">
+                    <div className={`text-sm font-medium ${
+                      isSelectedDay ? 'text-primary' : 'text-foreground'
+                    }`}>
+                      {date.getDate()}
+                    </div>
+                    <div
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedDayForEvents(date);
+                        setShowDayEventsModal(true);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setSelectedDayForEvents(date);
+                          setShowDayEventsModal(true);
+                        }
+                      }}
+                      className="w-4 h-4 text-gray-400 hover:text-white transition-colors opacity-60 hover:opacity-100 cursor-pointer"
+                      aria-label="View events for this day"
+                      role="button"
+                      tabIndex={0}
+                    >
+                      <svg viewBox="0 0 24 24" fill="currentColor" className="w-full h-full">
+                        <path d="M3 6h18v2H3V6zm0 5h18v2H3v-2zm0 5h18v2H3v-2z"/>
+                      </svg>
+                    </div>
+                  </div>
+                  
+                  {/* Events preview (only show first 2) */}
+                  <div className="space-y-1">
+                    {eventsOnThisDay.slice(0, 2).map((event) => {
+                      const { colorClass, Icon } = getEventStyle(event.source);
+                      const isBeingDragged = draggingId === event.id;
+                      
+                      return (
+                        <div
+                          key={event.id}
+                          data-testid={`calendar-event-${event.id}`}
+                          className={`w-[85%] h-4 text-xs truncate whitespace-nowrap overflow-hidden text-ellipsis rounded px-0.5 py-0.25 text-left ${colorClass} relative group cursor-pointer`}
+                          data-dragging={isBeingDragged}
+                          style={{
+                            opacity: isBeingDragged ? 0.5 : 1,
+                            transform: isBeingDragged ? 'scale(0.95)' : 'none',
+                            transition: 'opacity 0.2s, transform 0.2s'
+                          }}
+                          onClick={(e) => {
                             e.stopPropagation();
                             if (event.source === CALENDAR_SOURCES.MEAL) {
                               router.push(`/food/meals/${event.source_id}/cook`);
                             } else if (event.source === CALENDAR_SOURCES.PLANNED_MEAL) {
-                              // For planned meals, we need to fetch the meal_id from the planned_meals table
                               handlePlannedMealClick(event);
                             } else if (event.source === CALENDAR_SOURCES.EXPENSE) {
                               router.push(`/finances/expenses/${event.source_id}`);
                             } else if (event.source === CALENDAR_SOURCES.WORKOUT) {
-                              // Check if this is a planned workout and route to live session
                               handleFitnessEventClick(event, 'workout');
                             } else if (event.source === CALENDAR_SOURCES.CARDIO) {
-                              // Check if this is a planned cardio and route to live session
                               handleFitnessEventClick(event, 'cardio');
                             } else if (event.source === CALENDAR_SOURCES.SPORT) {
-                              // Check if this is a planned sport and route to live session
                               handleFitnessEventClick(event, 'sport');
                             }
-                          },
-                          onKeyDown: (e) => {
-                            if (e.key === 'Enter' || e.key === ' ') {
-                              e.stopPropagation();
-                              if (event.source === CALENDAR_SOURCES.MEAL) {
-                                router.push(`/food/meals/${event.source_id}/cook`);
-                              } else if (event.source === CALENDAR_SOURCES.PLANNED_MEAL) {
-                                // For planned meals, we need to fetch the meal_id from the planned_meals table
-                                handlePlannedMealClick(event);
-                              } else if (event.source === CALENDAR_SOURCES.EXPENSE) {
-                                router.push(`/finances/expenses/${event.source_id}`);
-                              } else if (event.source === CALENDAR_SOURCES.WORKOUT) {
-                                // Check if this is a planned workout and route to live session
-                                handleFitnessEventClick(event, 'workout');
-                              } else if (event.source === CALENDAR_SOURCES.CARDIO) {
-                                // Check if this is a planned cardio and route to live session
-                                handleFitnessEventClick(event, 'cardio');
-                              } else if (event.source === CALENDAR_SOURCES.SPORT) {
-                                // Check if this is a planned sport and route to live session
-                                handleFitnessEventClick(event, 'sport');
-                              }
-                            }
-                          },
-                          style: { 
-                            boxSizing: 'border-box', 
-                            display: 'block', 
-                            cursor: 'pointer',
-                            opacity: isBeingDragged ? 0.5 : 1,
-                            transform: isBeingDragged ? 'scale(0.95)' : 'none',
-                            transition: 'opacity 0.2s, transform 0.2s'
-                          },
-                        }
-                      : { 
-                          style: { 
-                            boxSizing: 'border-box', 
-                            display: 'block',
-                            opacity: isBeingDragged ? 0.5 : 1,
-                            transform: isBeingDragged ? 'scale(0.95)' : 'none',
-                            transition: 'opacity 0.2s, transform 0.2s'
-                          } 
-                        };
-                    return (
-                      <div
-                        key={event.id}
-                        data-testid={`calendar-event-${event.id}`}
-                        className={`w-full h-5 text-xs truncate whitespace-nowrap overflow-hidden text-ellipsis rounded px-1 py-0.5 text-left ${colorClass} relative group`}
-                        data-dragging={isBeingDragged}
-                        {...eventDivProps}
-                      >
-                        <div className="flex items-center justify-between w-full">
-                          <div className="flex items-center min-w-0 flex-1">
-                            {Icon && <Icon className="inline mr-1 align-text-bottom flex-shrink-0" size={16} />} 
-                            <span className="truncate">{event.title}</span>
-                          </div>
-                          {/* Drag handle */}
-                          <div
-                            data-testid={`calendar-event-drag-handle-${event.id}`}
-                            className="opacity-0 group-hover:opacity-100 focus-visible:opacity-100 data-[dragging=true]:opacity-100 transition-opacity ml-1 flex-shrink-0 p-0.5 rounded hover:bg-black/20 cursor-grab active:cursor-grabbing w-4 h-4 flex items-center justify-center"
-                            onPointerDown={(e) => {
-                              e.stopPropagation();
-                              startDrag(e, { 
-                                id: event.id, 
-                                originalStart: event.start_time, 
-                                originalEnd: event.end_time 
-                              });
-                            }}
-                            aria-label="Drag event"
-                            role="button"
-                            tabIndex={0}
-                            data-dragging={isBeingDragged}
-                            onKeyDown={(e) => {
-                              if (e.key === 'Enter' || e.key === ' ') {
-                                e.preventDefault();
+                          }}
+                        >
+                          <div className="flex items-center justify-between w-full">
+                            <div className="flex items-center min-w-0 flex-1">
+                              {Icon && <Icon className="inline mr-0.5 align-text-bottom flex-shrink-0" size={14} />} 
+                              <span className="truncate">{event.title}</span>
+                            </div>
+                            {/* Drag handle */}
+                            <div
+                              data-testid={`calendar-event-drag-handle-${event.id}`}
+                              className="opacity-0 group-hover:opacity-100 focus-visible:opacity-100 data-[dragging=true]:opacity-100 transition-opacity ml-1 flex-shrink-0 p-0.5 rounded hover:bg-black/20 cursor-grab active:cursor-grabbing w-4 h-4 flex items-center justify-center"
+                              onPointerDown={(e) => {
                                 e.stopPropagation();
                                 startDrag(e, { 
                                   id: event.id, 
                                   originalStart: event.start_time, 
                                   originalEnd: event.end_time 
                                 });
-                              }
-                            }}
-                          >
-                            <MdDragIndicator size={12} className="text-gray-400" />
+                              }}
+                              aria-label="Drag event"
+                              role="button"
+                              tabIndex={0}
+                              data-dragging={isBeingDragged}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  startDrag(e, { 
+                                    id: event.id, 
+                                    originalStart: event.start_time, 
+                                    originalEnd: event.end_time 
+                                  });
+                                }
+                              }}
+                            >
+                              <MdDragIndicator size={12} className="text-gray-400" />
+                            </div>
                           </div>
                         </div>
+                      );
+                    })}
+                    {eventsOnThisDay.length > 2 && (
+                      <div className="text-[10px] text-gray-400">
+                        +{eventsOnThisDay.length - 2} more
                       </div>
-                    );
-                  })}
-                  {eventsOnThisDay.length > 2 && (
-                    <div className="text-[10px] text-base">
-                      +{eventsOnThisDay.length - 2} more
-                    </div>
-                  )}
+                    )}
+                  </div>
                   
                   {/* Add button for selected day */}
                   {isSelectedDay && (
@@ -678,7 +662,7 @@ export default function CalendarView() {
                           setShowSelectionModalForDate(toYMD(date));
                         }
                       }}
-                      className="absolute bottom-0 right-0 w-5 h-5 bg-primary text-white rounded-full text-xs flex items-center justify-center hover:bg-primary/80 transition-colors shadow-sm z-10 cursor-pointer"
+                      className="absolute -bottom-0.5 -right-1.5 w-6 h-6 bg-primary text-white rounded-full text-sm flex items-center justify-center hover:bg-primary/80 transition-colors shadow-sm z-10 cursor-pointer"
                       aria-label="Add event for this day"
                       role="button"
                       tabIndex={0}
@@ -694,130 +678,136 @@ export default function CalendarView() {
         </div>
       </div>
 
-      <div className="mt-4">
-        <h3 className="text-lg font-semibold">
-          Events on {dayjs(selectedDate).format('MMMM D, YYYY')}
-        </h3>
 
-        {eventsForSelectedDate.length === 0 ? (
-          <p className="text-muted-foreground text-sm mt-2">No entries yet. Add one above ⬆️</p>
-        ) : (
-          <ul className="mt-2 space-y-2">
-            {eventsForSelectedDate.map((event) => {
-              const { colorClass, Icon } = getEventStyle(event.source);
-              const isBeingDragged = draggingId === event.id;
+
+      {/* Day Events Modal */}
+      {showDayEventsModal && selectedDayForEvents && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-surface p-6 rounded-lg w-96">
+            <h3 className="text-lg font-semibold mb-4">
+              Events on {dayjs(selectedDayForEvents).format('MMMM D, YYYY')}
+            </h3>
+            {(() => {
+              const eventsForDay = events.filter((event) =>
+                dayjs(event.start_time).isSame(selectedDayForEvents, 'day')
+              );
+              
+              if (eventsForDay.length === 0) {
+                return (
+                  <p className="text-sm text-gray-400">No events planned for this date.</p>
+                );
+              }
               
               return (
-                <li
-                  key={event.id}
-                  className={`p-3 rounded hover:opacity-80 ${colorClass} cursor-pointer relative group`}
-                  role="button"
-                  tabIndex={0}
-                  data-dragging={isBeingDragged}
-                  style={{
-                    opacity: isBeingDragged ? 0.5 : 1,
-                    transform: isBeingDragged ? 'scale(0.95)' : 'none',
-                    transition: 'opacity 0.2s, transform 0.2s'
-                  }}
-                  onClick={() => {
-                    if (!event.source || !event.source_id) return;
+                <ul className="space-y-2">
+                  {eventsForDay.map((event) => {
+                    const { colorClass, Icon } = getEventStyle(event.source);
+                    const isBeingDragged = draggingId === event.id;
                     
-                    // Use the same logic as calendar tile clicks for fitness events
-                    if (event.source === CALENDAR_SOURCES.WORKOUT) {
-                      handleFitnessEventClick(event, 'workout');
-                    } else if (event.source === CALENDAR_SOURCES.CARDIO) {
-                      handleFitnessEventClick(event, 'cardio');
-                    } else if (event.source === CALENDAR_SOURCES.SPORT) {
-                      handleFitnessEventClick(event, 'sport');
-                    } else if (event.source === CALENDAR_SOURCES.MEAL) {
-                      router.push(`/food/meals/${event.source_id}/cook`);
-                    } else if (event.source === CALENDAR_SOURCES.PLANNED_MEAL) {
-                      // For planned meals, we need to fetch the meal_id from the planned_meals table
-                      handlePlannedMealClick(event);
-                    } else {
-                      // For other events, use the existing route logic
-                      const route = getCalendarEventRoute(event.source, event.source_id);
-                      router.push(route);
-                    }
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      if (!event.source || !event.source_id) return;
-                      
-                      // Use the same logic as calendar tile clicks for fitness events
-                      if (event.source === CALENDAR_SOURCES.WORKOUT) {
-                        handleFitnessEventClick(event, 'workout');
-                      } else if (event.source === CALENDAR_SOURCES.CARDIO) {
-                        handleFitnessEventClick(event, 'cardio');
-                      } else if (event.source === CALENDAR_SOURCES.SPORT) {
-                        handleFitnessEventClick(event, 'sport');
-                      } else if (event.source === CALENDAR_SOURCES.MEAL) {
-                        router.push(`/food/meals/${event.source_id}/cook`);
-                      } else if (event.source === CALENDAR_SOURCES.PLANNED_MEAL) {
-                        // For planned meals, we need to fetch the meal_id from the planned_meals table
-                        handlePlannedMealClick(event);
-                      } else {
-                        // For other events, use the existing route logic
-                        const route = getCalendarEventRoute(event.source, event.source_id);
-                        router.push(route);
-                      }
-                    }
-                  }}
-                >
-                  <div className="flex justify-between items-center">
-                    <div className="font-semibold flex items-center min-w-0 flex-1">
-                      {Icon && <Icon className="inline mr-1 align-text-bottom flex-shrink-0" size={18} />} 
-                      <span className="truncate">{event.title}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      {/* Drag handle */}
-                      <div
-                        data-testid={`calendar-event-drag-handle-${event.id}`}
-                        className="opacity-0 group-hover:opacity-100 focus-visible:opacity-100 data-[dragging=true]:opacity-100 transition-opacity p-1 rounded hover:bg-black/20 cursor-grab active:cursor-grabbing w-6 h-6 flex items-center justify-center flex-shrink-0"
-                        onPointerDown={(e) => {
-                          e.stopPropagation();
-                          startDrag(e, { 
-                            id: event.id, 
-                            originalStart: event.start_time, 
-                            originalEnd: event.end_time 
-                          });
-                        }}
-                        aria-label="Drag event"
+                    return (
+                      <li
+                        key={event.id}
+                        className={`p-3 rounded text-sm ${colorClass} cursor-pointer relative group`}
                         role="button"
                         tabIndex={0}
                         data-dragging={isBeingDragged}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' || e.key === ' ') {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            startDrag(e, { 
-                              id: event.id, 
-                              originalStart: event.start_time, 
-                              originalEnd: event.end_time 
-                            });
+                        style={{
+                          opacity: isBeingDragged ? 0.5 : 1,
+                          transform: isBeingDragged ? 'scale(0.95)' : 'none',
+                          transition: 'opacity 0.2s, transform 0.2s'
+                        }}
+                        onClick={() => {
+                          if (!event.source || !event.source_id) return;
+                          
+                          if (event.source === CALENDAR_SOURCES.WORKOUT) {
+                            handleFitnessEventClick(event, 'workout');
+                          } else if (event.source === CALENDAR_SOURCES.CARDIO) {
+                            handleFitnessEventClick(event, 'cardio');
+                          } else if (event.source === CALENDAR_SOURCES.SPORT) {
+                            handleFitnessEventClick(event, 'sport');
+                          } else if (event.source === CALENDAR_SOURCES.MEAL) {
+                            router.push(`/food/meals/${event.source_id}/cook`);
+                          } else if (event.source === CALENDAR_SOURCES.PLANNED_MEAL) {
+                            handlePlannedMealClick(event);
+                          } else {
+                            const route = getCalendarEventRoute(event.source, event.source_id);
+                            router.push(route);
                           }
                         }}
                       >
-                        <MdDragIndicator size={16} className="text-gray-400" />
-                      </div>
-                      <SharedDeleteButton
-                        size="sm"
-                        onClick={() => handleDeleteEvent(event)}
-                        aria-label="Delete event"
-                        label="Delete"
-                      />
-                    </div>
-                  </div>
-                  {event.description && (
-                    <div className="text-sm opacity-90 mt-1">{event.description}</div>
-                  )}
-                </li>
+                        <div className="flex justify-between items-center">
+                          <div className="flex items-center gap-2 min-w-0 flex-1">
+                            {Icon && <Icon className="flex-shrink-0" size={16} />}
+                            <span className="truncate">{event.title}</span>
+                            {event.start_time && (
+                              <span className="text-xs opacity-75 flex-shrink-0">
+                                {dayjs(event.start_time).format('h:mm A')}
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            {/* Drag handle */}
+                            <div
+                              data-testid={`calendar-event-drag-handle-${event.id}`}
+                              className="opacity-0 group-hover:opacity-100 focus-visible:opacity-100 data-[dragging=true]:opacity-100 transition-opacity p-1 rounded hover:bg-black/20 cursor-grab active:cursor-grabbing w-6 h-6 flex items-center justify-center flex-shrink-0"
+                              onPointerDown={(e) => {
+                                e.stopPropagation();
+                                startDrag(e, { 
+                                  id: event.id, 
+                                  originalStart: event.start_time, 
+                                  originalEnd: event.end_time 
+                                });
+                              }}
+                              aria-label="Drag event"
+                              role="button"
+                              tabIndex={0}
+                              data-dragging={isBeingDragged}
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter' || e.key === ' ') {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  startDrag(e, { 
+                                    id: event.id, 
+                                    originalStart: event.start_time, 
+                                    originalEnd: event.end_time 
+                                  });
+                                }
+                              }}
+                            >
+                              <MdDragIndicator size={16} className="text-gray-400" />
+                            </div>
+                            <SharedDeleteButton
+                              size="sm"
+                              onClick={() => handleDeleteEvent(event)}
+                              aria-label="Delete event"
+                              label="Delete"
+                            />
+                          </div>
+                        </div>
+                        {event.description && (
+                          <div className="text-sm opacity-90 mt-1">{event.description}</div>
+                        )}
+                      </li>
+                    );
+                  })}
+                </ul>
               );
-            })}
-          </ul>
-        )}
-      </div>
+            })()}
+            <div className="flex gap-2 mt-4">
+              <Button 
+                onClick={() => {
+                  setShowDayEventsModal(false);
+                  setSelectedDayForEvents(null);
+                }} 
+                variant="secondary"
+                className="w-full"
+              >
+                Close
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {(showSelectionModal || showSelectionModalForDate) && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">

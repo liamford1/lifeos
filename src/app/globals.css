@@ -59,7 +59,7 @@ body {
   color: var(--foreground) !important;
   border: 1px solid var(--border) !important;
   border-radius: 0.5rem !important;
-  padding: 0.75rem 0.5rem !important;
+  padding: 0.25rem 0.5rem !important;
   display: flex !important;
   flex-direction: column !important;
   justify-content: flex-start !important;
@@ -117,12 +117,12 @@ body {
 .react-calendar__navigation {
   background: transparent !important;
   color: var(--foreground) !important;
-  margin-bottom: 1rem !important;
+  margin-bottom: 0.5rem !important;
   display: flex !important;
   justify-content: center !important;
   align-items: center !important;
   gap: 0.25rem !important;
-  padding: 0.5rem !important;
+  padding: 0.25rem !important;
   border-radius: 0.5rem !important;
 }
 
@@ -149,6 +149,11 @@ body {
 }
 .bg-panel {
   background-color: #2a2a2a;
+}
+
+/* Hide default date numbers from react-calendar */
+.react-calendar__tile abbr {
+  display: none !important;
 }
 
 /* Visually mark today's date in the calendar with a filled badge */
