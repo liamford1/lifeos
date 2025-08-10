@@ -10,6 +10,8 @@ import EditButton from "@/components/EditButton";
 import BaseModal from "@/components/shared/BaseModal";
 import { useCardioSessions } from "@/lib/hooks/useCardioSessions";
 import dynamic from "next/dynamic";
+import { Clock, MapPin, Ruler } from "lucide-react";
+
 const HeartPulse = dynamic(
   () => import("lucide-react/dist/esm/icons/heart-pulse"),
   { ssr: false, loading: () => <span className="inline-block w-4 h-4" /> },
@@ -128,45 +130,64 @@ export default function CardioHistoryModal({ isOpen, onClose }) {
     }
 
     return sessions.map((s) => (
-      <li key={s.id} className="group relative">
+      <div key={s.id} className="group relative">
         <div 
           onClick={() => router.push(`/fitness/cardio/${s.id}`)}
-          className="bg-card hover:bg-[#2e2e2e] transition p-4 rounded-lg shadow cursor-pointer border border-border pr-12"
+          className="bg-card hover:bg-[#2e2e2e] transition p-4 rounded-lg shadow cursor-pointer border border-border"
         >
-          <h2 className="text-xl font-semibold text-white truncate">
-            {s.activity_type || "Cardio"}
-          </h2>
-          <p className="text-sm text-gray-400 mt-1">{s.date}</p>
-          <p className="text-base mt-2">
-            ⏱️ {s.duration_minutes ?? "-"} min
-            {s.distance_miles && ` — 📏 ${s.distance_miles} mi`}
-          </p>
-          {s.location && <p className="text-base mt-1">📍 {s.location}</p>}
-          {s.notes && (
-            <p className="text-base mt-2">{s.notes}</p>
-          )}
-        </div>
-        <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
-          <div className="flex gap-2">
-            <EditButton
-              onClick={(e) => {
-                e.stopPropagation();
-                router.push(`/fitness/cardio/${s.id}/edit`);
-              }}
-            />
-            <SharedDeleteButton
-              onClick={(e) => {
-                e.stopPropagation();
-                handleDelete(s.id);
-              }}
-              size="sm"
-              aria-label="Delete cardio session"
-              label=""
-              className="w-8 h-8 p-0 flex items-center justify-center"
-            />
+          <div className="flex items-start justify-between">
+            <div className="flex-1 min-w-0">
+              <h2 className="text-xl font-semibold text-white truncate">
+                {s.activity_type || "Cardio"}
+              </h2>
+              <p className="text-sm text-gray-400 mt-1">{s.date}</p>
+              <div className="flex items-center gap-4 mt-2 text-sm text-gray-300">
+                <span className="flex items-center gap-1">
+                  <Clock className="w-4 h-4" />
+                  {s.duration_minutes ?? "-"} min
+                </span>
+                {s.distance_miles && (
+                  <span className="flex items-center gap-1">
+                    <Ruler className="w-4 h-4" />
+                    {s.distance_miles} mi
+                  </span>
+                )}
+                {s.location && (
+                  <span className="flex items-center gap-1">
+                    <MapPin className="w-4 h-4" />
+                    {s.location}
+                  </span>
+                )}
+              </div>
+              {s.notes && (
+                <p className="text-sm text-gray-400 mt-2 line-clamp-2">{s.notes}</p>
+              )}
+            </div>
+            <div className="flex gap-2 ml-4 opacity-0 group-hover:opacity-100 transition-opacity">
+              <EditButton
+                onClick={(e) => {
+                  e.stopPropagation();
+                  router.push(`/fitness/cardio/${s.id}/edit`);
+                }}
+                iconOnly={true}
+                size="sm"
+                className="w-8 h-8 p-0 flex items-center justify-center"
+              />
+              <SharedDeleteButton
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDelete(s.id);
+                }}
+                size="sm"
+                iconOnly={true}
+                aria-label="Delete cardio session"
+                label=""
+                className="w-8 h-8 p-0 flex items-center justify-center"
+              />
+            </div>
           </div>
         </div>
-      </li>
+      </div>
     ));
   }, [
     hasInitialized,
@@ -175,7 +196,6 @@ export default function CardioHistoryModal({ isOpen, onClose }) {
     sessions,
     router,
     handleDelete,
-    handleStartCardio,
   ]);
 
   if (!isOpen) return null;
@@ -194,12 +214,12 @@ export default function CardioHistoryModal({ isOpen, onClose }) {
     >
       <div className="space-y-6">
         {/* Start Cardio Button */}
-        <div className="flex justify-end gap-3">
+        <div className="flex justify-end">
           <Button
             onClick={handleStartCardio}
-            variant="secondary"
+            variant="primary"
             size="md"
-            className="flex items-center justify-center gap-2"
+            className="flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 focus:ring-green-500"
           >
             <HeartPulse className="w-4 h-4" />
             Start New Cardio Session
