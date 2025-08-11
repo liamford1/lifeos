@@ -37,7 +37,7 @@ import { MdOutlineCalendarToday } from 'react-icons/md';
 import SharedDeleteButton from '@/components/SharedDeleteButton';
 import { supabase } from '@/lib/supabaseClient';
 import { MdRestaurant, MdFitnessCenter, MdEvent, MdAdd, MdDragIndicator, MdFlashOn } from 'react-icons/md';
-import PlanMealModal from '@/components/modals/PlanMealModal';
+import MealDetailsModal from '@/components/modals/MealDetailsModal';
 import { toYMD } from '@/lib/date';
 
 export default function CalendarView() {
@@ -50,8 +50,8 @@ export default function CalendarView() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showSelectionModal, setShowSelectionModal] = useState(false);
   const [showSelectionModalForDate, setShowSelectionModalForDate] = useState(null);
-  const [showPlanMealModal, setShowPlanMealModal] = useState(false);
-  const [selectedDateForMealPlanning, setSelectedDateForMealPlanning] = useState(null);
+  const [showMealDetailsModal, setShowMealDetailsModal] = useState(false);
+  const [selectedMealId, setSelectedMealId] = useState(null);
   const [showDayEventsModal, setShowDayEventsModal] = useState(false);
   const [selectedDayForEvents, setSelectedDayForEvents] = useState(null);
   const [newEvent, setNewEvent] = useState({
@@ -235,8 +235,9 @@ export default function CalendarView() {
         break;
       case 'meal':
         // Open meal planning modal with the selected date
-        setSelectedDateForMealPlanning(dateStr);
-        setShowPlanMealModal(true);
+        // Handle meal planning - this would need to be implemented differently
+        // For now, just show a message that meal planning is handled elsewhere
+        handleSuccess('Meal planning is available in the Food section.');
         break;
       case 'workout':
         // Navigate to Fitness dashboard (planning handled via modal there)
@@ -406,14 +407,6 @@ export default function CalendarView() {
       
       if (!uuidRegex.test(event.source_id)) {
         console.warn('Invalid source_id for planned meal:', event.source_id);
-        // If source_id is not a valid UUID, try to extract date and open modal
-        const dateMatch = event.source_id.match(/^(\d{4}-\d{2}-\d{2})/);
-        if (dateMatch) {
-          setSelectedDateForMealPlanning(dateMatch[1]);
-          setShowPlanMealModal(true);
-        } else {
-          setShowPlanMealModal(true);
-        }
         return;
       }
 
@@ -432,10 +425,8 @@ export default function CalendarView() {
       }
 
       if (plannedMeal && plannedMeal.meal_id) {
-        router.push(`/food/meals/${plannedMeal.meal_id}/cook`);
-      } else {
-        // If no meal_id, open the modal to show the planned meal
-        setShowPlanMealModal(true);
+        setSelectedMealId(plannedMeal.meal_id);
+        setShowMealDetailsModal(true);
       }
     } catch (error) {
       console.error('Error in handlePlannedMealClick:', error);
@@ -448,8 +439,8 @@ export default function CalendarView() {
   return (
     <>
       {/* Quick Actions */}
-      <div className="mb-8">
-        <h3 className="text-lg font-semibold mb-3 text-gray-300 flex items-center">
+      <div className="mb-4">
+        <h3 className="text-lg font-semibold mb-2 text-gray-300 flex items-center">
           <MdFlashOn className="w-5 h-5 mr-2" />
           Quick Actions
         </h3>
@@ -493,7 +484,7 @@ export default function CalendarView() {
             onPointerMove={moveDrag}
             onPointerUp={(e) => endDrag(e, { computeTargetDate })}
           >
-                    <h3 className="text-lg font-semibold mb-2 text-gray-300 flex items-center">
+                    <h3 className="text-lg font-semibold mb-2 mt-2 text-gray-300 flex items-center">
                       <MdOutlineCalendarToday className="w-5 h-5 mr-2" />
                       Calendar
                     </h3>
@@ -569,7 +560,7 @@ export default function CalendarView() {
                   </div>
                   
                   {/* Events preview (only show first 2) */}
-                  <div className="space-y-1">
+                  <div className="space-y-0.5">
                     {eventsOnThisDay.slice(0, 2).map((event) => {
                       const { colorClass, Icon } = getEventStyle(event.source);
                       const isBeingDragged = draggingId === event.id;
@@ -682,74 +673,103 @@ export default function CalendarView() {
 
       {/* Day Events Modal */}
       {showDayEventsModal && selectedDayForEvents && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-surface p-6 rounded-lg w-96">
-            <h3 className="text-lg font-semibold mb-4">
-              Events on {dayjs(selectedDayForEvents).format('MMMM D, YYYY')}
-            </h3>
-            {(() => {
-              const eventsForDay = events.filter((event) =>
-                dayjs(event.start_time).isSame(selectedDayForEvents, 'day')
-              );
-              
-              if (eventsForDay.length === 0) {
-                return (
-                  <p className="text-sm text-gray-400">No events planned for this date.</p>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-surface border border-border rounded-xl shadow-2xl w-full max-w-md max-h-[80vh] flex flex-col">
+            {/* Header */}
+            <div className="flex items-center justify-between p-6 border-b border-border">
+              <h3 className="text-xl font-semibold text-foreground">
+                Events on {dayjs(selectedDayForEvents).format('MMMM D, YYYY')}
+              </h3>
+              <button
+                onClick={() => {
+                  setShowDayEventsModal(false);
+                  setSelectedDayForEvents(null);
+                }}
+                className="p-2 hover:bg-gray-100/10 rounded-lg transition-colors"
+                aria-label="Close modal"
+              >
+                <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto p-6">
+              {(() => {
+                const eventsForDay = events.filter((event) =>
+                  dayjs(event.start_time).isSame(selectedDayForEvents, 'day')
                 );
-              }
-              
-              return (
-                <ul className="space-y-2">
-                  {eventsForDay.map((event) => {
-                    const { colorClass, Icon } = getEventStyle(event.source);
-                    const isBeingDragged = draggingId === event.id;
-                    
-                    return (
-                      <li
-                        key={event.id}
-                        className={`p-3 rounded text-sm ${colorClass} cursor-pointer relative group`}
-                        role="button"
-                        tabIndex={0}
-                        data-dragging={isBeingDragged}
-                        style={{
-                          opacity: isBeingDragged ? 0.5 : 1,
-                          transform: isBeingDragged ? 'scale(0.95)' : 'none',
-                          transition: 'opacity 0.2s, transform 0.2s'
-                        }}
-                        onClick={() => {
-                          if (!event.source || !event.source_id) return;
-                          
-                          if (event.source === CALENDAR_SOURCES.WORKOUT) {
-                            handleFitnessEventClick(event, 'workout');
-                          } else if (event.source === CALENDAR_SOURCES.CARDIO) {
-                            handleFitnessEventClick(event, 'cardio');
-                          } else if (event.source === CALENDAR_SOURCES.SPORT) {
-                            handleFitnessEventClick(event, 'sport');
-                          } else if (event.source === CALENDAR_SOURCES.MEAL) {
-                            router.push(`/food/meals/${event.source_id}/cook`);
-                          } else if (event.source === CALENDAR_SOURCES.PLANNED_MEAL) {
-                            handlePlannedMealClick(event);
-                          } else {
-                            const route = getCalendarEventRoute(event.source, event.source_id);
-                            router.push(route);
-                          }
-                        }}
-                      >
-                        <div className="flex justify-between items-center">
-                          <div className="flex items-center gap-2 min-w-0 flex-1">
-                            {Icon && <Icon className="flex-shrink-0" size={16} />}
-                            <span className="truncate">{event.title}</span>
-                            {event.start_time && (
-                              <span className="text-xs opacity-75 flex-shrink-0">
-                                {dayjs(event.start_time).format('h:mm A')}
-                              </span>
-                            )}
+                
+                if (eventsForDay.length === 0) {
+                  return (
+                    <div className="text-center py-8">
+                      <div className="w-16 h-16 mx-auto mb-4 bg-gray-100/10 rounded-full flex items-center justify-center">
+                        <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                      </div>
+                      <p className="text-gray-400 text-sm">No events planned for this date</p>
+                    </div>
+                  );
+                }
+                
+                return (
+                  <div className="space-y-3">
+                    {eventsForDay.map((event) => {
+                      const { colorClass, Icon } = getEventStyle(event.source);
+                      const isBeingDragged = draggingId === event.id;
+                      
+                      return (
+                        <div
+                          key={event.id}
+                          className={`group relative bg-card border border-border rounded-lg p-4 hover:border-primary/50 transition-all duration-200 cursor-pointer ${
+                            isBeingDragged ? 'opacity-50 scale-95' : ''
+                          }`}
+                          onClick={() => {
+                            if (!event.source || !event.source_id) return;
+                            
+                            if (event.source === CALENDAR_SOURCES.WORKOUT) {
+                              handleFitnessEventClick(event, 'workout');
+                            } else if (event.source === CALENDAR_SOURCES.CARDIO) {
+                              handleFitnessEventClick(event, 'cardio');
+                            } else if (event.source === CALENDAR_SOURCES.SPORT) {
+                              handleFitnessEventClick(event, 'sport');
+                            } else if (event.source === CALENDAR_SOURCES.MEAL) {
+                              router.push(`/food/meals/${event.source_id}/cook`);
+                            } else if (event.source === CALENDAR_SOURCES.PLANNED_MEAL) {
+                              handlePlannedMealClick(event);
+                            } else {
+                              const route = getCalendarEventRoute(event.source, event.source_id);
+                              router.push(route);
+                            }
+                          }}
+                        >
+                          {/* Event content */}
+                          <div className="flex items-start gap-3">
+                            <div className={`p-2 rounded-lg ${colorClass} flex-shrink-0`}>
+                              {Icon && <Icon className="w-4 h-4 text-white" />}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center justify-between mb-1">
+                                <h4 className="font-medium text-foreground truncate">{event.title}</h4>
+                                {event.start_time && (
+                                  <span className="text-sm text-gray-400 flex-shrink-0 ml-2">
+                                    {dayjs(event.start_time).format('h:mm A')}
+                                  </span>
+                                )}
+                              </div>
+                              {event.description && (
+                                <p className="text-sm text-gray-400 line-clamp-2">{event.description}</p>
+                              )}
+                            </div>
                           </div>
-                          <div className="flex items-center gap-2">
-                            {/* Drag handle */}
-                            <div
+
+                          {/* Action buttons */}
+                          <div className="absolute top-3 right-3 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button
                               data-testid={`calendar-event-drag-handle-${event.id}`}
-                              className="opacity-0 group-hover:opacity-100 focus-visible:opacity-100 data-[dragging=true]:opacity-100 transition-opacity p-1 rounded hover:bg-black/20 cursor-grab active:cursor-grabbing w-6 h-6 flex items-center justify-center flex-shrink-0"
+                              className="p-1.5 rounded-md hover:bg-gray-100/10 transition-colors"
                               onPointerDown={(e) => {
                                 e.stopPropagation();
                                 startDrag(e, { 
@@ -759,41 +779,32 @@ export default function CalendarView() {
                                 });
                               }}
                               aria-label="Drag event"
-                              role="button"
-                              tabIndex={0}
-                              data-dragging={isBeingDragged}
-                              onKeyDown={(e) => {
-                                if (e.key === 'Enter' || e.key === ' ') {
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                  startDrag(e, { 
-                                    id: event.id, 
-                                    originalStart: event.start_time, 
-                                    originalEnd: event.end_time 
-                                  });
-                                }
-                              }}
                             >
-                              <MdDragIndicator size={16} className="text-gray-400" />
-                            </div>
-                            <SharedDeleteButton
-                              size="sm"
-                              onClick={() => handleDeleteEvent(event)}
+                              <MdDragIndicator size={14} className="text-gray-400" />
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteEvent(event);
+                              }}
+                              className="p-1.5 rounded-md hover:bg-red-500/10 transition-colors"
                               aria-label="Delete event"
-                              label="Delete"
-                            />
+                            >
+                              <svg className="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                              </svg>
+                            </button>
                           </div>
                         </div>
-                        {event.description && (
-                          <div className="text-sm opacity-90 mt-1">{event.description}</div>
-                        )}
-                      </li>
-                    );
-                  })}
-                </ul>
-              );
-            })()}
-            <div className="flex gap-2 mt-4">
+                      );
+                    })}
+                  </div>
+                );
+              })()}
+            </div>
+
+            {/* Footer */}
+            <div className="p-6 border-t border-border">
               <Button 
                 onClick={() => {
                   setShowDayEventsModal(false);
@@ -929,18 +940,14 @@ export default function CalendarView() {
         </div>
       )}
 
-      {/* Plan Meal Modal */}
-      <PlanMealModal 
-        isOpen={showPlanMealModal} 
+      {/* Meal Details Modal */}
+      <MealDetailsModal 
+        isOpen={showMealDetailsModal} 
         onClose={() => {
-          setShowPlanMealModal(false);
-          setSelectedDateForMealPlanning(null);
+          setShowMealDetailsModal(false);
+          setSelectedMealId(null);
         }}
-        onSuccess={() => {
-          // Refresh calendar events when a meal is successfully planned
-          queryClient.invalidateQueries({ queryKey: ["events", user?.id] });
-        }}
-        selectedDate={selectedDateForMealPlanning}
+        mealId={selectedMealId}
       />
         </div>
       </>
