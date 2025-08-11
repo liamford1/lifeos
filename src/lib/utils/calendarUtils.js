@@ -22,7 +22,7 @@ export const CALENDAR_SOURCES = {
 export const getCalendarEventRoute = (source, source_id) => {
   switch (source) {
     case CALENDAR_SOURCES.MEAL:
-      return `/food/meals/${source_id}/cook`
+      return `/food` // Meals now use modals instead of pages, so redirect to food page
     case CALENDAR_SOURCES.PLANNED_MEAL:
       return `/food` // Redirect to food page since planning is now done via modal
     case CALENDAR_SOURCES.WORKOUT:

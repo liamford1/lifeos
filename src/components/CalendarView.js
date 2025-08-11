@@ -38,6 +38,7 @@ import SharedDeleteButton from '@/components/SharedDeleteButton';
 import { supabase } from '@/lib/supabaseClient';
 import { MdRestaurant, MdFitnessCenter, MdEvent, MdAdd, MdDragIndicator, MdFlashOn } from 'react-icons/md';
 import MealDetailsModal from '@/components/modals/MealDetailsModal';
+import CookingSessionModal from '@/components/modals/CookingSessionModal';
 import { toYMD } from '@/lib/date';
 
 export default function CalendarView() {
@@ -52,6 +53,8 @@ export default function CalendarView() {
   const [showSelectionModalForDate, setShowSelectionModalForDate] = useState(null);
   const [showMealDetailsModal, setShowMealDetailsModal] = useState(false);
   const [selectedMealId, setSelectedMealId] = useState(null);
+  const [showCookingSessionModal, setShowCookingSessionModal] = useState(false);
+  const [cookingMealId, setCookingMealId] = useState(null);
   const [showDayEventsModal, setShowDayEventsModal] = useState(false);
   const [selectedDayForEvents, setSelectedDayForEvents] = useState(null);
   const [newEvent, setNewEvent] = useState({
@@ -402,6 +405,8 @@ export default function CalendarView() {
 
   const handlePlannedMealClick = async (event) => {
     try {
+      console.log('Planned meal click event:', event);
+      
       // Check if source_id looks like a valid UUID
       const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
       
@@ -410,29 +415,61 @@ export default function CalendarView() {
         return;
       }
 
-      const { data: plannedMeal, error } = await supabase
-        .from('planned_meals')
-        .select('meal_id')
-        .eq('id', event.source_id)
-        .single();
+      console.log('About to query planned_meals with source_id:', event.source_id);
+      
+      let plannedMeal, error;
+      try {
+        const response = await supabase
+          .from('planned_meals')
+          .select('meal_id')
+          .eq('id', event.source_id)
+          .single();
+        
+        plannedMeal = response.data;
+        error = response.error;
+        
+        console.log('Raw Supabase response:', response);
+      } catch (supabaseError) {
+        console.error('Exception during Supabase query:', supabaseError);
+        error = supabaseError;
+      }
+
+      console.log('Supabase response:', { 
+        data: plannedMeal, 
+        error: error,
+        errorType: typeof error,
+        errorKeys: error ? Object.keys(error) : 'no error',
+        errorStringified: error ? JSON.stringify(error) : 'no error'
+      });
 
       if (error) {
         console.error('Error fetching planned meal:', error);
-        handleError(new Error('Could not fetch planned meal details.'), { 
-          customMessage: 'Could not fetch planned meal details.' 
-        });
+        // Don't show error to user for now, just log it
         return;
       }
 
       if (plannedMeal && plannedMeal.meal_id) {
+        console.log('Found planned meal with meal_id:', plannedMeal.meal_id);
         setSelectedMealId(plannedMeal.meal_id);
         setShowMealDetailsModal(true);
+      } else {
+        console.warn('No meal_id found for planned meal:', plannedMeal);
+        
+        // Let's also check if the planned meal exists at all
+        try {
+          const { data: allPlannedMeals } = await supabase
+            .from('planned_meals')
+            .select('*')
+            .eq('id', event.source_id);
+          
+          console.log('All planned meals with this ID:', allPlannedMeals);
+        } catch (checkError) {
+          console.error('Error checking all planned meals:', checkError);
+        }
       }
     } catch (error) {
       console.error('Error in handlePlannedMealClick:', error);
-      handleError(error, { 
-        customMessage: 'Could not process planned meal click.' 
-      });
+      // Don't show error to user for now, just log it
     }
   };
 
@@ -579,7 +616,8 @@ export default function CalendarView() {
                           onClick={(e) => {
                             e.stopPropagation();
                             if (event.source === CALENDAR_SOURCES.MEAL) {
-                              router.push(`/food/meals/${event.source_id}/cook`);
+                              setCookingMealId(event.source_id);
+                              setShowCookingSessionModal(true);
                             } else if (event.source === CALENDAR_SOURCES.PLANNED_MEAL) {
                               handlePlannedMealClick(event);
                             } else if (event.source === CALENDAR_SOURCES.EXPENSE) {
@@ -948,6 +986,16 @@ export default function CalendarView() {
           setSelectedMealId(null);
         }}
         mealId={selectedMealId}
+      />
+
+      {/* Cooking Session Modal */}
+      <CookingSessionModal
+        isOpen={showCookingSessionModal}
+        onClose={() => {
+          setShowCookingSessionModal(false);
+          setCookingMealId(null);
+        }}
+        mealId={cookingMealId}
       />
         </div>
       </>

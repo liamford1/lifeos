@@ -10,6 +10,7 @@ import PantryModal from '@/components/modals/PantryModal';
 import AddMealModal from '@/components/modals/AddMealModal';
 import MealsModal from '@/components/modals/MealsModal';
 import AddReceiptModal from '@/components/modals/AddReceiptModal';
+import MealDetailsModal from '@/components/modals/MealDetailsModal';
 
 import dynamic from "next/dynamic";
 import { supabase } from '@/lib/supabaseClient';
@@ -46,6 +47,8 @@ export default function FoodHome() {
   const [showAddMealModal, setShowAddMealModal] = useState(false);
   const [showMealsModal, setShowMealsModal] = useState(false);
   const [showAddReceiptModal, setShowAddReceiptModal] = useState(false);
+  const [showMealDetailsModal, setShowMealDetailsModal] = useState(false);
+  const [selectedMealId, setSelectedMealId] = useState(null);
 
 
   useEffect(() => {
@@ -225,10 +228,13 @@ export default function FoodHome() {
                 </div>
               ) : recentlyCooked.length > 0 ? (
                 recentlyCooked.map((cookedMeal) => (
-                  <Link
+                  <div
                     key={`${cookedMeal.user_id}-${cookedMeal.meal_id}`}
-                    href={`/food/meals/${cookedMeal.meal_id}`}
-                    className="block"
+                    onClick={() => {
+                      setSelectedMealId(cookedMeal.meal_id);
+                      setShowMealDetailsModal(true);
+                    }}
+                    className="block cursor-pointer"
                   >
                     <div className="flex items-center justify-between p-3 bg-card rounded-lg hover:bg-card/80 transition-colors">
                       <div className="flex items-center space-x-3">
@@ -244,7 +250,7 @@ export default function FoodHome() {
                       </div>
                       <Clock className="w-4 h-4 text-muted-foreground" />
                     </div>
-                  </Link>
+                  </div>
                 ))
               ) : (
                 <div className="text-center py-8 text-muted-foreground">
@@ -517,6 +523,15 @@ export default function FoodHome() {
         onClose={() => setShowAddReceiptModal(false)}
       />
 
+      {/* Meal Details Modal */}
+      <MealDetailsModal 
+        isOpen={showMealDetailsModal} 
+        onClose={() => {
+          setShowMealDetailsModal(false);
+          setSelectedMealId(null);
+        }}
+        mealId={selectedMealId}
+      />
 
     </div>
   );

@@ -9,7 +9,8 @@ export function navigateToSource(source, sourceId, router) {
   let path = null;
   switch (source) {
     case 'meal':
-      path = `/food/meals/${sourceId}/cook`;
+      // Meals now use modals instead of pages, so redirect to food page
+      path = `/food`;
       break;
     case 'cardio':
       path = `/fitness`; // Redirect to fitness page since cardio details are now in modal
