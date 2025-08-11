@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import CalendarView from '../CalendarView';
+import CalendarView from '../CalendarView.tsx';
 
 // Mock the dependencies
 jest.mock('@/context/UserContext', () => ({

@@ -4,21 +4,29 @@ import React from 'react';
 import dayjs from 'dayjs';
 import EventItem from './EventItem';
 import { getEventStyle } from '@/lib/utils/eventStyleMap';
+import { EventListProps } from '@/types/calendar';
 
 /**
  * EventList Component
  * 
  * Displays a list of events for a selected day or period
  * Used in day events modal and other event list contexts
+ * 
+ * @param events - Array of calendar events to display
+ * @param draggingId - ID of the event currently being dragged
+ * @param onEventClick - Callback function when an event is clicked
+ * @param onDelete - Callback function to delete an event
+ * @param onStartDrag - Callback function when drag operation starts
+ * @param emptyMessage - Message to display when no events are available
  */
-export default function EventList({ 
+const EventList: React.FC<EventListProps & { emptyMessage?: string }> = ({ 
   events, 
   draggingId,
   onEventClick, 
   onDelete, 
   onStartDrag,
   emptyMessage = "No events planned for this date"
-}) {
+}) => {
   if (events.length === 0) {
     return (
       <div className="text-center py-8">
@@ -50,4 +58,6 @@ export default function EventList({
       })}
     </div>
   );
-}
+};
+
+export default EventList;

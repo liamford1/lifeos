@@ -9,15 +9,42 @@ import { supabase } from '@/lib/supabaseClient';
 import Button from '@/components/shared/Button';
 import FormInput from '@/components/shared/FormInput';
 import FormTextarea from '@/components/shared/FormTextarea';
-import dynamic from 'next/dynamic';
 
-// Dynamic imports for lucide-react icons to reduce bundle size
-const Activity = dynamic(() => import("lucide-react/dist/esm/icons/activity"), { ssr: false });
-const Dumbbell = dynamic(() => import("lucide-react/dist/esm/icons/dumbbell"), { ssr: false });
-const HeartPulse = dynamic(() => import("lucide-react/dist/esm/icons/heart-pulse"), { ssr: false });
-const Goal = dynamic(() => import("lucide-react/dist/esm/icons/goal"), { ssr: false });
-const StretchHorizontal = dynamic(() => import("lucide-react/dist/esm/icons/stretch-horizontal"), { ssr: false });
-const X = dynamic(() => import("lucide-react/dist/esm/icons/x"), { ssr: false });
+// Import lucide-react icons
+import { 
+  Activity, 
+  Dumbbell, 
+  HeartPulse, 
+  Goal, 
+  StretchHorizontal, 
+  X 
+} from "lucide-react";
+
+/**
+ * Workout form data interface
+ */
+interface WorkoutFormData {
+  title: string;
+  notes: string;
+}
+
+/**
+ * Cardio form data interface
+ */
+interface CardioFormData {
+  activityType: string;
+  location: string;
+  notes: string;
+}
+
+/**
+ * Props for WorkoutPlanner component
+ */
+interface WorkoutPlannerProps {
+  showStartActivityModal: boolean;
+  setShowStartActivityModal: (show: boolean) => void;
+  onOpenStretchingModal?: () => void;
+}
 
 /**
  * WorkoutPlanner Component
@@ -28,12 +55,11 @@ const X = dynamic(() => import("lucide-react/dist/esm/icons/x"), { ssr: false })
  * - Cardio form creation and submission
  * - Form validation and error handling
  * 
- * @param {Object} props
- * @param {boolean} props.showStartActivityModal - Controls start activity modal visibility
- * @param {Function} props.setShowStartActivityModal - Function to control start activity modal
- * @param {Function} props.onOpenStretchingModal - Callback to open stretching modal
+ * @param showStartActivityModal - Controls start activity modal visibility
+ * @param setShowStartActivityModal - Function to control start activity modal
+ * @param onOpenStretchingModal - Callback to open stretching modal
  */
-const WorkoutPlanner = React.memo(({ 
+const WorkoutPlanner: React.FC<WorkoutPlannerProps> = React.memo(({ 
   showStartActivityModal, 
   setShowStartActivityModal,
   onOpenStretchingModal 
@@ -45,22 +71,24 @@ const WorkoutPlanner = React.memo(({
   const { refreshCardio } = useCardioSession();
 
   // Form states
-  const [showWorkoutForm, setShowWorkoutForm] = useState(false);
-  const [showCardioForm, setShowCardioForm] = useState(false);
-  const [workoutFormData, setWorkoutFormData] = useState({
+  const [showWorkoutForm, setShowWorkoutForm] = useState<boolean>(false);
+  const [showCardioForm, setShowCardioForm] = useState<boolean>(false);
+  const [workoutFormData, setWorkoutFormData] = useState<WorkoutFormData>({
     title: '',
     notes: ''
   });
-  const [cardioFormData, setCardioFormData] = useState({
+  const [cardioFormData, setCardioFormData] = useState<CardioFormData>({
     activityType: '',
     location: '',
     notes: ''
   });
-  const [formLoading, setFormLoading] = useState(false);
-  const [formError, setFormError] = useState('');
+  const [formLoading, setFormLoading] = useState<boolean>(false);
+  const [formError, setFormError] = useState<string>('');
 
-  // Handle workout form submission
-  const handleStartWorkout = async (e) => {
+  /**
+   * Handle workout form submission
+   */
+  const handleStartWorkout = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     setFormError('');
     if (!workoutFormData.title.trim()) {
@@ -69,54 +97,59 @@ const WorkoutPlanner = React.memo(({
     }
     setFormLoading(true);
     
-    // Check for existing in-progress workout
-    const { data: existingWorkout } = await supabase
-      .from('fitness_workouts')
-      .select('*')
-      .eq('user_id', user.id)
-      .eq('in_progress', true)
-      .maybeSingle();
-    
-    if (existingWorkout) {
-      setFormError('You already have an active workout session.');
-      setFormLoading(false);
-      return;
-    }
-    
-    const now = new Date();
-    const today = now.toISOString().split('T')[0];
-    const workoutData = {
-      user_id: user.id,
-      title: workoutFormData.title.trim(),
-      notes: workoutFormData.notes.trim(),
-      in_progress: true,
-      start_time: now.toISOString(),
-      date: today,
-    };
+    try {
+      // Check for existing in-progress workout
+      const { data: existingWorkout } = await supabase
+        .from('fitness_workouts')
+        .select('*')
+        .eq('user_id', (user as any).id)
+        .eq('in_progress', true)
+        .maybeSingle();
+      
+      if (existingWorkout) {
+        setFormError('You already have an active workout session.');
+        setFormLoading(false);
+        return;
+      }
+      
+      const now = new Date();
+      const today = now.toISOString().split('T')[0];
+      const workoutData = {
+        user_id: (user as any).id,
+        title: workoutFormData.title.trim(),
+        notes: workoutFormData.notes.trim(),
+        in_progress: true,
+        start_time: now.toISOString(),
+        date: today,
+      };
 
-    const { data, error } = await supabase
-      .from('fitness_workouts')
-      .insert(workoutData)
-      .select()
-      .single();
-    
-    setFormLoading(false);
-    if (!error && data) {
-      showSuccess('Workout created! Opening workout session...');
+      const { data, error } = await supabase
+        .from('fitness_workouts')
+        .insert(workoutData)
+        .select()
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
       setShowWorkoutForm(false);
       setWorkoutFormData({ title: '', notes: '' });
-      // Refresh the workout session context to update navbar
-      await refreshWorkout();
-      // Return the workout data for parent to handle modal opening
-      return data;
-    } else {
-      setFormError(error?.message || 'Failed to start workout');
-      return null;
+      showSuccess('Workout started successfully!');
+      refreshWorkout();
+      router.push('/fitness/workouts/live');
+    } catch (error) {
+      console.error('Error starting workout:', error);
+      showError('Failed to start workout. Please try again.');
+    } finally {
+      setFormLoading(false);
     }
   };
 
-  // Handle cardio form submission
-  const handleStartCardio = async (e) => {
+  /**
+   * Handle cardio form submission
+   */
+  const handleStartCardio = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     setFormError('');
     if (!cardioFormData.activityType.trim()) {
@@ -125,51 +158,54 @@ const WorkoutPlanner = React.memo(({
     }
     setFormLoading(true);
     
-    // Check for existing in-progress cardio
-    const { data: existingCardio } = await supabase
-      .from('fitness_cardio')
-      .select('*')
-      .eq('user_id', user.id)
-      .eq('in_progress', true)
-      .maybeSingle();
-    
-    if (existingCardio) {
-      setFormError('You already have an active cardio session.');
-      setFormLoading(false);
-      return;
-    }
-    
-    const now = new Date();
-    const today = now.toISOString().split('T')[0];
-    const cardioData = {
-      user_id: user.id,
-      activity_type: cardioFormData.activityType.trim(),
-      notes: cardioFormData.notes.trim(),
-      location: cardioFormData.location.trim(),
-      in_progress: true,
-      start_time: now.toISOString(),
-      date: today,
-    };
+    try {
+      // Check for existing in-progress cardio session
+      const { data: existingCardio } = await supabase
+        .from('fitness_cardio')
+        .select('*')
+        .eq('user_id', (user as any).id)
+        .eq('in_progress', true)
+        .maybeSingle();
+      
+      if (existingCardio) {
+        setFormError('You already have an active cardio session.');
+        setFormLoading(false);
+        return;
+      }
+      
+      const now = new Date();
+      const today = now.toISOString().split('T')[0];
+      const cardioData = {
+        user_id: (user as any).id,
+        title: cardioFormData.activityType.trim(),
+        activity_type: cardioFormData.activityType.trim(),
+        location: cardioFormData.location.trim(),
+        notes: cardioFormData.notes.trim(),
+        in_progress: true,
+        start_time: now.toISOString(),
+        date: today,
+      };
 
-    const { data, error } = await supabase
-      .from('fitness_cardio')
-      .insert(cardioData)
-      .select()
-      .single();
-    
-    setFormLoading(false);
-    if (!error && data) {
-      showSuccess('Cardio session created! Redirecting to session...');
+      const { data, error } = await supabase
+        .from('fitness_cardio')
+        .insert(cardioData)
+        .select()
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
       setShowCardioForm(false);
       setCardioFormData({ activityType: '', location: '', notes: '' });
-      // Refresh the cardio session context to update navbar
-      await refreshCardio();
-      // Redirect directly to the session page
-      setTimeout(() => {
-        router.push(`/fitness/cardio/${data.id}/session`);
-      }, 1500);
-    } else {
-      setFormError(error?.message || 'Failed to start cardio session');
+      showSuccess('Cardio session started successfully!');
+      refreshCardio();
+      router.push('/fitness/cardio/live');
+    } catch (error) {
+      console.error('Error starting cardio session:', error);
+      showError('Failed to start cardio session. Please try again.');
+    } finally {
+      setFormLoading(false);
     }
   };
 
@@ -179,14 +215,15 @@ const WorkoutPlanner = React.memo(({
       {showStartActivityModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-surface rounded-xl p-6 w-full max-w-md border border-gray-700">
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold flex items-center">
                 <Activity className="w-5 h-5 text-blue-500 mr-2" />
-                Start New Activity
+                Start Activity
               </h2>
               <button
                 onClick={() => setShowStartActivityModal(false)}
                 className="text-gray-400 hover:text-white"
+                aria-label="Close activity modal"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -199,6 +236,7 @@ const WorkoutPlanner = React.memo(({
                   setShowWorkoutForm(true);
                 }}
                 className="w-full p-4 bg-gray-800 rounded-lg hover:bg-gray-700 transition-all duration-200 border border-gray-600 hover:border-blue-500 group text-left"
+                aria-label="Start a new workout session"
               >
                 <div className="flex items-center">
                   <Dumbbell className="w-6 h-6 text-blue-500 mr-3 group-hover:scale-110 transition-transform" />
@@ -215,6 +253,7 @@ const WorkoutPlanner = React.memo(({
                   setShowCardioForm(true);
                 }}
                 className="w-full p-4 bg-gray-800 rounded-lg hover:bg-gray-700 transition-all duration-200 border border-gray-600 hover:border-red-500 group text-left"
+                aria-label="Start a new cardio session"
               >
                 <div className="flex items-center">
                   <HeartPulse className="w-6 h-6 text-red-500 mr-3 group-hover:scale-110 transition-transform" />
@@ -231,6 +270,7 @@ const WorkoutPlanner = React.memo(({
                   router.push('/fitness/sports/live');
                 }}
                 className="w-full p-4 bg-gray-800 rounded-lg hover:bg-gray-700 transition-all duration-200 border border-gray-600 hover:border-green-500 group text-left"
+                aria-label="Start a new sports session"
               >
                 <div className="flex items-center">
                   <Goal className="w-6 h-6 text-green-500 mr-3 group-hover:scale-110 transition-transform" />
@@ -247,6 +287,7 @@ const WorkoutPlanner = React.memo(({
                   onOpenStretchingModal && onOpenStretchingModal();
                 }}
                 className="w-full p-4 bg-gray-800 rounded-lg hover:bg-gray-700 transition-all duration-200 border border-gray-600 hover:border-blue-500 group text-left"
+                aria-label="Start a stretching session"
               >
                 <div className="flex items-center">
                   <StretchHorizontal className="w-6 h-6 text-blue-500 mr-3 group-hover:scale-110 transition-transform" />
@@ -273,6 +314,7 @@ const WorkoutPlanner = React.memo(({
               <button
                 onClick={() => setShowWorkoutForm(false)}
                 className="text-gray-400 hover:text-white"
+                aria-label="Close workout form"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -285,7 +327,9 @@ const WorkoutPlanner = React.memo(({
                 <label className="block text-sm font-medium mb-2">Workout Title *</label>
                 <FormInput
                   value={workoutFormData.title}
-                  onChange={e => setWorkoutFormData(prev => ({ ...prev, title: e.target.value }))}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
+                    setWorkoutFormData(prev => ({ ...prev, title: e.target.value }))
+                  }
                   placeholder="e.g. Push Day, Full Body, etc."
                   required
                 />
@@ -294,7 +338,9 @@ const WorkoutPlanner = React.memo(({
                 <label className="block text-sm font-medium mb-2">Notes (optional)</label>
                 <FormTextarea
                   value={workoutFormData.notes}
-                  onChange={e => setWorkoutFormData(prev => ({ ...prev, notes: e.target.value }))}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => 
+                    setWorkoutFormData(prev => ({ ...prev, notes: e.target.value }))
+                  }
                   placeholder="Add any notes or goals for this workout"
                   rows={3}
                 />
@@ -306,6 +352,8 @@ const WorkoutPlanner = React.memo(({
                   loading={formLoading}
                   disabled={formLoading}
                   className="flex-1"
+                  aria-label="Start workout session"
+                  onClick={() => {}}
                 >
                   Start Workout
                 </Button>
@@ -314,6 +362,7 @@ const WorkoutPlanner = React.memo(({
                   variant="secondary"
                   onClick={() => setShowWorkoutForm(false)}
                   disabled={formLoading}
+                  aria-label="Cancel workout creation"
                 >
                   Cancel
                 </Button>
@@ -335,6 +384,7 @@ const WorkoutPlanner = React.memo(({
               <button
                 onClick={() => setShowCardioForm(false)}
                 className="text-gray-400 hover:text-white"
+                aria-label="Close cardio form"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -347,7 +397,9 @@ const WorkoutPlanner = React.memo(({
                 <label className="block text-sm font-medium mb-2">Activity Type *</label>
                 <FormInput
                   value={cardioFormData.activityType}
-                  onChange={e => setCardioFormData(prev => ({ ...prev, activityType: e.target.value }))}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
+                    setCardioFormData(prev => ({ ...prev, activityType: e.target.value }))
+                  }
                   placeholder="e.g. Running, Cycling, Swimming, Walking"
                   required
                 />
@@ -356,7 +408,9 @@ const WorkoutPlanner = React.memo(({
                 <label className="block text-sm font-medium mb-2">Location (optional)</label>
                 <FormInput
                   value={cardioFormData.location}
-                  onChange={e => setCardioFormData(prev => ({ ...prev, location: e.target.value }))}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => 
+                    setCardioFormData(prev => ({ ...prev, location: e.target.value }))
+                  }
                   placeholder="e.g. Central Park, Gym, Home"
                 />
               </div>
@@ -364,7 +418,9 @@ const WorkoutPlanner = React.memo(({
                 <label className="block text-sm font-medium mb-2">Notes (optional)</label>
                 <FormTextarea
                   value={cardioFormData.notes}
-                  onChange={e => setCardioFormData(prev => ({ ...prev, notes: e.target.value }))}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => 
+                    setCardioFormData(prev => ({ ...prev, notes: e.target.value }))
+                  }
                   placeholder="Add any notes or goals for this session"
                   rows={3}
                 />
@@ -376,6 +432,8 @@ const WorkoutPlanner = React.memo(({
                   loading={formLoading}
                   disabled={formLoading}
                   className="flex-1"
+                  aria-label="Start cardio session"
+                  onClick={() => {}}
                 >
                   Start Cardio
                 </Button>
@@ -384,6 +442,7 @@ const WorkoutPlanner = React.memo(({
                   variant="secondary"
                   onClick={() => setShowCardioForm(false)}
                   disabled={formLoading}
+                  aria-label="Cancel cardio creation"
                 >
                   Cancel
                 </Button>

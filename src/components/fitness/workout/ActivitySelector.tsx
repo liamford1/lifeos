@@ -6,6 +6,21 @@ import { MdEvent, MdFitnessCenter } from 'react-icons/md';
 import dayjs from 'dayjs';
 
 /**
+ * Activity type for selection
+ */
+type ActivityType = 'general' | 'workout';
+
+/**
+ * Props for ActivitySelector component
+ */
+interface ActivitySelectorProps {
+  isOpen: boolean;
+  selectedDate?: Date;
+  onSelect: (type: ActivityType, date?: Date) => void;
+  onClose: () => void;
+}
+
+/**
  * ActivitySelector Component
  * 
  * Handles the activity type selection modal for planning workouts and events.
@@ -15,8 +30,13 @@ import dayjs from 'dayjs';
  * - Activity type selection (General Event vs Workout)
  * - Date-specific planning
  * - Clean modal interface
+ * 
+ * @param isOpen - Controls modal visibility
+ * @param selectedDate - The date for which to plan the activity
+ * @param onSelect - Callback when an activity type is selected
+ * @param onClose - Callback to close the modal
  */
-const ActivitySelector = React.memo(({ 
+const ActivitySelector: React.FC<ActivitySelectorProps> = React.memo(({ 
   isOpen,
   selectedDate,
   onSelect,
@@ -24,7 +44,10 @@ const ActivitySelector = React.memo(({
 }) => {
   if (!isOpen) return null;
 
-  const handleSelection = (type) => {
+  /**
+   * Handle activity type selection
+   */
+  const handleSelection = (type: ActivityType): void => {
     onSelect(type, selectedDate);
   };
 
@@ -40,10 +63,12 @@ const ActivitySelector = React.memo(({
           )}
         </h3>
         <div className="space-y-3">
+          {/* General Event Button */}
           <Button
             onClick={() => handleSelection('general')}
             variant="secondary"
             className="w-full justify-start p-4 h-auto"
+            aria-label="Plan a general calendar event"
           >
             <div className="flex items-center gap-3">
               <MdEvent className="w-6 h-6" />
@@ -54,10 +79,12 @@ const ActivitySelector = React.memo(({
             </div>
           </Button>
           
+          {/* Workout Button */}
           <Button
             onClick={() => handleSelection('workout')}
             variant="secondary"
             className="w-full justify-start p-4 h-auto"
+            aria-label="Plan a fitness workout"
           >
             <div className="flex items-center gap-3">
               <MdFitnessCenter className="w-6 h-6" />
@@ -73,6 +100,7 @@ const ActivitySelector = React.memo(({
             onClick={onClose} 
             variant="secondary" 
             className="w-full"
+            aria-label="Cancel activity selection"
           >
             Cancel
           </Button>

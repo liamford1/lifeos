@@ -4,6 +4,7 @@ import React from 'react';
 import { MdDragIndicator } from 'react-icons/md';
 import { getEventStyle } from '@/lib/utils/eventStyleMap';
 import dayjs from 'dayjs';
+import { EventItemProps, DragState } from '@/types/calendar';
 
 /**
  * EventItem Component
@@ -13,16 +14,40 @@ import dayjs from 'dayjs';
  * - Drag handle for rescheduling
  * - Delete functionality
  * - Compact and full view modes
+ * 
+ * @param event - The calendar event to display
+ * @param isBeingDragged - Whether this event is currently being dragged
+ * @param onEventClick - Callback function when event is clicked
+ * @param onDelete - Callback function to delete the event
+ * @param onStartDrag - Callback function when drag operation starts
+ * @param isCompact - Whether to display in compact mode
  */
-const EventItem = React.memo(({ 
+const EventItem: React.FC<EventItemProps> = React.memo(({ 
   event, 
-  isBeingDragged, 
+  isBeingDragged = false, 
   onEventClick, 
   onDelete, 
   onStartDrag,
   isCompact = false 
 }) => {
   const { colorClass, Icon } = getEventStyle(event.source);
+  
+  const handleStartDrag = (e: React.PointerEvent | React.KeyboardEvent, dragState: DragState) => {
+    e.stopPropagation();
+    onStartDrag(e as React.PointerEvent, dragState);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      e.stopPropagation();
+      handleStartDrag(e, { 
+        id: event.id, 
+        originalStart: event.start_time, 
+        originalEnd: event.end_time || event.start_time
+      });
+    }
+  };
   
   if (isCompact) {
     return (
@@ -35,7 +60,7 @@ const EventItem = React.memo(({
           transform: isBeingDragged ? 'scale(0.95)' : 'none',
           transition: 'opacity 0.2s, transform 0.2s'
         }}
-        onClick={(e) => {
+        onClick={(e: React.MouseEvent) => {
           e.stopPropagation();
           onEventClick(event);
         }}
@@ -49,29 +74,18 @@ const EventItem = React.memo(({
           <div
             data-testid={`calendar-event-drag-handle-${event.id}`}
             className="opacity-0 group-hover:opacity-100 focus-visible:opacity-100 data-[dragging=true]:opacity-100 transition-opacity ml-1 flex-shrink-0 p-0.5 rounded hover:bg-black/20 cursor-grab active:cursor-grabbing w-4 h-4 flex items-center justify-center"
-            onPointerDown={(e) => {
-              e.stopPropagation();
-              onStartDrag(e, { 
+            onPointerDown={(e: React.PointerEvent) => {
+              handleStartDrag(e, { 
                 id: event.id, 
                 originalStart: event.start_time, 
-                originalEnd: event.end_time 
+                originalEnd: event.end_time || event.start_time
               });
             }}
             aria-label="Drag event"
             role="button"
             tabIndex={0}
             data-dragging={isBeingDragged}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                e.stopPropagation();
-                onStartDrag(e, { 
-                  id: event.id, 
-                  originalStart: event.start_time, 
-                  originalEnd: event.end_time 
-                });
-              }
-            }}
+            onKeyDown={handleKeyDown}
           >
             <MdDragIndicator size={12} className="text-gray-400" />
           </div>
@@ -112,12 +126,11 @@ const EventItem = React.memo(({
         <button
           data-testid={`calendar-event-drag-handle-${event.id}`}
           className="p-1.5 rounded-md hover:bg-gray-100/10 transition-colors"
-          onPointerDown={(e) => {
-            e.stopPropagation();
-            onStartDrag(e, { 
+          onPointerDown={(e: React.PointerEvent) => {
+            handleStartDrag(e, { 
               id: event.id, 
               originalStart: event.start_time, 
-              originalEnd: event.end_time 
+              originalEnd: event.end_time || event.start_time
             });
           }}
           aria-label="Drag event"
@@ -125,9 +138,9 @@ const EventItem = React.memo(({
           <MdDragIndicator size={14} className="text-gray-400" />
         </button>
         <button
-          onClick={(e) => {
+          onClick={(e: React.MouseEvent) => {
             e.stopPropagation();
-            onDelete(event);
+            onDelete(event.id);
           }}
           className="p-1.5 rounded-md hover:bg-red-500/10 transition-colors"
           aria-label="Delete event"

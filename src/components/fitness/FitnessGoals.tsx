@@ -1,15 +1,18 @@
 "use client";
 import React from 'react';
-import dynamic from 'next/dynamic';
+import { 
+  CardioActivity, 
+  Workout, 
+  FitnessGoalsProps 
+} from '@/types/fitness';
 
-// Dynamic imports for lucide-react icons to reduce bundle size
-const Flame = dynamic(() => import("lucide-react/dist/esm/icons/flame"), { ssr: false });
-const Target = dynamic(() => import("lucide-react/dist/esm/icons/target"), { ssr: false });
-const TrendingUp = dynamic(() => import("lucide-react/dist/esm/icons/trending-up"), { ssr: false });
-const Calendar = dynamic(() => import("lucide-react/dist/esm/icons/calendar"), { ssr: false });
+// Import lucide-react icons
+import { Flame, Target, TrendingUp, Calendar } from "lucide-react";
 
-// Memoized Skeleton component for charts
-const ChartsSkeleton = React.memo(() => {
+/**
+ * Memoized Skeleton component for charts
+ */
+const ChartsSkeleton: React.FC = React.memo(() => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {Array.from({ length: 2 }).map((_, index) => (
@@ -28,6 +31,23 @@ const ChartsSkeleton = React.memo(() => {
 ChartsSkeleton.displayName = 'ChartsSkeleton';
 
 /**
+ * Chart metrics interface
+ */
+interface ChartMetrics {
+  totalCaloriesBurned: number;
+  totalWorkoutsThisWeek: number;
+}
+
+/**
+ * Extended props for FitnessGoals component
+ */
+interface FitnessGoalsExtendedProps {
+  dataLoading?: boolean;
+  cardioData: CardioActivity[];
+  workoutData: Workout[];
+}
+
+/**
  * FitnessGoals Component
  * 
  * Displays fitness progress charts and goal tracking including:
@@ -35,15 +55,20 @@ ChartsSkeleton.displayName = 'ChartsSkeleton';
  * - Workout consistency tracking
  * - Progress visualization placeholders
  * 
- * @param {Object} props
- * @param {boolean} props.dataLoading - Loading state for data
- * @param {Array} props.cardioData - Cardio session data for calculations
- * @param {Array} props.workoutData - Workout data for calculations
+ * @param dataLoading - Loading state for data
+ * @param cardioData - Cardio session data for calculations
+ * @param workoutData - Workout data for calculations
  */
-const FitnessGoals = React.memo(({ dataLoading, cardioData, workoutData }) => {
-  // Calculate metrics for charts
-  const calculateChartMetrics = () => {
-    const totalCaloriesBurned = cardioData.reduce((sum, session) => 
+const FitnessGoals: React.FC<FitnessGoalsExtendedProps> = React.memo(({ 
+  dataLoading = false, 
+  cardioData, 
+  workoutData 
+}) => {
+  /**
+   * Calculate metrics for charts
+   */
+  const calculateChartMetrics = (): ChartMetrics => {
+    const totalCaloriesBurned = cardioData.reduce((sum: number, session: CardioActivity) => 
       sum + (session.calories_burned || 0), 0
     );
     

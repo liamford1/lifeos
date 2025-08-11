@@ -4,6 +4,7 @@ import React from 'react';
 import { MdOutlineCalendarToday, MdFlashOn, MdAdd, MdRestaurant, MdFitnessCenter, MdEvent } from 'react-icons/md';
 import { useRouter } from 'next/navigation';
 import Button from '@/components/shared/Button';
+import { CalendarHeaderProps } from '@/types/calendar';
 
 /**
  * CalendarHeader Component
@@ -12,13 +13,18 @@ import Button from '@/components/shared/Button';
  * - Quick Actions section with buttons for common tasks
  * - Calendar title and navigation
  * - Add event functionality
+ * 
+ * @param onAddEvent - Callback function to add a new event
+ * @param onShowSelectionModal - Callback function to show the event selection modal
+ * @param selectedDate - Currently selected date in the calendar
+ * @param onDateChange - Callback function when date selection changes
  */
-export default function CalendarHeader({ 
+const CalendarHeader: React.FC<CalendarHeaderProps> = ({ 
   onAddEvent,
   onShowSelectionModal,
   selectedDate,
   onDateChange 
-}) {
+}) => {
   const router = useRouter();
 
   return (
@@ -71,4 +77,6 @@ export default function CalendarHeader({
       </h3>
     </>
   );
-}
+};
+
+export default CalendarHeader;

@@ -1,15 +1,20 @@
 "use client";
 import React from 'react';
-import dynamic from 'next/dynamic';
+import { 
+  CardioActivity, 
+  Workout, 
+  SportActivity, 
+  FitnessStatsProps, 
+  WeeklyMetrics 
+} from '@/types/fitness';
 
-// Dynamic imports for lucide-react icons to reduce bundle size
-const Dumbbell = dynamic(() => import("lucide-react/dist/esm/icons/dumbbell"), { ssr: false });
-const Flame = dynamic(() => import("lucide-react/dist/esm/icons/flame"), { ssr: false });
-const HeartPulse = dynamic(() => import("lucide-react/dist/esm/icons/heart-pulse"), { ssr: false });
-const Goal = dynamic(() => import("lucide-react/dist/esm/icons/goal"), { ssr: false });
+// Import lucide-react icons
+import { Dumbbell, Flame, HeartPulse, Goal } from "lucide-react";
 
-// Memoized Skeleton component for metrics
-const MetricsSkeleton = React.memo(() => {
+/**
+ * Memoized Skeleton component for metrics
+ */
+const MetricsSkeleton: React.FC = React.memo(() => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       {Array.from({ length: 4 }).map((_, index) => (
@@ -39,15 +44,25 @@ MetricsSkeleton.displayName = 'MetricsSkeleton';
  * - Most common activity type
  * - Cardio & sports sessions
  * 
- * @param {Object} props
- * @param {Array} props.cardioData - Cardio session data
- * @param {Array} props.workoutData - Workout data
- * @param {Array} props.sportsData - Sports session data
- * @param {boolean} props.dataLoading - Loading state for data
+ * @param cardioData - Cardio session data
+ * @param workoutData - Workout data
+ * @param sportsData - Sports session data
+ * @param dataLoading - Loading state for data
  */
-const FitnessStats = React.memo(({ cardioData, workoutData, sportsData, dataLoading }) => {
-  // Calculate metrics
-  const getThisWeekData = () => {
+const FitnessStats: React.FC<FitnessStatsProps> = React.memo(({ 
+  cardioData, 
+  workoutData, 
+  sportsData, 
+  dataLoading = false 
+}) => {
+  /**
+   * Get data for the current week
+   */
+  const getThisWeekData = (): {
+    thisWeekWorkouts: Workout[];
+    thisWeekCardio: CardioActivity[];
+    thisWeekSports: SportActivity[];
+  } => {
     const now = new Date();
     const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
     
@@ -58,18 +73,21 @@ const FitnessStats = React.memo(({ cardioData, workoutData, sportsData, dataLoad
     return { thisWeekWorkouts, thisWeekCardio, thisWeekSports };
   };
 
-  const calculateMetrics = () => {
+  /**
+   * Calculate metrics from the data
+   */
+  const calculateMetrics = (): WeeklyMetrics => {
     const { thisWeekWorkouts, thisWeekCardio, thisWeekSports } = getThisWeekData();
     
     const totalWorkoutsThisWeek = thisWeekWorkouts.length;
     const totalCardioThisWeek = thisWeekCardio.length;
     const totalSportsThisWeek = thisWeekSports.length;
     
-    const totalCaloriesBurned = cardioData.reduce((sum, session) => 
+    const totalCaloriesBurned = cardioData.reduce((sum: number, session: CardioActivity) => 
       sum + (session.calories_burned || 0), 0
     );
     
-    const thisWeekCalories = thisWeekCardio.reduce((sum, session) => 
+    const thisWeekCalories = thisWeekCardio.reduce((sum: number, session: CardioActivity) => 
       sum + (session.calories_burned || 0), 0
     );
     
@@ -79,7 +97,7 @@ const FitnessStats = React.memo(({ cardioData, workoutData, sportsData, dataLoad
       ? activityTypes.sort((a, b) => 
           activityTypes.filter(v => v === a).length - 
           activityTypes.filter(v => v === b).length
-        ).pop()
+        ).pop() || 'No activities yet'
       : 'No activities yet';
     
     return {
@@ -100,6 +118,7 @@ const FitnessStats = React.memo(({ cardioData, workoutData, sportsData, dataLoad
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* Weekly Workouts */}
       <div className="bg-surface rounded-xl p-6 shadow-lg border border-gray-700">
         <div className="flex items-center justify-between">
           <div>
@@ -111,6 +130,7 @@ const FitnessStats = React.memo(({ cardioData, workoutData, sportsData, dataLoad
         </div>
       </div>
 
+      {/* Weekly Calories */}
       <div className="bg-surface rounded-xl p-6 shadow-lg border border-gray-700">
         <div className="flex items-center justify-between">
           <div>
@@ -122,6 +142,7 @@ const FitnessStats = React.memo(({ cardioData, workoutData, sportsData, dataLoad
         </div>
       </div>
 
+      {/* Most Common Activity */}
       <div className="bg-surface rounded-xl p-6 shadow-lg border border-gray-700">
         <div className="flex items-center justify-between">
           <div>
@@ -133,6 +154,7 @@ const FitnessStats = React.memo(({ cardioData, workoutData, sportsData, dataLoad
         </div>
       </div>
 
+      {/* Weekly Cardio & Sports */}
       <div className="bg-surface rounded-xl p-6 shadow-lg border border-gray-700">
         <div className="flex items-center justify-between">
           <div>
