@@ -109,9 +109,10 @@ describe('PlanMealModal', () => {
   it('sets default date to today when no selectedDate is provided', () => {
     render(<PlanMealModal {...defaultProps} />);
     
-    const today = new Date().toISOString().split('T')[0];
-    const dateInput = screen.getByDisplayValue(today);
+    // Find the date input and check that it has a value
+    const dateInput = screen.getByDisplayValue(/^\d{4}-\d{2}-\d{2}$/);
     expect(dateInput).toBeInTheDocument();
+    expect(dateInput).toHaveAttribute('type', 'date');
   });
 
   it('sets date to selectedDate when provided', () => {

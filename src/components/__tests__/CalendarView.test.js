@@ -159,6 +159,32 @@ jest.mock('@/components/SharedDeleteButton', () => {
   };
 });
 
+jest.mock('@/components/modals/MealDetailsModal', () => {
+  return function MockMealDetailsModal({ isOpen, onClose, meal }) {
+    if (!isOpen) return null;
+    return (
+      <div data-testid="meal-details-modal">
+        <div>Meal Details Modal</div>
+        <button onClick={onClose}>Close</button>
+        <div>Meal: {meal?.title || 'No meal'}</div>
+      </div>
+    );
+  };
+});
+
+jest.mock('@/components/modals/CookingSessionModal', () => {
+  return function MockCookingSessionModal({ isOpen, onClose, meal }) {
+    if (!isOpen) return null;
+    return (
+      <div data-testid="cooking-session-modal">
+        <div>Cooking Session Modal</div>
+        <button onClick={onClose}>Close</button>
+        <div>Meal: {meal?.title || 'No meal'}</div>
+      </div>
+    );
+  };
+});
+
 describe('CalendarView', () => {
   beforeEach(() => {
     // Clear all mocks before each test
