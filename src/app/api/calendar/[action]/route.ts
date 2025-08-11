@@ -1,23 +1,56 @@
 import { NextRequest, NextResponse } from "next/server";
 import { listEvents, insertEvent, deleteEvent, updateEvent } from "@/lib/api/calendar";
+import type { CalendarEvent } from "@/types/calendar";
+
+interface CalendarRequestBody {
+  userId?: string;
+  event?: CalendarEvent;
+  id?: string;
+  newStart?: string;
+  newEnd?: string;
+  updateLinkedEntity?: boolean;
+}
 
 export async function POST(
   req: NextRequest,
   context: { params: { action: "list" | "insert" | "delete" | "update" } }
 ) {
   const params = await context.params;
-  const body = await req.json();
+  const body: CalendarRequestBody = await req.json();
+  
   try {
-    if (params.action === "list")
+    if (params.action === "list") {
+      if (!body.userId) {
+        return NextResponse.json({ error: "userId is required" }, { status: 400 });
+      }
       return NextResponse.json(await listEvents(body.userId));
-    if (params.action === "insert") await insertEvent(body.event);
-    if (params.action === "delete") await deleteEvent(body.id);
+    }
+    
+    if (params.action === "insert") {
+      if (!body.event) {
+        return NextResponse.json({ error: "event is required" }, { status: 400 });
+      }
+      await insertEvent(body.event);
+    }
+    
+    if (params.action === "delete") {
+      if (!body.id) {
+        return NextResponse.json({ error: "id is required" }, { status: 400 });
+      }
+      await deleteEvent(body.id);
+    }
+    
     if (params.action === "update") {
+      if (!body.id || !body.userId || !body.newStart) {
+        return NextResponse.json({ error: "id, userId, and newStart are required" }, { status: 400 });
+      }
+      
       console.log('🔄 API update called with:', {
         id: body.id,
         userId: body.userId,
         updateLinkedEntity: body.updateLinkedEntity
       });
+      
       const result = await updateEvent({
         id: body.id,
         userId: body.userId,
@@ -25,9 +58,11 @@ export async function POST(
         newEnd: body.newEnd,
         updateLinkedEntity: body.updateLinkedEntity
       });
+      
       console.log('✅ API update result:', result);
       return NextResponse.json(result);
     }
+    
     return NextResponse.json({ success: true });
   } catch (err: unknown) {
     const errorMessage = err instanceof Error ? err.message : 'Unknown error occurred';

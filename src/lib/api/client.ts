@@ -1,19 +1,39 @@
-import { supabase } from '../supabaseClient';
-import type { 
-  Meal, MealInsert, MealUpdate,
-  PantryItem, PantryItemInsert, PantryItemUpdate,
-  Workout, WorkoutInsert, WorkoutUpdate,
-  WorkoutSession, WorkoutSessionInsert, WorkoutSessionUpdate,
-  CardioSession, CardioSessionInsert, CardioSessionUpdate,
-  SportsSession, SportsSessionInsert, SportsSessionUpdate,
-  StretchingSession, StretchingSessionInsert, StretchingSessionUpdate,
-  Expense, ExpenseInsert, ExpenseUpdate,
-  Receipt, ReceiptInsert, ReceiptUpdate,
-  ScratchpadNote, ScratchpadNoteInsert, ScratchpadNoteUpdate,
-  Profile, ProfileUpdate
+import { supabase } from '@/lib/supabaseClient';
+import type {
+  Meal,
+  MealInsert,
+  MealUpdate,
+  PantryItem,
+  PantryItemInsert,
+  PantryItemUpdate,
+  Workout,
+  WorkoutInsert,
+  WorkoutUpdate,
+  WorkoutSession,
+  WorkoutSessionInsert,
+  WorkoutSessionUpdate,
+  CardioSession,
+  CardioSessionInsert,
+  CardioSessionUpdate,
+  SportsSession,
+  SportsSessionInsert,
+  SportsSessionUpdate,
+  StretchingSession,
+  StretchingSessionInsert,
+  StretchingSessionUpdate,
+  Expense,
+  ExpenseInsert,
+  ExpenseUpdate,
+  Receipt,
+  ReceiptInsert,
+  ReceiptUpdate,
+  ScratchpadNote,
+  ScratchpadNoteInsert,
+  ScratchpadNoteUpdate,
+  Profile,
+  ProfileUpdate,
 } from '@/types/supabase';
 
-// Generic CRUD operations
 export class ApiClient {
   // Meals
   static async getMeals(userId: string): Promise<Meal[]> {
@@ -24,7 +44,7 @@ export class ApiClient {
       .order('created_at', { ascending: false });
     
     if (error) throw error;
-    return (data as Meal[]) || [];
+    return data || [];
   }
 
   static async getMeal(id: string, userId: string): Promise<Meal | null> {
@@ -36,7 +56,7 @@ export class ApiClient {
       .single();
     
     if (error) throw error;
-    return data as Meal | null;
+    return data;
   }
 
   static async createMeal(meal: MealInsert): Promise<Meal> {
@@ -47,7 +67,7 @@ export class ApiClient {
       .single();
     
     if (error) throw error;
-    return data as Meal;
+    return data;
   }
 
   static async updateMeal(id: string, updates: MealUpdate): Promise<Meal> {
@@ -59,7 +79,7 @@ export class ApiClient {
       .single();
     
     if (error) throw error;
-    return data as Meal;
+    return data;
   }
 
   static async deleteMeal(id: string): Promise<void> {
@@ -80,7 +100,7 @@ export class ApiClient {
       .order('created_at', { ascending: false });
     
     if (error) throw error;
-    return (data as PantryItem[]) || [];
+    return data || [];
   }
 
   static async createPantryItem(item: PantryItemInsert): Promise<PantryItem> {
@@ -91,7 +111,7 @@ export class ApiClient {
       .single();
     
     if (error) throw error;
-    return data as PantryItem;
+    return data;
   }
 
   static async updatePantryItem(id: string, updates: PantryItemUpdate): Promise<PantryItem> {
@@ -103,7 +123,7 @@ export class ApiClient {
       .single();
     
     if (error) throw error;
-    return data as PantryItem;
+    return data;
   }
 
   static async deletePantryItem(id: string): Promise<void> {
@@ -124,7 +144,7 @@ export class ApiClient {
       .order('created_at', { ascending: false });
     
     if (error) throw error;
-    return (data as Workout[]) || [];
+    return data || [];
   }
 
   static async createWorkout(workout: WorkoutInsert): Promise<Workout> {
@@ -135,7 +155,7 @@ export class ApiClient {
       .single();
     
     if (error) throw error;
-    return data as Workout;
+    return data;
   }
 
   static async updateWorkout(id: string, updates: WorkoutUpdate): Promise<Workout> {
@@ -147,7 +167,7 @@ export class ApiClient {
       .single();
     
     if (error) throw error;
-    return data as Workout;
+    return data;
   }
 
   static async deleteWorkout(id: string): Promise<void> {
@@ -168,7 +188,7 @@ export class ApiClient {
       .order('started_at', { ascending: false });
     
     if (error) throw error;
-    return (data as WorkoutSession[]) || [];
+    return data || [];
   }
 
   static async createWorkoutSession(session: WorkoutSessionInsert): Promise<WorkoutSession> {
@@ -179,7 +199,7 @@ export class ApiClient {
       .single();
     
     if (error) throw error;
-    return data as WorkoutSession;
+    return data;
   }
 
   static async updateWorkoutSession(id: string, updates: WorkoutSessionUpdate): Promise<WorkoutSession> {
@@ -191,7 +211,7 @@ export class ApiClient {
       .single();
     
     if (error) throw error;
-    return data as WorkoutSession;
+    return data;
   }
 
   // Cardio Sessions
@@ -203,7 +223,7 @@ export class ApiClient {
       .order('started_at', { ascending: false });
     
     if (error) throw error;
-    return (data as CardioSession[]) || [];
+    return data || [];
   }
 
   static async createCardioSession(session: CardioSessionInsert): Promise<CardioSession> {
@@ -214,7 +234,7 @@ export class ApiClient {
       .single();
     
     if (error) throw error;
-    return data as CardioSession;
+    return data;
   }
 
   static async updateCardioSession(id: string, updates: CardioSessionUpdate): Promise<CardioSession> {
@@ -226,7 +246,7 @@ export class ApiClient {
       .single();
     
     if (error) throw error;
-    return data as CardioSession;
+    return data;
   }
 
   // Sports Sessions
@@ -238,7 +258,7 @@ export class ApiClient {
       .order('started_at', { ascending: false });
     
     if (error) throw error;
-    return (data as SportsSession[]) || [];
+    return data || [];
   }
 
   static async createSportsSession(session: SportsSessionInsert): Promise<SportsSession> {
@@ -249,7 +269,7 @@ export class ApiClient {
       .single();
     
     if (error) throw error;
-    return data as SportsSession;
+    return data;
   }
 
   static async updateSportsSession(id: string, updates: SportsSessionUpdate): Promise<SportsSession> {
@@ -261,7 +281,7 @@ export class ApiClient {
       .single();
     
     if (error) throw error;
-    return data as SportsSession;
+    return data;
   }
 
   // Stretching Sessions
@@ -273,7 +293,7 @@ export class ApiClient {
       .order('started_at', { ascending: false });
     
     if (error) throw error;
-    return (data as StretchingSession[]) || [];
+    return data || [];
   }
 
   static async createStretchingSession(session: StretchingSessionInsert): Promise<StretchingSession> {
@@ -284,7 +304,7 @@ export class ApiClient {
       .single();
     
     if (error) throw error;
-    return data as StretchingSession;
+    return data;
   }
 
   static async updateStretchingSession(id: string, updates: StretchingSessionUpdate): Promise<StretchingSession> {
@@ -296,7 +316,7 @@ export class ApiClient {
       .single();
     
     if (error) throw error;
-    return data as StretchingSession;
+    return data;
   }
 
   // Expenses
@@ -308,7 +328,7 @@ export class ApiClient {
       .order('date', { ascending: false });
     
     if (error) throw error;
-    return (data as Expense[]) || [];
+    return data || [];
   }
 
   static async createExpense(expense: ExpenseInsert): Promise<Expense> {
@@ -319,7 +339,7 @@ export class ApiClient {
       .single();
     
     if (error) throw error;
-    return data as Expense;
+    return data;
   }
 
   static async updateExpense(id: string, updates: ExpenseUpdate): Promise<Expense> {
@@ -331,7 +351,7 @@ export class ApiClient {
       .single();
     
     if (error) throw error;
-    return data as Expense;
+    return data;
   }
 
   static async deleteExpense(id: string): Promise<void> {
@@ -352,7 +372,7 @@ export class ApiClient {
       .order('date', { ascending: false });
     
     if (error) throw error;
-    return (data as Receipt[]) || [];
+    return data || [];
   }
 
   static async createReceipt(receipt: ReceiptInsert): Promise<Receipt> {
@@ -363,7 +383,7 @@ export class ApiClient {
       .single();
     
     if (error) throw error;
-    return data as Receipt;
+    return data;
   }
 
   static async updateReceipt(id: string, updates: ReceiptUpdate): Promise<Receipt> {
@@ -375,7 +395,7 @@ export class ApiClient {
       .single();
     
     if (error) throw error;
-    return data as Receipt;
+    return data;
   }
 
   static async deleteReceipt(id: string): Promise<void> {
@@ -396,7 +416,7 @@ export class ApiClient {
       .order('updated_at', { ascending: false });
     
     if (error) throw error;
-    return (data as ScratchpadNote[]) || [];
+    return data || [];
   }
 
   static async getScratchpadNote(id: string): Promise<ScratchpadNote | null> {
@@ -407,7 +427,7 @@ export class ApiClient {
       .single();
     
     if (error) throw error;
-    return data as ScratchpadNote | null;
+    return data;
   }
 
   static async createScratchpadNote(note: ScratchpadNoteInsert): Promise<ScratchpadNote> {
@@ -418,7 +438,7 @@ export class ApiClient {
       .single();
     
     if (error) throw error;
-    return data as ScratchpadNote;
+    return data;
   }
 
   static async updateScratchpadNote(id: string, updates: ScratchpadNoteUpdate): Promise<ScratchpadNote> {
@@ -430,7 +450,7 @@ export class ApiClient {
       .single();
     
     if (error) throw error;
-    return data as ScratchpadNote;
+    return data;
   }
 
   static async deleteScratchpadNote(id: string): Promise<void> {
@@ -451,7 +471,7 @@ export class ApiClient {
       .single();
     
     if (error) throw error;
-    return data as Profile | null;
+    return data;
   }
 
   static async updateProfile(userId: string, updates: ProfileUpdate): Promise<Profile> {
@@ -463,6 +483,6 @@ export class ApiClient {
       .single();
     
     if (error) throw error;
-    return data as Profile;
+    return data;
   }
 }

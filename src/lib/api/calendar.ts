@@ -11,7 +11,7 @@ export async function listEvents(userId: string): Promise<CalendarEvent[]> {
     .order("start_time", { ascending: true });
   
   if (error) throw error;
-  return (data as CalendarEvent[]) || [];
+  return data || [];
 }
 
 export async function insertEvent(event: CalendarEvent): Promise<void> {
@@ -79,12 +79,11 @@ export async function updateEvent({
 
   // Update linked entity if requested
   let linkedEntityUpdated = false;
-  const typedCurrentEvent = currentEvent as CalendarEvent;
   
-  if (updateLinkedEntity && typedCurrentEvent.source && typedCurrentEvent.source_id) {
-    const finalEndTime = newEnd !== undefined ? newEnd : (typedCurrentEvent.end_time || dayjs(newStart).add(1, 'hour').toISOString());
+  if (updateLinkedEntity && currentEvent.source && currentEvent.source_id) {
+    const finalEndTime = newEnd !== undefined ? newEnd : (currentEvent.end_time || dayjs(newStart).add(1, 'hour').toISOString());
     const linkedEntityError = await updateLinkedEntityOnCalendarChange({
-      ...typedCurrentEvent,
+      ...currentEvent,
       start_time: newStart,
       end_time: finalEndTime
     });
@@ -95,7 +94,7 @@ export async function updateEvent({
   }
 
   return {
-    event: updatedEvent as CalendarEvent,
+    event: updatedEvent,
     linkedEntityUpdated
   };
 } 
