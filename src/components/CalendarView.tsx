@@ -267,7 +267,10 @@ const CalendarView: React.FC = () => {
     originalStart: string;
     originalEnd?: string;
   }) => {
-    console.log('🎯 handleEventDrop called with:', { id, newStartISO, originalStart, originalEnd });
+    // Log event drop for debugging
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🎯 handleEventDrop called with:', { id, newStartISO, originalStart, originalEnd });
+    }
     if (!user) return;
 
     // Find the event to update
@@ -325,26 +328,32 @@ const CalendarView: React.FC = () => {
           ...(originalEnd && { originalEnd })
         });
         // Invalidate the query cache to ensure UI updates
-        queryClient.invalidateQueries({ queryKey: ["events", (user as any)?.id] });
+        void queryClient.invalidateQueries({ queryKey: ["events", (user as any)?.id] });
       });
 
       // Refresh planned meal modal if this is a planned meal event
-      console.log('🔍 Checking refresh conditions:', {
-        hasRefreshFn: !!plannedMealRefreshFnRef.current,
-        eventSource: event.source,
-        expectedSource: CALENDAR_SOURCES.PLANNED_MEAL,
-        modalOpen: showPlannedMealDetailsModal,
-        selectedPlannedMealId
-      });
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🔍 Checking refresh conditions:', {
+          hasRefreshFn: !!plannedMealRefreshFnRef.current,
+          eventSource: event.source,
+          expectedSource: CALENDAR_SOURCES.PLANNED_MEAL,
+          modalOpen: showPlannedMealDetailsModal,
+          selectedPlannedMealId
+        });
+      }
       
       if (event.source === CALENDAR_SOURCES.PLANNED_MEAL) {
         // Always increment the refresh key to force modal refresh when it opens
         setPlannedMealRefreshKey(prev => prev + 1);
-        console.log('🔄 Incremented planned meal refresh key');
+        if (process.env.NODE_ENV === 'development') {
+          console.log('🔄 Incremented planned meal refresh key');
+        }
         
         // If modal is open, also call the refresh function
         if (plannedMealRefreshFnRef.current) {
-          console.log('🔄 Calling refresh function for planned meal event:', event.id);
+          if (process.env.NODE_ENV === 'development') {
+            console.log('🔄 Calling refresh function for planned meal event:', event.id);
+          }
           plannedMealRefreshFnRef.current();
         }
       }
@@ -475,7 +484,7 @@ const CalendarView: React.FC = () => {
           });
         } else {
           // Invalidate the events query to refresh the data
-          queryClient.invalidateQueries({ queryKey: ["events", (user as any)?.id] });
+          void queryClient.invalidateQueries({ queryKey: ["events", (user as any)?.id] });
         }
       } catch (error) {
         handleError(error as Error, { 
@@ -534,7 +543,7 @@ const CalendarView: React.FC = () => {
       });
     } else {
       // Invalidate the events query to refresh the data
-      queryClient.invalidateQueries({ queryKey: ["events", (user as any)?.id] });
+      void queryClient.invalidateQueries({ queryKey: ["events", (user as any)?.id] });
       handleSuccess('Event deleted successfully!');
     }
   };  

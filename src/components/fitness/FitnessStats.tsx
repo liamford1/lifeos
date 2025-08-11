@@ -18,7 +18,7 @@ const MetricsSkeleton: React.FC = React.memo(() => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       {Array.from({ length: 4 }).map((_, index) => (
-        <div key={index} className="bg-surface rounded-xl p-6 shadow-lg border border-gray-700 animate-pulse">
+        <div key={`metric-skeleton-${index}`} className="bg-surface rounded-xl p-6 shadow-lg border border-gray-700 animate-pulse">
           <div className="flex items-center justify-between">
             <div>
               <div className="h-4 bg-gray-700 rounded mb-2 w-20" />

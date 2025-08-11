@@ -45,11 +45,14 @@ export async function POST(
         return NextResponse.json({ error: "id, userId, and newStart are required" }, { status: 400 });
       }
       
-      console.log('🔄 API update called with:', {
-        id: body.id,
-        userId: body.userId,
-        updateLinkedEntity: body.updateLinkedEntity
-      });
+      // Log update call for debugging
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🔄 API update called with:', {
+          id: body.id,
+          userId: body.userId,
+          updateLinkedEntity: body.updateLinkedEntity
+        });
+      }
       
       const result = await updateEvent({
         id: body.id,
@@ -59,7 +62,10 @@ export async function POST(
         updateLinkedEntity: body.updateLinkedEntity
       });
       
-      console.log('✅ API update result:', result);
+      // Log update result for debugging
+      if (process.env.NODE_ENV === 'development') {
+        console.log('✅ API update result:', result);
+      }
       return NextResponse.json(result);
     }
     
