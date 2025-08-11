@@ -1,27 +1,17 @@
-import { createSupabaseServerClient } from "@/lib/supabaseServer";
+import { supabase } from '../supabaseClient';
 import { updateLinkedEntityOnCalendarChange } from "@/lib/calendarSync";
 import dayjs from 'dayjs';
-
-const supabase = createSupabaseServerClient();
+import type { CalendarEvent } from '@/types/calendar';
 
 export async function listEvents(userId: string) {
   const { data, error } = await supabase
     .from("calendar_events")
     .select("*")
-    .eq("user_id", userId);
+    .eq("user_id", userId)
+    .order("start_time", { ascending: true });
+  
   if (error) throw error;
   return data;
-}
-
-interface CalendarEvent {
-  title: string;
-  description?: string;
-  start_time: string;
-  end_time?: string;
-  source: string;
-  source_id: string | number;
-  user_id: string;
-  [key: string]: string | number | null | undefined;
 }
 
 export async function insertEvent(event: CalendarEvent) {
@@ -97,7 +87,7 @@ export async function updateEvent({
   if (updateLinkedEntity && currentEvent.source && currentEvent.source_id) {
     console.log('🔄 Calling updateLinkedEntityOnCalendarChange');
     const linkedEntityError = await updateLinkedEntityOnCalendarChange({
-      ...currentEvent,
+      ...(currentEvent as CalendarEvent),
       start_time: newStart,
       end_time: newEnd !== undefined ? newEnd : currentEvent.end_time
     });
