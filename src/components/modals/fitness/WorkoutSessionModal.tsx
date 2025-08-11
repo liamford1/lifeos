@@ -7,7 +7,7 @@ import { supabase } from '@/lib/supabaseClient';
 import Button from '@/components/shared/Button';
 import FormInput from '@/components/shared/FormInput';
 import FormTextarea from '@/components/shared/FormTextarea';
-import { useRouter } from 'next/navigation';
+
 import { useToast } from '@/components/client/Toast';
 import { updateCalendarEventForCompletedEntity, cleanupPlannedSessionOnCompletion } from '@/lib/calendarSync';
 import { CALENDAR_SOURCES } from '@/lib/utils/calendarUtils';
@@ -15,9 +15,54 @@ import LoadingSpinner from '@/components/shared/LoadingSpinner';
 import BaseModal from '@/components/shared/BaseModal';
 import { Dumbbell } from 'lucide-react';
 
-export default function WorkoutSessionModal({ isOpen, onClose, workoutId = null, plannedId = null, plannedTitle = null, plannedNotes = null }) {
+interface WorkoutSessionModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  workoutId?: string | null;
+  plannedId?: string | null;
+  plannedTitle?: string | null;
+  plannedNotes?: string | null;
+}
+
+interface Exercise {
+  id: string;
+  workout_id: string;
+  name: string;
+  notes?: string;
+  created_at: string;
+}
+
+interface Set {
+  id: string;
+  exercise_id: string;
+  reps: number;
+  weight: number | null;
+  created_at: string;
+}
+
+interface SetsByExercise {
+  [exerciseId: string]: Set[];
+}
+
+interface AddSetForm {
+  [exerciseId: string]: {
+    reps: string;
+    weight: string;
+    loading: boolean;
+    error: string;
+  };
+}
+
+export default function WorkoutSessionModal({ 
+  isOpen, 
+  onClose, 
+  workoutId = null, 
+  plannedId = null, 
+  plannedTitle = null, 
+  plannedNotes = null 
+}: WorkoutSessionModalProps) {
   const { user, loading: userLoading } = useUser();
-  const { activeWorkoutId, workoutData, refreshWorkout, clearSession, loading: workoutLoading } = useWorkoutSession();
+  const { activeWorkoutId, workoutData, refreshWorkout, loading: workoutLoading } = useWorkoutSession();
   
   const [creating, setCreating] = useState(false);
   const [title, setTitle] = useState(() => {
@@ -33,17 +78,17 @@ export default function WorkoutSessionModal({ isOpen, onClose, workoutId = null,
   const [formError, setFormError] = useState('');
 
   // Exercise state
-  const [exercises, setExercises] = useState([]);
+  const [exercises, setExercises] = useState<Exercise[]>([]);
   const [exLoading, setExLoading] = useState(false);
   const [addExerciseName, setAddExerciseName] = useState('');
   const [addExerciseLoading, setAddExerciseLoading] = useState(false);
   const [exerciseError, setExerciseError] = useState('');
 
   // Sets state (per exercise)
-  const [setsByExercise, setSetsByExercise] = useState({}); // { [exerciseId]: [sets] }
-  const [addSetForm, setAddSetForm] = useState({}); // { [exerciseId]: { reps, weight, loading, error } }
+  const [setsByExercise, setSetsByExercise] = useState<SetsByExercise>({}); // { [exerciseId]: [sets] }
+  const [addSetForm, setAddSetForm] = useState<AddSetForm>({}); // { [exerciseId]: { reps, weight, loading, error } }
 
-  const router = useRouter();
+
   const { showSuccess, showError } = useToast();
 
   // Check if the requested workout ID matches the active session
@@ -73,9 +118,9 @@ export default function WorkoutSessionModal({ isOpen, onClose, workoutId = null,
   useEffect(() => {
     if (!exercises.length) return;
     const fetchSets = async () => {
-      const newSetsByExercise = {};
+      const newSetsByExercise: SetsByExercise = {};
       for (const ex of exercises) {
-        const { data, error } = await supabase
+        const { data } = await supabase
           .from('fitness_sets')
           .select('*')
           .eq('exercise_id', ex.id)
@@ -88,7 +133,7 @@ export default function WorkoutSessionModal({ isOpen, onClose, workoutId = null,
   }, [exercises]);
 
   // Add exercise handler
-  const handleAddExercise = async (e) => {
+  const handleAddExercise = async (e: React.FormEvent) => {
     e.preventDefault();
     setAddExerciseLoading(true);
     setExerciseError('');
@@ -116,11 +161,11 @@ export default function WorkoutSessionModal({ isOpen, onClose, workoutId = null,
   };
 
   // Add set handler (per exercise)
-  const handleAddSet = (exerciseId) => async (e) => {
+  const handleAddSet = (exerciseId: string) => async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Get the current form state for this exercise
-    const currentForm = addSetForm[exerciseId] || {};
+    const currentForm = addSetForm[exerciseId] || { reps: '', weight: '', loading: false, error: '' };
     const reps = Number(currentForm.reps);
     const weight = Number(currentForm.weight);
     
@@ -161,7 +206,7 @@ export default function WorkoutSessionModal({ isOpen, onClose, workoutId = null,
         setAddSetForm((prev) => ({ 
           ...prev, 
           [exerciseId]: { 
-            ...prev[exerciseId], 
+            ...(prev[exerciseId] || { reps: '', weight: '', loading: false, error: '' }), 
             loading: false, 
             error: error.message || 'Failed to add set' 
           } 
@@ -189,7 +234,7 @@ export default function WorkoutSessionModal({ isOpen, onClose, workoutId = null,
       setAddSetForm((prev) => ({ 
         ...prev, 
         [exerciseId]: { 
-          ...prev[exerciseId], 
+          ...(prev[exerciseId] || { reps: '', weight: '', loading: false, error: '' }), 
           loading: false, 
           error: 'Failed to add set' 
         } 
@@ -225,7 +270,6 @@ export default function WorkoutSessionModal({ isOpen, onClose, workoutId = null,
     }
 
     // Clear session state in context immediately
-    if (typeof clearSession === 'function') clearSession();
     if (typeof refreshWorkout === 'function') await refreshWorkout();
     
     // Show success message
@@ -259,7 +303,7 @@ export default function WorkoutSessionModal({ isOpen, onClose, workoutId = null,
 
   // Show the form if there is no active workout (workoutData is falsy)
   if (!workoutData) {
-    const handleStartWorkout = async (e) => {
+    const handleStartWorkout = async (e: React.FormEvent) => {
       e.preventDefault();
       setFormError('');
       if (!title.trim()) {
@@ -268,6 +312,12 @@ export default function WorkoutSessionModal({ isOpen, onClose, workoutId = null,
       }
       setCreating(true);
       
+      if (!user?.id) {
+        setFormError('User not found');
+        setCreating(false);
+        return;
+      }
+
       // Double-check that there's no in-progress workout before creating a new one
       const { data: existingWorkout } = await supabase
         .from('fitness_workouts')
@@ -350,7 +400,7 @@ export default function WorkoutSessionModal({ isOpen, onClose, workoutId = null,
               <label className="font-semibold">Workout Title</label>
               <FormInput
                 value={title}
-                onChange={e => setTitle(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
                 required
                 placeholder="e.g. Push Day, Full Body, etc."
               />
@@ -359,15 +409,15 @@ export default function WorkoutSessionModal({ isOpen, onClose, workoutId = null,
               <label className="font-semibold">Notes (optional)</label>
               <FormTextarea
                 value={notes}
-                onChange={e => setNotes(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setNotes(e.target.value)}
                 placeholder="Add any notes or goals for this workout (optional)"
               />
             </div>
             <div className="flex gap-3">
-              <Button type="submit" variant="primary" loading={creating} disabled={creating}>
+              <Button type="submit" variant="primary" loading={creating} disabled={creating} aria-label="Start workout session" onClick={() => {}}>
                 Start Workout
               </Button>
-              <Button type="button" variant="secondary" onClick={onClose}>
+              <Button type="button" variant="secondary" onClick={onClose} aria-label="Cancel workout session">
                 Cancel
               </Button>
             </div>
@@ -383,7 +433,7 @@ export default function WorkoutSessionModal({ isOpen, onClose, workoutId = null,
       isOpen={isOpen}
       onClose={onClose}
       title="Workout In Progress"
-      subtitle={workoutData.title || 'Untitled Workout'}
+      subtitle={(workoutData as any)?.title || 'Untitled Workout'}
       icon={Dumbbell}
       iconBgColor="bg-blue-500/10"
       iconColor="text-blue-500"
@@ -391,14 +441,14 @@ export default function WorkoutSessionModal({ isOpen, onClose, workoutId = null,
     >
       <div className="space-y-6">
         <div className="bg-panel border border-border rounded-lg p-4">
-          <p className="mb-2"><strong>Title:</strong> {workoutData.title || 'Untitled Workout'}</p>
-          {workoutData.notes && <p className="mb-2"><strong>Notes:</strong> {workoutData.notes}</p>}
-          <p className="mb-2"><strong>Started:</strong> {workoutData.start_time ? new Date(workoutData.start_time).toLocaleString() : 'Unknown'}</p>
+          <p className="mb-2"><strong>Title:</strong> {(workoutData as any)?.title || 'Untitled Workout'}</p>
+          {(workoutData as any)?.notes && <p className="mb-2"><strong>Notes:</strong> {(workoutData as any).notes}</p>}
+          <p className="mb-2"><strong>Started:</strong> {(workoutData as any)?.start_time ? new Date((workoutData as any).start_time).toLocaleString() : 'Unknown'}</p>
         </div>
 
         {/* End Workout Button */}
         <div className="flex justify-end">
-          <Button variant="danger" onClick={handleEndWorkout}>
+          <Button variant="danger" onClick={handleEndWorkout} aria-label="End workout session">
             End Workout
           </Button>
         </div>
@@ -408,13 +458,13 @@ export default function WorkoutSessionModal({ isOpen, onClose, workoutId = null,
           <FormInput
             label="Add Exercise"
             value={addExerciseName}
-            onChange={e => setAddExerciseName(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAddExerciseName(e.target.value)}
             required
             placeholder="e.g. Bench Press, Squat, etc."
             title="Enter the name of the exercise"
             className="flex-1"
           />
-          <Button type="submit" variant="primary" loading={addExerciseLoading}>
+          <Button type="submit" variant="primary" loading={addExerciseLoading} aria-label="Add exercise to workout" onClick={() => {}}>
             Add
           </Button>
         </form>
@@ -428,14 +478,14 @@ export default function WorkoutSessionModal({ isOpen, onClose, workoutId = null,
             <div className="text-center py-8 text-gray-400">No exercises yet.</div>
           ) : (
             <div className="space-y-4">
-              {exercises.map((ex, idx) => (
+              {exercises.map((ex) => (
                 <div key={ex.id} className="border border-border rounded-lg p-4 bg-panel">
                   <div className="font-semibold mb-3">{ex.name}</div>
                   {/* Sets List */}
                   <div className="ml-2 mb-3">
                     {setsByExercise[ex.id]?.length ? (
                       <div className="space-y-1">
-                        {setsByExercise[ex.id].map((set, i) => (
+                        {(setsByExercise[ex.id] || []).map((set, i) => (
                           <div key={set.id} className="text-sm">
                             Set {i + 1}: {set.reps} reps{set.weight != null ? ` @ ${set.weight} lbs` : ''}
                           </div>
@@ -452,7 +502,7 @@ export default function WorkoutSessionModal({ isOpen, onClose, workoutId = null,
                       type="number"
                       min={1}
                       value={addSetForm[ex.id]?.reps || ''}
-                      onChange={e => setAddSetForm(prev => ({ ...prev, [ex.id]: { ...prev[ex.id], reps: e.target.value } }))}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAddSetForm(prev => ({ ...prev, [ex.id]: { ...(prev[ex.id] || { reps: '', weight: '', loading: false, error: '' }), reps: e.target.value } }))}
                       required
                       placeholder="Reps"
                       title="Number of repetitions for this set"
@@ -461,15 +511,15 @@ export default function WorkoutSessionModal({ isOpen, onClose, workoutId = null,
                       label="Weight (lbs)"
                       type="number"
                       value={addSetForm[ex.id]?.weight || ''}
-                      onChange={e => setAddSetForm(prev => ({ ...prev, [ex.id]: { ...prev[ex.id], weight: e.target.value } }))}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAddSetForm(prev => ({ ...prev, [ex.id]: { ...(prev[ex.id] || { reps: '', weight: '', loading: false, error: '' }), weight: e.target.value } }))}
                       placeholder="Weight (lbs)"
                       title="Weight used for this set (optional)"
                     />
-                    <Button type="submit" variant="primary" loading={addSetForm[ex.id]?.loading}>
+                    <Button type="submit" variant="primary" loading={addSetForm[ex.id]?.loading} aria-label="Log set for exercise" onClick={() => {}}>
                       Log Set
                     </Button>
                   </form>
-                  {addSetForm[ex.id]?.error && <div className="text-red-500 mt-2 text-sm">{addSetForm[ex.id].error}</div>}
+                  {addSetForm[ex.id]?.error && <div className="text-red-500 mt-2 text-sm">{addSetForm[ex.id]?.error}</div>}
                 </div>
               ))}
             </div>

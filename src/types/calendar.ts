@@ -1,5 +1,5 @@
 import { IconType } from 'react-icons';
-import { CALENDAR_SOURCES } from '@/lib/utils/calendarUtils';
+import type { CalendarSource } from '@/lib/utils/calendarUtils';
 
 /**
  * Calendar event interface representing events displayed in the calendar
@@ -10,7 +10,7 @@ export interface CalendarEvent {
   description?: string;
   start_time: string; // ISO string
   end_time?: string; // ISO string
-  source: keyof typeof CALENDAR_SOURCES;
+  source: CalendarSource;
   source_id: string | number;
   user_id: string;
   created_at?: string;

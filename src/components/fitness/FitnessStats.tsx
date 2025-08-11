@@ -2,7 +2,7 @@
 import React from 'react';
 import { 
   CardioActivity, 
-  Workout, 
+  WorkoutActivity, 
   SportActivity, 
   FitnessStatsProps, 
   WeeklyMetrics 
@@ -59,7 +59,7 @@ const FitnessStats: React.FC<FitnessStatsProps> = React.memo(({
    * Get data for the current week
    */
   const getThisWeekData = (): {
-    thisWeekWorkouts: Workout[];
+    thisWeekWorkouts: WorkoutActivity[];
     thisWeekCardio: CardioActivity[];
     thisWeekSports: SportActivity[];
   } => {

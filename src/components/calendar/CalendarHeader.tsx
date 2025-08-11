@@ -3,7 +3,6 @@
 import React from 'react';
 import { MdOutlineCalendarToday, MdFlashOn, MdAdd, MdRestaurant, MdFitnessCenter, MdEvent } from 'react-icons/md';
 import { useRouter } from 'next/navigation';
-import Button from '@/components/shared/Button';
 import { CalendarHeaderProps } from '@/types/calendar';
 
 /**
@@ -20,10 +19,10 @@ import { CalendarHeaderProps } from '@/types/calendar';
  * @param onDateChange - Callback function when date selection changes
  */
 const CalendarHeader: React.FC<CalendarHeaderProps> = ({ 
-  onAddEvent,
+  // onAddEvent,
   onShowSelectionModal,
-  selectedDate,
-  onDateChange 
+  // selectedDate,
+  // onDateChange 
 }) => {
   const router = useRouter();
 

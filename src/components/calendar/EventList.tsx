@@ -1,9 +1,7 @@
 'use client';
 
 import React from 'react';
-import dayjs from 'dayjs';
 import EventItem from './EventItem';
-import { getEventStyle } from '@/lib/utils/eventStyleMap';
 import { EventListProps } from '@/types/calendar';
 
 /**

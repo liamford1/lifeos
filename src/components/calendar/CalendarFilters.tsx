@@ -15,9 +15,9 @@ import { CalendarFiltersProps } from '@/types/calendar';
  * @param availableSources - Array of available source types
  */
 const CalendarFilters: React.FC<CalendarFiltersProps> = ({ 
-  selectedSources,
-  onSourceChange,
-  availableSources
+  // selectedSources,
+  // onSourceChange,
+  // availableSources
 }) => {
   // This is a placeholder component for future filter functionality
   // Currently the calendar doesn't have explicit filters, but this component

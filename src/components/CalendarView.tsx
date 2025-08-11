@@ -33,7 +33,6 @@ import { useCalendarDragAndDrop } from '@/lib/hooks/useCalendarDragAndDrop';
 import { useApiError } from '@/lib/hooks/useApiError';
 import { useToast } from '@/components/client/Toast';
 import { MdOutlineCalendarToday } from 'react-icons/md';
-import SharedDeleteButton from '@/components/SharedDeleteButton';
 import { supabase } from '@/lib/supabaseClient';
 import { MdRestaurant, MdFitnessCenter, MdEvent, MdAdd, MdDragIndicator, MdFlashOn } from 'react-icons/md';
 import { toYMD } from '@/lib/date';
@@ -41,16 +40,9 @@ import dynamic from 'next/dynamic';
 import { 
   CalendarEvent, 
   DragState, 
-  PlanningType, 
-  PlanningSelection, 
-  FitnessEventData,
-  CalendarModalState,
-  CalendarViewState,
   CalendarEventClickHandler,
   CalendarEventDeleteHandler,
-  CalendarDragStartHandler,
-  CalendarDayEventsHandler,
-  CalendarSelectionModalHandler
+  CalendarDragStartHandler
 } from '@/types/calendar';
 
 // Dynamic imports for heavy modal components
@@ -225,27 +217,12 @@ const CalendarView: React.FC = () => {
   const { user } = useUser();
   
   // Modal state management
-  const [showAddModal, setShowAddModal] = useState<boolean>(false);
-  const [showSelectionModal, setShowSelectionModal] = useState<boolean>(false);
-  const [showSelectionModalForDate, setShowSelectionModalForDate] = useState<Date | null>(null);
   const [showMealDetailsModal, setShowMealDetailsModal] = useState<boolean>(false);
   const [selectedMealId, setSelectedMealId] = useState<string | null>(null);
   const [showCookingSessionModal, setShowCookingSessionModal] = useState<boolean>(false);
   const [cookingMealId, setCookingMealId] = useState<string | null>(null);
-  const [showDayEventsModal, setShowDayEventsModal] = useState<boolean>(false);
-  const [selectedDayForEvents, setSelectedDayForEvents] = useState<Date | null>(null);
   
-  const [newEvent, setNewEvent] = useState<{
-    title: string;
-    start_time: string;
-    end_time: string;
-    description: string;
-  }>({
-    title: '',
-    start_time: '',
-    end_time: '',
-    description: '',
-  });
+
 
   const router = useRouter();
 
@@ -264,10 +241,6 @@ const CalendarView: React.FC = () => {
   });
 
   const events = useMemo<CalendarEvent[]>(() => eventsQuery.data || [], [eventsQuery.data]);
-  const eventsForSelectedDate = useMemo(() => 
-    events.filter((event) => dayjs(event.start_time).isSame(selectedDate, 'day')),
-    [events, selectedDate]
-  );
 
   // Drag and drop functionality
   const handleEventDrop = useCallback(async ({ 
@@ -288,16 +261,16 @@ const CalendarView: React.FC = () => {
     if (eventIndex === -1) return;
 
     const event = events[eventIndex];
-    const originalEvent = { ...event };
+    if (!event) return;
 
     // Optimistic update: immediately update local state
     const updatedEvents = [...events];
     const updatedEvent = {
       ...event,
       start_time: newStartISO,
-      end_time: event.end_time ? 
-        dayjs(newStartISO).add(dayjs(event.end_time).diff(dayjs(event.start_time))).toISOString() : 
-        undefined
+      ...(event.end_time && {
+        end_time: dayjs(newStartISO).add(dayjs(event.end_time).diff(dayjs(event.start_time))).toISOString()
+      })
     };
     updatedEvents[eventIndex] = updatedEvent;
 
@@ -321,8 +294,6 @@ const CalendarView: React.FC = () => {
         throw new Error('Failed to update event');
       }
 
-      const result = await response.json();
-      
       // Show success toast with undo option
       const newDate = dayjs(newStartISO).format('ddd MMM D');
       showSuccess(`Event moved to ${newDate}`, 5000, () => {
@@ -331,7 +302,7 @@ const CalendarView: React.FC = () => {
           id,
           newStartISO: originalStart,
           originalStart: newStartISO,
-          originalEnd: originalEnd
+          ...(originalEnd && { originalEnd })
         });
         // Invalidate the query cache to ensure UI updates
         queryClient.invalidateQueries({ queryKey: ["events", (user as any)?.id] });
@@ -346,106 +317,15 @@ const CalendarView: React.FC = () => {
     }
   }, [events, user, queryClient, handleError, showSuccess]);
 
-  const { draggingId, startDrag, moveDrag, endDrag, isDragging } = useCalendarDragAndDrop({
+  const { draggingId, startDrag } = useCalendarDragAndDrop({
     onDrop: handleEventDrop
   });
 
-  // Compute target date from pointer position
-  const computeTargetDate = useCallback((evt: PointerEvent): string | null => {
-    const el = document.elementFromPoint(evt.clientX, evt.clientY);
-    if (!el) return null;
-    // Our calendar renders `data-date="YYYY-MM-DD"` on the inner daycell div.
-    const dayCell = el.closest('[data-date]') as HTMLElement;
-    if (!dayCell) return null;
-    const dateStr = dayCell.getAttribute('data-date'); // e.g., "2025-08-09"
-    if (!dateStr) return null;
-    // Normalize to start of that day (preserve duration elsewhere)
-    return dayjs(dateStr).startOf('day').toISOString();
-  }, []);
 
-  const handleAddEvent = async (): Promise<void> => {
-    if (!user || !newEvent.title || !newEvent.start_time) return;
 
-    // Use the date from the selection modal if available, otherwise use selectedDate
-    const dateToUse = showSelectionModalForDate || selectedDate;
-    const dateStr = dayjs(dateToUse).format('YYYY-MM-DD');
-    const startTime = `${dateStr}T${newEvent.start_time}`;
-    
-    // Set default end time to 1 hour after start time if not provided
-    let endTime: string | null = null;
-    if (newEvent.end_time) {
-      endTime = `${dateStr}T${newEvent.end_time}`;
-    } else {
-      endTime = dayjs(startTime).add(1, 'hour').toISOString();
-    }
-    
-    const payload = {
-      user_id: (user as any).id,
-      title: newEvent.title,
-      description: newEvent.description || null,
-      start_time: startTime,
-      end_time: endTime,
-    };
 
-    try {
-      const response = await fetch("/api/calendar/insert", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ event: payload }),
-      });
 
-      if (!response.ok) {
-        handleError(new Error('Failed to add event.'), { 
-          customMessage: 'Failed to add event.' 
-        });
-      } else {
-        setShowAddModal(false);
-        setNewEvent({ title: '', start_time: '', end_time: '', description: '' });
-        setShowSelectionModalForDate(null);
-        
-        // Invalidate the events query to refresh the data
-        queryClient.invalidateQueries({ queryKey: ["events", (user as any)?.id] });
-        handleSuccess('Event added successfully');
-      }
-    } catch (error) {
-      handleError(error as Error, { 
-        customMessage: 'Failed to add event.' 
-      });
-    }
-  };
 
-  const handlePlanningSelection = (type: PlanningType | 'general', selectedDateForPlanning: Date | null = null): void => {
-    setShowSelectionModal(false);
-    
-    // Use the provided date or fall back to the currently selected date
-    const dateToUse = selectedDateForPlanning || selectedDate;
-    const dateStr = dayjs(dateToUse).format('YYYY-MM-DD');
-    
-    switch (type) {
-      case 'general':
-        // Pre-fill the start time with the selected date
-        setNewEvent({
-          ...newEvent,
-          start_time: '',
-          end_time: '',
-          description: '',
-        });
-        setShowAddModal(true);
-        break;
-      case 'meal':
-        // Open meal planning modal with the selected date
-        // Handle meal planning - this would need to be implemented differently
-        // For now, just show a message that meal planning is handled elsewhere
-        handleSuccess('Meal planning is available in the Food section.');
-        break;
-      case 'workout':
-        // Navigate to Fitness dashboard (planning handled via modal there)
-        router.push(`/fitness`);
-        break;
-      default:
-        break;
-    }
-  };
 
   const handleFitnessEventClick = async (event: CalendarEvent, type: 'workout' | 'cardio' | 'sport' | 'stretching'): Promise<void> => {
     try {
@@ -613,10 +493,10 @@ const CalendarView: React.FC = () => {
         return;
       }
 
-      // Fetch the planned meal details
-      const { data: plannedMeal, error } = await supabase
+      // Fetch the planned meal details to verify it exists
+      const { error } = await supabase
         .from('planned_meals')
-        .select('*')
+        .select('id')
         .eq('id', event.source_id)
         .single();
 
@@ -676,15 +556,12 @@ const CalendarView: React.FC = () => {
     }
   };
 
-  const handleShowDayEvents = (date: Date): void => {
-    setSelectedDayForEvents(date);
-    setShowDayEventsModal(true);
+  const handleShowDayEvents = (_date: Date): void => {
+    // TODO: Implement day events modal
   };
 
-  const handleShowSelectionModalForDate = (dateStr: string): void => {
-    const date = dayjs(dateStr).toDate();
-    setShowSelectionModalForDate(date);
-    setShowSelectionModal(true);
+  const handleShowSelectionModalForDate = (_dateStr: string): void => {
+    // TODO: Implement selection modal for date
   };
 
   // Loading state
@@ -718,7 +595,7 @@ const CalendarView: React.FC = () => {
         </h3>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           <button
-            onClick={() => setShowSelectionModal(true)}
+            onClick={() => {}}
             className="h-12 bg-[#1e1e1e] rounded-lg hover:bg-gray-700 transition-all duration-200 group p-3 flex items-center justify-center shadow-sm hover:shadow-md gap-2"
           >
             <MdAdd className="w-4 h-4 text-blue-500 group-hover:scale-110 transition-transform" />

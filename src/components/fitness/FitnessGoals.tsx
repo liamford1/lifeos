@@ -2,8 +2,7 @@
 import React from 'react';
 import { 
   CardioActivity, 
-  Workout, 
-  FitnessGoalsProps 
+  WorkoutActivity
 } from '@/types/fitness';
 
 // Import lucide-react icons
@@ -44,7 +43,7 @@ interface ChartMetrics {
 interface FitnessGoalsExtendedProps {
   dataLoading?: boolean;
   cardioData: CardioActivity[];
-  workoutData: Workout[];
+  workoutData: WorkoutActivity[];
 }
 
 /**

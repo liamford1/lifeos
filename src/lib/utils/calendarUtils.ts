@@ -1,5 +1,5 @@
-import { supabase } from '../supabaseClient'
-import dayjs from 'dayjs'
+import { supabase } from '../supabaseClient';
+import dayjs from 'dayjs';
 
 // Constants for consistent source values
 export const CALENDAR_SOURCES = {
@@ -11,15 +11,17 @@ export const CALENDAR_SOURCES = {
   STRETCHING: 'stretching',
   EXPENSE: 'expense',
   NOTE: 'note'
-}
+} as const;
+
+export type CalendarSource = typeof CALENDAR_SOURCES[keyof typeof CALENDAR_SOURCES];
 
 /**
  * Returns the route path for a calendar event based on its source and source_id
- * @param {string} source - The source type (e.g., 'meal', 'workout', etc.)
- * @param {string|number} source_id - The ID of the source entity
- * @returns {string} The relative path for routing to the source entity
+ * @param source - The source type (e.g., 'meal', 'workout', etc.)
+ * @param source_id - The ID of the source entity
+ * @returns The relative path for routing to the source entity
  */
-export const getCalendarEventRoute = (source, source_id) => {
+export const getCalendarEventRoute = (source: CalendarSource, source_id: string | number): string => {
   switch (source) {
     case CALENDAR_SOURCES.MEAL:
       return `/food` // Meals now use modals instead of pages, so redirect to food page
@@ -42,16 +44,30 @@ export const getCalendarEventRoute = (source, source_id) => {
   }
 }
 
+interface CalendarEventUpdateFields {
+  title?: string;
+  start_time?: string;
+  end_time?: string | null;
+  description?: string;
+  [key: string]: any;
+}
+
 /**
  * Updates a calendar event when an entity is edited
- * @param {string} source - The source type (e.g., 'meal', 'workout', etc.)
- * @param {string|number} source_id - The ID of the source entity
- * @param {string} title - The new title for the calendar event
- * @param {string} startTime - The new start time (ISO string)
- * @param {string|null} endTime - The new end time (ISO string, optional)
- * @returns {Promise<Object|null>} - Returns any Supabase error encountered or null on success
+ * @param source - The source type (e.g., 'meal', 'workout', etc.)
+ * @param source_id - The ID of the source entity
+ * @param title - The new title for the calendar event
+ * @param startTime - The new start time (ISO string)
+ * @param endTime - The new end time (ISO string, optional)
+ * @returns Returns any Supabase error encountered or null on success
  */
-export const updateCalendarEvent = async (source, source_id, title, startTime, endTime = null) => {
+export const updateCalendarEvent = async (
+  source: CalendarSource, 
+  source_id: string | number, 
+  title: string, 
+  startTime: string, 
+  endTime: string | null = null
+): Promise<any | null> => {
   try {
     const { error } = await supabase
       .from('calendar_events')
@@ -75,12 +91,16 @@ export const updateCalendarEvent = async (source, source_id, title, startTime, e
 
 /**
  * Updates a calendar event for a given source and source_id with arbitrary fields.
- * @param {string} source - The source type (e.g., 'meal', 'workout', etc.)
- * @param {string|number} source_id - The ID of the source entity
- * @param {Object} updatedFields - Fields to update (e.g., { title, start_time, end_time, description })
- * @returns {Promise<Object|null>} - Returns any Supabase error encountered or null on success
+ * @param source - The source type (e.g., 'meal', 'workout', etc.)
+ * @param source_id - The ID of the source entity
+ * @param updatedFields - Fields to update (e.g., { title, start_time, end_time, description })
+ * @returns Returns any Supabase error encountered or null on success
  */
-export const updateCalendarEventFromSource = async (source, source_id, updatedFields) => {
+export const updateCalendarEventFromSource = async (
+  source: CalendarSource, 
+  source_id: string | number, 
+  updatedFields: CalendarEventUpdateFields
+): Promise<any | null> => {
   try {
     const { error } = await supabase
       .from('calendar_events')
@@ -97,7 +117,15 @@ export const updateCalendarEventFromSource = async (source, source_id, updatedFi
   }
 }
 
-
+interface AddCalendarEventParams {
+  userId: string;
+  title: string;
+  description?: string;
+  startTime: string;
+  endTime?: string | null;
+  source: CalendarSource;
+  sourceId: string | number;
+}
 
 export const addCalendarEvent = async ({
   userId,
@@ -107,11 +135,11 @@ export const addCalendarEvent = async ({
   endTime = null,
   source,
   sourceId,
-}) => {
+}: AddCalendarEventParams): Promise<any | null> => {
   // Validate source value
-  const validSources = Object.values(CALENDAR_SOURCES)
+  const validSources = Object.values(CALENDAR_SOURCES);
   if (!validSources.includes(source)) {
-    return { error: `Invalid source value: ${source}` }
+    return { error: `Invalid source value: ${source}` };
   }
 
   // Set default end time to 1 hour after start time if not provided
@@ -135,4 +163,6 @@ export const addCalendarEvent = async ({
   if (error) {
     return error;
   }
+
+  return null;
 }

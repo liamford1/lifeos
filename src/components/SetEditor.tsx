@@ -2,8 +2,30 @@ import React, { useState, useCallback } from 'react';
 import Button from '@/components/shared/Button';
 import FormInput from '@/components/shared/FormInput';
 
+interface Set {
+  id?: string;
+  reps: number;
+  weight: number | null;
+}
+
+interface SetItemProps {
+  set: Set;
+  index: number;
+  editIndex: number | null;
+  editForm: { reps: string; weight: string };
+  onEditSet: (index: number, form?: { reps: string; weight: string }) => void;
+  onSaveEdit: () => void;
+  onCancelEdit: () => void;
+  onDeleteSet: (index: number) => void;
+}
+
+interface SetEditorProps {
+  initialSets?: Set[];
+  onSetsChange?: (sets: Set[]) => void;
+}
+
 // Memoized Set Item Component
-const SetItem = React.memo(({ 
+const SetItem = React.memo<SetItemProps>(({ 
   set, 
   index, 
   editIndex, 
@@ -20,19 +42,19 @@ const SetItem = React.memo(({
           type="number"
           min={1}
           value={editForm.reps}
-          onChange={e => onEditSet(index, { ...editForm, reps: e.target.value })}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => onEditSet(index, { ...editForm, reps: e.target.value })}
           placeholder="Reps"
           title="Number of repetitions for this set"
         />
         <FormInput
           type="number"
           value={editForm.weight}
-          onChange={e => onEditSet(index, { ...editForm, weight: e.target.value })}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => onEditSet(index, { ...editForm, weight: e.target.value })}
           placeholder="Weight (lbs)"
           title="Weight used for this set (optional)"
         />
-        <Button type="button" variant="primary" onClick={onSaveEdit}>Save</Button>
-        <Button type="button" variant="ghost" onClick={onCancelEdit}>Cancel</Button>
+        <Button type="button" variant="primary" onClick={onSaveEdit} aria-label="Save set changes">Save</Button>
+        <Button type="button" variant="ghost" onClick={onCancelEdit} aria-label="Cancel editing">Cancel</Button>
       </div>
     );
   }
@@ -40,7 +62,7 @@ const SetItem = React.memo(({
   return (
     <>
       <span>Set {index + 1}: {set.reps} reps{set.weight != null ? ` @ ${set.weight} lbs` : ''}</span>
-      <Button type="button" variant="ghost" onClick={() => onEditSet(index)}>
+      <Button type="button" variant="ghost" onClick={() => onEditSet(index)} aria-label={`Edit set ${index + 1}`}>
         Edit
       </Button>
       <Button
@@ -58,14 +80,13 @@ const SetItem = React.memo(({
 SetItem.displayName = 'SetItem';
 
 // Memoized SetEditor Component
-const SetEditor = React.memo(({
+const SetEditor = React.memo<SetEditorProps>(({
   initialSets = [],
   onSetsChange,
-  exerciseId,
 }) => {
-  const [sets, setSets] = useState(initialSets);
+  const [sets, setSets] = useState<Set[]>(initialSets);
   const [form, setForm] = useState({ reps: '', weight: '' });
-  const [editIndex, setEditIndex] = useState(null);
+  const [editIndex, setEditIndex] = useState<number | null>(null);
   const [editForm, setEditForm] = useState({ reps: '', weight: '' });
   const [addError, setAddError] = useState('');
 
@@ -78,12 +99,12 @@ const SetEditor = React.memo(({
       setAddError('Please enter a valid number of reps');
       return;
     }
-    if (form.weight !== '' && isNaN(weight)) {
+    if (form.weight !== '' && isNaN(weight!)) {
       setAddError('Please enter a valid weight');
       return;
     }
     
-    const newSet = { id: Date.now(), reps, weight };
+    const newSet = { id: Date.now().toString(), reps, weight };
     const updated = [...sets, newSet];
     setSets(updated);
     setForm({ reps: '', weight: '' });
@@ -91,21 +112,24 @@ const SetEditor = React.memo(({
     onSetsChange && onSetsChange(updated);
   }, [form, sets, onSetsChange]);
 
-  const handleDeleteSet = useCallback((idx) => {
+  const handleDeleteSet = useCallback((idx: number) => {
     const updated = sets.filter((_, i) => i !== idx);
     setSets(updated);
     onSetsChange && onSetsChange(updated);
   }, [sets, onSetsChange]);
 
-  const handleEditSet = useCallback((idx, newEditForm = null) => {
+  const handleEditSet = useCallback((idx: number, newEditForm?: { reps: string; weight: string }) => {
     if (newEditForm) {
       setEditForm(newEditForm);
     } else {
-      setEditIndex(idx);
-      setEditForm({
-        reps: sets[idx].reps.toString(),
-        weight: sets[idx].weight != null ? sets[idx].weight.toString() : '',
-      });
+      const set = sets[idx];
+      if (set) {
+        setEditIndex(idx);
+        setEditForm({
+          reps: set.reps.toString(),
+          weight: set.weight != null ? set.weight.toString() : '',
+        });
+      }
     }
   }, [sets]);
 
@@ -113,7 +137,7 @@ const SetEditor = React.memo(({
     const reps = Number(editForm.reps);
     const weight = editForm.weight === '' ? null : Number(editForm.weight);
     if (!reps || reps < 1) return;
-    if (editForm.weight !== '' && isNaN(weight)) return;
+    if (editForm.weight !== '' && isNaN(weight!)) return;
     const updated = sets.map((set, i) =>
       i === editIndex ? { ...set, reps, weight } : set
     );
@@ -151,18 +175,18 @@ const SetEditor = React.memo(({
           type="number"
           min={1}
           value={form.reps}
-          onChange={e => setForm(f => ({ ...f, reps: e.target.value }))}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm(f => ({ ...f, reps: e.target.value }))}
           placeholder="Reps"
           title="Number of repetitions for this set"
         />
         <FormInput
           type="number"
           value={form.weight}
-          onChange={e => setForm(f => ({ ...f, weight: e.target.value }))}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForm(f => ({ ...f, weight: e.target.value }))}
           placeholder="Weight (lbs)"
           title="Weight used for this set (optional)"
         />
-        <Button type="button" variant="primary" onClick={handleAddSet}>Add Set</Button>
+        <Button type="button" variant="primary" onClick={handleAddSet} aria-label="Add new set">Add Set</Button>
       </div>
       {addError && <div className="text-red-500 mt-1">{addError}</div>}
     </div>
@@ -171,4 +195,4 @@ const SetEditor = React.memo(({
 
 SetEditor.displayName = 'SetEditor';
 
-export default SetEditor; 
+export default SetEditor;

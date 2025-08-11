@@ -1,33 +1,51 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo, useRef } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useUser } from "@/context/UserContext";
 import { useStretchingSessions } from "@/lib/hooks/useStretchingSessions";
 import { useStretchingSession } from "@/context/StretchingSessionContext";
 import { supabase } from "@/lib/supabaseClient";
 import BaseModal from "@/components/shared/BaseModal";
 import Button from "@/components/shared/Button";
-import LoadingSpinner from "@/components/shared/LoadingSpinner";
+
 import SharedDeleteButton from "@/components/SharedDeleteButton";
 import EditButton from "@/components/EditButton";
 import StretchingForm from "@/components/forms/StretchingForm";
 import { useToast } from "@/components/client/Toast";
-import { updateCalendarEventForCompletedEntity, cleanupPlannedSessionOnCompletion } from "@/lib/calendarSync";
-import { CALENDAR_SOURCES } from "@/lib/utils/calendarUtils";
+import { cleanupPlannedSessionOnCompletion } from "@/lib/calendarSync";
+
 import dynamic from "next/dynamic";
 
+
 const StretchHorizontal = dynamic(
-  () => import("lucide-react/dist/esm/icons/stretch-horizontal"),
+  () => import("lucide-react").then(mod => ({ default: mod.StretchHorizontal })),
   { ssr: false },
 );
-const Clock = dynamic(() => import("lucide-react/dist/esm/icons/clock"), {
+const Clock = dynamic(() => import("lucide-react").then(mod => ({ default: mod.Clock })), {
   ssr: false,
   loading: () => <span className="inline-block w-4 h-4" />,
 });
-const Calendar = dynamic(() => import("lucide-react/dist/esm/icons/calendar"), {
-  ssr: false,
-});
+
 const CalendarClient = dynamic(() => import("@/components/client/CalendarClient"));
+
+interface StretchingMobilityModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  initialMode?: 'list' | 'create' | 'edit' | 'view';
+  initialSessionId?: string | null;
+}
+
+interface StretchingSessionData {
+  id: string;
+  session_type?: string;
+  intensity_level?: string;
+  body_parts?: string;
+  notes?: string;
+  start_time?: string;
+  end_time?: string;
+  duration_minutes?: number;
+  date: string;
+}
 
 // Skeleton component for stretching sessions
 function StretchingSkeleton() {
@@ -45,20 +63,25 @@ function StretchingSkeleton() {
   );
 }
 
-export default function StretchingMobilityModal({ isOpen, onClose, initialMode = 'list', initialSessionId = null }) {
+export default function StretchingMobilityModal({ 
+  isOpen, 
+  onClose, 
+  initialMode = 'list', 
+  initialSessionId = null 
+}: StretchingMobilityModalProps) {
   const { user } = useUser();
-  const { activeStretchingId, stretchingData, refreshStretching, clearSession, loading: stretchingLoading } = useStretchingSession();
-  const { fetchStretchingSessions, deleteStretchingSession, updateStretchingSession } = useStretchingSessions();
+  const { activeStretchingId, stretchingData, refreshStretching } = useStretchingSession();
+  const { fetchStretchingSessions, deleteStretchingSession } = useStretchingSessions();
   const { showSuccess, showError } = useToast();
   
-  const [mode, setMode] = useState(initialMode);
-  const [selectedSession, setSelectedSession] = useState(null);
-  const [stretchingSessions, setStretchingSessions] = useState([]);
+  const [mode, setMode] = useState<'list' | 'create' | 'edit' | 'view'>(initialMode);
+  const [selectedSession, setSelectedSession] = useState<StretchingSessionData | null>(null);
+  const [stretchingSessions, setStretchingSessions] = useState<StretchingSessionData[]>([]);
   const [loading, setLoading] = useState(true);
   const [hasInitialized, setHasInitialized] = useState(false);
   const [endingSession, setEndingSession] = useState(false);
   
-  const fetchedRef = useRef({ userId: null, done: false });
+  const fetchedRef = useRef<{ userId: string | null; done: boolean }>({ userId: null, done: false });
 
   const loadStretchingSessions = useCallback(async () => {
     if (!user?.id) {
@@ -99,7 +122,7 @@ export default function StretchingMobilityModal({ isOpen, onClose, initialMode =
   }, [initialSessionId, stretchingSessions]);
 
   const handleDeleteStretching = useCallback(
-    async (id) => {
+    async (id: string) => {
       const confirm = window.confirm("Delete this stretching session?");
       if (!confirm) return;
       if (!user) return;
@@ -120,12 +143,12 @@ export default function StretchingMobilityModal({ isOpen, onClose, initialMode =
     setSelectedSession(null);
   };
 
-  const handleEditSession = useCallback((session) => {
+  const handleEditSession = useCallback((session: StretchingSessionData) => {
     setSelectedSession(session);
     setMode('edit');
   }, []);
 
-  const handleViewSession = useCallback((session) => {
+  const handleViewSession = useCallback((session: StretchingSessionData) => {
     setSelectedSession(session);
     setMode('view');
   }, []);
@@ -147,9 +170,15 @@ export default function StretchingMobilityModal({ isOpen, onClose, initialMode =
     setEndingSession(true);
     
     // Calculate duration from start time
-    const startTime = new Date(stretchingData.start_time);
+    const sessionData = stretchingData as StretchingSessionData;
+    if (!sessionData?.start_time) {
+      showError('No start time found for stretching session.');
+      setEndingSession(false);
+      return;
+    }
+    const startTime = new Date(sessionData.start_time);
     const endTime = new Date();
-    const durationMinutes = Math.round((endTime - startTime) / (1000 * 60));
+    const durationMinutes = Math.round((endTime.getTime() - startTime.getTime()) / (1000 * 60));
     
     // Update the stretching session to mark it as completed
     const { error } = await supabase
@@ -177,7 +206,6 @@ export default function StretchingMobilityModal({ isOpen, onClose, initialMode =
     }
     
     // Clear session state in context immediately
-    if (typeof clearSession === 'function') clearSession();
     if (typeof refreshStretching === 'function') await refreshStretching();
     
     // Show success message
@@ -192,6 +220,7 @@ export default function StretchingMobilityModal({ isOpen, onClose, initialMode =
   const renderContent = () => {
     // Show live session if active
     if (stretchingData && activeStretchingId) {
+      const sessionData = stretchingData as StretchingSessionData;
       return (
         <div className="space-y-6">
           <div className="text-center">
@@ -200,7 +229,7 @@ export default function StretchingMobilityModal({ isOpen, onClose, initialMode =
             </div>
             <h3 className="text-lg font-medium mb-2">Stretching Session In Progress</h3>
             <p className="text-sm text-gray-400 mb-4">
-              {stretchingData.session_type || 'Untitled Stretching'}
+              {sessionData.session_type || 'Untitled Stretching'}
             </p>
           </div>
 
@@ -208,28 +237,28 @@ export default function StretchingMobilityModal({ isOpen, onClose, initialMode =
             <div className="space-y-3">
               <div className="flex justify-between">
                 <span className="text-sm text-gray-400">Session Type:</span>
-                <span className="font-medium">{stretchingData.session_type || 'N/A'}</span>
+                <span className="font-medium">{sessionData.session_type || 'N/A'}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-sm text-gray-400">Intensity:</span>
-                <span className="font-medium">{stretchingData.intensity_level || 'N/A'}</span>
+                <span className="font-medium">{sessionData.intensity_level || 'N/A'}</span>
               </div>
-              {stretchingData.body_parts && (
+              {sessionData.body_parts && (
                 <div className="flex justify-between">
                   <span className="text-sm text-gray-400">Body Parts:</span>
-                  <span className="font-medium">{stretchingData.body_parts}</span>
+                  <span className="font-medium">{sessionData.body_parts}</span>
                 </div>
               )}
-              {stretchingData.notes && (
+              {sessionData.notes && (
                 <div className="flex justify-between">
                   <span className="text-sm text-gray-400">Notes:</span>
-                  <span className="font-medium">{stretchingData.notes}</span>
+                  <span className="font-medium">{sessionData.notes}</span>
                 </div>
               )}
               <div className="flex justify-between">
                 <span className="text-sm text-gray-400">Started:</span>
                 <span className="font-medium">
-                  {stretchingData.start_time ? new Date(stretchingData.start_time).toLocaleString() : 'Unknown'}
+                  {sessionData.start_time ? new Date(sessionData.start_time).toLocaleString() : 'Unknown'}
                 </span>
               </div>
             </div>
@@ -241,6 +270,7 @@ export default function StretchingMobilityModal({ isOpen, onClose, initialMode =
             loading={endingSession}
             disabled={endingSession}
             className="w-full"
+            aria-label="End stretching session"
           >
             End Stretching Session
           </Button>
@@ -260,12 +290,12 @@ export default function StretchingMobilityModal({ isOpen, onClose, initialMode =
             <h3 className="text-lg font-medium">
               {mode === 'create' ? 'Start New Stretching Session' : 'Edit Stretching Session'}
             </h3>
-            <Button onClick={handleBackToList} variant="secondary" size="sm">
+            <Button onClick={handleBackToList} variant="secondary" size="sm" aria-label="Back to stretching sessions list">
               Back to List
             </Button>
           </div>
           <StretchingForm 
-            initialData={selectedSession} 
+            initialData={selectedSession as any} 
             isEdit={mode === 'edit'} 
             onSuccess={handleFormSuccess}
           />
@@ -280,10 +310,10 @@ export default function StretchingMobilityModal({ isOpen, onClose, initialMode =
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-medium">Stretching Session Details</h3>
             <div className="flex gap-2">
-              <Button onClick={() => handleEditSession(selectedSession)} variant="secondary" size="sm">
+              <Button onClick={() => handleEditSession(selectedSession)} variant="secondary" size="sm" aria-label="Edit stretching session">
                 Edit
               </Button>
-              <Button onClick={handleBackToList} variant="secondary" size="sm">
+              <Button onClick={handleBackToList} variant="secondary" size="sm" aria-label="Back to stretching sessions list">
                 Back to List
               </Button>
             </div>
@@ -351,6 +381,7 @@ export default function StretchingMobilityModal({ isOpen, onClose, initialMode =
             onClick={handleStartNewSession}
             variant="primary"
             className="w-full max-w-md"
+            aria-label="Start new stretching session"
           >
             Start New Stretching Session
           </Button>
@@ -459,13 +490,14 @@ export default function StretchingMobilityModal({ isOpen, onClose, initialMode =
             <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
               <div className="flex gap-2">
                 <EditButton
-                  onClick={(e) => {
+                  href="#"
+                  onClick={(e: React.MouseEvent) => {
                     e.stopPropagation();
                     handleEditSession(session);
                   }}
                 />
                 <SharedDeleteButton
-                  onClick={(e) => {
+                  onClick={(e: React.MouseEvent) => {
                     e.stopPropagation();
                     handleDeleteStretching(session.id);
                   }}

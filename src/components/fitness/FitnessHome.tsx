@@ -9,7 +9,7 @@ import Button from '@/components/shared/Button';
 import dynamic from 'next/dynamic';
 import { 
   CardioActivity, 
-  Workout, 
+  WorkoutActivity, 
   SportActivity, 
   FitnessHomeProps 
 } from '@/types/fitness';
@@ -69,7 +69,7 @@ const FitnessHome: React.FC<FitnessHomeProps> = React.memo(() => {
   const { fetchSportsSessions } = useSportsSessions();
   
   const [cardioData, setCardioData] = useState<CardioActivity[]>([]);
-  const [workoutData, setWorkoutData] = useState<Workout[]>([]);
+  const [workoutData, setWorkoutData] = useState<WorkoutActivity[]>([]);
   const [sportsData, setSportsData] = useState<SportActivity[]>([]);
   const [dataLoading, setDataLoading] = useState<boolean>(true);
 
@@ -133,9 +133,7 @@ const FitnessHome: React.FC<FitnessHomeProps> = React.memo(() => {
     setShowPlanWorkoutModal(true);
   };
 
-  const handleOpenWorkoutSession = (): void => {
-    setShowWorkoutSessionModal(true);
-  };
+
 
   // Loading state
   if (loading) {
@@ -221,8 +219,8 @@ const FitnessHome: React.FC<FitnessHomeProps> = React.memo(() => {
       {/* Workout Planner and Exercise Library */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <WorkoutPlanner 
-          showStartActivityModal={false}
-          setShowStartActivityModal={() => {}}
+          showStartActivityModal={showStartActivityModal}
+          setShowStartActivityModal={setShowStartActivityModal}
           onOpenStretchingModal={handleOpenStretchingModal}
         />
         

@@ -1,4 +1,4 @@
-import { IconType } from 'react-icons';
+
 
 /**
  * Base fitness activity interface
@@ -18,7 +18,7 @@ export interface FitnessActivity {
 /**
  * Workout interface
  */
-export interface Workout extends FitnessActivity {
+export interface WorkoutActivity extends FitnessActivity {
   workout_type: string;
   duration?: number;
   intensity?: string;
@@ -162,7 +162,7 @@ export interface FitnessHomeProps {
  */
 export interface FitnessStatsProps {
   cardioData: CardioActivity[];
-  workoutData: Workout[];
+  workoutData: WorkoutActivity[];
   sportsData: SportActivity[];
   dataLoading?: boolean;
 }
@@ -204,9 +204,9 @@ export interface Exercise {
  * Props for WorkoutPlanner component
  */
 export interface WorkoutPlannerProps {
-  workouts: Workout[];
-  onWorkoutCreate?: (workout: Partial<Workout>) => Promise<void>;
-  onWorkoutUpdate?: (workoutId: string, updates: Partial<Workout>) => Promise<void>;
+  workouts: WorkoutActivity[];
+  onWorkoutCreate?: (workout: Partial<WorkoutActivity>) => Promise<void>;
+  onWorkoutUpdate?: (workoutId: string, updates: Partial<WorkoutActivity>) => Promise<void>;
   onWorkoutDelete?: (workoutId: string) => Promise<void>;
   isLoading?: boolean;
 }
@@ -302,7 +302,7 @@ export interface PlannedExercise {
 /**
  * Workout session interface
  */
-export interface WorkoutSession {
+export interface WorkoutSessionActivity {
   id: string;
   workout_plan_id?: string;
   user_id: string;
@@ -357,7 +357,7 @@ export interface ActivityOption {
 /**
  * Event manager interface
  */
-export interface CalendarEvent {
+export interface FitnessCalendarEvent {
   id: string;
   title: string;
   date: string;
@@ -372,12 +372,12 @@ export interface CalendarEvent {
  * Workout calendar interface
  */
 export interface WorkoutCalendarProps {
-  workouts: Workout[];
+  workouts: WorkoutActivity[];
   cardioSessions: CardioActivity[];
   sportsSessions: SportActivity[];
-  onEventClick?: (event: CalendarEvent) => void;
-  onEventCreate?: (event: Partial<CalendarEvent>) => Promise<void>;
-  onEventUpdate?: (eventId: string, updates: Partial<CalendarEvent>) => Promise<void>;
+  onEventClick?: (event: FitnessCalendarEvent) => void;
+  onEventCreate?: (event: Partial<FitnessCalendarEvent>) => Promise<void>;
+  onEventUpdate?: (eventId: string, updates: Partial<FitnessCalendarEvent>) => Promise<void>;
   onEventDelete?: (eventId: string) => Promise<void>;
   isLoading?: boolean;
 }
@@ -388,7 +388,7 @@ export interface WorkoutCalendarProps {
 export interface WorkoutFormModalProps {
   isOpen: boolean;
   onClose: () => void;
-  workout?: Workout;
+  workout?: WorkoutActivity;
   onSave: (workout: WorkoutFormData) => Promise<void>;
   mode: 'create' | 'edit';
 }
@@ -427,3 +427,125 @@ export type WorkoutPlanStatus = 'draft' | 'planned' | 'completed';
  * Workout session status types
  */
 export type WorkoutSessionStatus = 'in_progress' | 'completed' | 'paused';
+
+/**
+ * Calendar event for workout planning
+ */
+export interface WorkoutCalendarEvent {
+  id: string;
+  title: string;
+  date: string;
+  start_time: string;
+  end_time?: string;
+  source: string;
+  source_id: string;
+  description?: string;
+  user_id: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+/**
+ * Drag and drop event data
+ */
+export interface DragDropEvent {
+  id: string;
+  newStartISO: string;
+  originalStart: string;
+  originalEnd?: string;
+}
+
+/**
+ * Calendar day data for workout planning
+ */
+export interface CalendarDay {
+  date: string;
+  dayOfWeek: string;
+  isToday: boolean;
+  isSelected: boolean;
+  events: WorkoutCalendarEvent[];
+}
+
+/**
+ * Props for PlanWorkoutModal component
+ */
+export interface PlanWorkoutModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+/**
+ * Props for EventManager component
+ */
+export interface EventManagerProps {
+  user?: {
+    id: string;
+    email?: string;
+  } | null;
+  isAddModalOpen: boolean;
+  isDayEventsModalOpen: boolean;
+  selectedDayForEvents: Date | null;
+  fitnessEvents: WorkoutCalendarEvent[];
+  onAddEventClose: () => void;
+  onDayEventsClose: () => void;
+  onEventClick: (event: WorkoutCalendarEvent) => Promise<void>;
+}
+
+/**
+ * Props for WorkoutCalendar component
+ */
+export interface WorkoutCalendarComponentProps {
+  user?: {
+    id: string;
+    email?: string;
+  } | null;
+  selectedDate: Date;
+  onDateSelect: (date: Date) => void;
+  onEventClick: (event: WorkoutCalendarEvent) => Promise<void>;
+  onAddEvent: (dateStr: string) => void;
+  onViewDayEvents: (date: Date) => void;
+}
+
+/**
+ * Props for WorkoutFormModal component
+ */
+export interface WorkoutFormModalComponentProps {
+  isOpen: boolean;
+  selectedDate: string | null;
+  onClose: () => void;
+  onSuccess: () => void;
+}
+
+/**
+ * New event form data
+ */
+export interface NewEventFormData {
+  title: string;
+  start_time: string;
+  end_time: string;
+  description: string;
+}
+
+/**
+ * Calendar event update payload
+ */
+export interface CalendarEventUpdatePayload {
+  id: string;
+  userId: string;
+  newStart: string;
+  newEnd?: string;
+  updateLinkedEntity: boolean;
+}
+
+/**
+ * Calendar event insert payload
+ */
+export interface CalendarEventInsertPayload {
+  event: {
+    user_id: string;
+    title: string;
+    description?: string | null;
+    start_time: string;
+    end_time: string;
+  };
+}

@@ -1,13 +1,29 @@
 import { supabase } from '../supabaseClient';
+import type { CalendarSource } from './calendarUtils';
+
+interface DeleteWorkoutCascadeParams {
+  workoutId: string;
+  user_id: string;
+}
+
+interface DeleteEntityWithCalendarEventParams {
+  table: string;
+  id: string | number;
+  user_id: string;
+  source: CalendarSource;
+}
 
 /**
  * Deletes a workout and all its child data (exercises, sets, calendar event) safely.
- * @param {Object} params - The parameters for deletion
- * @param {string} params.workoutId - The ID of the workout to delete
- * @param {string} params.user_id - The user ID for the entity
- * @returns {Promise<Object|null>} - Returns any Supabase error encountered or null on success
+ * @param params - The parameters for deletion
+ * @param params.workoutId - The ID of the workout to delete
+ * @param params.user_id - The user ID for the entity
+ * @returns Returns any Supabase error encountered or null on success
  */
-export const deleteWorkoutCascade = async ({ workoutId, user_id }) => {
+export const deleteWorkoutCascade = async ({ 
+  workoutId, 
+  user_id 
+}: DeleteWorkoutCascadeParams): Promise<any | null> => {
   try {
     // 1. Get all exercises for the workout
     const { data: exercises, error: exError } = await supabase
@@ -86,14 +102,19 @@ export const deleteWorkoutCascade = async ({ workoutId, user_id }) => {
 
 /**
  * Deletes an entity from the specified table and also deletes its corresponding calendar event
- * @param {Object} params - The parameters for deletion
- * @param {string} params.table - The table name to delete from
- * @param {string|number} params.id - The ID of the entity to delete
- * @param {string} params.user_id - The user ID for the entity
- * @param {string} params.source - The source type for calendar events (e.g., "workout", "cardio", "meal", etc.)
- * @returns {Promise<Object|null>} - Returns any Supabase error encountered or null on success
+ * @param params - The parameters for deletion
+ * @param params.table - The table name to delete from
+ * @param params.id - The ID of the entity to delete
+ * @param params.user_id - The user ID for the entity
+ * @param params.source - The source type for calendar events (e.g., "workout", "cardio", "meal", etc.)
+ * @returns Returns any Supabase error encountered or null on success
  */
-export const deleteEntityWithCalendarEvent = async ({ table, id, user_id, source }) => {
+export const deleteEntityWithCalendarEvent = async ({ 
+  table, 
+  id, 
+  user_id, 
+  source 
+}: DeleteEntityWithCalendarEventParams): Promise<any | null> => {
   try {
     // First, delete the calendar event if it exists
     // Ensure id is a string for the query
@@ -137,4 +158,4 @@ export const deleteEntityWithCalendarEvent = async ({ table, id, user_id, source
     }
     return error;
   }
-}; 
+};

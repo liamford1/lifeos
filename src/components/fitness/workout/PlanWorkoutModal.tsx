@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import BaseModal from "@/components/shared/BaseModal";
 import dynamic from "next/dynamic";
 import { useUser } from '@/context/UserContext';
@@ -11,6 +11,10 @@ import { useApiError } from '@/lib/hooks/useApiError';
 import { MdAdd } from 'react-icons/md';
 import { supabase } from '@/lib/supabaseClient';
 import { useRouter } from 'next/navigation';
+import { 
+  PlanWorkoutModalProps, 
+  WorkoutCalendarEvent
+} from '@/types/fitness';
 
 // Dynamic imports for sub-components
 const WorkoutCalendar = dynamic(() => import('./WorkoutCalendar'), {
@@ -33,7 +37,7 @@ const WorkoutFormModal = dynamic(() => import('./WorkoutFormModal'), {
   ssr: false
 });
 
-const CalendarIcon = dynamic(() => import("lucide-react/dist/esm/icons/calendar"), {
+const CalendarIcon = dynamic(() => import("lucide-react").then(mod => ({ default: mod.Calendar })), {
   ssr: false,
   loading: () => <span className="inline-block w-4 h-4" />,
 });
@@ -50,60 +54,66 @@ const CalendarIcon = dynamic(() => import("lucide-react/dist/esm/icons/calendar"
  * - Event management (add/view)
  * - Workout form integration
  * - Fitness event navigation
+ * 
+ * @param isOpen - Controls modal visibility
+ * @param onClose - Callback to close the modal
  */
-export default function PlanWorkoutModal({ isOpen, onClose }) {
+const PlanWorkoutModal: React.FC<PlanWorkoutModalProps> = ({ isOpen, onClose }) => {
   const { handleError } = useApiError();
   const router = useRouter();
   
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const [selectedDateForForm, setSelectedDateForForm] = useState(null);
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [showSelectionModal, setShowSelectionModal] = useState(false);
-  const [showSelectionModalForDate, setShowSelectionModalForDate] = useState(null);
-  const [showDayEventsModal, setShowDayEventsModal] = useState(false);
-  const [selectedDayForEvents, setSelectedDayForEvents] = useState(null);
-  const [showForm, setShowForm] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [selectedDateForForm, setSelectedDateForForm] = useState<string | null>(null);
+  const [showAddModal, setShowAddModal] = useState<boolean>(false);
+  const [showSelectionModal, setShowSelectionModal] = useState<boolean>(false);
+  const [showSelectionModalForDate, setShowSelectionModalForDate] = useState<Date | null>(null);
+  const [showDayEventsModal, setShowDayEventsModal] = useState<boolean>(false);
+  const [selectedDayForEvents, setSelectedDayForEvents] = useState<Date | null>(null);
+  const [showForm, setShowForm] = useState<boolean>(false);
   
   const { user } = useUser();
 
   // Fetch calendar events for EventManager
   const eventsQuery = useQuery({
-    queryKey: ["events", user?.id],
+    queryKey: ["events", (user as any)?.id],
     enabled: !!user && isOpen,
-    queryFn: () =>
-      fetch("/api/calendar/list", {
+    queryFn: async (): Promise<WorkoutCalendarEvent[]> => {
+      if (!user) throw new Error('User not found');
+      const response = await fetch("/api/calendar/list", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: user.id }),
-      }).then((r) => r.json()),
+        body: JSON.stringify({ userId: (user as any).id }),
+      });
+      return response.json();
+    },
   });
 
-  const events = eventsQuery.data || [];
+  const events: WorkoutCalendarEvent[] = eventsQuery.data || [];
   
   // Filter for fitness-related events only
-  const fitnessEvents = events.filter(event => 
+  const fitnessEvents: WorkoutCalendarEvent[] = events.filter(event => 
     event.source === CALENDAR_SOURCES.WORKOUT ||
     event.source === CALENDAR_SOURCES.CARDIO ||
     event.source === CALENDAR_SOURCES.SPORT
   );
 
   // Calendar event handlers
-  const handleDateSelect = useCallback((date) => {
+  const handleDateSelect = useCallback((date: Date): void => {
     setSelectedDate(date);
   }, []);
 
-  const handleAddEvent = useCallback((dateStr) => {
+  const handleAddEvent = useCallback((dateStr: string): void => {
     setSelectedDateForForm(dateStr);
     setShowForm(true);
   }, []);
 
-  const handleViewDayEvents = useCallback((date) => {
+  const handleViewDayEvents = useCallback((date: Date): void => {
     setSelectedDayForEvents(date);
     setShowDayEventsModal(true);
   }, []);
 
   // Activity selection handlers
-  const handlePlanningSelection = useCallback((type, selectedDateForPlanning = null) => {
+  const handlePlanningSelection = useCallback((type: 'general' | 'workout', selectedDateForPlanning: Date | null = null): void => {
     setShowSelectionModal(false);
     setShowSelectionModalForDate(null);
     
@@ -123,10 +133,10 @@ export default function PlanWorkoutModal({ isOpen, onClose }) {
   }, [selectedDate]);
 
   // Event click handler
-  const handleFitnessEventClick = useCallback(async (event) => {
+  const handleFitnessEventClick = useCallback(async (event: WorkoutCalendarEvent): Promise<void> => {
     try {
       // Determine the table name based on type
-      const tableMap = {
+      const tableMap: Record<string, string> = {
         'workout': 'fitness_workouts',
         'cardio': 'fitness_cardio', 
         'sport': 'fitness_sports'
@@ -156,7 +166,7 @@ export default function PlanWorkoutModal({ isOpen, onClose }) {
 
       // If it's a planned event, route to live session with pre-filled data
       if (sourceEntity.status === 'planned') {
-        const routeMap = {
+        const routeMap: Record<string, string> = {
           'workout': '/fitness/workouts/live',
           'cardio': '/fitness/cardio/live',
           'sport': '/fitness/sports/live'
@@ -173,12 +183,15 @@ export default function PlanWorkoutModal({ isOpen, onClose }) {
         router.push(`${baseRoute}?${params.toString()}`);
       } else {
         // For completed events, route to the details page
-        const routeMap = {
+        const routeMap: Record<string, string> = {
           'workout': `/fitness/workouts/${event.source_id}`,
           'cardio': `/fitness/cardio/${event.source_id}`,
           'sport': `/fitness/sports/${event.source_id}`
         };
-        router.push(routeMap[event.source]);
+        const route = event.source ? routeMap[event.source] : undefined;
+        if (route) {
+          router.push(route);
+        }
       }
     } catch (error) {
       handleError(error, { 
@@ -188,7 +201,7 @@ export default function PlanWorkoutModal({ isOpen, onClose }) {
   }, [handleError, router]);
 
   // Form success handler
-  const handleFormSuccess = useCallback(() => {
+  const handleFormSuccess = useCallback((): void => {
     setShowForm(false);
     setSelectedDateForForm(null);
     // Refresh the events query to show the new planned workout
@@ -243,8 +256,8 @@ export default function PlanWorkoutModal({ isOpen, onClose }) {
 
         {/* Sub-components */}
         <ActivitySelector
-          isOpen={showSelectionModal || showSelectionModalForDate}
-          selectedDate={showSelectionModalForDate}
+          isOpen={showSelectionModal || !!showSelectionModalForDate}
+          {...(showSelectionModalForDate && { selectedDate: showSelectionModalForDate })}
           onSelect={handlePlanningSelection}
           onClose={() => {
             setShowSelectionModal(false);
@@ -278,4 +291,6 @@ export default function PlanWorkoutModal({ isOpen, onClose }) {
       </div>
     </BaseModal>
   );
-}
+};
+
+export default PlanWorkoutModal;

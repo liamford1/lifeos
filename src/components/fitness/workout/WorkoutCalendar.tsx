@@ -8,8 +8,14 @@ import { useApiError } from '@/lib/hooks/useApiError';
 import { useToast } from '@/components/client/Toast';
 import { CALENDAR_SOURCES } from '@/lib/utils/calendarUtils';
 import { getEventStyle } from '@/lib/utils/eventStyleMap';
-import { MdAdd, MdDragIndicator } from 'react-icons/md';
+import { MdDragIndicator } from 'react-icons/md';
 import { toYMD } from '@/lib/date';
+import { 
+  WorkoutCalendarComponentProps, 
+  WorkoutCalendarEvent, 
+  DragDropEvent,
+  CalendarEventUpdatePayload
+} from '@/types/fitness';
 
 /**
  * WorkoutCalendar Component
@@ -23,8 +29,15 @@ import { toYMD } from '@/lib/date';
  * - Event click handling for fitness activities
  * - Optimistic updates with rollback on error
  * - Keyboard accessibility
+ * 
+ * @param user - Current user object
+ * @param selectedDate - Currently selected date
+ * @param onDateSelect - Callback when a date is selected
+ * @param onEventClick - Callback when an event is clicked
+ * @param onAddEvent - Callback to add an event for a specific date
+ * @param onViewDayEvents - Callback to view events for a specific day
  */
-const WorkoutCalendar = React.memo(({ 
+const WorkoutCalendar: React.FC<WorkoutCalendarComponentProps> = React.memo(({ 
   user,
   selectedDate,
   onDateSelect,
@@ -32,7 +45,7 @@ const WorkoutCalendar = React.memo(({
   onAddEvent,
   onViewDayEvents
 }) => {
-  const { handleError, handleSuccess } = useApiError();
+  const { handleError } = useApiError();
   const { showSuccess } = useToast();
   const queryClient = useQueryClient();
 
@@ -40,18 +53,21 @@ const WorkoutCalendar = React.memo(({
   const eventsQuery = useQuery({
     queryKey: ["events", user?.id],
     enabled: !!user,
-    queryFn: () =>
-      fetch("/api/calendar/list", {
+    queryFn: async (): Promise<WorkoutCalendarEvent[]> => {
+      if (!user) throw new Error('User not found');
+      const response = await fetch("/api/calendar/list", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId: user.id }),
-      }).then((r) => r.json()),
+      });
+      return response.json();
+    },
   });
 
-  const events = useMemo(() => eventsQuery.data || [], [eventsQuery.data]);
+  const events: WorkoutCalendarEvent[] = useMemo(() => eventsQuery.data || [], [eventsQuery.data]);
   
   // Filter for fitness-related events only
-  const fitnessEvents = useMemo(() => 
+  const fitnessEvents: WorkoutCalendarEvent[] = useMemo(() => 
     events.filter(event => 
       event.source === CALENDAR_SOURCES.WORKOUT ||
       event.source === CALENDAR_SOURCES.CARDIO ||
@@ -61,7 +77,7 @@ const WorkoutCalendar = React.memo(({
   );
 
   // Drag and drop functionality
-  const handleEventDrop = useCallback(async ({ id, newStartISO, originalStart, originalEnd }) => {
+  const handleEventDrop = useCallback(async ({ id, newStartISO, originalStart, originalEnd }: DragDropEvent): Promise<void> => {
     if (!user) return;
 
     // Find the event to update
@@ -69,16 +85,16 @@ const WorkoutCalendar = React.memo(({
     if (eventIndex === -1) return;
 
     const event = events[eventIndex];
-    const originalEvent = { ...event };
+    if (!event) return;
 
     // Optimistic update: immediately update local state
     const updatedEvents = [...events];
     const updatedEvent = {
       ...event,
       start_time: newStartISO,
-      end_time: event.end_time ? 
-        dayjs(newStartISO).add(dayjs(event.end_time).diff(dayjs(event.start_time))).toISOString() : 
-        null
+      ...(event.end_time && {
+        end_time: dayjs(newStartISO).add(dayjs(event.end_time).diff(dayjs(event.start_time))).toISOString()
+      })
     };
     updatedEvents[eventIndex] = updatedEvent;
 
@@ -86,24 +102,24 @@ const WorkoutCalendar = React.memo(({
     queryClient.setQueryData(["events", user?.id], updatedEvents);
 
     try {
+      const payload: CalendarEventUpdatePayload = {
+        id,
+        userId: user.id,
+        newStart: newStartISO,
+        ...(updatedEvent.end_time && { newEnd: updatedEvent.end_time }),
+        updateLinkedEntity: true
+      };
+
       const response = await fetch("/api/calendar/update", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          id,
-          userId: user.id,
-          newStart: newStartISO,
-          newEnd: updatedEvent.end_time,
-          updateLinkedEntity: true
-        }),
+        body: JSON.stringify(payload),
       });
 
       if (!response.ok) {
         throw new Error('Failed to update event');
       }
 
-      const result = await response.json();
-      
       // Show success toast with undo option
       const newDate = dayjs(newStartISO).format('ddd MMM D');
       showSuccess(`Event moved to ${newDate}`, 5000, () => {
@@ -112,7 +128,7 @@ const WorkoutCalendar = React.memo(({
           id,
           newStartISO: originalStart,
           originalStart: newStartISO,
-          originalEnd: originalEnd
+          ...(originalEnd && { originalEnd })
         });
     
         queryClient.invalidateQueries({ queryKey: ["events", user?.id] });
@@ -127,16 +143,16 @@ const WorkoutCalendar = React.memo(({
     }
   }, [events, user, queryClient, handleError, showSuccess]);
 
-  const { draggingId, startDrag, moveDrag, endDrag, isDragging } = useCalendarDragAndDrop({
+  const { draggingId, startDrag, moveDrag, endDrag } = useCalendarDragAndDrop({
     onDrop: handleEventDrop
   });
 
   // Compute target date from pointer position
-  const computeTargetDate = useCallback((evt) => {
+  const computeTargetDate = useCallback((evt: PointerEvent): string | null => {
     const el = document.elementFromPoint(evt.clientX, evt.clientY);
     if (!el) return null;
     // Our calendar renders `data-date="YYYY-MM-DD"` on the inner daycell div.
-    const dayCell = el.closest('[data-date]');
+    const dayCell = el.closest('[data-date]') as HTMLElement;
     if (!dayCell) return null;
     const dateStr = dayCell.getAttribute('data-date'); // e.g., "2025-08-09"
     if (!dateStr) return null;
@@ -173,7 +189,7 @@ const WorkoutCalendar = React.memo(({
         <div className="grid grid-cols-7 gap-1">
           {(() => {
             const startOfWeek = dayjs(selectedDate).startOf('week');
-            const days = [];
+            const days: React.ReactElement[] = [];
             
             // Generate 14 days (2 weeks)
             for (let i = 0; i < 14; i++) {
@@ -223,7 +239,7 @@ const WorkoutCalendar = React.memo(({
                   {/* Events */}
                   <div className="space-y-1">
                     {eventsOnThisDay.slice(0, 2).map((event) => {
-                      const { colorClass, Icon } = getEventStyle(event.source);
+                      const { colorClass, Icon } = getEventStyle(event.source as any);
                       const isBeingDragged = draggingId === event.id;
                       
                       return (

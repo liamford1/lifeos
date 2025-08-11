@@ -1,6 +1,5 @@
 "use client";
 import React from 'react';
-import dynamic from 'next/dynamic';
 
 // Import lucide-react icons
 import { Activity, Timer, Calendar } from "lucide-react";

@@ -3,6 +3,7 @@
 import React from "react";
 import PlannedWorkoutForm from "@/components/forms/PlannedWorkoutForm";
 import { MdClose } from 'react-icons/md';
+import { WorkoutFormModalComponentProps } from '@/types/fitness';
 
 /**
  * WorkoutFormModal Component
@@ -15,8 +16,13 @@ import { MdClose } from 'react-icons/md';
  * - Date-specific workout planning
  * - Success callback handling
  * - Clean modal interface
+ * 
+ * @param isOpen - Controls modal visibility
+ * @param selectedDate - The date for which to plan the workout (YYYY-MM-DD format)
+ * @param onClose - Callback to close the modal
+ * @param onSuccess - Callback when the form is successfully submitted
  */
-const WorkoutFormModal = React.memo(({ 
+const WorkoutFormModal: React.FC<WorkoutFormModalComponentProps> = React.memo(({ 
   isOpen,
   selectedDate,
   onClose,
@@ -24,7 +30,10 @@ const WorkoutFormModal = React.memo(({
 }) => {
   if (!isOpen) return null;
 
-  const handleFormSuccess = () => {
+  /**
+   * Handle form success submission
+   */
+  const handleFormSuccess = (): void => {
     onSuccess();
   };
 

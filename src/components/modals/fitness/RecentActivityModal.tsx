@@ -3,8 +3,8 @@
 import { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/context/UserContext";
-import LoadingSpinner from "@/components/shared/LoadingSpinner";
-import Button from "@/components/shared/Button";
+
+
 import SharedDeleteButton from "@/components/SharedDeleteButton";
 import EditButton from "@/components/EditButton";
 import BaseModal from "@/components/shared/BaseModal";
@@ -14,42 +14,74 @@ import { useWorkouts } from "@/lib/hooks/useWorkouts";
 import { useCardioSessions } from "@/lib/hooks/useCardioSessions";
 import { useSportsSessions } from "@/lib/hooks/useSportsSessions";
 import { useStretchingSessions } from "@/lib/hooks/useStretchingSessions";
-import { useSportsSession } from "@/context/SportsSessionContext";
+
 import dynamic from "next/dynamic";
+import type { ComponentType } from 'react';
 
 // Dynamic imports for icons
-const Activity = dynamic(() => import("lucide-react/dist/esm/icons/activity"), {
+const Activity = dynamic(() => import("lucide-react").then(mod => ({ default: mod.Activity })), {
   ssr: false,
   loading: () => <span className="inline-block w-4 h-4" />,
 });
-const Dumbbell = dynamic(() => import("lucide-react/dist/esm/icons/dumbbell"), {
+const Dumbbell = dynamic(() => import("lucide-react").then(mod => ({ default: mod.Dumbbell })), {
   ssr: false,
   loading: () => <span className="inline-block w-4 h-4" />,
 });
-const HeartPulse = dynamic(() => import("lucide-react/dist/esm/icons/heart-pulse"), {
+const HeartPulse = dynamic(() => import("lucide-react").then(mod => ({ default: mod.HeartPulse })), {
   ssr: false,
   loading: () => <span className="inline-block w-4 h-4" />,
 });
-const Goal = dynamic(() => import("lucide-react/dist/esm/icons/goal"), {
+const Goal = dynamic(() => import("lucide-react").then(mod => ({ default: mod.Goal })), {
   ssr: false,
   loading: () => <span className="inline-block w-4 h-4" />,
 });
-const StretchHorizontal = dynamic(() => import("lucide-react/dist/esm/icons/stretch-horizontal"), {
+const StretchHorizontal = dynamic(() => import("lucide-react").then(mod => ({ default: mod.StretchHorizontal })), {
   ssr: false,
   loading: () => <span className="inline-block w-4 h-4" />,
 });
-const Clock = dynamic(() => import("lucide-react/dist/esm/icons/clock"), {
+const Clock = dynamic(() => import("lucide-react").then(mod => ({ default: mod.Clock })), {
   ssr: false,
   loading: () => <span className="inline-block w-4 h-4" />,
 });
-const MapPin = dynamic(() => import("lucide-react/dist/esm/icons/map-pin"), {
+const MapPin = dynamic(() => import("lucide-react").then(mod => ({ default: mod.MapPin })), {
   ssr: false,
   loading: () => <span className="inline-block w-4 h-4" />,
 });
-const Ruler = dynamic(() => import("lucide-react/dist/esm/icons/ruler"), {
+const Ruler = dynamic(() => import("lucide-react").then(mod => ({ default: mod.Ruler })), {
   ssr: false,
   loading: () => <span className="inline-block w-4 h-4" />,
 });
+
+interface RecentActivityModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onOpenStretchingModal?: (mode: 'view' | 'edit', id: string) => void;
+}
+
+interface ActivityItem {
+  id: string;
+  type: 'workout' | 'cardio' | 'sports' | 'stretching';
+  date: Date;
+  displayDate: string;
+  title?: string;
+  activity_type?: string;
+  notes?: string;
+  duration_minutes?: number;
+  distance_miles?: number;
+  location?: string;
+  intensity_level?: string;
+  performance_notes?: string;
+}
+
+interface ActivityConfig {
+  icon: ComponentType<any>;
+  iconColor: string;
+  bgColor: string;
+  label: string;
+  onClick: (id: string) => void;
+  onDelete: (id: string) => void;
+  onEdit: (id: string) => void;
+}
 
 // Skeleton component for activity items
 function ActivitySkeleton() {
@@ -67,28 +99,28 @@ function ActivitySkeleton() {
   );
 }
 
-export default function RecentActivityModal({ isOpen, onClose, onOpenStretchingModal }) {
+export default function RecentActivityModal({ isOpen, onClose, onOpenStretchingModal }: RecentActivityModalProps) {
   const { user } = useUser();
-  const { activeSportsId } = useSportsSession();
+
   const router = useRouter();
   
   // State for all activity types
-  const [workouts, setWorkouts] = useState([]);
-  const [cardioSessions, setCardioSessions] = useState([]);
-  const [sportsSessions, setSportsSessions] = useState([]);
-  const [stretchingSessions, setStretchingSessions] = useState([]);
+  const [workouts, setWorkouts] = useState<any[]>([]);
+  const [cardioSessions, setCardioSessions] = useState<any[]>([]);
+  const [sportsSessions, setSportsSessions] = useState<any[]>([]);
+  const [stretchingSessions, setStretchingSessions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [hasInitialized, setHasInitialized] = useState(false);
   
   // Workout details modal state
-  const [selectedWorkoutId, setSelectedWorkoutId] = useState(null);
+  const [selectedWorkoutId, setSelectedWorkoutId] = useState<string | null>(null);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   
   // Cardio details modal state
-  const [selectedCardioId, setSelectedCardioId] = useState(null);
+  const [selectedCardioId, setSelectedCardioId] = useState<string | null>(null);
   const [showCardioDetailsModal, setShowCardioDetailsModal] = useState(false);
   
-  const fetchedRef = useRef({ userId: null, done: false });
+  const fetchedRef = useRef<{ userId: string | null; done: boolean }>({ userId: null, done: false });
   
   // Hooks for data fetching
   const { fetchWorkouts, deleteWorkout } = useWorkouts();
@@ -139,7 +171,7 @@ export default function RecentActivityModal({ isOpen, onClose, onOpenStretchingM
 
   // Delete handlers
   const handleDeleteWorkout = useCallback(
-    async (id) => {
+    async (id: string) => {
       const confirm = window.confirm("Delete this workout?");
       if (!confirm) return;
       const success = await deleteWorkout(id);
@@ -151,7 +183,7 @@ export default function RecentActivityModal({ isOpen, onClose, onOpenStretchingM
   );
 
   const handleDeleteCardio = useCallback(
-    async (id) => {
+    async (id: string) => {
       const confirm = window.confirm("Delete this cardio session?");
       if (!confirm) return;
       if (!user) return;
@@ -164,7 +196,7 @@ export default function RecentActivityModal({ isOpen, onClose, onOpenStretchingM
   );
 
   const handleDeleteSports = useCallback(
-    async (id) => {
+    async (id: string) => {
       const confirm = window.confirm("Delete this sports session?");
       if (!confirm) return;
       if (!user) return;
@@ -177,7 +209,7 @@ export default function RecentActivityModal({ isOpen, onClose, onOpenStretchingM
   );
 
   const handleDeleteStretching = useCallback(
-    async (id) => {
+    async (id: string) => {
       const confirm = window.confirm("Delete this stretching session?");
       if (!confirm) return;
       if (!user) return;
@@ -190,12 +222,12 @@ export default function RecentActivityModal({ isOpen, onClose, onOpenStretchingM
   );
 
   // Click handlers
-  const handleWorkoutClick = useCallback((workoutId) => {
+  const handleWorkoutClick = useCallback((workoutId: string) => {
     setSelectedWorkoutId(workoutId);
     setShowDetailsModal(true);
   }, []);
 
-  const handleCardioClick = useCallback((cardioId) => {
+  const handleCardioClick = useCallback((cardioId: string) => {
     setSelectedCardioId(cardioId);
     setShowCardioDetailsModal(true);
   }, []);
@@ -211,19 +243,19 @@ export default function RecentActivityModal({ isOpen, onClose, onOpenStretchingM
   }, []);
 
   // Combine and sort all activities by date
-  const allActivities = useMemo(() => {
-    const activities = [
-      ...workouts.map(w => ({ ...w, type: 'workout', date: new Date(w.date), displayDate: w.date })),
-      ...cardioSessions.map(c => ({ ...c, type: 'cardio', date: new Date(c.date), displayDate: c.date })),
-      ...sportsSessions.map(s => ({ ...s, type: 'sports', date: new Date(s.date), displayDate: s.date })),
-      ...stretchingSessions.map(s => ({ ...s, type: 'stretching', date: new Date(s.date), displayDate: s.date }))
+  const allActivities = useMemo((): ActivityItem[] => {
+    const activities: ActivityItem[] = [
+      ...workouts.map(w => ({ ...w, type: 'workout' as const, date: new Date(w.date), displayDate: w.date })),
+      ...cardioSessions.map(c => ({ ...c, type: 'cardio' as const, date: new Date(c.date), displayDate: c.date })),
+      ...sportsSessions.map(s => ({ ...s, type: 'sports' as const, date: new Date(s.date), displayDate: s.date })),
+      ...stretchingSessions.map(s => ({ ...s, type: 'stretching' as const, date: new Date(s.date), displayDate: s.date }))
     ];
     
-    return activities.sort((a, b) => b.date - a.date);
+    return activities.sort((a, b) => b.date.getTime() - a.date.getTime());
   }, [workouts, cardioSessions, sportsSessions, stretchingSessions]);
 
   // Activity type configuration
-  const activityConfig = useMemo(() => ({
+  const activityConfig = useMemo((): Record<string, ActivityConfig> => ({
     workout: {
       icon: Dumbbell,
       iconColor: "text-blue-500",
@@ -231,7 +263,7 @@ export default function RecentActivityModal({ isOpen, onClose, onOpenStretchingM
       label: "Workout",
       onClick: handleWorkoutClick,
       onDelete: handleDeleteWorkout,
-      onEdit: (id) => window.open(`/fitness/workouts/${id}/edit`, '_blank')
+      onEdit: (id: string) => window.open(`/fitness/workouts/${id}/edit`, '_blank')
     },
     cardio: {
       icon: HeartPulse,
@@ -240,37 +272,35 @@ export default function RecentActivityModal({ isOpen, onClose, onOpenStretchingM
       label: "Cardio",
       onClick: handleCardioClick,
       onDelete: handleDeleteCardio,
-      onEdit: (id) => router.push(`/fitness/cardio/${id}/edit`)
+      onEdit: (id: string) => router.push(`/fitness/cardio/${id}/edit`)
     },
     sports: {
       icon: Goal,
       iconColor: "text-green-500",
       bgColor: "bg-green-500/10",
       label: "Sports",
-      onClick: (id) => router.push(`/fitness/sports/${id}`),
+      onClick: (id: string) => router.push(`/fitness/sports/${id}`),
       onDelete: handleDeleteSports,
-      onEdit: (id) => router.push(`/fitness/sports/${id}/edit`)
+      onEdit: (id: string) => router.push(`/fitness/sports/${id}/edit`)
     },
     stretching: {
       icon: StretchHorizontal,
       iconColor: "text-blue-500",
       bgColor: "bg-blue-500/10",
       label: "Stretching",
-      onClick: (id) => {
+      onClick: (id: string) => {
         if (onOpenStretchingModal) {
           onOpenStretchingModal('view', id);
         }
       },
       onDelete: handleDeleteStretching,
-      onEdit: (id) => {
+      onEdit: (id: string) => {
         if (onOpenStretchingModal) {
           onOpenStretchingModal('edit', id);
         }
       }
     }
   }), [handleWorkoutClick, handleCardioClick, handleDeleteWorkout, handleDeleteCardio, handleDeleteSports, handleDeleteStretching, router, onOpenStretchingModal]);
-
-
 
   // Determine what to render
   const content = useMemo(() => {
@@ -308,6 +338,7 @@ export default function RecentActivityModal({ isOpen, onClose, onOpenStretchingM
       <div className="space-y-4">
         {allActivities.map((activity) => {
           const config = activityConfig[activity.type];
+          if (!config) return null;
           const IconComponent = config.icon;
 
           return (
@@ -390,13 +421,14 @@ export default function RecentActivityModal({ isOpen, onClose, onOpenStretchingM
               <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
                 <div className="flex gap-2">
                   <EditButton
-                    onClick={(e) => {
+                    href="#"
+                    onClick={(e: React.MouseEvent) => {
                       e.stopPropagation();
                       config.onEdit(activity.id);
                     }}
                   />
                   <SharedDeleteButton
-                    onClick={(e) => {
+                    onClick={(e: React.MouseEvent) => {
                       e.stopPropagation();
                       config.onDelete(activity.id);
                     }}

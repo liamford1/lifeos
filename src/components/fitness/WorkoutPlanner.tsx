@@ -123,7 +123,7 @@ const WorkoutPlanner: React.FC<WorkoutPlannerProps> = React.memo(({
         date: today,
       };
 
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('fitness_workouts')
         .insert(workoutData)
         .select()
@@ -186,7 +186,7 @@ const WorkoutPlanner: React.FC<WorkoutPlannerProps> = React.memo(({
         date: today,
       };
 
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('fitness_cardio')
         .insert(cardioData)
         .select()

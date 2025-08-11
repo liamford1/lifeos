@@ -1,19 +1,42 @@
 import { supabase } from './supabaseClient';
-import { CALENDAR_SOURCES } from './utils/calendarUtils';
+import { CALENDAR_SOURCES, type CalendarSource } from './utils/calendarUtils';
 import dayjs from 'dayjs';
+import type { CalendarEvent } from '@/types/calendar';
+
+interface EntityData {
+  user_id: string;
+  id: string | number;
+  name?: string;
+  title?: string;
+  date?: string;
+  planned_date?: string;
+  meal_time?: string;
+  meal_name?: string;
+  description?: string;
+  notes?: string;
+  performance_notes?: string;
+  amount?: number;
+  start_time?: string;
+  end_time?: string;
+  activity_type?: string;
+}
 
 /**
  * Creates a calendar event for a given entity type and entity data.
- * @param {string} type - The source type (e.g., 'meal', 'planned_meal', 'workout', etc.)
- * @param {Object} entity - The entity data (should include user_id, id, and relevant fields)
- * @returns {Promise<Object|null>} - Returns any Supabase error encountered or null on success
+ * @param type - The source type (e.g., 'meal', 'planned_meal', 'workout', etc.)
+ * @param entity - The entity data (should include user_id, id, and relevant fields)
+ * @returns Returns any Supabase error encountered or null on success
  */
-export const createCalendarEventForEntity = async (type, entity) => {
+export const createCalendarEventForEntity = async (
+  type: CalendarSource, 
+  entity: EntityData
+): Promise<any | null> => {
   try {
     let title = '';
     let start_time = '';
-    let end_time = null;
+    let end_time: string | null = null;
     let description = '';
+    
     switch (type) {
       case CALENDAR_SOURCES.MEAL:
         title = `Meal: ${entity.name}`;
@@ -21,7 +44,14 @@ export const createCalendarEventForEntity = async (type, entity) => {
         description = entity.description || '';
         break;
       case CALENDAR_SOURCES.PLANNED_MEAL:
-        title = `${entity.meal_time ? entity.meal_time[0].toUpperCase() + entity.meal_time.slice(1) : 'Meal'}: ${entity.meal_name || entity.name || ''}`;
+        let mealTimeDisplay = 'Meal';
+        const mealTime = entity.meal_time;
+        if (mealTime && typeof mealTime === 'string' && mealTime.length > 0) {
+          const firstChar = mealTime.charAt(0);
+          const rest = mealTime.substring(1);
+          mealTimeDisplay = firstChar.toUpperCase() + rest;
+        }
+        title = `${mealTimeDisplay}: ${entity.meal_name || entity.name || ''}`;
         start_time = entity.planned_date ? new Date(entity.planned_date).toISOString() : new Date().toISOString();
         description = entity.description || '';
         break;
@@ -53,6 +83,7 @@ export const createCalendarEventForEntity = async (type, entity) => {
         start_time = entity.start_time || new Date().toISOString();
         description = entity.description || '';
     }
+    
     // Set default end time to 1 hour after start time if not provided
     let finalEndTime = end_time;
     if (!finalEndTime && start_time) {
@@ -70,6 +101,7 @@ export const createCalendarEventForEntity = async (type, entity) => {
         source_id: entity.id,
       },
     ]);
+    
     if (error) {
       if (process.env.NODE_ENV !== "production") {
         console.error('Error creating calendar event:', error);
@@ -87,10 +119,10 @@ export const createCalendarEventForEntity = async (type, entity) => {
 
 /**
  * Updates a linked entity when its calendar event is rescheduled
- * @param {Object} event - The calendar event with updated start_time/end_time
- * @returns {Promise<Object|null>} - Returns any Supabase error encountered or null on success
+ * @param event - The calendar event with updated start_time/end_time
+ * @returns Returns any Supabase error encountered or null on success
  */
-export const updateLinkedEntityOnCalendarChange = async (event) => {
+export const updateLinkedEntityOnCalendarChange = async (event: CalendarEvent): Promise<any | null> => {
   try {
     const newDate = new Date(event.start_time);
     const newDateStr = newDate.toISOString().split('T')[0]; // YYYY-MM-DD format
@@ -118,7 +150,7 @@ export const updateLinkedEntityOnCalendarChange = async (event) => {
         
       case CALENDAR_SOURCES.WORKOUT:
         // Update workout date and times
-        const workoutUpdate = { date: newDateStr };
+        const workoutUpdate: any = { date: newDateStr };
         if (event.end_time) {
           workoutUpdate.start_time = event.start_time;
           workoutUpdate.end_time = event.end_time;
@@ -133,7 +165,7 @@ export const updateLinkedEntityOnCalendarChange = async (event) => {
         
       case CALENDAR_SOURCES.CARDIO:
         // Update cardio date and times
-        const cardioUpdate = { date: newDateStr };
+        const cardioUpdate: any = { date: newDateStr };
         if (event.end_time) {
           cardioUpdate.start_time = event.start_time;
           cardioUpdate.end_time = event.end_time;
@@ -148,7 +180,7 @@ export const updateLinkedEntityOnCalendarChange = async (event) => {
         
       case CALENDAR_SOURCES.SPORT:
         // Update sport date and times
-        const sportUpdate = { date: newDateStr };
+        const sportUpdate: any = { date: newDateStr };
         if (event.end_time) {
           sportUpdate.start_time = event.start_time;
           sportUpdate.end_time = event.end_time;
@@ -187,11 +219,14 @@ export const updateLinkedEntityOnCalendarChange = async (event) => {
 
 /**
  * Deletes a calendar event for a given source type and source_id.
- * @param {string} type - The source type (e.g., 'meal', 'planned_meal', 'workout', etc.)
- * @param {string|number} source_id - The ID of the source entity
- * @returns {Promise<Object|null>} - Returns any Supabase error encountered or null on success
+ * @param type - The source type (e.g., 'meal', 'planned_meal', 'workout', etc.)
+ * @param source_id - The ID of the source entity
+ * @returns Returns any Supabase error encountered or null on success
  */
-export const deleteCalendarEventForEntity = async (type, source_id) => {
+export const deleteCalendarEventForEntity = async (
+  type: CalendarSource, 
+  source_id: string | number
+): Promise<any | null> => {
   try {
     const { error } = await supabase
       .from('calendar_events')
@@ -215,11 +250,14 @@ export const deleteCalendarEventForEntity = async (type, source_id) => {
 
 /**
  * Updates a calendar event when the source entity status changes from planned to completed
- * @param {string} type - The source type (e.g., 'workout', 'cardio', 'sport')
- * @param {string|number} source_id - The ID of the source entity
- * @returns {Promise<Object|null>} - Returns any Supabase error encountered or null on success
+ * @param type - The source type (e.g., 'workout', 'cardio', 'sport')
+ * @param source_id - The ID of the source entity
+ * @returns Returns any Supabase error encountered or null on success
  */
-export const updateCalendarEventForCompletedEntity = async (type, source_id) => {
+export const updateCalendarEventForCompletedEntity = async (
+  type: CalendarSource, 
+  source_id: string | number
+): Promise<any | null> => {
   try {
     // When a planned event is completed, we can either:
     // 1. Delete the calendar event (since it's no longer "planned")
@@ -237,12 +275,16 @@ export const updateCalendarEventForCompletedEntity = async (type, source_id) => 
 /**
  * Cleans up planned fitness session data when a session is completed
  * This function should be called when a user finishes a session that was started from a planned event
- * @param {string} type - The source type ('workout', 'cardio', 'sport')
- * @param {string} sessionId - The ID of the completed session
- * @param {string} userId - The user ID
- * @returns {Promise<Object|null>} - Returns any Supabase error encountered or null on success
+ * @param type - The source type ('workout', 'cardio', 'sport')
+ * @param sessionId - The ID of the completed session
+ * @param userId - The user ID
+ * @returns Returns any Supabase error encountered or null on success
  */
-export const cleanupPlannedSessionOnCompletion = async (type, sessionId, userId) => {
+export const cleanupPlannedSessionOnCompletion = async (
+  type: CalendarSource, 
+  sessionId: string, 
+  userId: string
+): Promise<any | null> => {
   try {
     // First, check if this session was originally planned by looking at the calendar event
     const { data: calendarEvent, error: calendarError } = await supabase
@@ -270,10 +312,15 @@ export const cleanupPlannedSessionOnCompletion = async (type, sessionId, userId)
     }
 
     // Ensure the session is marked as completed (not planned)
-    const tableMap = {
+    const tableMap: Record<CalendarSource, string> = {
       'workout': 'fitness_workouts',
       'cardio': 'fitness_cardio',
-      'sport': 'fitness_sports'
+      'sport': 'fitness_sports',
+      'meal': 'meals',
+      'planned_meal': 'planned_meals',
+      'stretching': 'fitness_stretching',
+      'expense': 'expenses',
+      'note': 'scratchpad_notes'
     };
     
     const table = tableMap[type];
@@ -302,4 +349,4 @@ export const cleanupPlannedSessionOnCompletion = async (type, sessionId, userId)
     }
     return error;
   }
-}; 
+};

@@ -1,8 +1,14 @@
-import { MdRestaurant, MdFitnessCenter, MdDirectionsRun, MdSportsBasketball, MdAttachMoney, MdEventNote } from 'react-icons/md';
-import { CALENDAR_SOURCES } from './calendarUtils';
+import { IconType } from 'react-icons';
+import { MdRestaurant, MdFitnessCenter, MdDirectionsRun, MdSportsBasketball, MdAttachMoney, MdEventNote, MdAccessibility } from 'react-icons/md';
+import { CALENDAR_SOURCES, type CalendarSource } from './calendarUtils';
+
+interface EventStyle {
+  colorClass: string;
+  Icon: IconType;
+}
 
 // Map each source to a color and icon
-export const eventStyleMap = {
+export const eventStyleMap: Record<CalendarSource, EventStyle> & { default: EventStyle } = {
   [CALENDAR_SOURCES.MEAL]: {
     colorClass: 'bg-orange-500 text-white',
     Icon: MdRestaurant,
@@ -23,6 +29,10 @@ export const eventStyleMap = {
     colorClass: 'bg-green-500 text-white',
     Icon: MdSportsBasketball,
   },
+  [CALENDAR_SOURCES.STRETCHING]: {
+    colorClass: 'bg-blue-400 text-white',
+    Icon: MdAccessibility,
+  },
   [CALENDAR_SOURCES.EXPENSE]: {
     colorClass: 'bg-purple-500 text-white',
     Icon: MdAttachMoney,
@@ -37,6 +47,6 @@ export const eventStyleMap = {
   },
 };
 
-export function getEventStyle(source) {
+export function getEventStyle(source: CalendarSource): EventStyle {
   return eventStyleMap[source] || eventStyleMap.default;
-} 
+}
