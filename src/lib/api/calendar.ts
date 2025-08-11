@@ -86,10 +86,9 @@ export async function updateEvent({
   });
   if (updateLinkedEntity && currentEvent.source && currentEvent.source_id) {
     console.log('🔄 Calling updateLinkedEntityOnCalendarChange');
-    const typedCurrentEvent = currentEvent as CalendarEvent;
-    const finalEndTime = newEnd !== undefined ? newEnd : (typedCurrentEvent.end_time || dayjs(newStart).add(1, 'hour').toISOString());
+    const finalEndTime = newEnd !== undefined ? newEnd : (currentEvent.end_time || dayjs(newStart).add(1, 'hour').toISOString());
     const linkedEntityError = await updateLinkedEntityOnCalendarChange({
-      ...typedCurrentEvent,
+      ...(currentEvent as CalendarEvent),
       start_time: newStart,
       end_time: finalEndTime
     });
