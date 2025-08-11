@@ -13,8 +13,18 @@ import { useWorkoutSession } from '@/context/WorkoutSessionContext';
 import { useCardioSession } from '@/context/CardioSessionContext';
 import { useSportsSession } from '@/context/SportsSessionContext';
 import { useCookingSession } from '@/context/CookingSessionContext';
-import WorkoutSessionModal from '@/components/modals/fitness/WorkoutSessionModal';
-import CookingSessionModal from '@/components/modals/CookingSessionModal';
+import dynamic from 'next/dynamic';
+
+// Dynamic imports for modal components
+const WorkoutSessionModal = dynamic(() => import('@/components/modals/fitness/WorkoutSessionModal'), {
+  loading: () => <div className="animate-pulse bg-surface rounded-lg p-4">Loading workout session...</div>,
+  ssr: false
+});
+
+const CookingSessionModal = dynamic(() => import('@/components/modals/CookingSessionModal'), {
+  loading: () => <div className="animate-pulse bg-surface rounded-lg p-4">Loading cooking session...</div>,
+  ssr: false
+});
 
 export default function AppBar() {
   const { user, loading, session } = useUser();

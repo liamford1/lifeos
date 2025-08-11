@@ -4,17 +4,6 @@ import { useRouter } from 'next/navigation';
 import { useUser } from '@/context/UserContext';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
 import { CalendarIconClient as CalendarIcon } from "@/components/client/CalendarIconClient";
-import Activity from "lucide-react/dist/esm/icons/activity";
-import Dumbbell from "lucide-react/dist/esm/icons/dumbbell";
-import HeartPulse from "lucide-react/dist/esm/icons/heart-pulse";
-import Goal from "lucide-react/dist/esm/icons/goal";
-import StretchHorizontal from "lucide-react/dist/esm/icons/stretch-horizontal";
-import Timer from "lucide-react/dist/esm/icons/timer";
-import TrendingUp from "lucide-react/dist/esm/icons/trending-up";
-import Flame from "lucide-react/dist/esm/icons/flame";
-import Target from "lucide-react/dist/esm/icons/target";
-import Calendar from "lucide-react/dist/esm/icons/calendar";
-import X from "lucide-react/dist/esm/icons/x";
 import { useCardioSessions } from '@/lib/hooks/useCardioSessions';
 import { useWorkouts } from '@/lib/hooks/useWorkouts';
 import { useSportsSessions } from '@/lib/hooks/useSportsSessions';
@@ -25,15 +14,51 @@ import FormTextarea from '@/components/shared/FormTextarea';
 import { supabase } from '@/lib/supabaseClient';
 import { useWorkoutSession } from '@/context/WorkoutSessionContext';
 import { useCardioSession } from '@/context/CardioSessionContext';
-import RecentActivityModal from '@/components/modals/fitness/RecentActivityModal';
-import StretchingMobilityModal from '@/components/modals/fitness/StretchingMobilityModal';
-import DailyActivityModal from '@/components/modals/fitness/DailyActivityModal';
-import PlanWorkoutModal from '@/components/modals/fitness/PlanWorkoutModal';
-import WorkoutSessionModal from '@/components/modals/fitness/WorkoutSessionModal';
 import { useSportsSession } from '@/context/SportsSessionContext';
+import React from 'react';
+import dynamic from 'next/dynamic';
 
-// Skeleton components for dashboard sections
-function MetricsSkeleton() {
+// Dynamic imports for heavy modal components
+const RecentActivityModal = dynamic(() => import('@/components/modals/fitness/RecentActivityModal'), {
+  loading: () => <div className="animate-pulse bg-surface rounded-lg p-4">Loading activity...</div>,
+  ssr: false
+});
+
+const StretchingMobilityModal = dynamic(() => import('@/components/modals/fitness/StretchingMobilityModal'), {
+  loading: () => <div className="animate-pulse bg-surface rounded-lg p-4">Loading stretching...</div>,
+  ssr: false
+});
+
+const DailyActivityModal = dynamic(() => import('@/components/modals/fitness/DailyActivityModal'), {
+  loading: () => <div className="animate-pulse bg-surface rounded-lg p-4">Loading daily activity...</div>,
+  ssr: false
+});
+
+const PlanWorkoutModal = dynamic(() => import('@/components/modals/fitness/PlanWorkoutModal'), {
+  loading: () => <div className="animate-pulse bg-surface rounded-lg p-4">Loading workout planner...</div>,
+  ssr: false
+});
+
+const WorkoutSessionModal = dynamic(() => import('@/components/modals/fitness/WorkoutSessionModal'), {
+  loading: () => <div className="animate-pulse bg-surface rounded-lg p-4">Loading workout session...</div>,
+  ssr: false
+});
+
+// Dynamic imports for lucide-react icons to reduce bundle size
+const Activity = dynamic(() => import("lucide-react/dist/esm/icons/activity"), { ssr: false });
+const Dumbbell = dynamic(() => import("lucide-react/dist/esm/icons/dumbbell"), { ssr: false });
+const HeartPulse = dynamic(() => import("lucide-react/dist/esm/icons/heart-pulse"), { ssr: false });
+const Goal = dynamic(() => import("lucide-react/dist/esm/icons/goal"), { ssr: false });
+const StretchHorizontal = dynamic(() => import("lucide-react/dist/esm/icons/stretch-horizontal"), { ssr: false });
+const Timer = dynamic(() => import("lucide-react/dist/esm/icons/timer"), { ssr: false });
+const TrendingUp = dynamic(() => import("lucide-react/dist/esm/icons/trending-up"), { ssr: false });
+const Flame = dynamic(() => import("lucide-react/dist/esm/icons/flame"), { ssr: false });
+const Target = dynamic(() => import("lucide-react/dist/esm/icons/target"), { ssr: false });
+const Calendar = dynamic(() => import("lucide-react/dist/esm/icons/calendar"), { ssr: false });
+const X = dynamic(() => import("lucide-react/dist/esm/icons/x"), { ssr: false });
+
+// Memoized Skeleton components for dashboard sections
+const MetricsSkeleton = React.memo(() => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       {Array.from({ length: 4 }).map((_, index) => (
@@ -50,9 +75,11 @@ function MetricsSkeleton() {
       ))}
     </div>
   );
-}
+});
 
-function ChartsSkeleton() {
+MetricsSkeleton.displayName = 'MetricsSkeleton';
+
+const ChartsSkeleton = React.memo(() => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {Array.from({ length: 2 }).map((_, index) => (
@@ -66,9 +93,11 @@ function ChartsSkeleton() {
       ))}
     </div>
   );
-}
+});
 
-function QuickActionsSkeleton() {
+ChartsSkeleton.displayName = 'ChartsSkeleton';
+
+const QuickActionsSkeleton = React.memo(() => {
   return (
     <div className="bg-surface rounded-xl p-6 shadow-lg border border-gray-700">
       <div className="h-6 bg-gray-700 rounded mb-4 w-48"></div>
@@ -83,7 +112,9 @@ function QuickActionsSkeleton() {
       </div>
     </div>
   );
-}
+});
+
+QuickActionsSkeleton.displayName = 'QuickActionsSkeleton';
 
 export default function FitnessHomeContent() {
   const { user, loading } = useUser();

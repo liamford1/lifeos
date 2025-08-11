@@ -4,11 +4,7 @@ import "./globals.css";
 import SupabaseProvider from "@/components/client/SupabaseProvider";
 import { UserProvider } from '@/context/UserContext';
 import { ToastContainer, ToastProvider } from '@/components/client/Toast';
-import { WorkoutSessionProvider } from '@/context/WorkoutSessionContext';
-import { CardioSessionProvider } from '@/context/CardioSessionContext';
-import { SportsSessionProvider } from '@/context/SportsSessionContext';
-import { StretchingSessionProvider } from '@/context/StretchingSessionContext';
-import { CookingSessionProvider } from '@/context/CookingSessionContext';
+import { SessionProvider } from '@/context/SessionContext';
 import { supabase } from '@/lib/supabaseClient';
 import ErrorBoundary from "@/components/shared/ErrorBoundary";
 import QueryProvider from '@/components/QueryProvider';
@@ -36,20 +32,12 @@ export default function RootLayout({ children }) {
           <SupabaseProvider>
             <UserProvider>
               <ToastProvider>
-                <WorkoutSessionProvider>
-                  <CardioSessionProvider>
-                    <SportsSessionProvider>
-                      <StretchingSessionProvider>
-                        <CookingSessionProvider>
-                        <ErrorBoundary>
-                          <ToastContainer />
-                          {children}
-                        </ErrorBoundary>
-                      </CookingSessionProvider>
-                    </StretchingSessionProvider>
-                  </SportsSessionProvider>
-                </CardioSessionProvider>
-              </WorkoutSessionProvider>
+                <SessionProvider>
+                  <ErrorBoundary>
+                    <ToastContainer />
+                    {children}
+                  </ErrorBoundary>
+                </SessionProvider>
               </ToastProvider>
             </UserProvider>
           </SupabaseProvider>

@@ -8,7 +8,7 @@ import { useCookingSession } from '@/context/CookingSessionContext';
 import SharedDeleteButton from '@/components/SharedDeleteButton';
 import { useMealQuery } from '@/lib/hooks/useMeals';
 import { useUser } from '@/context/UserContext';
-import BaseModal from '@/components/shared/BaseModal';
+import EnhancedModal, { ModalFormActions } from '@/components/shared/EnhancedModal';
 import { UtensilsCrossed } from 'lucide-react';
 
 export default function CookingSessionModal({ isOpen, onClose, mealId }) {
@@ -65,70 +65,42 @@ export default function CookingSessionModal({ isOpen, onClose, mealId }) {
     }
   }, [meal, isCooking, cookingMealId, mealId, endCooking, showError, onClose]);
 
-  // Show loading state
-  if (userLoading || sessionLoading || mealLoading) {
+  // Show error state for missing meal
+  if (!meal && !mealLoading && !userLoading) {
     return (
-      <BaseModal
-        isOpen={isOpen}
-        onClose={onClose}
-        title="Loading..."
-        maxWidth="max-w-2xl"
-      >
-        <div className="flex justify-center py-8">
-          <LoadingSpinner />
-        </div>
-      </BaseModal>
-    );
-  }
-
-  // Show error state
-  if (mealError) {
-    return (
-      <BaseModal
-        isOpen={isOpen}
-        onClose={onClose}
-        title="Error Loading Meal"
-        maxWidth="max-w-2xl"
-      >
-        <div className="text-center py-8">
-          <p className="text-red-400 mb-4">{mealError.message}</p>
-          <Button onClick={onClose} variant="primary">
-            Close
-          </Button>
-        </div>
-      </BaseModal>
-    );
-  }
-
-  // Show not found state
-  if (!meal) {
-    return (
-      <BaseModal
+      <EnhancedModal
         isOpen={isOpen}
         onClose={onClose}
         title="Meal Not Found"
+        subtitle="The meal you're looking for doesn't exist or you don't have permission to view it."
+        icon={UtensilsCrossed}
+        iconBgColor="bg-red-500/10"
+        iconColor="text-red-500"
         maxWidth="max-w-2xl"
-      >
-        <div className="text-center py-8">
-          <p className="mb-4">The meal you're looking for doesn't exist or you don't have permission to view it.</p>
-          <Button onClick={onClose} variant="primary">
-            Close
-          </Button>
-        </div>
-      </BaseModal>
+        empty={true}
+        emptyTitle="Meal Not Found"
+        emptyMessage="The meal you're looking for doesn't exist or you don't have permission to view it."
+        emptyIcon={UtensilsCrossed}
+      />
     );
   }
 
   return (
-    <BaseModal
+    <EnhancedModal
       isOpen={isOpen}
       onClose={onClose}
-      title={meal.name}
-      subtitle={meal.description}
+      title={meal?.name || "Cooking Session"}
+      subtitle={meal?.description}
       icon={UtensilsCrossed}
       iconBgColor="bg-orange-500/10"
       iconColor="text-orange-500"
       maxWidth="max-w-2xl"
+      loading={userLoading || sessionLoading || mealLoading}
+      loadingTitle="Loading Meal"
+      loadingSubtitle="Preparing cooking session..."
+      error={mealError}
+      errorTitle="Error Loading Meal"
+      errorMessage={mealError?.message}
     >
       <div className="space-y-6">
         {/* Instructions */}
@@ -206,6 +178,6 @@ export default function CookingSessionModal({ isOpen, onClose, mealId }) {
           </Button>
         )}
       </div>
-    </BaseModal>
+    </EnhancedModal>
   );
 }

@@ -14,6 +14,46 @@ import AIMealSuggestionsModal from '@/components/forms/AIMealSuggestionsModal';
 import MealDetailsModal from '@/components/modals/MealDetailsModal';
 import BaseModal from '@/components/shared/BaseModal';
 import { MdLightbulb } from 'react-icons/md';
+import React from 'react'; // Added missing import for React
+
+// Memoized Meal Item Component
+const MealItem = React.memo(({ 
+  meal, 
+  onMealClick, 
+  onDelete, 
+  isDeleting 
+}) => {
+  return (
+    <li className="group relative">
+      <div 
+        onClick={() => onMealClick(meal.id)}
+        className="bg-card hover:bg-[#2e2e2e] transition p-4 rounded shadow cursor-pointer border border-border pr-12"
+      >
+        <h2 className="text-xl font-semibold text-white truncate">{meal.name}</h2>
+        {meal.description && (
+          <p className="text-base mt-1">{meal.description}</p>
+        )}
+        <p className="text-sm text-gray-400 mt-2">
+          Prep: {meal.prep_time || 0} min • Cook: {meal.cook_time || 0} min • Servings: {meal.servings || 1}
+        </p>
+      </div>
+      <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+        <SharedDeleteButton
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete(meal.id);
+          }}
+          label=""
+          size="sm"
+          disabled={isDeleting}
+          className="w-8 h-8 p-0 flex items-center justify-center"
+        />
+      </div>
+    </li>
+  );
+});
+
+MealItem.displayName = 'MealItem';
 
 export default function MealsModal({ isOpen, onClose }) {
   const { user, loading: userLoading } = useUser();
@@ -138,32 +178,13 @@ export default function MealsModal({ isOpen, onClose }) {
         ) : (
           <ul className="space-y-4">
             {meals.map((meal) => (
-              <li key={meal.id} className="group relative">
-                <div 
-                  onClick={() => handleMealClick(meal.id)}
-                  className="bg-card hover:bg-[#2e2e2e] transition p-4 rounded shadow cursor-pointer border border-border pr-12"
-                >
-                  <h2 className="text-xl font-semibold text-white truncate">{meal.name}</h2>
-                  {meal.description && (
-                    <p className="text-base mt-1">{meal.description}</p>
-                  )}
-                  <p className="text-sm text-gray-400 mt-2">
-                    Prep: {meal.prep_time || 0} min • Cook: {meal.cook_time || 0} min • Servings: {meal.servings || 1}
-                  </p>
-                </div>
-                <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <SharedDeleteButton
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDelete(meal.id);
-                    }}
-                    label=""
-                    size="sm"
-                    disabled={deleteMealMutation.isPending}
-                    className="w-8 h-8 p-0 flex items-center justify-center"
-                  />
-                </div>
-              </li>
+              <MealItem
+                key={meal.id}
+                meal={meal}
+                onMealClick={handleMealClick}
+                onDelete={handleDelete}
+                isDeleting={deleteMealMutation.isPending}
+              />
             ))}
           </ul>
         )}

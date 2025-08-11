@@ -69,36 +69,38 @@ export function useToast() {
   return context;
 }
 
-export default function Toast({ 
+// Memoized Toast Component with custom comparison
+const Toast = React.memo(({ 
   message, 
   type = 'success', // 'success', 'error', 'warning', 'info'
   duration = 5000,
   onClose,
   onUndo,
   position = 'top-right' // 'top-right', 'top-left', 'bottom-right', 'bottom-left', 'top-center', 'bottom-center'
-}) {
+}) => {
   const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
-    if (duration > 0) {
-      const timer = setTimeout(() => {
-        setIsVisible(false);
-        onClose?.();
-      }, duration);
+    const timer = setTimeout(() => {
+      setIsVisible(false);
+      setTimeout(() => {
+        onClose();
+      }, 300); // Wait for animation to complete
+    }, duration);
 
-      return () => clearTimeout(timer);
-    }
+    return () => clearTimeout(timer);
   }, [duration, onClose]);
 
   const handleClose = () => {
     setIsVisible(false);
-    onClose?.();
+    setTimeout(() => {
+      onClose();
+    }, 300);
   };
 
   const handleUndo = () => {
-    onUndo?.();
-    setIsVisible(false);
-    onClose?.();
+    onUndo && onUndo();
+    handleClose();
   };
 
   const getTypeStyles = () => {
@@ -182,10 +184,22 @@ export default function Toast({
       </div>
     </div>
   );
-}
+}, (prevProps, nextProps) => {
+  // Custom comparison function for better performance
+  return (
+    prevProps.message === nextProps.message &&
+    prevProps.type === nextProps.type &&
+    prevProps.duration === nextProps.duration &&
+    prevProps.position === nextProps.position &&
+    prevProps.onUndo === nextProps.onUndo &&
+    prevProps.onClose === nextProps.onClose
+  );
+});
 
-// Toast Container Component for managing multiple toasts
-export function ToastContainer() {
+Toast.displayName = 'Toast';
+
+// Memoized Toast Container Component
+const ToastContainer = React.memo(() => {
   const { toasts, removeToast } = useToast();
 
   return (
@@ -202,4 +216,9 @@ export function ToastContainer() {
       ))}
     </div>
   );
-} 
+});
+
+ToastContainer.displayName = 'ToastContainer';
+
+export default Toast;
+export { ToastContainer }; 
