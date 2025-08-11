@@ -6,7 +6,7 @@ import { useUser } from '@/context/UserContext';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
 import Button from '@/components/shared/Button';
 import { useToast } from '@/components/client/Toast';
-import { MdOutlineCalendarToday, MdOutlineStickyNote2 } from 'react-icons/md';
+import { MdOutlineStickyNote2 } from 'react-icons/md';
 import SharedDeleteButton from '@/components/SharedDeleteButton';
 import { supabase } from '@/lib/supabaseClient';
 import { useApiError } from '@/lib/hooks/useApiError';
@@ -250,9 +250,16 @@ export default function PlannedMealDetailsModal({ isOpen, onClose, plannedMealId
         <div className="space-y-6">
           <div className="flex flex-wrap gap-4 items-center text-xs text-zinc-500 mt-1">
             <span>Planned for: {(() => {
-              // Use the calendar event's current date instead of the database date
-              const eventDate = new Date(calendarEvent.start_time);
-              return eventDate.toLocaleDateString();
+              // Use the calendar event's current date if available, otherwise use the planned meal's date
+              if (calendarEvent?.start_time) {
+                const eventDate = new Date(calendarEvent.start_time);
+                return eventDate.toLocaleDateString();
+              } else if (plannedMeal?.planned_date) {
+                const plannedDate = new Date(plannedMeal.planned_date);
+                return plannedDate.toLocaleDateString();
+              } else {
+                return 'Date not specified';
+              }
             })()}</span>
             {plannedMeal.meal_time && <span>Time: {plannedMeal.meal_time}</span>}
             {plannedMeal.meals?.prep_time && <span>Prep: {plannedMeal.meals.prep_time} min</span>}
@@ -263,19 +270,14 @@ export default function PlannedMealDetailsModal({ isOpen, onClose, plannedMealId
           <div className="flex gap-4 mt-4">
             <Button 
               onClick={() => {
-                // Navigate to food page to create the actual meal
-                router.push('/food');
+                // Navigate to cooking session for this meal
+                router.push(`/food/meals/${plannedMeal.meal_id}/cook`);
                 onClose();
               }}
               variant="primary"
             >
-              Create Meal
-            </Button>
-            <Button
-              onClick={() => router.push(`/food/planner/${plannedMeal.id}`)}
-              variant="secondary"
-            >
-              Edit
+              <UtensilsCrossed className="inline w-5 h-5 text-base align-text-bottom mr-2" />
+              Cook Meal
             </Button>
           </div>
           
@@ -317,14 +319,7 @@ export default function PlannedMealDetailsModal({ isOpen, onClose, plannedMealId
             </ol>
           </div>
           
-          <div className="flex justify-between mt-6 gap-4">
-            <Button
-              onClick={() => router.push('/')}
-              variant="primary"
-            >
-              <MdOutlineCalendarToday className="inline w-5 h-5 text-base align-text-bottom mr-2" />
-              Back to Calendar
-            </Button>
+          <div className="flex justify-end mt-6">
             <SharedDeleteButton
               onClick={handleDeletePlannedMeal}
               size="sm"
