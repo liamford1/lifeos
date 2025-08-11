@@ -17,6 +17,7 @@ import { UtensilsCrossed } from 'lucide-react';
 import MealForm from '@/components/forms/MealForm';
 import { CALENDAR_SOURCES, updateCalendarEventFromSource } from '@/lib/utils/calendarUtils';
 import { useApiError } from '@/lib/hooks/useApiError';
+import ConfirmationModal from '@/components/shared/ConfirmationModal';
 
 export default function MealDetailsModal({ isOpen, onClose, mealId }) {
   const { user, loading: userLoading } = useUser();
@@ -25,6 +26,7 @@ export default function MealDetailsModal({ isOpen, onClose, mealId }) {
   const { endCooking, mealId: cookingMealId } = useCookingSession();
   const [showCookingSessionModal, setShowCookingSessionModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const { handleError } = useApiError();
 
   // Use React Query for data fetching
@@ -129,9 +131,11 @@ export default function MealDetailsModal({ isOpen, onClose, mealId }) {
   }
 
   async function handleDeleteMeal() {
+    setShowDeleteConfirmation(true);
+  }
+
+  async function handleConfirmDeleteMeal() {
     try {
-      const confirm = window.confirm('Delete this meal? This will also remove any linked calendar events.');
-      if (!confirm) return;
 
       if (!user) {
         showError('You must be logged in.');
@@ -340,7 +344,7 @@ export default function MealDetailsModal({ isOpen, onClose, mealId }) {
             ) : (
               <ul className="list-disc list-inside space-y-2 text-base">
                 {ingredients.map((item, i) => (
-                  <li key={i}>
+                  <li key={`ingredient-${item.id || i}-${item.food_item_name}`}>
                     {item.quantity} {item.unit} {item.food_item_name}
                   </li>
                 ))}
@@ -356,7 +360,7 @@ export default function MealDetailsModal({ isOpen, onClose, mealId }) {
             <ol className="list-decimal list-inside space-y-2 text-base">
               {Array.isArray(meal.instructions)
                 ? meal.instructions.map((step, index) => (
-                    <li key={index}>{step}</li>
+                    <li key={`instruction-${index}-${step.substring(0, 20)}`}>{step}</li>
                   ))
                 : (typeof meal.instructions === 'string' && meal.instructions.trim()
                     ? meal.instructions.split('\n').map((step, index) => (
@@ -391,6 +395,17 @@ export default function MealDetailsModal({ isOpen, onClose, mealId }) {
         isOpen={showCookingSessionModal}
         onClose={() => setShowCookingSessionModal(false)}
         mealId={mealId}
+      />
+
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={showDeleteConfirmation}
+        onClose={() => setShowDeleteConfirmation(false)}
+        onConfirm={handleConfirmDeleteMeal}
+        title="Delete Meal"
+        message="Delete this meal? This will also remove any linked calendar events."
+        confirmText="Delete"
+        cancelText="Cancel"
       />
     </>
   );

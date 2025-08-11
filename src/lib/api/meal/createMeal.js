@@ -39,9 +39,6 @@ export default async function handleCreateMeal(request) {
     }
     
     if (!user) {
-      if (process.env.NODE_ENV !== "production") {
-        console.error('🚫 Not authenticated:', userError);
-      }
       return new Response(JSON.stringify({ error: 'Not authenticated' }), { status: 401 });
     }
 
@@ -62,9 +59,6 @@ export default async function handleCreateMeal(request) {
     const { id: mealId } = firstData;
     return new Response(JSON.stringify({ mealId }), { status: 200 });
   } catch (err) {
-    if (process.env.NODE_ENV !== "production") {
-      console.error('🔥 Unexpected API error:', err);
-    }
     return new Response(JSON.stringify({ error: 'Invalid request' }), { status: 500 });
   }
 } 

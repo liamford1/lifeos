@@ -26,6 +26,16 @@ export interface FilterParams {
   value: string | number | boolean | string[] | number[];
 }
 
+// User types - extending Supabase User
+export interface AppUser {
+  id: string;
+  email: string;
+  full_name?: string;
+  avatar_url?: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
 // Form types
 export interface FormField {
   name: string;
@@ -66,12 +76,7 @@ export interface LoadingState {
 
 // User session types
 export interface UserSession {
-  user: {
-    id: string;
-    email: string;
-    full_name?: string;
-    avatar_url?: string;
-  } | null;
+  user: AppUser | null;
   session: unknown | null;
   loading: boolean;
 }
@@ -96,6 +101,97 @@ export interface FitnessSession {
   notes?: string;
 }
 
+// Workout specific types
+export interface WorkoutData {
+  id: string;
+  title: string;
+  notes?: string;
+  start_time: string;
+  end_time?: string;
+  exercises?: Exercise[];
+  sets?: Set[];
+}
+
+export interface Exercise {
+  id?: string;
+  name: string;
+  notes?: string;
+  sets?: Set[];
+}
+
+export interface Set {
+  id?: string;
+  reps: number;
+  weight: number | null;
+  created_at?: string;
+}
+
+export interface ExerciseWithSets extends Exercise {
+  sets: Set[];
+}
+
+export interface SetsByExercise {
+  [exerciseId: string]: Set[];
+}
+
+// Fitness activity types
+export interface FitnessActivity {
+  id: string;
+  type: 'workout' | 'cardio' | 'sport' | 'stretching';
+  title: string;
+  date: string;
+  duration?: number;
+  notes?: string;
+  status?: 'planned' | 'completed';
+  start_time?: string;
+  end_time?: string;
+}
+
+export interface CardioActivity {
+  id: string;
+  activity_type: string;
+  date: string;
+  duration_minutes?: number;
+  distance_miles?: number;
+  calories_burned?: number;
+  location?: string;
+  notes?: string;
+  status: 'planned' | 'completed';
+  start_time?: string;
+  end_time?: string;
+  in_progress?: boolean;
+}
+
+export interface SportsActivity {
+  id: string;
+  activity_type: string;
+  date: string;
+  duration_minutes?: number;
+  intensity_level?: string;
+  location?: string;
+  weather?: string;
+  participants?: string;
+  score?: string;
+  performance_notes?: string;
+  injuries_or_flags?: string;
+  status: 'planned' | 'completed';
+  start_time?: string;
+  end_time?: string;
+  in_progress?: boolean;
+}
+
+export interface StretchingActivity {
+  id: string;
+  date: string;
+  duration_minutes?: number;
+  focus_areas?: string[];
+  notes?: string;
+  status: 'planned' | 'completed';
+  start_time?: string;
+  end_time?: string;
+  in_progress?: boolean;
+}
+
 // Meal planning types
 export interface MealPlan {
   id: string;
@@ -103,6 +199,15 @@ export interface MealPlan {
   meal_time: 'breakfast' | 'lunch' | 'dinner' | 'snack';
   meal_id: string;
   user_id: string;
+}
+
+export interface PlannedMeal {
+  id: string;
+  meal_id: string;
+  planned_date: string;
+  meal_time: 'breakfast' | 'lunch' | 'dinner' | 'snack';
+  user_id: string;
+  meal?: Meal;
 }
 
 // Financial types
@@ -144,3 +249,76 @@ export interface SearchResult<T> {
   limit: number;
   hasMore: boolean;
 }
+
+// API Response types
+export interface CalendarEventsResponse {
+  events: CalendarEvent[];
+  error?: string;
+}
+
+export interface WorkoutResponse {
+  workout: WorkoutData;
+  exercises: Exercise[];
+  sets: Set[];
+  error?: string;
+}
+
+export interface FitnessActivitiesResponse {
+  activities: FitnessActivity[];
+  error?: string;
+}
+
+// Event style types
+export interface EventStyle {
+  colorClass: string;
+  Icon: React.ComponentType<{ size?: number; className?: string }>;
+}
+
+// Calendar drag and drop types
+export interface DragState {
+  id: string;
+  originalStart: string;
+  originalEnd?: string;
+}
+
+export interface CalendarEventClickHandler {
+  (event: CalendarEvent): Promise<void>;
+}
+
+export interface CalendarEventDeleteHandler {
+  (event: CalendarEvent): Promise<void>;
+}
+
+export interface CalendarDragStartHandler {
+  (e: React.PointerEvent, dragState: DragState): void;
+}
+
+// Form component types
+export interface FormComponentProps {
+  onSubmit: (data: FormData) => void | Promise<void>;
+  onCancel?: () => void;
+  initialData?: Partial<FormData>;
+  loading?: boolean;
+  error?: string;
+}
+
+// Toast types
+export interface ToastOptions {
+  duration?: number;
+  onUndo?: () => void;
+}
+
+// Context types
+export interface UserContextType {
+  session: Session | null;
+  user: User | null;
+  loading: boolean;
+  refresh: () => void;
+  isAuthenticated: boolean;
+  userId: string | undefined;
+}
+
+// Import Supabase types
+import type { Session, User } from '@supabase/supabase-js';
+import type { CalendarEvent } from './calendar';
+import type { Meal } from './supabase';

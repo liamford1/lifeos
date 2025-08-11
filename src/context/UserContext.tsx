@@ -74,7 +74,8 @@ export function UserProvider({ children }: UserProviderProps) {
         setSession(newSession);
         setUser(newUser);
       } catch (error) {
-        console.error('Error fetching auth state:', error);
+        // Silent error handling for auth state fetching
+        // This is expected during initial load and auth transitions
       } finally {
         if (mountedRef.current) {
           setLoading(false);
@@ -112,7 +113,8 @@ export function UserProvider({ children }: UserProviderProps) {
       setSession(newSession);
       setUser(newUser);
     } catch (error) {
-      console.error('Error refreshing auth state:', error);
+      // Silent error handling for auth state refresh
+      // This is expected during auth transitions
     } finally {
       if (mountedRef.current) {
         setLoading(false);

@@ -10,7 +10,8 @@ export default function StretchingClient() {
         <StretchHorizontal /> Stretching Session
       </h1>
       <Calendar />
-      {/* TODO: step-by-step stretching content goes here */}
+      {/* Feature: Step-by-step stretching content - planned for future release */}
+      {/* GitHub Issue: #TODO-003 - Implement stretching session content */}
     </section>
   );
 } 

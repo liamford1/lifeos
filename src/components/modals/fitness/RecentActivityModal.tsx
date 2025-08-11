@@ -13,6 +13,7 @@ import { useWorkouts } from "@/lib/hooks/useWorkouts";
 import { useCardioSessions } from "@/lib/hooks/useCardioSessions";
 import { useSportsSessions } from "@/lib/hooks/useSportsSessions";
 import { useStretchingSessions } from "@/lib/hooks/useStretchingSessions";
+import ConfirmationModal from "@/components/shared/ConfirmationModal";
 
 import dynamic from "next/dynamic";
 
@@ -118,6 +119,14 @@ export default function RecentActivityModal({ isOpen, onClose, onOpenStretchingM
   const [selectedCardioId, setSelectedCardioId] = useState<string | null>(null);
   const [showCardioDetailsModal, setShowCardioDetailsModal] = useState(false);
   
+  // Confirmation modal state
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const [deleteConfig, setDeleteConfig] = useState<{
+    type: 'workout' | 'cardio' | 'sports' | 'stretching';
+    id: string;
+    title: string;
+  } | null>(null);
+  
   const fetchedRef = useRef<{ userId: string | null; done: boolean }>({ userId: null, done: false });
   
   // Hooks for data fetching
@@ -167,57 +176,55 @@ export default function RecentActivityModal({ isOpen, onClose, onOpenStretchingM
     loadAllActivities();
   }, [isOpen, user, loadAllActivities]);
 
-  // Delete handlers
-  const handleDeleteWorkout = useCallback(
-    async (id: string) => {
-      const confirm = window.confirm("Delete this workout?");
-      if (!confirm) return;
-      const success = await deleteWorkout(id);
-      if (success) {
-        setWorkouts((prev) => prev.filter((w) => w.id !== id));
-      }
+  // Unified delete handler
+  const handleDeleteActivity = useCallback(
+    (type: 'workout' | 'cardio' | 'sports' | 'stretching', id: string, title: string) => {
+      setDeleteConfig({ type, id, title });
+      setShowDeleteConfirmation(true);
     },
-    [deleteWorkout],
+    [],
   );
 
-  const handleDeleteCardio = useCallback(
-    async (id: string) => {
-      const confirm = window.confirm("Delete this cardio session?");
-      if (!confirm) return;
-      if (!user) return;
-      const success = await deleteCardioSession(id, user.id);
-      if (success) {
-        setCardioSessions((prev) => prev.filter((s) => s.id !== id));
-      }
-    },
-    [deleteCardioSession, user],
-  );
+  const handleConfirmDelete = useCallback(async () => {
+    if (!deleteConfig || !user) return;
 
-  const handleDeleteSports = useCallback(
-    async (id: string) => {
-      const confirm = window.confirm("Delete this sports session?");
-      if (!confirm) return;
-      if (!user) return;
-      const success = await deleteSportsSession(id, user.id);
-      if (success) {
-        setSportsSessions((prev) => prev.filter((s) => s.id !== id));
-      }
-    },
-    [deleteSportsSession, user],
-  );
+    const { type, id } = deleteConfig;
+    let success = false;
 
-  const handleDeleteStretching = useCallback(
-    async (id: string) => {
-      const confirm = window.confirm("Delete this stretching session?");
-      if (!confirm) return;
-      if (!user) return;
-      const success = await deleteStretchingSession(id, user.id);
-      if (success) {
-        setStretchingSessions((prev) => prev.filter((s) => s.id !== id));
+    try {
+      switch (type) {
+        case 'workout':
+          success = await deleteWorkout(id);
+          if (success) {
+            setWorkouts((prev) => prev.filter((w) => w.id !== id));
+          }
+          break;
+        case 'cardio':
+          success = await deleteCardioSession(id, user.id);
+          if (success) {
+            setCardioSessions((prev) => prev.filter((s) => s.id !== id));
+          }
+          break;
+        case 'sports':
+          success = await deleteSportsSession(id, user.id);
+          if (success) {
+            setSportsSessions((prev) => prev.filter((s) => s.id !== id));
+          }
+          break;
+        case 'stretching':
+          success = await deleteStretchingSession(id, user.id);
+          if (success) {
+            setStretchingSessions((prev) => prev.filter((s) => s.id !== id));
+          }
+          break;
       }
-    },
-    [deleteStretchingSession, user],
-  );
+    } catch (error) {
+      console.error(`Error deleting ${type}:`, error);
+    }
+
+    setShowDeleteConfirmation(false);
+    setDeleteConfig(null);
+  }, [deleteConfig, user, deleteWorkout, deleteCardioSession, deleteSportsSession, deleteStretchingSession]);
 
   // Click handlers
   const handleWorkoutClick = useCallback((workoutId: string) => {
@@ -260,7 +267,7 @@ export default function RecentActivityModal({ isOpen, onClose, onOpenStretchingM
       bgColor: "bg-blue-500/10",
       label: "Workout",
       onClick: handleWorkoutClick,
-      onDelete: handleDeleteWorkout,
+      onDelete: (id: string) => handleDeleteActivity('workout', id, 'workout'),
       onEdit: (id: string) => window.open(`/fitness/workouts/${id}/edit`, '_blank')
     },
     cardio: {
@@ -269,7 +276,7 @@ export default function RecentActivityModal({ isOpen, onClose, onOpenStretchingM
       bgColor: "bg-red-500/10",
       label: "Cardio",
       onClick: handleCardioClick,
-      onDelete: handleDeleteCardio,
+      onDelete: (id: string) => handleDeleteActivity('cardio', id, 'cardio session'),
       onEdit: (id: string) => router.push(`/fitness/cardio/${id}/edit`)
     },
     sports: {
@@ -278,7 +285,7 @@ export default function RecentActivityModal({ isOpen, onClose, onOpenStretchingM
       bgColor: "bg-green-500/10",
       label: "Sports",
       onClick: (id: string) => router.push(`/fitness/sports/${id}`),
-      onDelete: handleDeleteSports,
+      onDelete: (id: string) => handleDeleteActivity('sports', id, 'sports session'),
       onEdit: (id: string) => router.push(`/fitness/sports/${id}/edit`)
     },
     stretching: {
@@ -291,14 +298,14 @@ export default function RecentActivityModal({ isOpen, onClose, onOpenStretchingM
           onOpenStretchingModal('view', id);
         }
       },
-      onDelete: handleDeleteStretching,
+      onDelete: (id: string) => handleDeleteActivity('stretching', id, 'stretching session'),
       onEdit: (id: string) => {
         if (onOpenStretchingModal) {
           onOpenStretchingModal('edit', id);
         }
       }
     }
-  }), [handleWorkoutClick, handleCardioClick, handleDeleteWorkout, handleDeleteCardio, handleDeleteSports, handleDeleteStretching, router, onOpenStretchingModal]);
+  }), [handleWorkoutClick, handleCardioClick, handleDeleteActivity, router, onOpenStretchingModal]);
 
   // Determine what to render
   const content = useMemo(() => {
@@ -480,6 +487,20 @@ export default function RecentActivityModal({ isOpen, onClose, onOpenStretchingM
         isOpen={showCardioDetailsModal}
         onClose={handleCloseCardioDetailsModal}
         cardioId={selectedCardioId}
+      />
+
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={showDeleteConfirmation}
+        onClose={() => {
+          setShowDeleteConfirmation(false);
+          setDeleteConfig(null);
+        }}
+        onConfirm={handleConfirmDelete}
+        title={`Delete ${deleteConfig?.title || 'Activity'}`}
+        message={`Delete this ${deleteConfig?.title || 'activity'}? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
       />
     </BaseModal>
   );

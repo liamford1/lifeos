@@ -13,16 +13,12 @@ export async function getMealSuggestions(pantryItems = [], preferences = {}, die
     const { data: { session }, error: sessionError } = await supabase.auth.getSession();
     
     if (sessionError) {
-      console.error('Session error:', sessionError);
       throw new Error(`Failed to get session: ${sessionError.message}`);
     }
     
     if (!session) {
-      console.error('No session found');
       throw new Error('No active session found. Please log in to use AI meal suggestions.');
     }
-    
-    console.log('Session found:', !!session.access_token);
     
     const response = await fetch(`/api/ai/meal-suggestions`, {
       method: 'POST',
@@ -47,7 +43,6 @@ export async function getMealSuggestions(pantryItems = [], preferences = {}, die
 
     return await response.json();
   } catch (error) {
-    console.error('Error getting meal suggestions:', error);
     throw error;
   }
 }
@@ -65,5 +60,5 @@ export async function getMealSuggestions(pantryItems = [], preferences = {}, die
  *   ['vegetarian']
  * );
  * 
- * console.log(suggestions.suggestions);
+ * // suggestions.suggestions contains the meal suggestions
  */ 

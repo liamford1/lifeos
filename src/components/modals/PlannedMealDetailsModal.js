@@ -15,6 +15,7 @@ import CookingSessionModal from '@/components/modals/CookingSessionModal';
 import { UtensilsCrossed } from 'lucide-react';
 import { deleteCalendarEventForEntity } from '@/lib/calendarSync';
 import { CALENDAR_SOURCES } from '@/lib/utils/calendarUtils';
+import ConfirmationModal from '@/components/shared/ConfirmationModal';
 
 export default function PlannedMealDetailsModal({ isOpen, onClose, plannedMealId, calendarEvent, refreshKey, onRefresh }) {
   const { user, loading: userLoading } = useUser();
@@ -27,6 +28,7 @@ export default function PlannedMealDetailsModal({ isOpen, onClose, plannedMealId
   const [ingredientsLoading, setIngredientsLoading] = useState(false);
   const [showCookingSessionModal, setShowCookingSessionModal] = useState(false);
   const [internalRefreshKey, setInternalRefreshKey] = useState(0);
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
   // Fetch planned meal data
   useEffect(() => {
@@ -97,8 +99,6 @@ export default function PlannedMealDetailsModal({ isOpen, onClose, plannedMealId
           return;
         }
 
-        console.log('📊 Planned meal modal fetched data:', data);
-        console.log('📅 Planned date from DB:', data?.planned_date);
         setPlannedMeal(data);
         // Fetch ingredients using the meal_id from the planned meal
         await fetchIngredients(data.meal_id);
@@ -117,7 +117,6 @@ export default function PlannedMealDetailsModal({ isOpen, onClose, plannedMealId
   useEffect(() => {
     if (onRefresh) {
       onRefresh(() => {
-        console.log('🔄 Refresh function called, incrementing internal refreshKey');
         setInternalRefreshKey(prev => prev + 1);
       });
     }
@@ -151,9 +150,11 @@ export default function PlannedMealDetailsModal({ isOpen, onClose, plannedMealId
   }
 
   async function handleDeletePlannedMeal() {
+    setShowDeleteConfirmation(true);
+  }
+
+  async function handleConfirmDeletePlannedMeal() {
     try {
-      const confirm = window.confirm('Delete this planned meal? This will also remove any linked calendar events.');
-      if (!confirm) return;
 
       if (!user) {
         showError('You must be logged in.');
@@ -180,8 +181,7 @@ export default function PlannedMealDetailsModal({ isOpen, onClose, plannedMealId
       // Delete the linked calendar event
       const calendarError = await deleteCalendarEventForEntity(CALENDAR_SOURCES.PLANNED_MEAL, plannedMeal.id);
       if (calendarError) {
-        console.error('Failed to delete linked calendar event:', calendarError);
-        // Don't show error to user since the main deletion succeeded
+        // Silent error handling - main deletion succeeded
       }
 
       showSuccess('Planned meal deleted successfully!');
@@ -292,7 +292,7 @@ export default function PlannedMealDetailsModal({ isOpen, onClose, plannedMealId
             ) : (
               <ul className="list-disc list-inside space-y-2 text-base">
                 {ingredients.map((item, i) => (
-                  <li key={i}>
+                  <li key={`ingredient-${item.id || i}-${item.food_item_name}`}>
                     {item.quantity} {item.unit} {item.food_item_name}
                   </li>
                 ))}
@@ -308,11 +308,11 @@ export default function PlannedMealDetailsModal({ isOpen, onClose, plannedMealId
             <ol className="list-decimal list-inside space-y-2 text-base">
               {Array.isArray(plannedMeal.meals?.instructions)
                 ? plannedMeal.meals.instructions.map((step, index) => (
-                    <li key={index}>{step}</li>
+                    <li key={`instruction-${index}-${step.substring(0, 20)}`}>{step}</li>
                   ))
                 : (typeof plannedMeal.meals?.instructions === 'string' && plannedMeal.meals.instructions.trim()
                     ? plannedMeal.meals.instructions.split('\n').map((step, index) => (
-                        <li key={index}>{step}</li>
+                        <li key={`instruction-${index}-${step.substring(0, 20)}`}>{step}</li>
                       ))
                     : <li className="text-zinc-500 italic">No instructions provided.</li>
                   )}
@@ -329,6 +329,17 @@ export default function PlannedMealDetailsModal({ isOpen, onClose, plannedMealId
           </div>
         </div>
       </BaseModal>
+
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={showDeleteConfirmation}
+        onClose={() => setShowDeleteConfirmation(false)}
+        onConfirm={handleConfirmDeletePlannedMeal}
+        title="Delete Planned Meal"
+        message="Delete this planned meal? This will also remove any linked calendar events."
+        confirmText="Delete"
+        cancelText="Cancel"
+      />
     </>
   );
 }

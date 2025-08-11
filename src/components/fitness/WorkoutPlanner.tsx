@@ -102,7 +102,7 @@ const WorkoutPlanner: React.FC<WorkoutPlannerProps> = React.memo(({
       const { data: existingWorkout } = await supabase
         .from('fitness_workouts')
         .select('*')
-        .eq('user_id', (user as any).id)
+        .eq('user_id', user?.id)
         .eq('in_progress', true)
         .maybeSingle();
       
@@ -115,7 +115,7 @@ const WorkoutPlanner: React.FC<WorkoutPlannerProps> = React.memo(({
       const now = new Date();
       const [today] = now.toISOString().split('T');
       const workoutData = {
-        user_id: (user as any).id,
+        user_id: user?.id,
         title: workoutFormData.title.trim(),
         notes: workoutFormData.notes.trim(),
         in_progress: true,
@@ -139,7 +139,6 @@ const WorkoutPlanner: React.FC<WorkoutPlannerProps> = React.memo(({
       refreshWorkout();
       router.push('/fitness/workouts/live');
     } catch (error) {
-      console.error('Error starting workout:', error);
       showError('Failed to start workout. Please try again.');
     } finally {
       setFormLoading(false);
@@ -163,7 +162,7 @@ const WorkoutPlanner: React.FC<WorkoutPlannerProps> = React.memo(({
       const { data: existingCardio } = await supabase
         .from('fitness_cardio')
         .select('*')
-        .eq('user_id', (user as any).id)
+        .eq('user_id', user?.id)
         .eq('in_progress', true)
         .maybeSingle();
       
@@ -176,7 +175,7 @@ const WorkoutPlanner: React.FC<WorkoutPlannerProps> = React.memo(({
       const now = new Date();
       const [today] = now.toISOString().split('T');
       const cardioData = {
-        user_id: (user as any).id,
+        user_id: user?.id,
         title: cardioFormData.activityType.trim(),
         activity_type: cardioFormData.activityType.trim(),
         location: cardioFormData.location.trim(),
@@ -202,7 +201,6 @@ const WorkoutPlanner: React.FC<WorkoutPlannerProps> = React.memo(({
       refreshCardio();
       router.push('/fitness/cardio/live');
     } catch (error) {
-      console.error('Error starting cardio session:', error);
       showError('Failed to start cardio session. Please try again.');
     } finally {
       setFormLoading(false);

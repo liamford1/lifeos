@@ -8,6 +8,7 @@ import LoadingSpinner from "@/components/shared/LoadingSpinner";
 import Button from "@/components/shared/Button";
 import Link from "next/link";
 import { useToast } from "@/components/client/Toast";
+import { useConfirmation, SimpleConfirmationDialog } from "@/lib/hooks/useConfirmation";
 
 export default function ExpenseDetailPage() {
   const { id } = useParams();
@@ -17,6 +18,21 @@ export default function ExpenseDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [deleting, setDeleting] = useState(false);
+
+  const { isOpen, message, showConfirmation, handleConfirm, handleCancel } = useConfirmation(async () => {
+    setDeleting(true);
+    const { error } = await supabase
+      .from("expenses")
+      .delete()
+      .eq("id", id);
+    setDeleting(false);
+    if (error) {
+      showError("Failed to delete expense entry");
+    } else {
+      showSuccess("Expense entry deleted");
+      router.push("/finances/expenses");
+    }
+  });
 
   useEffect(() => {
     async function fetchExpense() {
@@ -41,19 +57,7 @@ export default function ExpenseDetailPage() {
   }, [id, router]);
 
   async function handleDelete() {
-    if (!window.confirm("Delete this expense entry?")) return;
-    setDeleting(true);
-    const { error } = await supabase
-      .from("expenses")
-      .delete()
-      .eq("id", id);
-    setDeleting(false);
-    if (error) {
-      showError("Failed to delete expense entry");
-    } else {
-      showSuccess("Expense entry deleted");
-      router.push("/finances/expenses");
-    }
+    showConfirmation("Delete this expense entry?");
   }
 
   if (loading) return <LoadingSpinner />;
@@ -86,6 +90,13 @@ export default function ExpenseDetailPage() {
       >
         🗑️ Delete
       </Button>
+      
+      <SimpleConfirmationDialog
+        isOpen={isOpen}
+        message={message}
+        onConfirm={handleConfirm}
+        onCancel={handleCancel}
+      />
     </div>
   );
 } 

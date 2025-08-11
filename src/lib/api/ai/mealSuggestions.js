@@ -13,33 +13,20 @@ export default async function handleMealSuggestions(request) {
     let user = null;
     let userError = null;
 
-    if (process.env.NODE_ENV !== "production") {
-      console.log('🔍 Auth header:', authHeader ? 'Present' : 'Missing');
-    }
-
     if (authHeader && authHeader.startsWith('Bearer ')) {
       // Use Bearer token authentication
       const token = authHeader.substring(7);
-      if (process.env.NODE_ENV !== "production") {
-        console.log('🔍 Using Bearer token authentication');
-      }
       const { data: userData, error: error } = await supabase.auth.getUser(token);
       user = userData?.user;
       userError = error;
     } else {
       // Fall back to cookie-based authentication
-      if (process.env.NODE_ENV !== "production") {
-        console.log('🔍 Using cookie-based authentication');
-      }
       const { data: userData, error: error } = await supabase.auth.getUser();
       user = userData?.user;
       userError = error;
       
       // If no user, try to refresh the session
       if (!user && userError?.message?.includes('Auth session missing')) {
-        if (process.env.NODE_ENV !== "production") {
-          console.log('🔍 Attempting session refresh');
-        }
         const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession();
         if (refreshData?.user) {
           const { user: refreshUser } = refreshData;
@@ -49,11 +36,6 @@ export default async function handleMealSuggestions(request) {
     }
     
     if (!user) {
-      if (process.env.NODE_ENV !== "production") {
-        console.error('🚫 Not authenticated:', userError);
-        console.error('🚫 User data:', user);
-        console.error('🚫 Auth header present:', !!authHeader);
-      }
       return new Response(JSON.stringify({ error: 'Not authenticated' }), { status: 401 });
     }
 
@@ -104,11 +86,7 @@ export default async function handleMealSuggestions(request) {
     const prompt = mealPlannerPrompt(pantryItems, preferences, dietaryRestrictions);
     const systemPrompt = getMealPlanningSystemPrompt();
 
-    // Debug logging
-    if (process.env.NODE_ENV !== "production") {
-      console.log('🔍 Prompt:', prompt);
-      console.log('🔍 System Prompt:', systemPrompt);
-    }
+
 
     // Call OpenAI for meal suggestions
     const suggestions = await getStructuredResponse(prompt, {
@@ -117,16 +95,8 @@ export default async function handleMealSuggestions(request) {
       maxTokens: 2000,
     });
 
-    // Debug logging
-    if (process.env.NODE_ENV !== "production") {
-      console.log('🔍 AI Response:', JSON.stringify(suggestions, null, 2));
-    }
-
     // Validate the response structure
     if (!Array.isArray(suggestions) || suggestions.length === 0) {
-      if (process.env.NODE_ENV !== "production") {
-        console.error('❌ Invalid AI response structure:', suggestions);
-      }
       return new Response(JSON.stringify({ error: 'Invalid response from AI service' }), { status: 500 });
     }
 
@@ -156,15 +126,6 @@ export default async function handleMealSuggestions(request) {
     });
 
   } catch (err) {
-    if (process.env.NODE_ENV !== "production") {
-      console.error('🔥 AI Meal Suggestions API error:', err);
-      console.error('🔥 Error details:', {
-        message: err.message,
-        stack: err.stack,
-        name: err.name
-      });
-    }
-    
     // Handle specific AI-related errors
     if (err.message.includes('OPENAI_API_KEY')) {
       return new Response(JSON.stringify({ error: 'AI service not configured' }), { status: 503 });
@@ -179,8 +140,7 @@ export default async function handleMealSuggestions(request) {
     }
     
     return new Response(JSON.stringify({ 
-      error: 'Failed to generate meal suggestions',
-      details: process.env.NODE_ENV !== "production" ? err.message : undefined
+      error: 'Failed to generate meal suggestions'
     }), { status: 500 });
   }
 } 

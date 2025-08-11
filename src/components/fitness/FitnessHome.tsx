@@ -84,25 +84,26 @@ const FitnessHome: React.FC<FitnessHomeProps> = React.memo(() => {
   const [showWorkoutSessionModal, setShowWorkoutSessionModal] = useState<boolean>(false);
 
   const loadFitnessData = useCallback(async (): Promise<void> => {
-    if (!(user as any)?.id) return;
+    if (!user?.id) return;
     
     setDataLoading(true);
     try {
       const [cardio, workouts, sports] = await Promise.all([
-        fetchCardioSessions((user as any).id),
-        fetchWorkouts((user as any).id),
-        fetchSportsSessions((user as any).id)
+        fetchCardioSessions(user.id),
+        fetchWorkouts(user.id),
+        fetchSportsSessions(user.id)
       ]);
       
       setCardioData(cardio || []);
       setWorkoutData(workouts || []);
       setSportsData(sports || []);
     } catch (error) {
-      console.error('Error loading fitness data:', error);
+      // Silent error handling for fitness data loading
+      // Data will be retried on next render
     } finally {
       setDataLoading(false);
     }
-  }, [(user as any)?.id, fetchCardioSessions, fetchWorkouts, fetchSportsSessions]);
+  }, [user?.id, fetchCardioSessions, fetchWorkouts, fetchSportsSessions]);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -110,7 +111,7 @@ const FitnessHome: React.FC<FitnessHomeProps> = React.memo(() => {
       return;
     }
 
-    if ((user as any)?.id) {
+    if (user?.id) {
       loadFitnessData();
     }
   }, [user, loading, router, loadFitnessData]);

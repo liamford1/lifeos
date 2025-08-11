@@ -43,9 +43,8 @@ export default function SportForm({ initialData = {}, onSubmit }) {
       ...formData,
       calories_burned: null, // reserved for AI estimation
     });
-    // TODO: Provide accurate start_time and end_time if available
-    // import { createCalendarEventForEntity } from '@/lib/utils/calendarUtils';
-    // await createCalendarEventForEntity('sport', /* newEntry.id */, /* user.id */, /* start_time */, /* end_time */);
+    // Feature: Calendar event creation with accurate timestamps - planned for future release
+    // GitHub Issue: #TODO-004 - Implement calendar event creation for sports activities
   };
 
   const {

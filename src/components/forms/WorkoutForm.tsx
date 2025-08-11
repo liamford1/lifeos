@@ -213,7 +213,7 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
       ...exercises.map(ex => ({ name: ex.name, notes: ex.notes })),
       ...newExercisesWithSets.map(ex => ({ name: ex.name, notes: ex.notes }))
     ];
-    let insertedExercises: any[] = [];
+    let insertedExercises: Array<{ id: string; name: string; notes?: string }> = [];
     if (allEditorExercises.length > 0) {
       const formatted = allEditorExercises.map((ex) => ({
         workout_id: workoutId,

@@ -43,6 +43,9 @@ import {
   CalendarEventDeleteHandler,
   CalendarDragStartHandler
 } from '@/types/calendar';
+import type { UserContextType } from '@/types';
+import type { Value } from 'react-calendar/dist/shared/types';
+import ConfirmationModal from '@/components/shared/ConfirmationModal';
 
 // Dynamic imports for heavy modal components
 const MealDetailsModal = dynamic(() => import('@/components/modals/MealDetailsModal'), {
@@ -218,7 +221,7 @@ const CalendarView: React.FC = () => {
   const { showSuccess } = useToast();
   const queryClient = useQueryClient();
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const { user } = useUser();
+  const { user }: UserContextType = useUser();
   
   // Modal state management
   const [showMealDetailsModal, setShowMealDetailsModal] = useState<boolean>(false);
@@ -231,6 +234,10 @@ const CalendarView: React.FC = () => {
   const plannedMealRefreshFnRef = useRef<(() => void) | null>(null);
   const [plannedMealRefreshKey, setPlannedMealRefreshKey] = useState<number>(0);
   
+  // Confirmation modal state
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState<boolean>(false);
+  const [eventToDelete, setEventToDelete] = useState<CalendarEvent | null>(null);
+  
   const setPlannedMealRefreshFn = useCallback((refreshFn: () => void) => {
     plannedMealRefreshFnRef.current = refreshFn;
   }, []);
@@ -239,15 +246,19 @@ const CalendarView: React.FC = () => {
 
   const router = useRouter();
 
+  // Get user ID safely
+  const userId = user?.id;
+
   // useQuery for events
   const eventsQuery = useQuery({
-    queryKey: ["events", (user as any)?.id],
-    enabled: !!user,
+    queryKey: ["events", userId],
+    enabled: !!userId,
     queryFn: async (): Promise<CalendarEvent[]> => {
+      if (!userId) throw new Error('User ID is required');
       const response = await fetch("/api/calendar/list", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: (user as any)?.id }),
+        body: JSON.stringify({ userId }),
       });
       return response.json();
     },
@@ -267,10 +278,6 @@ const CalendarView: React.FC = () => {
     originalStart: string;
     originalEnd?: string;
   }) => {
-    // Log event drop for debugging
-    if (process.env.NODE_ENV === 'development') {
-      console.log('🎯 handleEventDrop called with:', { id, newStartISO, originalStart, originalEnd });
-    }
     if (!user) return;
 
     // Find the event to update
@@ -292,21 +299,15 @@ const CalendarView: React.FC = () => {
     updatedEvents[eventIndex] = updatedEvent;
 
     // Optimistically update the query cache
-    queryClient.setQueryData(["events", (user as any)?.id], updatedEvents);
+    queryClient.setQueryData(["events", userId], updatedEvents);
 
     try {
-      console.log('🌐 Making API call to update event:', {
-        id,
-        userId: (user as any).id,
-        newStart: newStartISO,
-        updateLinkedEntity: true
-      });
       const response = await fetch("/api/calendar/update", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           id,
-          userId: (user as any).id,
+          userId,
           newStart: newStartISO,
           newEnd: updatedEvent.end_time,
           updateLinkedEntity: true
@@ -328,39 +329,22 @@ const CalendarView: React.FC = () => {
           ...(originalEnd && { originalEnd })
         });
         // Invalidate the query cache to ensure UI updates
-        void queryClient.invalidateQueries({ queryKey: ["events", (user as any)?.id] });
+        void queryClient.invalidateQueries({ queryKey: ["events", userId] });
       });
 
-      // Refresh planned meal modal if this is a planned meal event
-      if (process.env.NODE_ENV === 'development') {
-        console.log('🔍 Checking refresh conditions:', {
-          hasRefreshFn: !!plannedMealRefreshFnRef.current,
-          eventSource: event.source,
-          expectedSource: CALENDAR_SOURCES.PLANNED_MEAL,
-          modalOpen: showPlannedMealDetailsModal,
-          selectedPlannedMealId
-        });
-      }
-      
       if (event.source === CALENDAR_SOURCES.PLANNED_MEAL) {
         // Always increment the refresh key to force modal refresh when it opens
         setPlannedMealRefreshKey(prev => prev + 1);
-        if (process.env.NODE_ENV === 'development') {
-          console.log('🔄 Incremented planned meal refresh key');
-        }
         
         // If modal is open, also call the refresh function
         if (plannedMealRefreshFnRef.current) {
-          if (process.env.NODE_ENV === 'development') {
-            console.log('🔄 Calling refresh function for planned meal event:', event.id);
-          }
           plannedMealRefreshFnRef.current();
         }
       }
 
     } catch (error) {
       // Rollback on error
-      queryClient.setQueryData(["events", (user as any)?.id], events);
+      queryClient.setQueryData(["events", userId], events);
       handleError(error as Error, { 
         customMessage: 'Failed to move event. Changes reverted.' 
       });
@@ -466,8 +450,14 @@ const CalendarView: React.FC = () => {
   };
 
   const handleDeleteEvent = async (event: CalendarEvent): Promise<void> => {
-    const confirm = window.confirm('Delete this event? This will also remove the linked workout/cardio/sports entry if one exists.');
-    if (!confirm) return;
+    setEventToDelete(event);
+    setShowDeleteConfirmation(true);
+  };
+
+  const handleConfirmDeleteEvent = async (): Promise<void> => {
+    if (!eventToDelete) return;
+    
+    const event = eventToDelete;
   
     if (!event.source || !event.source_id) {
       // If no source entity, just delete the calendar event
@@ -484,7 +474,7 @@ const CalendarView: React.FC = () => {
           });
         } else {
           // Invalidate the events query to refresh the data
-          void queryClient.invalidateQueries({ queryKey: ["events", (user as any)?.id] });
+          void queryClient.invalidateQueries({ queryKey: ["events", userId] });
         }
       } catch (error) {
         handleError(error as Error, { 
@@ -543,7 +533,7 @@ const CalendarView: React.FC = () => {
       });
     } else {
       // Invalidate the events query to refresh the data
-      void queryClient.invalidateQueries({ queryKey: ["events", (user as any)?.id] });
+      void queryClient.invalidateQueries({ queryKey: ["events", userId] });
       handleSuccess('Event deleted successfully!');
     }
   };  
@@ -618,11 +608,13 @@ const CalendarView: React.FC = () => {
   };
 
   const handleShowDayEvents = (_date: Date): void => {
-    // TODO: Implement day events modal
+    // Feature: Day events modal - planned for future release
+    // GitHub Issue: #TODO-001 - Implement day events modal
   };
 
   const handleShowSelectionModalForDate = (_dateStr: string): void => {
-    // TODO: Implement selection modal for date
+    // Feature: Date selection modal - planned for future release
+    // GitHub Issue: #TODO-002 - Implement date selection modal
   };
 
   // Loading state
@@ -704,7 +696,7 @@ const CalendarView: React.FC = () => {
         <div className="w-full">
           <div className="p-2 rounded">
             <Calendar
-              onChange={(value: any) => {
+              onChange={(value: Value) => {
                 if (value instanceof Date) {
                   setSelectedDate(value);
                 }
@@ -866,6 +858,20 @@ const CalendarView: React.FC = () => {
           }}
         />
       )}
+
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={showDeleteConfirmation}
+        onClose={() => {
+          setShowDeleteConfirmation(false);
+          setEventToDelete(null);
+        }}
+        onConfirm={handleConfirmDeleteEvent}
+        title="Delete Event"
+        message="Delete this event? This will also remove the linked workout/cardio/sports entry if one exists."
+        confirmText="Delete"
+        cancelText="Cancel"
+      />
     </div>
   );
 };
