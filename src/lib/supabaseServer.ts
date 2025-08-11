@@ -2,8 +2,8 @@ import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/types/supabase";
 
 // Read env vars (available at build & runtime on the server)
-const SUPABASE_URL = process.env['NEXT_PUBLIC_SUPABASE_URL']!;
-const SERVICE_ROLE_KEY = process.env['SUPABASE_SERVICE_ROLE_KEY']!;
+const SUPABASE_URL = process.env['NEXT_PUBLIC_SUPABASE_URL'];
+const SERVICE_ROLE_KEY = process.env['SUPABASE_SERVICE_ROLE_KEY'];
 
 /**
  * Returns a singleton Supabase client configured **only for server usage**.

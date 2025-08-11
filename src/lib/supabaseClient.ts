@@ -1,12 +1,19 @@
 import { createClient } from '@supabase/supabase-js/dist/module';
 import type { Database } from '@/types/supabase';
 
-export const supabase = createClient<Database>(
-  process.env['NEXT_PUBLIC_SUPABASE_URL']!,
-  process.env['NEXT_PUBLIC_SUPABASE_ANON_KEY']!
-);
+const supabaseUrl = process.env['NEXT_PUBLIC_SUPABASE_URL'];
+const supabaseAnonKey = process.env['NEXT_PUBLIC_SUPABASE_ANON_KEY'];
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error('Missing Supabase environment variables');
+}
+
+export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey);
 
 // ✅ Expose in browser context for testing
-if (typeof window !== 'undefined' && !(window as any).supabase) {
-  (window as any).supabase = supabase;
+if (typeof window !== 'undefined') {
+  const windowWithSupabase = window as typeof window & { supabase?: typeof supabase };
+  if (!windowWithSupabase.supabase) {
+    windowWithSupabase.supabase = supabase;
+  }
 }

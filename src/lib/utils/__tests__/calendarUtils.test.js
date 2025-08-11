@@ -1,5 +1,4 @@
-import { addCalendarEvent } from '../calendarUtils';
-import { CALENDAR_SOURCES } from '../calendarUtils';
+import { addCalendarEvent, CALENDAR_SOURCES } from '../calendarUtils';
 import dayjs from 'dayjs';
 
 // Mock Supabase

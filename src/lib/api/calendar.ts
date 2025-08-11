@@ -13,7 +13,18 @@ export async function listEvents(userId: string) {
   return data;
 }
 
-export async function insertEvent(event: any) {
+interface CalendarEvent {
+  title: string;
+  description?: string;
+  start_time: string;
+  end_time?: string;
+  source: string;
+  source_id: string | number;
+  user_id: string;
+  [key: string]: string | number | null | undefined;
+}
+
+export async function insertEvent(event: CalendarEvent) {
   // Set default end time to 1 hour after start time if not provided
   let finalEvent = { ...event };
   if (!finalEvent.end_time && finalEvent.start_time) {
@@ -57,13 +68,13 @@ export async function updateEvent({
   if (!currentEvent) throw new Error("Event not found");
 
   // Update the calendar event
-  const updateData: any = {
+  const updateData: Record<string, string> = {
     start_time: newStart,
     updated_at: new Date().toISOString()
   };
   
   if (newEnd !== undefined) {
-    updateData.end_time = newEnd;
+    updateData['end_time'] = newEnd;
   }
 
   const { data: updatedEvent, error: updateError } = await supabase

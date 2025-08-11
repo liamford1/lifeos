@@ -49,7 +49,7 @@ interface CalendarEventUpdateFields {
   start_time?: string;
   end_time?: string | null;
   description?: string;
-  [key: string]: any;
+  [key: string]: string | null | undefined;
 }
 
 /**
@@ -67,7 +67,7 @@ export const updateCalendarEvent = async (
   title: string, 
   startTime: string, 
   endTime: string | null = null
-): Promise<any | null> => {
+): Promise<Error | null> => {
   try {
     const { error } = await supabase
       .from('calendar_events')
@@ -85,7 +85,7 @@ export const updateCalendarEvent = async (
 
     return null; // Success
   } catch (error) {
-    return error;
+    return error instanceof Error ? error : new Error('Unknown error occurred');
   }
 }
 
@@ -100,7 +100,7 @@ export const updateCalendarEventFromSource = async (
   source: CalendarSource, 
   source_id: string | number, 
   updatedFields: CalendarEventUpdateFields
-): Promise<any | null> => {
+): Promise<Error | null> => {
   try {
     const { error } = await supabase
       .from('calendar_events')
@@ -113,7 +113,7 @@ export const updateCalendarEventFromSource = async (
     }
     return null;
   } catch (error) {
-    return error;
+    return error instanceof Error ? error : new Error('Unknown error occurred');
   }
 }
 
@@ -135,11 +135,11 @@ export const addCalendarEvent = async ({
   endTime = null,
   source,
   sourceId,
-}: AddCalendarEventParams): Promise<any | null> => {
+}: AddCalendarEventParams): Promise<Error | null> => {
   // Validate source value
   const validSources = Object.values(CALENDAR_SOURCES);
   if (!validSources.includes(source)) {
-    return { error: `Invalid source value: ${source}` };
+    return new Error(`Invalid source value: ${source}`);
   }
 
   // Set default end time to 1 hour after start time if not provided
