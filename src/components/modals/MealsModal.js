@@ -10,10 +10,10 @@ import Button from '@/components/shared/Button';
 import SharedDeleteButton from '@/components/SharedDeleteButton';
 import { useMealsQuery, useDeleteMealMutation } from '@/lib/hooks/useMeals';
 import AddMealModal from '@/components/modals/AddMealModal';
-import AIMealSuggestionsModal from '@/components/forms/AIMealSuggestionsModal';
+
 import MealDetailsModal from '@/components/modals/MealDetailsModal';
 import BaseModal from '@/components/shared/BaseModal';
-import { MdLightbulb } from 'react-icons/md';
+
 import React from 'react'; // Added missing import for React
 
 // Memoized Meal Item Component
@@ -58,7 +58,7 @@ MealItem.displayName = 'MealItem';
 export default function MealsModal({ isOpen, onClose }) {
   const { user, loading: userLoading } = useUser();
   const [showAddMealModal, setShowAddMealModal] = useState(false);
-  const [showAIModal, setShowAIModal] = useState(false);
+
   const [showMealDetailsModal, setShowMealDetailsModal] = useState(false);
   const [selectedMealId, setSelectedMealId] = useState(null);
   
@@ -108,10 +108,7 @@ export default function MealsModal({ isOpen, onClose }) {
     });
   };
 
-  // Handle AI meal added
-  const handleAIMealAdded = () => {
-    refetch();
-  };
+
 
   // Handle meal click to show details
   const handleMealClick = (mealId) => {
@@ -131,17 +128,7 @@ export default function MealsModal({ isOpen, onClose }) {
     >
       <div className="space-y-6">
         {/* Action Buttons */}
-        <div className="flex justify-between">
-          <Button
-            onClick={() => setShowAIModal(true)}
-            variant="secondary"
-            size="md"
-            className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2"
-          >
-            <MdLightbulb className="w-4 h-4 text-yellow-300" />
-            AI Suggestions
-          </Button>
-          
+        <div className="flex justify-end">
           <Button
             onClick={() => setShowAddMealModal(true)}
             variant="secondary"
@@ -199,13 +186,7 @@ export default function MealsModal({ isOpen, onClose }) {
         }}
       />
 
-      {/* AI Meal Suggestions Modal */}
-      {showAIModal && (
-        <AIMealSuggestionsModal
-          onClose={() => setShowAIModal(false)}
-          onMealAdded={handleAIMealAdded}
-        />
-      )}
+
 
       {/* Meal Details Modal */}
       <MealDetailsModal

@@ -13,6 +13,11 @@ export async function POST(
     if (params.action === "insert") await insertEvent(body.event);
     if (params.action === "delete") await deleteEvent(body.id);
     if (params.action === "update") {
+      console.log('🔄 API update called with:', {
+        id: body.id,
+        userId: body.userId,
+        updateLinkedEntity: body.updateLinkedEntity
+      });
       const result = await updateEvent({
         id: body.id,
         userId: body.userId,
@@ -20,6 +25,7 @@ export async function POST(
         newEnd: body.newEnd,
         updateLinkedEntity: body.updateLinkedEntity
       });
+      console.log('✅ API update result:', result);
       return NextResponse.json(result);
     }
     return NextResponse.json({ success: true });

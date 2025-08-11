@@ -9,11 +9,14 @@ import Link from 'next/link';
 import { useToast } from '@/components/client/Toast';
 import { MdOutlineCalendarToday, MdOutlineStickyNote2 } from 'react-icons/md';
 import SharedDeleteButton from '@/components/SharedDeleteButton';
-import { useMealQuery, useMealIngredientsQuery, useDeleteMealMutation } from '@/lib/hooks/useMeals';
+import { useMealQuery, useMealIngredientsQuery, useUpdateMealMutation, useDeleteMealMutation } from '@/lib/hooks/useMeals';
 import { useCookingSession } from '@/context/CookingSessionContext';
 import BaseModal from '@/components/shared/BaseModal';
 import CookingSessionModal from '@/components/modals/CookingSessionModal';
 import { UtensilsCrossed } from 'lucide-react';
+import MealForm from '@/components/forms/MealForm';
+import { CALENDAR_SOURCES, updateCalendarEventFromSource } from '@/lib/utils/calendarUtils';
+import { useApiError } from '@/lib/hooks/useApiError';
 
 export default function MealDetailsModal({ isOpen, onClose, mealId }) {
   const { user, loading: userLoading } = useUser();
@@ -21,6 +24,8 @@ export default function MealDetailsModal({ isOpen, onClose, mealId }) {
   const { showSuccess, showError } = useToast();
   const { endCooking, mealId: cookingMealId } = useCookingSession();
   const [showCookingSessionModal, setShowCookingSessionModal] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const { handleError } = useApiError();
 
   // Use React Query for data fetching
   const { 
@@ -35,6 +40,7 @@ export default function MealDetailsModal({ isOpen, onClose, mealId }) {
     error: ingredientsError 
   } = useMealIngredientsQuery(mealId);
   
+  const updateMealMutation = useUpdateMealMutation();
   const deleteMealMutation = useDeleteMealMutation();
 
   // Don't render if not open
@@ -64,6 +70,64 @@ export default function MealDetailsModal({ isOpen, onClose, mealId }) {
     return null;
   }
 
+  async function handleUpdateMeal(mealData) {
+    if (!user || !mealId) {
+      handleError(new Error('User not authenticated or meal ID missing'), {
+        customMessage: 'User not authenticated or meal ID missing'
+      });
+      return;
+    }
+
+    try {
+      // Update the meal using React Query mutation
+      updateMealMutation.mutate(
+        {
+          id: mealId,
+          updatedData: {
+            name: mealData.name,
+            description: mealData.description,
+            prep_time: mealData.prep_time,
+            cook_time: mealData.cook_time,
+            servings: mealData.servings,
+            instructions: mealData.instructions
+          },
+          ingredients: mealData.ingredients,
+          options: {
+            onSuccess: async (updatedMeal) => {
+              // Update calendar event for the edited meal
+              const startTime = new Date();
+              const calendarError = await updateCalendarEventFromSource(
+                CALENDAR_SOURCES.MEAL,
+                mealId,
+                {
+                  title: `Meal: ${mealData.name}`,
+                  start_time: startTime.toISOString(),
+                  description: mealData.description || null,
+                }
+              );
+              if (calendarError) {
+                console.error('Calendar event update failed:', calendarError);
+              }
+
+              showSuccess('Meal updated successfully!');
+              setIsEditing(false);
+            },
+            onError: (error) => {
+              handleError(error, { 
+                customMessage: 'Failed to update meal' 
+              });
+            }
+          }
+        }
+      );
+    } catch (err) {
+      console.error('Error in handleUpdateMeal:', err);
+      handleError(err, { 
+        customMessage: 'An unexpected error occurred' 
+      });
+    }
+  }
+
   async function handleDeleteMeal() {
     try {
       const confirm = window.confirm('Delete this meal? This will also remove any linked calendar events.');
@@ -88,7 +152,17 @@ export default function MealDetailsModal({ isOpen, onClose, mealId }) {
       deleteMealMutation.mutate({
         id: meal.id,
         options: {
-          onSuccess: () => {
+          onSuccess: async (deletedId) => {
+            // Update calendar event for the deleted meal
+            const calendarError = await updateCalendarEventFromSource(
+              CALENDAR_SOURCES.MEAL,
+              deletedId,
+              null // Set to null to indicate deletion
+            );
+            if (calendarError) {
+              console.error('Calendar event update failed:', calendarError);
+            }
+
             showSuccess('Meal deleted successfully!');
             onClose();
           },
@@ -100,6 +174,10 @@ export default function MealDetailsModal({ isOpen, onClose, mealId }) {
     } catch (error) {
       showError('An unexpected error occurred while deleting the meal.');
     }
+  }
+
+  function handleCancelEdit() {
+    setIsEditing(false);
   }
 
   // Show loading state while fetching meal data
@@ -172,6 +250,51 @@ export default function MealDetailsModal({ isOpen, onClose, mealId }) {
     );
   }
 
+  // If editing, show the edit form
+  if (isEditing) {
+    // Prepare initial values for the form
+    const mappedIngredients = ingredients.map(ing => ({
+      name: ing.food_item_name || '',
+      quantity: ing.quantity?.toString() || '',
+      unit: ing.unit || '',
+    }));
+    
+    // Ensure we have at least one ingredient to prevent validation failure
+    const initialIngredients = mappedIngredients.length > 0 ? mappedIngredients : [{ name: '', quantity: '', unit: '' }];
+    
+    const initialValues = {
+      name: meal?.name || '',
+      description: meal?.description || '',
+      prep_time: meal?.prep_time,
+      cook_time: meal?.cook_time,
+      servings: meal?.servings,
+      instructions: meal?.instructions || [],
+      ingredients: initialIngredients,
+    };
+
+    return (
+      <BaseModal
+        isOpen={isOpen}
+        onClose={onClose}
+        title="Edit Meal"
+        subtitle="Update your meal recipe details"
+        icon={UtensilsCrossed}
+        iconBgColor="bg-purple-500/10"
+        iconColor="text-purple-500"
+        maxWidth="max-w-4xl"
+      >
+        <MealForm
+          initialValues={initialValues}
+          onSubmit={handleUpdateMeal}
+          onCancel={handleCancelEdit}
+          isEditing={true}
+          loading={updateMealMutation.isPending}
+          error={updateMealMutation.error?.message}
+        />
+      </BaseModal>
+    );
+  }
+
   return (
     <>
       <BaseModal
@@ -199,7 +322,7 @@ export default function MealDetailsModal({ isOpen, onClose, mealId }) {
               Cook Meal
             </Button>
             <Button
-              onClick={() => router.push(`/food/meals/edit/${meal.id}`)}
+              onClick={() => setIsEditing(true)}
               variant="secondary"
             >
               Edit

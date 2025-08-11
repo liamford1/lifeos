@@ -78,7 +78,13 @@ export async function updateEvent({
 
   // Update linked entity if requested
   let linkedEntityUpdated = false;
+  console.log('🔍 Checking linked entity update:', {
+    updateLinkedEntity,
+    source: currentEvent.source,
+    source_id: currentEvent.source_id
+  });
   if (updateLinkedEntity && currentEvent.source && currentEvent.source_id) {
+    console.log('🔄 Calling updateLinkedEntityOnCalendarChange');
     const linkedEntityError = await updateLinkedEntityOnCalendarChange({
       ...currentEvent,
       start_time: newStart,
@@ -87,7 +93,12 @@ export async function updateEvent({
     
     if (!linkedEntityError) {
       linkedEntityUpdated = true;
+      console.log('✅ Linked entity updated successfully');
+    } else {
+      console.error('❌ Linked entity update failed:', linkedEntityError);
     }
+  } else {
+    console.log('❌ Skipping linked entity update - conditions not met');
   }
 
   return {

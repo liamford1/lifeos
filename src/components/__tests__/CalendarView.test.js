@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import CalendarView from '../CalendarView';
+import CalendarView from '../CalendarView.tsx';
 
 // Mock the dependencies
 jest.mock('@/context/UserContext', () => ({
@@ -49,14 +49,14 @@ jest.mock('@/components/client/CalendarClient', () => {
 });
 
 jest.mock('@tanstack/react-query', () => ({
-  useQuery: () => ({
+  useQuery: jest.fn(() => ({
     data: [],
     isLoading: false
-  }),
-  useQueryClient: () => ({
+  })),
+  useQueryClient: jest.fn(() => ({
     setQueryData: jest.fn(),
     invalidateQueries: jest.fn()
-  })
+  }))
 }));
 
 jest.mock('@/lib/hooks/useApiError', () => ({
@@ -252,5 +252,44 @@ describe('CalendarView', () => {
     // Check that the 3-line button is present
     const threeLineButton = todayElement.querySelector('[aria-label="View events for this day"]');
     expect(threeLineButton).toBeInTheDocument();
+  });
+
+  it('should render without errors and support drag and drop functionality', () => {
+    // This test ensures the component renders without errors
+    // The actual drag and drop functionality is tested in the useCalendarDragAndDrop hook
+    expect(() => render(<CalendarView />)).not.toThrow();
+    
+    // Verify the component renders the main structure
+    expect(screen.getByTestId('calendar')).toBeInTheDocument();
+  });
+
+  it('should render drag handles for events when events are present', () => {
+    // Mock the useQuery to return some test events
+    const { useQuery } = require('@tanstack/react-query');
+    useQuery.mockReturnValue({
+      data: [
+        {
+          id: 'test-event-1',
+          title: 'Test Event 1',
+          start_time: new Date().toISOString(),
+          source: 'meal',
+          source_id: '123'
+        }
+      ],
+      isLoading: false
+    });
+
+    render(<CalendarView />);
+    
+    // Check that drag handles are rendered for events
+    const dragHandles = screen.getAllByTestId(/calendar-event-drag-handle-/);
+    expect(dragHandles.length).toBeGreaterThan(0);
+    
+    // Check that each drag handle has the required attributes
+    dragHandles.forEach(handle => {
+      expect(handle).toHaveAttribute('aria-label', 'Drag event');
+      expect(handle).toHaveAttribute('role', 'button');
+      expect(handle).toHaveAttribute('tabIndex', '0');
+    });
   });
 });

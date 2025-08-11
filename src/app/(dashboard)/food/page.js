@@ -1,7 +1,7 @@
 "use client";
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useUser } from '@/context/UserContext';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
@@ -11,6 +11,8 @@ import AddMealModal from '@/components/modals/AddMealModal';
 import MealsModal from '@/components/modals/MealsModal';
 import AddReceiptModal from '@/components/modals/AddReceiptModal';
 import MealDetailsModal from '@/components/modals/MealDetailsModal';
+import PlannedMealDetailsModal from '@/components/modals/PlannedMealDetailsModal';
+import AIMealSuggestionsModal from '@/components/forms/AIMealSuggestionsModal';
 
 import dynamic from "next/dynamic";
 import { supabase } from '@/lib/supabaseClient';
@@ -49,6 +51,9 @@ export default function FoodHome() {
   const [showAddReceiptModal, setShowAddReceiptModal] = useState(false);
   const [showMealDetailsModal, setShowMealDetailsModal] = useState(false);
   const [selectedMealId, setSelectedMealId] = useState(null);
+  const [showPlannedMealDetailsModal, setShowPlannedMealDetailsModal] = useState(false);
+  const [selectedPlannedMealId, setSelectedPlannedMealId] = useState(null);
+  const [showAIModal, setShowAIModal] = useState(false);
 
 
   useEffect(() => {
@@ -113,46 +118,52 @@ export default function FoodHome() {
     fetchRecentlyCooked();
   }, [user]);
 
-  // Fetch upcoming planned meals
-  useEffect(() => {
-    const fetchUpcomingMeals = async () => {
-      if (!user) return;
-      
+  // Fetch upcoming planned meals function
+  const fetchUpcomingMeals = useCallback(async (showLoading = true) => {
+    if (!user) return;
+    
+    if (showLoading) {
       setLoadingPlanned(true);
-      try {
-        const today = dayjs().format('YYYY-MM-DD');
-        const { data, error } = await supabase
-          .from('planned_meals')
-          .select(`
-            *,
-            meals (
-              id,
-              name
-            )
-          `)
-          .eq('user_id', user.id)
-          .gte('planned_date', today)
-          .order('planned_date', { ascending: true })
-          .limit(3);
+    }
+    
+    try {
+      const today = dayjs().format('YYYY-MM-DD');
+      const { data, error } = await supabase
+        .from('planned_meals')
+        .select(`
+          *,
+          meals (
+            id,
+            name
+          )
+        `)
+        .eq('user_id', user.id)
+        .gte('planned_date', today)
+        .order('planned_date', { ascending: true })
+        .limit(3);
 
-        if (error) {
-          console.error('Error fetching planned meals:', error);
-          setUpcomingMeals([]);
-        } else {
-          setUpcomingMeals(data || []);
-        }
-      } catch (err) {
-        console.error('Error fetching planned meals:', err);
+      if (error) {
+        console.error('Error fetching planned meals:', error);
         setUpcomingMeals([]);
-      } finally {
+      } else {
+        setUpcomingMeals(data || []);
+      }
+    } catch (err) {
+      console.error('Error fetching planned meals:', err);
+      setUpcomingMeals([]);
+    } finally {
+      if (showLoading) {
         setLoadingPlanned(false);
       }
-    };
-
-    fetchUpcomingMeals();
+    }
   }, [user]);
 
-  const formatDate = (dateString) => {
+  // Fetch upcoming planned meals on mount
+  useEffect(() => {
+    fetchUpcomingMeals(true);
+  }, [user, fetchUpcomingMeals]);
+
+  const formatDate = useCallback((dateString) => {
     const date = dayjs(dateString);
     const now = dayjs();
     
@@ -165,10 +176,10 @@ export default function FoodHome() {
     } else {
       return date.format('ddd, MMM D');
     }
-  };
+  }, []);
 
-  const getMealIcon = (mealName) => {
-    const name = mealName.toLowerCase();
+  const getMealIcon = useCallback((mealName) => {
+    const name = mealName?.toLowerCase() || '';
     if (name.includes('chicken') || name.includes('meat') || name.includes('beef')) {
       return <Drumstick className="w-5 h-5 text-orange-600" />;
     } else if (name.includes('salad') || name.includes('vegetable')) {
@@ -180,10 +191,10 @@ export default function FoodHome() {
     } else {
       return <Pizza className="w-5 h-5 text-blue-600" />;
     }
-  };
+  }, []);
 
-  const getMealIconBg = (mealName) => {
-    const name = mealName.toLowerCase();
+  const getMealIconBg = useCallback((mealName) => {
+    const name = mealName?.toLowerCase() || '';
     if (name.includes('chicken') || name.includes('meat') || name.includes('beef')) {
       return 'bg-orange-100 dark:bg-orange-900/20';
     } else if (name.includes('salad') || name.includes('vegetable')) {
@@ -195,7 +206,7 @@ export default function FoodHome() {
     } else {
       return 'bg-blue-100 dark:bg-blue-900/20';
     }
-  };
+  }, []);
 
   if (loading) return <LoadingSpinner />;
   if (!user) return null;
@@ -276,10 +287,13 @@ export default function FoodHome() {
                 </div>
               ) : upcomingMeals.length > 0 ? (
                 upcomingMeals.map((plannedMeal) => (
-                  <Link
+                  <button
                     key={plannedMeal.id}
-                    href={`/food/planner/${plannedMeal.id}`}
-                    className="block"
+                    onClick={() => {
+                      setSelectedPlannedMealId(plannedMeal.id);
+                      setShowPlannedMealDetailsModal(true);
+                    }}
+                    className="block w-full text-left"
                   >
                     <div className="flex items-center justify-between p-3 bg-card rounded-lg hover:bg-card/80 transition-colors">
                       <div className="flex items-center space-x-3">
@@ -295,7 +309,7 @@ export default function FoodHome() {
                       </div>
                       <Calendar className="w-4 h-4 text-muted-foreground" />
                     </div>
-                  </Link>
+                  </button>
                 ))
               ) : (
                 <div className="text-center py-8 text-muted-foreground">
@@ -411,7 +425,7 @@ export default function FoodHome() {
                 Need help planning this week&apos;s dinners?
               </p>
               <button
-                onClick={() => console.log('AI suggestion clicked')}
+                onClick={() => setShowAIModal(true)}
                 className="w-full bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium py-2 px-4 rounded-lg transition-colors"
               >
                 Ask AI
@@ -427,40 +441,7 @@ export default function FoodHome() {
         onClose={() => setShowPlanMealModal(false)}
         onSuccess={() => {
           // Refresh the upcoming meals when a meal is successfully planned
-          const fetchUpcomingMeals = async () => {
-            if (!user) return;
-            
-            setLoadingPlanned(true);
-            try {
-              const today = dayjs().format('YYYY-MM-DD');
-              const { data, error } = await supabase
-                .from('planned_meals')
-                .select(`
-                  *,
-                  meals (
-                    id,
-                    name
-                  )
-                `)
-                .eq('user_id', user.id)
-                .gte('planned_date', today)
-                .order('planned_date', { ascending: true })
-                .limit(3);
-
-              if (error) {
-                console.error('Error fetching planned meals:', error);
-                setUpcomingMeals([]);
-              } else {
-                setUpcomingMeals(data || []);
-              }
-            } catch (err) {
-              console.error('Error fetching planned meals:', err);
-              setUpcomingMeals([]);
-            } finally {
-              setLoadingPlanned(false);
-            }
-          };
-          fetchUpcomingMeals();
+          fetchUpcomingMeals(false);
         }}
       />
 
@@ -531,6 +512,61 @@ export default function FoodHome() {
           setSelectedMealId(null);
         }}
         mealId={selectedMealId}
+      />
+
+      {/* Planned Meal Details Modal */}
+      <PlannedMealDetailsModal 
+        isOpen={showPlannedMealDetailsModal} 
+        onClose={() => {
+          setShowPlannedMealDetailsModal(false);
+          setSelectedPlannedMealId(null);
+        }}
+        plannedMealId={selectedPlannedMealId}
+        onRefresh={() => {
+          // Refresh the upcoming meals when the modal is closed
+          fetchUpcomingMeals(false);
+        }}
+      />
+
+      {/* AI Meal Suggestions Modal */}
+      <AIMealSuggestionsModal
+        isOpen={showAIModal}
+        onClose={() => setShowAIModal(false)}
+        onMealAdded={() => {
+          // Refresh the recently cooked meals when a new AI meal is added
+          const fetchRecentlyCooked = async () => {
+            if (!user) return;
+            
+            setLoadingCooked(true);
+            try {
+              const { data, error } = await supabase
+                .from('cooked_meals')
+                .select(`
+                  *,
+                  meals (
+                    id,
+                    name
+                  )
+                `)
+                .eq('user_id', user.id)
+                .order('last_cooked_at', { ascending: false })
+                .limit(2);
+
+              if (error) {
+                console.error('Error fetching cooked meals:', error);
+                setRecentlyCooked([]);
+              } else {
+                setRecentlyCooked(data || []);
+              }
+            } catch (err) {
+              console.error('Error fetching cooked meals:', err);
+              setRecentlyCooked([]);
+            } finally {
+              setLoadingCooked(false);
+            }
+          };
+          fetchRecentlyCooked();
+        }}
       />
 
     </div>

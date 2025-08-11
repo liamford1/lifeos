@@ -26,14 +26,17 @@ jobs:
         run: npm ci
 
       # ---------- Quality gates ----------
-      - name: ESLint (fail on any warning)
-        run: npm run lint --max-warnings=0
+      - name: ESLint (strict mode - fail on any warning)
+        run: npm run lint:strict
 
-      - name: Type-check
-        run: npm run type-check
+      - name: TypeScript strict type-check
+        run: npm run type-check:strict
 
       - name: Unit tests (Jest)
         run: npm test -- --ci
+
+      - name: Test coverage
+        run: npm run test:coverage
 
       # ---------- Production build ----------
       - name: Build Next.js app

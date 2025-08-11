@@ -11,14 +11,14 @@ import FormSelect from '@/components/shared/FormSelect'
 import FormLabel from '@/components/shared/FormLabel'
 import { CALENDAR_SOURCES } from '@/lib/utils/calendarUtils'
 import { useToast } from '@/components/client/Toast'
-import { MdOutlineCalendarToday, MdLightbulb } from 'react-icons/md';
+import { MdOutlineCalendarToday } from 'react-icons/md';
 import dynamic from "next/dynamic";
 const CalendarCheck = dynamic(() => import("lucide-react/dist/esm/icons/calendar-check"), { ssr: false });
 import { createCalendarEventForEntity } from '@/lib/calendarSync';
 import { deleteCalendarEventForEntity } from '@/lib/calendarSync';
 import { useUser } from '@/context/UserContext';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import AIMealSuggestionsModal from '@/components/forms/AIMealSuggestionsModal';
+
 import BaseModal from '@/components/shared/BaseModal';
 import { toYMD } from '@/lib/date';
 
@@ -33,7 +33,7 @@ export default function PlanMealModal({ isOpen, onClose, onSuccess, selectedDate
   const [message, setMessage] = useState('')
   const [mealsLoading, setMealsLoading] = useState(true)
   const [plannedMealsLoading, setPlannedMealsLoading] = useState(true)
-  const [showAIModal, setShowAIModal] = useState(false)
+
   const { user, loading: userLoading } = useUser();
 
   // Set default date to selected date or today when modal opens
@@ -196,54 +196,7 @@ export default function PlanMealModal({ isOpen, onClose, onSuccess, selectedDate
     planMealMutation.mutate({ selectedMealId, plannedDate, mealTime });
   }
 
-  const handleMealAdded = () => {
-    // Refetch meals and planned meals when a new AI meal is added
-    const fetchData = async () => {
-      setMealsLoading(true);
-      setPlannedMealsLoading(true);
-      try {
-        const { data: mealsData, error: mealsError } = await supabase
-          .from('meals')
-          .select('*')
-          .order('name');
-        if (mealsError) {
-          showError('Error fetching meals:', mealsError.message);
-          setMeals([]);
-        } else {
-          setMeals(mealsData);
-        }
-      } catch (err) {
-        showError('Error fetching meals:', err.message || String(err));
-        setMeals([]);
-      } finally {
-        setMealsLoading(false);
-      }
 
-      try {
-        const { data: plannedData, error: plannedError } = await supabase
-          .from('planned_meals')
-          .select(`
-            *,
-            meals (
-              name
-            )
-          `)
-          .order('planned_date');
-        if (plannedError) {
-          showError('Error fetching planned meals:', plannedError.message);
-          setPlannedMeals([]);
-        } else {
-          setPlannedMeals(plannedData);
-        }
-      } catch (err) {
-        showError('Error fetching planned meals:', err.message || String(err));
-        setPlannedMeals([]);
-      } finally {
-        setPlannedMealsLoading(false);
-      }
-    };
-    fetchData();
-  }
 
   const handleDelete = async (id) => {
     if (!user) {
@@ -316,18 +269,7 @@ export default function PlanMealModal({ isOpen, onClose, onSuccess, selectedDate
       iconColor="text-blue-500"
       disabled={planMealMutation.isPending}
     >
-          {/* AI Suggestions Button */}
-          <div className="flex justify-end">
-            <Button
-              onClick={() => setShowAIModal(true)}
-              variant="primary"
-              size="md"
-              className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 border-0 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-            >
-              <MdLightbulb className="w-4 h-4 mr-2 text-yellow-300" />
-              AI Suggest Meals
-            </Button>
-          </div>
+
 
           {/* Form */}
           <div className="bg-card border border-border rounded-lg p-6 space-y-6">
@@ -483,13 +425,7 @@ export default function PlanMealModal({ isOpen, onClose, onSuccess, selectedDate
           )}
         </div>
 
-        {/* AI Meal Suggestions Modal */}
-        {showAIModal && (
-          <AIMealSuggestionsModal
-            onClose={() => setShowAIModal(false)}
-            onMealAdded={handleMealAdded}
-          />
-        )}
+
     </BaseModal>
   );
 } 
