@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useUser } from '@/context/UserContext';
 import LoadingSpinner from '@/components/shared/LoadingSpinner';
 import dynamic from "next/dynamic";
@@ -13,8 +13,6 @@ import AddMealModal from '@/components/modals/AddMealModal';
 
 import MealDetailsModal from '@/components/modals/MealDetailsModal';
 import BaseModal from '@/components/shared/BaseModal';
-
-import React from 'react'; // Added missing import for React
 
 // Memoized Meal Item Component
 const MealItem = React.memo(({ 

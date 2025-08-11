@@ -1,7 +1,6 @@
 'use client';
 
-import React from 'react';
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useInsertEntity, useDeleteEntity } from '@/lib/hooks/useSupabaseCrud';
 import { useUser } from '@/context/UserContext';
@@ -168,7 +167,7 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
       setFormError('Workout title and date are required.');
       return;
     }
-    let workoutId = initialWorkout?.id;
+    const workoutId = initialWorkout?.id;
 
     if (!workoutId) {
       showError('No workout ID found.');
@@ -232,7 +231,7 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
     // 5. Insert all sets for all exercises (from editedSetsByExercise and newExercisesWithSets)
     // Map sets from editor state to the correct inserted exercise IDs
     // First, handle sets for exercises (editedSetsByExercise)
-    let allSetsToInsert: Array<{exercise_id: string, reps: number, weight: number}> = [];
+    const allSetsToInsert: Array<{exercise_id: string, reps: number, weight: number}> = [];
     // For old exercises (from exercises array)
     for (let i = 0; i < exercises.length; i++) {
       const sets = editedSetsByExercise[exercises[i]?.id || ''] || [];
@@ -264,7 +263,7 @@ export default function WorkoutForm({ initialWorkout = null, initialExercises = 
     if (allSetsToInsert.length > 0) {
       try {
         await insertSetsClient(allSetsToInsert);
-      } catch (err) {
+      } catch (_err) {
         showError('Failed to insert sets.');
         return;
       }

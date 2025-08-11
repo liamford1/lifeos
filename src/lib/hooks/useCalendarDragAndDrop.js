@@ -22,7 +22,8 @@ export function useCalendarDragAndDrop({ onDrop }) {
     const d = draggingRef.current
     if (!d) return
     
-    const { startX, startY } = d
+    const startX = d.startX;
+    const startY = d.startY;
     const dx = Math.abs(evt.clientX - startX)
     const dy = Math.abs(evt.clientY - startY)
     

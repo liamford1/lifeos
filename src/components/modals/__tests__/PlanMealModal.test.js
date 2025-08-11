@@ -100,7 +100,7 @@ describe('PlanMealModal', () => {
     render(<PlanMealModal {...defaultProps} />);
     
     // Find the close button by its position (first button in header)
-    const closeButton = screen.getAllByRole('button')[0];
+    const [closeButton] = screen.getAllByRole('button');
     closeButton.click();
     
     expect(defaultProps.onClose).toHaveBeenCalled();

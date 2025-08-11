@@ -1,5 +1,6 @@
 import { supabase } from '../supabaseClient';
 import type { CalendarSource } from './calendarUtils';
+import type { PostgrestError } from '@supabase/supabase-js';
 
 interface DeleteWorkoutCascadeParams {
   workoutId: string;
@@ -23,7 +24,7 @@ interface DeleteEntityWithCalendarEventParams {
 export const deleteWorkoutCascade = async ({ 
   workoutId, 
   user_id 
-}: DeleteWorkoutCascadeParams): Promise<Error | null> => {
+}: DeleteWorkoutCascadeParams): Promise<PostgrestError | Error | null> => {
   try {
     // 1. Get all exercises for the workout
     const { data: exercises, error: exError } = await supabase
@@ -114,7 +115,7 @@ export const deleteEntityWithCalendarEvent = async ({
   id, 
   user_id, 
   source 
-}: DeleteEntityWithCalendarEventParams): Promise<Error | null> => {
+}: DeleteEntityWithCalendarEventParams): Promise<PostgrestError | Error | null> => {
   try {
     // First, delete the calendar event if it exists
     // Ensure id is a string for the query

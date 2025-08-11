@@ -17,10 +17,10 @@ const ChartsSkeleton: React.FC = React.memo(() => {
       {Array.from({ length: 2 }).map((_, index) => (
         <div key={index} className="bg-surface rounded-xl p-6 shadow-lg border border-gray-700 animate-pulse">
           <div className="flex items-center justify-between mb-4">
-            <div className="h-6 bg-gray-700 rounded w-32"></div>
-            <div className="h-8 bg-gray-700 rounded w-20"></div>
+            <div className="h-6 bg-gray-700 rounded w-32" />
+            <div className="h-8 bg-gray-700 rounded w-20" />
           </div>
-          <div className="h-48 bg-gray-800 rounded-lg"></div>
+          <div className="h-48 bg-gray-800 rounded-lg" />
         </div>
       ))}
     </div>

@@ -1,7 +1,6 @@
 "use client";
 
-import React from 'react';
-import { useEffect } from "react";
+import React, { useEffect } from 'react';
 import { useRouter } from "next/navigation";
 import { useUser } from "@/context/UserContext";
 import LoadingSpinner from "@/components/shared/LoadingSpinner";
@@ -22,7 +21,7 @@ export default function AuthGuard({ children }) {
 
   if (!user) {
     // Optionally, you could return null or a spinner here
-    return null;
+    return <div style={{ display: 'none' }} />;
   }
 
   return <>{children}</>;

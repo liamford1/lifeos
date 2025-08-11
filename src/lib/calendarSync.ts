@@ -2,6 +2,7 @@ import { supabase } from './supabaseClient';
 import { CALENDAR_SOURCES, type CalendarSource } from './utils/calendarUtils';
 import dayjs from 'dayjs';
 import type { CalendarEvent } from '@/types/calendar';
+import type { PostgrestError } from '@supabase/supabase-js';
 
 interface EntityData {
   user_id: string;
@@ -30,7 +31,7 @@ interface EntityData {
 export const createCalendarEventForEntity = async (
   type: CalendarSource, 
   entity: EntityData
-): Promise<Error | null> => {
+): Promise<PostgrestError | Error | null> => {
   try {
     let title = '';
     let start_time = '';
@@ -134,7 +135,7 @@ export const createCalendarEventForEntity = async (
  * @param event - The calendar event with updated start_time/end_time
  * @returns Returns any Supabase error encountered or null on success
  */
-export const updateLinkedEntityOnCalendarChange = async (event: CalendarEvent): Promise<Error | null> => {
+export const updateLinkedEntityOnCalendarChange = async (event: CalendarEvent): Promise<PostgrestError | Error | null> => {
   try {
     const newDate = new Date(event.start_time);
     const newDateStr = newDate.toISOString().split('T')[0] || ''; // YYYY-MM-DD format
@@ -152,7 +153,7 @@ export const updateLinkedEntityOnCalendarChange = async (event: CalendarEvent): 
         
       case CALENDAR_SOURCES.PLANNED_MEAL:
         // Update planned meal date
-        console.log('🔄 Updating planned meal in DB:', event.source_id, 'to date:', newDateStr);
+        // console.log('🔄 Updating planned meal in DB:', event.source_id, 'to date:', newDateStr);
         const { error: plannedMealError } = await supabase
           .from('planned_meals')
           .update({ planned_date: newDateStr })
@@ -162,7 +163,7 @@ export const updateLinkedEntityOnCalendarChange = async (event: CalendarEvent): 
           console.error('❌ Error updating planned meal:', plannedMealError);
           return plannedMealError;
         }
-        console.log('✅ Successfully updated planned meal in DB');
+        // console.log('✅ Successfully updated planned meal in DB');
         break;
         
       case CALENDAR_SOURCES.WORKOUT:
@@ -243,7 +244,7 @@ export const updateLinkedEntityOnCalendarChange = async (event: CalendarEvent): 
 export const deleteCalendarEventForEntity = async (
   type: CalendarSource, 
   source_id: string | number
-): Promise<Error | null> => {
+): Promise<PostgrestError | Error | null> => {
   try {
     const { error } = await supabase
       .from('calendar_events')
@@ -274,7 +275,7 @@ export const deleteCalendarEventForEntity = async (
 export const updateCalendarEventForCompletedEntity = async (
   type: CalendarSource, 
   source_id: string | number
-): Promise<Error | null> => {
+): Promise<PostgrestError | Error | null> => {
   try {
     // When a planned event is completed, we can either:
     // 1. Delete the calendar event (since it's no longer "planned")
@@ -301,7 +302,7 @@ export const cleanupPlannedSessionOnCompletion = async (
   type: CalendarSource, 
   sessionId: string, 
   userId: string
-): Promise<Error | null> => {
+): Promise<PostgrestError | Error | null> => {
   try {
     // First, check if this session was originally planned by looking at the calendar event
     const { data: calendarEvent, error: calendarError } = await supabase
@@ -309,7 +310,7 @@ export const cleanupPlannedSessionOnCompletion = async (
       .select('*')
       .eq('source', type)
       .eq('source_id', sessionId)
-      .maybeSingle();
+      .maybeSingle() as { data: CalendarEvent | null; error: PostgrestError | null };
 
     if (calendarError) {
       console.error('Error checking calendar event:', calendarError);

@@ -11,7 +11,7 @@ const CalendarView = dynamic(() => import('@/components/CalendarView'), {
   loading: () => (
     <div className="flex items-center justify-center min-h-[600px]">
       <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4" />
         <p className="text-lg text-muted-foreground">Loading calendar...</p>
       </div>
     </div>
@@ -30,7 +30,7 @@ export default function Home() {
   }, [loading, user, router]);
 
   if (loading) return <LoadingSpinner />;
-  if (!user) return null;
+  if (!user) return <div style={{ display: 'none' }} />;
 
   return (
     <div className="max-w-6xl mx-auto p-4 space-y-4">

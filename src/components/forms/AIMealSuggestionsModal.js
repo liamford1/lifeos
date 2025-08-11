@@ -17,7 +17,7 @@ export default function AIMealSuggestionsModal({ isOpen, onClose, onMealAdded })
   const queryClient = useQueryClient();
   
   const [pantryItems, setPantryItems] = useState([]);
-  const [suggestions, setSuggestions] = useState([]);
+      const [suggestions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [selectedDate, setSelectedDate] = useState('');
@@ -25,7 +25,7 @@ export default function AIMealSuggestionsModal({ isOpen, onClose, onMealAdded })
 
   // Set default date to today
   useEffect(() => {
-    const today = new Date().toISOString().split('T')[0];
+    const [today] = new Date().toISOString().split('T');
     setSelectedDate(today);
   }, []);
 
@@ -246,7 +246,7 @@ export default function AIMealSuggestionsModal({ isOpen, onClose, onMealAdded })
         >
           {loading ? (
             <>
-              <div className="w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              <div className="w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin" />
               Getting AI Suggestions...
             </>
           ) : !user ? (
@@ -274,7 +274,7 @@ export default function AIMealSuggestionsModal({ isOpen, onClose, onMealAdded })
       {loading && (
         <div className="text-center py-12">
           <div className="bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg p-8 max-w-md mx-auto">
-            <div className="w-12 h-12 border-4 border-white border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <div className="w-12 h-12 border-4 border-white border-t-transparent rounded-full animate-spin mx-auto mb-4" />
             <p className="text-white font-medium">Getting AI Suggestions...</p>
             <p className="text-purple-200 text-sm mt-2">Analyzing your pantry and creating personalized meal ideas</p>
           </div>
@@ -384,7 +384,7 @@ export default function AIMealSuggestionsModal({ isOpen, onClose, onMealAdded })
                 >
                   {addMealToPlannerMutation.isPending ? (
                     <>
-                      <div className="w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      <div className="w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin" />
                       Adding...
                     </>
                   ) : (

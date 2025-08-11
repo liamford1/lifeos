@@ -230,7 +230,7 @@ export default function WorkoutSessionModal({
           error: '' 
         } 
       }));
-    } catch (err) {
+    } catch (_err) {
       setAddSetForm((prev) => ({ 
         ...prev, 
         [exerciseId]: { 

@@ -1,7 +1,6 @@
 'use client';
 
-import React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { z } from 'zod';
 import Button from '@/components/shared/Button';
 import FormInput from '@/components/shared/FormInput';

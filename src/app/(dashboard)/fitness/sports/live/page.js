@@ -90,8 +90,8 @@ export default function LiveSportsPage() {
       }
       
       const now = new Date();
-      const today = now.toISOString().split('T')[0];
-      let sportsData = {
+      const [today] = now.toISOString().split('T');
+      const sportsData = {
         user_id: user.id,
         activity_type: activityType.trim(),
         performance_notes: performanceNotes.trim(),

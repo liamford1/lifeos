@@ -113,7 +113,7 @@ const WorkoutPlanner: React.FC<WorkoutPlannerProps> = React.memo(({
       }
       
       const now = new Date();
-      const today = now.toISOString().split('T')[0];
+      const [today] = now.toISOString().split('T');
       const workoutData = {
         user_id: (user as any).id,
         title: workoutFormData.title.trim(),
@@ -174,7 +174,7 @@ const WorkoutPlanner: React.FC<WorkoutPlannerProps> = React.memo(({
       }
       
       const now = new Date();
-      const today = now.toISOString().split('T')[0];
+      const [today] = now.toISOString().split('T');
       const cardioData = {
         user_id: (user as any).id,
         title: cardioFormData.activityType.trim(),

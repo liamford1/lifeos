@@ -11,7 +11,7 @@ export async function insertPantryItem(item: PantryItemInsert): Promise<void> {
       console.error('Server-side Supabase error:', error);
       throw error;
     }
-  } catch (serverError) {
+  } catch (_serverError) {
     // Fallback to client-side
     const { error } = await clientSupabase.from("pantry_items").insert(item);
     if (error) {

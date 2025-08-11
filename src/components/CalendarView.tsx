@@ -516,14 +516,14 @@ const CalendarView: React.FC = () => {
     if (event.source === CALENDAR_SOURCES.WORKOUT) {
       error = await deleteWorkoutCascade({
         workoutId: event.source_id.toString(),
-        user_id: user_id,
+        user_id,
       });
     } else {
       // Call deleteEntityWithCalendarEvent with correct params for other entities
       error = await deleteEntityWithCalendarEvent({
         table: sourceTable,
         id: event.source_id.toString(),
-        user_id: user_id,
+        user_id,
         source: event.source,
       });
     }
@@ -620,7 +620,7 @@ const CalendarView: React.FC = () => {
   if (eventsQuery.isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
       </div>
     );
   }

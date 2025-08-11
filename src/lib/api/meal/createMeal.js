@@ -17,12 +17,12 @@ export default async function handleCreateMeal(request) {
     if (authHeader && authHeader.startsWith('Bearer ')) {
       // Use Bearer token authentication
       const token = authHeader.substring(7);
-      const { data: userData, error: error } = await supabase.auth.getUser(token);
+      const { data: userData, error } = await supabase.auth.getUser(token);
       user = userData?.user;
       userError = error;
     } else {
       // Fall back to cookie-based authentication
-      const { data: userData, error: error } = await supabase.auth.getUser();
+      const { data: userData, error } = await supabase.auth.getUser();
       user = userData?.user;
       userError = error;
       

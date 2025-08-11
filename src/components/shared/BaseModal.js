@@ -127,7 +127,7 @@ export default function BaseModal({
     }
   };
 
-  if (!isOpen) return null;
+  if (!isOpen) return <div style={{ display: 'none' }} />;
 
   const modalContent = (
     <div

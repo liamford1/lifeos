@@ -203,7 +203,7 @@ describe('CalendarView', () => {
     
     // Find today's date element
     const today = new Date();
-    const todayString = today.toISOString().split('T')[0];
+    const [todayString] = today.toISOString().split('T');
     const todayElement = screen.getByTestId(`calendar-day-${todayString}`);
     
     // Check that the selected-day class is applied
@@ -217,7 +217,7 @@ describe('CalendarView', () => {
     // Find tomorrow's date element
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
-    const tomorrowString = tomorrow.toISOString().split('T')[0];
+    const [tomorrowString] = tomorrow.toISOString().split('T');
     const tomorrowElement = screen.getByTestId(`calendar-day-${tomorrowString}`);
     
     // Click on tomorrow's date
@@ -233,7 +233,7 @@ describe('CalendarView', () => {
     
     // Find today's date element
     const today = new Date();
-    const todayString = today.toISOString().split('T')[0];
+    const [todayString] = today.toISOString().split('T');
     const todayElement = screen.getByTestId(`calendar-day-${todayString}`);
     
     // Check that the + button is present (it should be in the tileContent)
@@ -246,7 +246,7 @@ describe('CalendarView', () => {
     
     // Find today's date element
     const today = new Date();
-    const todayString = today.toISOString().split('T')[0];
+    const [todayString] = today.toISOString().split('T');
     const todayElement = screen.getByTestId(`calendar-day-${todayString}`);
     
     // Check that the 3-line button is present

@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useState, useCallback, useMemo, useRef } from "react";
+import React, { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/context/UserContext";
-
 
 import SharedDeleteButton from "@/components/SharedDeleteButton";
 import EditButton from "@/components/EditButton";
@@ -88,11 +87,11 @@ function ActivitySkeleton() {
   return (
     <div className="bg-card border border-border rounded-lg p-4 animate-pulse">
       <div className="flex items-start gap-3">
-        <div className="w-8 h-8 bg-gray-700 rounded-full"></div>
+        <div className="w-8 h-8 bg-gray-700 rounded-full" />
         <div className="flex-1">
-          <div className="h-6 bg-gray-700 rounded mb-2 w-3/4"></div>
-          <div className="h-4 bg-gray-700 rounded mb-2 w-1/4"></div>
-          <div className="h-4 bg-gray-700 rounded mb-2 w-1/2"></div>
+          <div className="h-6 bg-gray-700 rounded mb-2 w-3/4" />
+          <div className="h-4 bg-gray-700 rounded mb-2 w-1/4" />
+          <div className="h-4 bg-gray-700 rounded mb-2 w-1/2" />
         </div>
       </div>
     </div>

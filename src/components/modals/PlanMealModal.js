@@ -14,8 +14,7 @@ import { useToast } from '@/components/client/Toast'
 import { MdOutlineCalendarToday } from 'react-icons/md';
 import dynamic from "next/dynamic";
 const CalendarCheck = dynamic(() => import("lucide-react/dist/esm/icons/calendar-check"), { ssr: false });
-import { createCalendarEventForEntity } from '@/lib/calendarSync';
-import { deleteCalendarEventForEntity } from '@/lib/calendarSync';
+import { createCalendarEventForEntity, deleteCalendarEventForEntity } from '@/lib/calendarSync';
 import { useUser } from '@/context/UserContext';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
@@ -392,7 +391,7 @@ export default function PlanMealModal({ isOpen, onClose, onSuccess, selectedDate
                             data-testid={`planned-meal-card-${item.id}`}
                           >
                             <div className="flex items-center gap-3">
-                              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                              <div className="w-2 h-2 bg-blue-500 rounded-full" />
                               <div>
                                 <div className="font-medium">{item.meals?.name}</div>
                                 <div className="text-sm text-gray-400 capitalize">

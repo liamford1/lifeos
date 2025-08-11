@@ -174,7 +174,7 @@ export default function EnhancedModal({
     }
   };
 
-  if (!isOpen) return null;
+  if (!isOpen) return <div style={{ display: 'none' }} />;
 
   // Render loading state
   if (loading) {

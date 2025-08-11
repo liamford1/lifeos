@@ -90,8 +90,8 @@ export default function LiveCardioPage() {
       }
       
       const now = new Date();
-      const today = now.toISOString().split('T')[0];
-      let cardioData = {
+      const [today] = now.toISOString().split('T');
+      const cardioData = {
         user_id: user.id,
         activity_type: activityType.trim(),
         notes: notes.trim(),

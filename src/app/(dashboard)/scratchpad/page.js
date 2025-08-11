@@ -82,8 +82,8 @@ export default function ScratchpadPage() {
     }
     const error = await deleteEntityWithCalendarEvent({
       table: 'scratchpad_entries',
-      id: id,
-      user_id: user_id,
+      id,
+      user_id,
       source: 'scratchpad',
     });
     if (error) {

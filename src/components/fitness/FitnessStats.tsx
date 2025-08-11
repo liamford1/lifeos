@@ -21,11 +21,11 @@ const MetricsSkeleton: React.FC = React.memo(() => {
         <div key={index} className="bg-surface rounded-xl p-6 shadow-lg border border-gray-700 animate-pulse">
           <div className="flex items-center justify-between">
             <div>
-              <div className="h-4 bg-gray-700 rounded mb-2 w-20"></div>
-              <div className="h-8 bg-gray-700 rounded mb-2 w-16"></div>
-              <div className="h-4 bg-gray-700 rounded w-24"></div>
+              <div className="h-4 bg-gray-700 rounded mb-2 w-20" />
+              <div className="h-8 bg-gray-700 rounded mb-2 w-16" />
+              <div className="h-4 bg-gray-700 rounded w-24" />
             </div>
-            <div className="w-8 h-8 bg-gray-700 rounded"></div>
+            <div className="w-8 h-8 bg-gray-700 rounded" />
           </div>
         </div>
       ))}
