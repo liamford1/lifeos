@@ -27,11 +27,12 @@ export class ApiClient {
     return data || [];
   }
 
-  static async getMeal(id: string): Promise<Meal | null> {
+  static async getMeal(id: string, userId: string): Promise<Meal | null> {
     const { data, error } = await supabase
       .from('meals')
       .select('*')
       .eq('id', id)
+      .eq('user_id', userId)
       .single();
     
     if (error) throw error;

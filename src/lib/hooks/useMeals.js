@@ -269,15 +269,18 @@ export function useMealQuery(mealId, userId) {
     queryKey: ['meal', mealId],
     queryFn: async () => {
       if (!mealId || !userId) return null;
+      
       const { data, error } = await supabase
         .from('meals')
         .select('*')
         .eq('id', mealId)
         .eq('user_id', userId)
         .single();
+        
       if (error) {
         throw new Error(error.message || 'Failed to fetch meal.');
       }
+      
       return data;
     },
     enabled: !!mealId && !!userId,

@@ -51,6 +51,11 @@ const MealDetailsModal = dynamic(() => import('@/components/modals/MealDetailsMo
   ssr: false
 });
 
+const PlannedMealDetailsModal = dynamic(() => import('@/components/modals/PlannedMealDetailsModal'), {
+  loading: () => <div className="animate-pulse bg-surface rounded-lg p-4">Loading planned meal details...</div>,
+  ssr: false
+});
+
 const CookingSessionModal = dynamic(() => import('@/components/modals/CookingSessionModal'), {
   loading: () => <div className="animate-pulse bg-surface rounded-lg p-4">Loading cooking session...</div>,
   ssr: false
@@ -219,6 +224,8 @@ const CalendarView: React.FC = () => {
   // Modal state management
   const [showMealDetailsModal, setShowMealDetailsModal] = useState<boolean>(false);
   const [selectedMealId, setSelectedMealId] = useState<string | null>(null);
+  const [showPlannedMealDetailsModal, setShowPlannedMealDetailsModal] = useState<boolean>(false);
+  const [selectedPlannedMealId, setSelectedPlannedMealId] = useState<string | null>(null);
   const [showCookingSessionModal, setShowCookingSessionModal] = useState<boolean>(false);
   const [cookingMealId, setCookingMealId] = useState<string | null>(null);
   
@@ -483,8 +490,6 @@ const CalendarView: React.FC = () => {
 
   const handlePlannedMealClick = async (event: CalendarEvent): Promise<void> => {
     try {
-      console.log('Planned meal click event:', event);
-      
       // Check if source_id looks like a valid UUID
       if (!event.source_id || typeof event.source_id !== 'string') {
         handleError(new Error('Invalid meal ID.'), { 
@@ -493,23 +498,18 @@ const CalendarView: React.FC = () => {
         return;
       }
 
-      // Fetch the planned meal details to verify it exists
-      const { error } = await supabase
-        .from('planned_meals')
-        .select('id')
-        .eq('id', event.source_id)
-        .single();
-
-      if (error) {
-        handleError(new Error('Could not fetch planned meal details.'), { 
-          customMessage: 'Could not fetch planned meal details.' 
+      // Check if user is available
+      if (!user?.id) {
+        handleError(new Error('User not authenticated.'), { 
+          customMessage: 'User not authenticated.' 
         });
         return;
       }
 
-      // Set the selected meal and open the meal details modal
-      setSelectedMealId(event.source_id);
-      setShowMealDetailsModal(true);
+      // Set the selected planned meal and open the planned meal details modal
+      // The modal will handle its own data fetching and error handling
+      setSelectedPlannedMealId(event.source_id);
+      setShowPlannedMealDetailsModal(true);
     } catch (error) {
       console.error('Error handling planned meal click:', error);
       handleError(error as Error, { 
@@ -771,6 +771,17 @@ const CalendarView: React.FC = () => {
           onClose={() => {
             setShowMealDetailsModal(false);
             setSelectedMealId(null);
+          }}
+        />
+      )}
+
+      {showPlannedMealDetailsModal && selectedPlannedMealId && (
+        <PlannedMealDetailsModal
+          isOpen={showPlannedMealDetailsModal}
+          plannedMealId={selectedPlannedMealId}
+          onClose={() => {
+            setShowPlannedMealDetailsModal(false);
+            setSelectedPlannedMealId(null);
           }}
         />
       )}
