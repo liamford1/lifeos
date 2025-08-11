@@ -4,9 +4,9 @@ export * from './calendar';
 export * from './fitness';
 
 // Common utility types
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   data: T | null;
-  error: any | null;
+  error: Error | null;
 }
 
 export interface PaginationParams {
@@ -23,7 +23,7 @@ export interface SortParams {
 export interface FilterParams {
   field: string;
   operator: 'eq' | 'neq' | 'gt' | 'gte' | 'lt' | 'lte' | 'like' | 'ilike' | 'in' | 'not.in';
-  value: any;
+  value: string | number | boolean | string[] | number[];
 }
 
 // Form types
@@ -43,7 +43,7 @@ export interface FormField {
 }
 
 export interface FormData {
-  [key: string]: any;
+  [key: string]: string | number | boolean | string[] | number[] | null | undefined;
 }
 
 export interface FormErrors {
@@ -72,7 +72,7 @@ export interface UserSession {
     full_name?: string;
     avatar_url?: string;
   } | null;
-  session: any | null;
+  session: unknown | null;
   loading: boolean;
 }
 

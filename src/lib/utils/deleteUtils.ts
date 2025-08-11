@@ -23,7 +23,7 @@ interface DeleteEntityWithCalendarEventParams {
 export const deleteWorkoutCascade = async ({ 
   workoutId, 
   user_id 
-}: DeleteWorkoutCascadeParams): Promise<any | null> => {
+}: DeleteWorkoutCascadeParams): Promise<Error | null> => {
   try {
     // 1. Get all exercises for the workout
     const { data: exercises, error: exError } = await supabase
@@ -96,7 +96,7 @@ export const deleteWorkoutCascade = async ({
     if (process.env.NODE_ENV !== "production") {
       console.error('Unexpected error in deleteWorkoutCascade:', error);
     }
-    return error;
+    return error instanceof Error ? error : new Error('Unknown error occurred');
   }
 };
 
@@ -114,7 +114,7 @@ export const deleteEntityWithCalendarEvent = async ({
   id, 
   user_id, 
   source 
-}: DeleteEntityWithCalendarEventParams): Promise<any | null> => {
+}: DeleteEntityWithCalendarEventParams): Promise<Error | null> => {
   try {
     // First, delete the calendar event if it exists
     // Ensure id is a string for the query
@@ -156,6 +156,6 @@ export const deleteEntityWithCalendarEvent = async ({
     if (process.env.NODE_ENV !== "production") {
       console.error('Unexpected error in deleteEntityWithCalendarEvent:', error);
     }
-    return error;
+    return error instanceof Error ? error : new Error('Unknown error occurred');
   }
 };

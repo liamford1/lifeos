@@ -34,6 +34,6 @@ export function navigateToSource(
   }
 
   if (path) {
-    router.push(path);
+    void router.push(path);
   }
 }

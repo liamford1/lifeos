@@ -30,7 +30,7 @@ interface EntityData {
 export const createCalendarEventForEntity = async (
   type: CalendarSource, 
   entity: EntityData
-): Promise<any | null> => {
+): Promise<Error | null> => {
   try {
     let title = '';
     let start_time = '';
@@ -125,7 +125,7 @@ export const createCalendarEventForEntity = async (
     if (process.env.NODE_ENV !== "production") {
       console.error('Unexpected error in createCalendarEventForEntity:', error);
     }
-    return error;
+    return error instanceof Error ? error : new Error('Unknown error occurred');
   }
 };
 
@@ -134,10 +134,10 @@ export const createCalendarEventForEntity = async (
  * @param event - The calendar event with updated start_time/end_time
  * @returns Returns any Supabase error encountered or null on success
  */
-export const updateLinkedEntityOnCalendarChange = async (event: CalendarEvent): Promise<any | null> => {
+export const updateLinkedEntityOnCalendarChange = async (event: CalendarEvent): Promise<Error | null> => {
   try {
     const newDate = new Date(event.start_time);
-    const newDateStr = newDate.toISOString().split('T')[0]; // YYYY-MM-DD format
+    const newDateStr = newDate.toISOString().split('T')[0] || ''; // YYYY-MM-DD format
     
     switch (event.source) {
       case CALENDAR_SOURCES.MEAL:
@@ -167,10 +167,10 @@ export const updateLinkedEntityOnCalendarChange = async (event: CalendarEvent): 
         
       case CALENDAR_SOURCES.WORKOUT:
         // Update workout date and times
-        const workoutUpdate: any = { date: newDateStr };
+        const workoutUpdate: Record<string, string> = { date: newDateStr };
         if (event.end_time) {
-          workoutUpdate.start_time = event.start_time;
-          workoutUpdate.end_time = event.end_time;
+          workoutUpdate['start_time'] = event.start_time;
+          workoutUpdate['end_time'] = event.end_time;
         }
         const { error: workoutError } = await supabase
           .from('fitness_workouts')
@@ -182,10 +182,10 @@ export const updateLinkedEntityOnCalendarChange = async (event: CalendarEvent): 
         
       case CALENDAR_SOURCES.CARDIO:
         // Update cardio date and times
-        const cardioUpdate: any = { date: newDateStr };
+        const cardioUpdate: Record<string, string> = { date: newDateStr };
         if (event.end_time) {
-          cardioUpdate.start_time = event.start_time;
-          cardioUpdate.end_time = event.end_time;
+          cardioUpdate['start_time'] = event.start_time;
+          cardioUpdate['end_time'] = event.end_time;
         }
         const { error: cardioError } = await supabase
           .from('fitness_cardio')
@@ -197,10 +197,10 @@ export const updateLinkedEntityOnCalendarChange = async (event: CalendarEvent): 
         
       case CALENDAR_SOURCES.SPORT:
         // Update sport date and times
-        const sportUpdate: any = { date: newDateStr };
+        const sportUpdate: Record<string, string> = { date: newDateStr };
         if (event.end_time) {
-          sportUpdate.start_time = event.start_time;
-          sportUpdate.end_time = event.end_time;
+          sportUpdate['start_time'] = event.start_time;
+          sportUpdate['end_time'] = event.end_time;
         }
         const { error: sportError } = await supabase
           .from('fitness_sports')
@@ -230,7 +230,7 @@ export const updateLinkedEntityOnCalendarChange = async (event: CalendarEvent): 
     if (process.env.NODE_ENV !== "production") {
       console.error('Unexpected error in updateLinkedEntityOnCalendarChange:', error);
     }
-    return error;
+    return error instanceof Error ? error : new Error('Unknown error occurred');
   }
 };
 
@@ -243,7 +243,7 @@ export const updateLinkedEntityOnCalendarChange = async (event: CalendarEvent): 
 export const deleteCalendarEventForEntity = async (
   type: CalendarSource, 
   source_id: string | number
-): Promise<any | null> => {
+): Promise<Error | null> => {
   try {
     const { error } = await supabase
       .from('calendar_events')
@@ -261,7 +261,7 @@ export const deleteCalendarEventForEntity = async (
     if (process.env.NODE_ENV !== "production") {
       console.error('Unexpected error in deleteCalendarEventForEntity:', error);
     }
-    return error;
+    return error instanceof Error ? error : new Error('Unknown error occurred');
   }
 };
 
@@ -274,7 +274,7 @@ export const deleteCalendarEventForEntity = async (
 export const updateCalendarEventForCompletedEntity = async (
   type: CalendarSource, 
   source_id: string | number
-): Promise<any | null> => {
+): Promise<Error | null> => {
   try {
     // When a planned event is completed, we can either:
     // 1. Delete the calendar event (since it's no longer "planned")
@@ -285,7 +285,7 @@ export const updateCalendarEventForCompletedEntity = async (
     if (process.env.NODE_ENV !== "production") {
       console.error('Unexpected error in updateCalendarEventForCompletedEntity:', error);
     }
-    return error;
+    return error instanceof Error ? error : new Error('Unknown error occurred');
   }
 };
 
@@ -301,7 +301,7 @@ export const cleanupPlannedSessionOnCompletion = async (
   type: CalendarSource, 
   sessionId: string, 
   userId: string
-): Promise<any | null> => {
+): Promise<Error | null> => {
   try {
     // First, check if this session was originally planned by looking at the calendar event
     const { data: calendarEvent, error: calendarError } = await supabase
@@ -342,7 +342,7 @@ export const cleanupPlannedSessionOnCompletion = async (
     
     const table = tableMap[type];
     if (!table) {
-      return { error: 'Unknown fitness type' };
+      return new Error('Unknown fitness type');
     }
 
     const { error: updateError } = await supabase
@@ -364,6 +364,6 @@ export const cleanupPlannedSessionOnCompletion = async (
     if (process.env.NODE_ENV !== "production") {
       console.error('Unexpected error in cleanupPlannedSessionOnCompletion:', error);
     }
-    return error;
+    return error instanceof Error ? error : new Error('Unknown error occurred');
   }
 };

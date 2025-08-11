@@ -22,8 +22,9 @@ export function useCalendarDragAndDrop({ onDrop }) {
     const d = draggingRef.current
     if (!d) return
     
-    const dx = Math.abs(evt.clientX - d.startX)
-    const dy = Math.abs(evt.clientY - d.startY)
+    const { startX, startY } = d
+    const dx = Math.abs(evt.clientX - startX)
+    const dy = Math.abs(evt.clientY - startY)
     
     if (!d.started && dx + dy < 5) return
     d.started = true
