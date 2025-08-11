@@ -198,7 +198,7 @@ export function SessionProvider({ children }) {
     }
 
     if (data && data.length > 0) {
-      const session = data[0];
+      const [session] = data;
       setMealId(session.meal_id);
       setSessionId(session.id);
       setStartedAt(session.started_at);

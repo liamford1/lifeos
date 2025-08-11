@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useCallback, useMemo, useRef } from "react";
+import { useEffect, useState, useCallback, useMemo, useRef, type ComponentType } from "react";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/context/UserContext";
 
@@ -15,7 +15,6 @@ import { useSportsSessions } from "@/lib/hooks/useSportsSessions";
 import { useStretchingSessions } from "@/lib/hooks/useStretchingSessions";
 
 import dynamic from "next/dynamic";
-import type { ComponentType } from 'react';
 
 // Dynamic imports for icons
 const Activity = dynamic(() => import("lucide-react").then(mod => ({ default: mod.Activity })), {

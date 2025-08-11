@@ -334,8 +334,8 @@ export default function WorkoutSessionModal({
       }
       
       const now = new Date();
-      const today = now.toISOString().split('T')[0];
-      let workoutData = {
+      const [today] = now.toISOString().split('T');
+      const workoutData = {
         user_id: user.id,
         title: title.trim(),
         notes: notes.trim(),

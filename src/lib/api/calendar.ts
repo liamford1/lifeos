@@ -26,7 +26,7 @@ interface CalendarEvent {
 
 export async function insertEvent(event: CalendarEvent) {
   // Set default end time to 1 hour after start time if not provided
-  let finalEvent = { ...event };
+  const finalEvent = { ...event };
   if (!finalEvent.end_time && finalEvent.start_time) {
     finalEvent.end_time = dayjs(finalEvent.start_time).add(1, 'hour').toISOString();
   }

@@ -42,7 +42,8 @@ export default async function handleMealSuggestions(request) {
         }
         const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession();
         if (refreshData?.user) {
-          user = refreshData.user;
+          const { user: refreshUser } = refreshData;
+          user = refreshUser;
         }
       }
     }
@@ -57,7 +58,8 @@ export default async function handleMealSuggestions(request) {
     }
 
     // Parse the request body
-    const { pantryItems = [], preferences = {}, dietaryRestrictions = [] } = await request.json();
+    const requestBody = await request.json();
+    const { pantryItems = [], preferences = {}, dietaryRestrictions = [] } = requestBody;
 
     // Validate input
     if (!Array.isArray(pantryItems)) {

@@ -35,7 +35,7 @@ export const deleteWorkoutCascade = async ({
       if (process.env.NODE_ENV !== "production") {
         console.error('Error fetching exercises:', exError);
       }
-      return exError;
+      return exError as PostgrestError;
     }
     const exerciseIds = exercises?.map(e => e.id) || [];
 
@@ -49,7 +49,7 @@ export const deleteWorkoutCascade = async ({
         if (process.env.NODE_ENV !== "production") {
           console.error('Error deleting sets:', setsError);
         }
-        return setsError;
+        return setsError as PostgrestError;
       }
     }
 
@@ -62,7 +62,7 @@ export const deleteWorkoutCascade = async ({
       if (process.env.NODE_ENV !== "production") {
         console.error('Error deleting exercises:', delExError);
       }
-      return delExError;
+      return delExError as PostgrestError;
     }
 
     // 4. Delete the workout itself
@@ -75,7 +75,7 @@ export const deleteWorkoutCascade = async ({
       if (process.env.NODE_ENV !== "production") {
         console.error('Error deleting workout:', workoutError);
       }
-      return workoutError;
+      return workoutError as PostgrestError;
     }
 
     // 5. Delete the calendar event if it exists
@@ -89,7 +89,7 @@ export const deleteWorkoutCascade = async ({
       if (process.env.NODE_ENV !== "production") {
         console.error('Error deleting calendar event:', calendarError);
       }
-      return calendarError;
+      return calendarError as PostgrestError;
     }
 
     return null;
@@ -132,7 +132,7 @@ export const deleteEntityWithCalendarEvent = async ({
       if (process.env.NODE_ENV !== "production") {
         console.error('Error deleting calendar event:', calendarError);
       }
-      return calendarError;
+      return calendarError as PostgrestError;
     }
 
     // Then, delete the entity from the specified table
@@ -149,7 +149,7 @@ export const deleteEntityWithCalendarEvent = async ({
       if (process.env.NODE_ENV !== "production") {
         console.error('Error deleting entity:', entityError);
       }
-      return entityError;
+      return entityError as PostgrestError;
     }
 
     return null; // Success

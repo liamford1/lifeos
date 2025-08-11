@@ -18,19 +18,22 @@ export default async function handleCreateMeal(request) {
       // Use Bearer token authentication
       const token = authHeader.substring(7);
       const { data: userData, error } = await supabase.auth.getUser(token);
-      user = userData?.user;
+      const { user: userFromData } = userData || {};
+      user = userFromData;
       userError = error;
     } else {
       // Fall back to cookie-based authentication
       const { data: userData, error } = await supabase.auth.getUser();
-      user = userData?.user;
+      const { user: userFromData } = userData || {};
+      user = userFromData;
       userError = error;
       
       // If no user, try to refresh the session
       if (!user && userError?.message?.includes('Auth session missing')) {
         const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession();
         if (refreshData?.user) {
-          user = refreshData.user;
+          const { user: refreshUser } = refreshData;
+          user = refreshUser;
         }
       }
     }
@@ -43,9 +46,10 @@ export default async function handleCreateMeal(request) {
     }
 
     // Insert the meal with user_id and created_at
+    const { id: userId } = user;
     const mealPayload = {
       ...payload,
-      user_id: user.id,
+      user_id: userId,
       created_at: new Date().toISOString(),
     };
     const { data, error } = await supabase.from('meals').insert([mealPayload]).select('id');
@@ -54,7 +58,9 @@ export default async function handleCreateMeal(request) {
       return new Response(JSON.stringify({ error: error.message }), { status: 500 });
     }
 
-    return new Response(JSON.stringify({ mealId: data[0].id }), { status: 200 });
+    const [firstData] = data;
+    const { id: mealId } = firstData;
+    return new Response(JSON.stringify({ mealId }), { status: 200 });
   } catch (err) {
     if (process.env.NODE_ENV !== "production") {
       console.error('🔥 Unexpected API error:', err);

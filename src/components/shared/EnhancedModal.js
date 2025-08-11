@@ -121,7 +121,7 @@ export default function EnhancedModal({
         (closeButtonRef.current instanceof HTMLElement ? closeButtonRef.current : null)?.focus();
       }
     };
-    let rafId = requestAnimationFrame(() => {
+    const rafId = requestAnimationFrame(() => {
       focusFirstElement();
     });
 
@@ -136,7 +136,7 @@ export default function EnhancedModal({
           'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])'
         );
         if (focusable.length === 0) return;
-        const first = focusable[0];
+        const [first] = focusable;
         const last = focusable[focusable.length - 1];
         const active = document.activeElement;
 
@@ -155,7 +155,7 @@ export default function EnhancedModal({
     return () => {
       cancelAnimationFrame(rafId);
       // Unlock body scroll if this is the last modal
-      scrollLockCount = Math.max(0, scrollLockCount - 1);
+      [scrollLockCount] = [Math.max(0, scrollLockCount - 1)];
       if (scrollLockCount === 0) {
         document.body.style.overflow = originalBodyOverflow;
         document.body.style.paddingRight = originalBodyPaddingRight;

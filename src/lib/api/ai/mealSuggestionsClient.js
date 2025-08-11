@@ -14,7 +14,7 @@ export async function getMealSuggestions(pantryItems = [], preferences = {}, die
     
     if (sessionError) {
       console.error('Session error:', sessionError);
-      throw new Error('Failed to get session: ' + sessionError.message);
+      throw new Error(`Failed to get session: ${sessionError.message}`);
     }
     
     if (!session) {
@@ -24,7 +24,7 @@ export async function getMealSuggestions(pantryItems = [], preferences = {}, die
     
     console.log('Session found:', !!session.access_token);
     
-    const response = await fetch('/api/ai/meal-suggestions', {
+    const response = await fetch(`/api/ai/meal-suggestions`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

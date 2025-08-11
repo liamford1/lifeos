@@ -7,10 +7,11 @@ export function useCalendarDragAndDrop({ onDrop }) {
 
   const startDrag = useCallback((evt, { id, originalStart, originalEnd }) => {
     // Prevent scroll hijack; only begin if pointer moved > threshold (5px)
+    const { clientX, clientY } = evt;
     draggingRef.current = { 
       id, 
-      startX: evt.clientX, 
-      startY: evt.clientY, 
+      startX: clientX, 
+      startY: clientY, 
       started: false,
       originalStart,
       originalEnd
@@ -22,10 +23,10 @@ export function useCalendarDragAndDrop({ onDrop }) {
     const d = draggingRef.current
     if (!d) return
     
-    const startX = d.startX;
-    const startY = d.startY;
-    const dx = Math.abs(evt.clientX - startX)
-    const dy = Math.abs(evt.clientY - startY)
+    const { startX, startY } = d;
+    const { clientX, clientY } = evt;
+    const dx = Math.abs(clientX - startX)
+    const dy = Math.abs(clientY - startY)
     
     if (!d.started && dx + dy < 5) return
     d.started = true
@@ -42,7 +43,7 @@ export function useCalendarDragAndDrop({ onDrop }) {
       return
     }
     
-    const id = d.id
+    const { id } = d
     draggingRef.current = null
     setDraggingId(null)
     
