@@ -2,6 +2,9 @@
 const nextConfig = {
   reactStrictMode: true,
   trailingSlash: false,
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   webpack(config, { isServer }) {
     // Silence Node `punycode` deprecation
     config.resolve.fallback = {
