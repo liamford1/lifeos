@@ -3,7 +3,7 @@ import { updateLinkedEntityOnCalendarChange } from "@/lib/calendarSync";
 import dayjs from 'dayjs';
 import type { CalendarEvent } from '@/types/calendar';
 
-export async function listEvents(userId: string) {
+export async function listEvents(userId: string): Promise<CalendarEvent[]> {
   const { data, error } = await supabase
     .from("calendar_events")
     .select("*")
@@ -11,10 +11,10 @@ export async function listEvents(userId: string) {
     .order("start_time", { ascending: true });
   
   if (error) throw error;
-  return data;
+  return (data as CalendarEvent[]) || [];
 }
 
-export async function insertEvent(event: CalendarEvent) {
+export async function insertEvent(event: CalendarEvent): Promise<void> {
   // Set default end time to 1 hour after start time if not provided
   const finalEvent = { ...event };
   if (!finalEvent.end_time && finalEvent.start_time) {
@@ -25,7 +25,7 @@ export async function insertEvent(event: CalendarEvent) {
   if (error) throw error;
 }
 
-export async function deleteEvent(id: string) {
+export async function deleteEvent(id: string): Promise<void> {
   const { error } = await supabase
     .from("calendar_events")
     .delete()
@@ -45,7 +45,7 @@ export async function updateEvent({
   newStart: string;
   newEnd?: string;
   updateLinkedEntity?: boolean;
-}) {
+}): Promise<{ event: CalendarEvent; linkedEntityUpdated: boolean }> {
   // First, get the current event to check if we need to update linked entity
   const { data: currentEvent, error: fetchError } = await supabase
     .from("calendar_events")
@@ -79,32 +79,23 @@ export async function updateEvent({
 
   // Update linked entity if requested
   let linkedEntityUpdated = false;
-  console.log('🔍 Checking linked entity update:', {
-    updateLinkedEntity,
-    source: currentEvent.source,
-    source_id: currentEvent.source_id
-  });
-  if (updateLinkedEntity && currentEvent.source && currentEvent.source_id) {
-    console.log('🔄 Calling updateLinkedEntityOnCalendarChange');
-    const finalEndTime = newEnd !== undefined ? newEnd : (currentEvent.end_time || dayjs(newStart).add(1, 'hour').toISOString());
+  const typedCurrentEvent = currentEvent as CalendarEvent;
+  
+  if (updateLinkedEntity && typedCurrentEvent.source && typedCurrentEvent.source_id) {
+    const finalEndTime = newEnd !== undefined ? newEnd : (typedCurrentEvent.end_time || dayjs(newStart).add(1, 'hour').toISOString());
     const linkedEntityError = await updateLinkedEntityOnCalendarChange({
-      ...(currentEvent as CalendarEvent),
+      ...typedCurrentEvent,
       start_time: newStart,
       end_time: finalEndTime
     });
     
     if (!linkedEntityError) {
       linkedEntityUpdated = true;
-      console.log('✅ Linked entity updated successfully');
-    } else {
-      console.error('❌ Linked entity update failed:', linkedEntityError);
     }
-  } else {
-    console.log('❌ Skipping linked entity update - conditions not met');
   }
 
   return {
-    event: updatedEvent,
+    event: updatedEvent as CalendarEvent,
     linkedEntityUpdated
   };
 } 

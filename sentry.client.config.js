@@ -14,15 +14,15 @@ Sentry.init({
   debug: false,
 
   // Configure beforeSend to filter out certain errors or modify them
-  beforeSend(event, hint) {
+  beforeSend(event, { originalException }) {
     // Don't send errors in development
     if (process.env.NODE_ENV === 'development') {
       return null;
     }
     
     // Filter out network errors that might be temporary
-    if (hint.originalException && hint.originalException.message) {
-      const message = hint.originalException.message;
+    if (originalException && originalException.message) {
+      const message = originalException.message;
       if (message.includes('net::ERR_FAILED') || 
           message.includes('Failed to fetch') ||
           message.includes('NetworkError')) {
