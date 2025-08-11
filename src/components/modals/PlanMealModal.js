@@ -11,7 +11,7 @@ import FormSelect from '@/components/shared/FormSelect'
 import FormLabel from '@/components/shared/FormLabel'
 import { CALENDAR_SOURCES } from '@/lib/utils/calendarUtils'
 import { useToast } from '@/components/client/Toast'
-import { MdOutlineCalendarToday } from 'react-icons/md';
+import { MdOutlineCalendarToday, MdLightbulb } from 'react-icons/md';
 import dynamic from "next/dynamic";
 const CalendarCheck = dynamic(() => import("lucide-react/dist/esm/icons/calendar-check"), { ssr: false });
 import { createCalendarEventForEntity, deleteCalendarEventForEntity } from '@/lib/calendarSync';
@@ -20,6 +20,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import BaseModal from '@/components/shared/BaseModal';
 import { toYMD } from '@/lib/date';
+import AIMealSuggestionsModal from '@/components/forms/AIMealSuggestionsModal';
 
 export default function PlanMealModal({ isOpen, onClose, onSuccess, selectedDate }) {
   const { showSuccess, showError } = useToast();
@@ -32,6 +33,7 @@ export default function PlanMealModal({ isOpen, onClose, onSuccess, selectedDate
   const [message, setMessage] = useState('')
   const [mealsLoading, setMealsLoading] = useState(true)
   const [plannedMealsLoading, setPlannedMealsLoading] = useState(true)
+  const [showAIModal, setShowAIModal] = useState(false)
 
   const { user, loading: userLoading } = useUser();
 
@@ -327,7 +329,16 @@ export default function PlanMealModal({ isOpen, onClose, onSuccess, selectedDate
               </div>
             </div>
 
-            <div className="flex justify-end pt-2">
+            <div className="flex justify-between items-center pt-2">
+              <Button
+                onClick={() => setShowAIModal(true)}
+                variant="secondary"
+                size="md"
+                className="flex items-center gap-2"
+              >
+                <MdLightbulb className="w-4 h-4" />
+                AI Suggest Meals
+              </Button>
               <Button
                 onClick={handlePlanMeal}
                 variant="primary"
@@ -424,7 +435,15 @@ export default function PlanMealModal({ isOpen, onClose, onSuccess, selectedDate
           )}
         </div>
 
-
-    </BaseModal>
-  );
-} 
+        {/* AI Meal Suggestions Modal */}
+        <AIMealSuggestionsModal
+          isOpen={showAIModal}
+          onClose={() => setShowAIModal(false)}
+          onMealAdded={() => {
+            setShowAIModal(false);
+            if (onSuccess) onSuccess();
+          }}
+        />
+      </BaseModal>
+    );
+  } 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, act } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import PlanMealModal from '../PlanMealModal';
 
@@ -52,10 +52,12 @@ jest.mock('@/lib/calendarSync', () => ({
 }));
 
 jest.mock('@/components/forms/AIMealSuggestionsModal', () => {
-  return function MockAIMealSuggestionsModal({ onClose }) {
+  return function MockAIMealSuggestionsModal({ isOpen, onClose, onMealAdded }) {
+    if (!isOpen) return null;
     return (
       <div data-testid="ai-meal-suggestions-modal">
         <button onClick={onClose}>Close AI Modal</button>
+        <button onClick={() => onMealAdded && onMealAdded()}>Add Meal</button>
       </div>
     );
   };
@@ -68,10 +70,16 @@ describe('PlanMealModal', () => {
     onSuccess: jest.fn()
   };
 
-  it('renders when isOpen is true', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('renders when isOpen is true', async () => {
     render(<PlanMealModal {...defaultProps} />);
     
-    expect(screen.getByText('Plan a Meal')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('Plan a Meal')).toBeInTheDocument();
+    });
     expect(screen.getByText('Schedule meals for the week ahead')).toBeInTheDocument();
   });
 
@@ -81,45 +89,54 @@ describe('PlanMealModal', () => {
     expect(screen.queryByText('Plan a Meal')).not.toBeInTheDocument();
   });
 
-  it('displays the meal selection form', () => {
+  it('displays the meal selection form', async () => {
     render(<PlanMealModal {...defaultProps} />);
     
-    expect(screen.getByTestId('meal-select')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByTestId('meal-select')).toBeInTheDocument();
+    });
     expect(screen.getByTestId('meal-time-select')).toBeInTheDocument();
     // Check that the dinner option exists in the select
     expect(screen.getByText('Dinner')).toBeInTheDocument();
   });
 
-  it('shows AI suggestions button', () => {
+  it('shows AI suggestions button', async () => {
     render(<PlanMealModal {...defaultProps} />);
     
-    expect(screen.getByText('AI Suggest Meals')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('AI Suggest Meals')).toBeInTheDocument();
+    });
   });
 
-  it('calls onClose when close button is clicked', () => {
+  it('calls onClose when close button is clicked', async () => {
     render(<PlanMealModal {...defaultProps} />);
     
-    // Find the close button by its position (first button in header)
-    const [closeButton] = screen.getAllByRole('button');
-    closeButton.click();
+    await waitFor(() => {
+      const closeButton = screen.getByRole('button', { name: /close modal/i });
+      closeButton.click();
+    });
     
     expect(defaultProps.onClose).toHaveBeenCalled();
   });
 
-  it('sets default date to today when no selectedDate is provided', () => {
+  it('sets default date to today when no selectedDate is provided', async () => {
     render(<PlanMealModal {...defaultProps} />);
     
-    // Find the date input and check that it has a value
-    const dateInput = screen.getByDisplayValue(/^\d{4}-\d{2}-\d{2}$/);
-    expect(dateInput).toBeInTheDocument();
-    expect(dateInput).toHaveAttribute('type', 'date');
+    await waitFor(() => {
+      // Find the date input and check that it has a value
+      const dateInput = screen.getByDisplayValue(/^\d{4}-\d{2}-\d{2}$/);
+      expect(dateInput).toBeInTheDocument();
+      expect(dateInput).toHaveAttribute('type', 'date');
+    });
   });
 
-  it('sets date to selectedDate when provided', () => {
+  it('sets date to selectedDate when provided', async () => {
     const selectedDate = '2024-01-15';
     render(<PlanMealModal {...defaultProps} selectedDate={selectedDate} />);
     
-    const dateInput = screen.getByDisplayValue(selectedDate);
-    expect(dateInput).toBeInTheDocument();
+    await waitFor(() => {
+      const dateInput = screen.getByDisplayValue(selectedDate);
+      expect(dateInput).toBeInTheDocument();
+    });
   });
 }); 

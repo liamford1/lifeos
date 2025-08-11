@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import AIMealSuggestionsModal from '../AIMealSuggestionsModal';
 
 // Mock dependencies
@@ -95,6 +95,7 @@ describe('AIMealSuggestionsModal', () => {
   it('renders the modal with pantry summary', async () => {
     render(
       <AIMealSuggestionsModal
+        isOpen={true}
         onClose={mockOnClose}
         onMealAdded={mockOnMealAdded}
       />
@@ -113,6 +114,7 @@ describe('AIMealSuggestionsModal', () => {
   it('shows get suggestions button', async () => {
     render(
       <AIMealSuggestionsModal
+        isOpen={true}
         onClose={mockOnClose}
         onMealAdded={mockOnMealAdded}
       />
@@ -126,6 +128,7 @@ describe('AIMealSuggestionsModal', () => {
   it('calls onClose when close button is clicked', async () => {
     render(
       <AIMealSuggestionsModal
+        isOpen={true}
         onClose={mockOnClose}
         onMealAdded={mockOnMealAdded}
       />
@@ -142,6 +145,7 @@ describe('AIMealSuggestionsModal', () => {
   it('displays suggestions after clicking get suggestions button', async () => {
     render(
       <AIMealSuggestionsModal
+        isOpen={true}
         onClose={mockOnClose}
         onMealAdded={mockOnMealAdded}
       />
@@ -165,6 +169,7 @@ describe('AIMealSuggestionsModal', () => {
   it('shows date and time selection when suggestions are displayed', async () => {
     render(
       <AIMealSuggestionsModal
+        isOpen={true}
         onClose={mockOnClose}
         onMealAdded={mockOnMealAdded}
       />
@@ -187,6 +192,7 @@ describe('AIMealSuggestionsModal', () => {
   it('shows add to planner button for each suggestion', async () => {
     render(
       <AIMealSuggestionsModal
+        isOpen={true}
         onClose={mockOnClose}
         onMealAdded={mockOnMealAdded}
       />
@@ -209,6 +215,7 @@ describe('AIMealSuggestionsModal', () => {
   it('displays meal details correctly', async () => {
     render(
       <AIMealSuggestionsModal
+        isOpen={true}
         onClose={mockOnClose}
         onMealAdded={mockOnMealAdded}
       />

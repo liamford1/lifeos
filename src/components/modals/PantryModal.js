@@ -21,8 +21,44 @@ export default function PantryModal({ isOpen, onClose }) {
   const [showManualAddModal, setShowManualAddModal] = useState(false);
   const [showAddReceiptModal, setShowAddReceiptModal] = useState(false);
 
-  // fetchInventory must be defined before useEffect, so move it above
-  const fetchInventory = useCallback(async () => {
+  useEffect(() => {
+    if (user && isOpen) {
+      const fetchInventory = async () => {
+        if (!user) {
+          return;
+        }
+
+        const { data, error } = await import('@/lib/supabaseClient').then(m => m.supabase.from('food_items').select(`
+            id,
+            name,
+            quantity,
+            unit,
+            added_from,
+            added_at,
+            receipt_id,
+            receipts (
+              store_name,
+              scanned_at
+            )
+          `).eq('user_id', user.id).order('added_at', { ascending: false }))
+
+        if (error) {
+          if (process.env.NODE_ENV !== "production") {
+            console.error('Error fetching inventory:', error)
+          }
+        } else {
+          setItems(data)
+        }
+
+        setInventoryLoading(false)
+      };
+      fetchInventory();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, isOpen]);
+
+  // Function to refresh inventory (for use in callbacks)
+  const refreshInventory = async () => {
     if (!user) {
       return;
     }
@@ -50,13 +86,7 @@ export default function PantryModal({ isOpen, onClose }) {
     }
 
     setInventoryLoading(false)
-  }, [user]);
-
-  useEffect(() => {
-    if (user && isOpen) {
-      fetchInventory();
-    }
-  }, [user, isOpen, fetchInventory]);
+  };
 
   if (!isOpen) return null;
 
@@ -214,7 +244,7 @@ export default function PantryModal({ isOpen, onClose }) {
         {showManualAddModal && (
           <ManualPantryItemModal 
             onClose={() => setShowManualAddModal(false)}
-            onAddSuccess={fetchInventory}
+            onAddSuccess={refreshInventory}
           />
         )}
 
@@ -222,7 +252,7 @@ export default function PantryModal({ isOpen, onClose }) {
         <AddReceiptModal 
           isOpen={showAddReceiptModal} 
           onClose={() => setShowAddReceiptModal(false)}
-          onSuccess={fetchInventory}
+          onSuccess={refreshInventory}
         />
     </BaseModal>
   );

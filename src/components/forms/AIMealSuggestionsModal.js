@@ -17,7 +17,7 @@ export default function AIMealSuggestionsModal({ isOpen, onClose, onMealAdded })
   const queryClient = useQueryClient();
   
   const [pantryItems, setPantryItems] = useState([]);
-      const [suggestions] = useState([]);
+  const [suggestions, setSuggestions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [selectedDate, setSelectedDate] = useState('');

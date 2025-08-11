@@ -32,8 +32,9 @@ describe('Calendar Sync Integration', () => {
       planned_date: '2024-01-15'
     };
 
-    // The function converts the date to midnight UTC
-    const expectedStartTime = new Date('2024-01-15').toISOString();
+    // The function creates a local date at noon to avoid timezone issues
+    const localDate = new Date(2024, 0, 15, 12, 0, 0); // January 15, 2024 at noon
+    const expectedStartTime = localDate.toISOString();
     const expectedEndTime = dayjs(expectedStartTime).add(1, 'hour').toISOString();
 
     await createCalendarEventForEntity('planned_meal', entity);
@@ -66,7 +67,7 @@ describe('Calendar Sync Integration', () => {
       notes: 'Test notes'
     };
 
-    // The function converts the date to midnight UTC
+    // The function uses entity.date for start_time
     const expectedStartTime = new Date('2024-01-15').toISOString();
     const expectedEndTime = dayjs(expectedStartTime).add(1, 'hour').toISOString();
 
