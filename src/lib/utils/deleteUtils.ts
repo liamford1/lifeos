@@ -37,7 +37,7 @@ export const deleteWorkoutCascade = async ({
       }
       return exError as PostgrestError;
     }
-    const exerciseIds = exercises?.map(e => e.id) || [];
+    const exerciseIds = (exercises as { id: string }[])?.map(e => e.id) || [];
 
     // 2. Delete all sets for those exercises
     if (exerciseIds.length > 0) {

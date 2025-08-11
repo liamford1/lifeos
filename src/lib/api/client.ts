@@ -24,7 +24,7 @@ export class ApiClient {
       .order('created_at', { ascending: false });
     
     if (error) throw error;
-    return data || [];
+    return (data as Meal[]) || [];
   }
 
   static async getMeal(id: string, userId: string): Promise<Meal | null> {
@@ -36,7 +36,7 @@ export class ApiClient {
       .single();
     
     if (error) throw error;
-    return data;
+    return data as Meal | null;
   }
 
   static async createMeal(meal: MealInsert): Promise<Meal> {
@@ -47,7 +47,7 @@ export class ApiClient {
       .single();
     
     if (error) throw error;
-    return data;
+    return data as Meal;
   }
 
   static async updateMeal(id: string, updates: MealUpdate): Promise<Meal> {
@@ -59,7 +59,7 @@ export class ApiClient {
       .single();
     
     if (error) throw error;
-    return data;
+    return data as Meal;
   }
 
   static async deleteMeal(id: string): Promise<void> {
@@ -80,7 +80,7 @@ export class ApiClient {
       .order('created_at', { ascending: false });
     
     if (error) throw error;
-    return data || [];
+    return (data as PantryItem[]) || [];
   }
 
   static async createPantryItem(item: PantryItemInsert): Promise<PantryItem> {
@@ -91,7 +91,7 @@ export class ApiClient {
       .single();
     
     if (error) throw error;
-    return data;
+    return data as PantryItem;
   }
 
   static async updatePantryItem(id: string, updates: PantryItemUpdate): Promise<PantryItem> {
@@ -103,7 +103,7 @@ export class ApiClient {
       .single();
     
     if (error) throw error;
-    return data;
+    return data as PantryItem;
   }
 
   static async deletePantryItem(id: string): Promise<void> {
@@ -124,7 +124,7 @@ export class ApiClient {
       .order('created_at', { ascending: false });
     
     if (error) throw error;
-    return data || [];
+    return (data as Workout[]) || [];
   }
 
   static async createWorkout(workout: WorkoutInsert): Promise<Workout> {
@@ -135,7 +135,7 @@ export class ApiClient {
       .single();
     
     if (error) throw error;
-    return data;
+    return data as Workout;
   }
 
   static async updateWorkout(id: string, updates: WorkoutUpdate): Promise<Workout> {
@@ -147,7 +147,7 @@ export class ApiClient {
       .single();
     
     if (error) throw error;
-    return data;
+    return data as Workout;
   }
 
   static async deleteWorkout(id: string): Promise<void> {
@@ -168,7 +168,7 @@ export class ApiClient {
       .order('started_at', { ascending: false });
     
     if (error) throw error;
-    return data || [];
+    return (data as WorkoutSession[]) || [];
   }
 
   static async createWorkoutSession(session: WorkoutSessionInsert): Promise<WorkoutSession> {
@@ -179,7 +179,7 @@ export class ApiClient {
       .single();
     
     if (error) throw error;
-    return data;
+    return data as WorkoutSession;
   }
 
   static async updateWorkoutSession(id: string, updates: WorkoutSessionUpdate): Promise<WorkoutSession> {
@@ -191,7 +191,7 @@ export class ApiClient {
       .single();
     
     if (error) throw error;
-    return data;
+    return data as WorkoutSession;
   }
 
   // Cardio Sessions
@@ -203,7 +203,7 @@ export class ApiClient {
       .order('started_at', { ascending: false });
     
     if (error) throw error;
-    return data || [];
+    return (data as CardioSession[]) || [];
   }
 
   static async createCardioSession(session: CardioSessionInsert): Promise<CardioSession> {
@@ -214,7 +214,7 @@ export class ApiClient {
       .single();
     
     if (error) throw error;
-    return data;
+    return data as CardioSession;
   }
 
   static async updateCardioSession(id: string, updates: CardioSessionUpdate): Promise<CardioSession> {
@@ -226,7 +226,7 @@ export class ApiClient {
       .single();
     
     if (error) throw error;
-    return data;
+    return data as CardioSession;
   }
 
   // Sports Sessions
@@ -238,7 +238,7 @@ export class ApiClient {
       .order('started_at', { ascending: false });
     
     if (error) throw error;
-    return data || [];
+    return (data as SportsSession[]) || [];
   }
 
   static async createSportsSession(session: SportsSessionInsert): Promise<SportsSession> {
@@ -249,7 +249,7 @@ export class ApiClient {
       .single();
     
     if (error) throw error;
-    return data;
+    return data as SportsSession;
   }
 
   static async updateSportsSession(id: string, updates: SportsSessionUpdate): Promise<SportsSession> {
@@ -261,7 +261,7 @@ export class ApiClient {
       .single();
     
     if (error) throw error;
-    return data;
+    return data as SportsSession;
   }
 
   // Stretching Sessions
@@ -273,7 +273,7 @@ export class ApiClient {
       .order('started_at', { ascending: false });
     
     if (error) throw error;
-    return data || [];
+    return (data as StretchingSession[]) || [];
   }
 
   static async createStretchingSession(session: StretchingSessionInsert): Promise<StretchingSession> {
@@ -284,7 +284,7 @@ export class ApiClient {
       .single();
     
     if (error) throw error;
-    return data;
+    return data as StretchingSession;
   }
 
   static async updateStretchingSession(id: string, updates: StretchingSessionUpdate): Promise<StretchingSession> {
@@ -296,7 +296,7 @@ export class ApiClient {
       .single();
     
     if (error) throw error;
-    return data;
+    return data as StretchingSession;
   }
 
   // Expenses
@@ -308,7 +308,7 @@ export class ApiClient {
       .order('date', { ascending: false });
     
     if (error) throw error;
-    return data || [];
+    return (data as Expense[]) || [];
   }
 
   static async createExpense(expense: ExpenseInsert): Promise<Expense> {
@@ -319,7 +319,7 @@ export class ApiClient {
       .single();
     
     if (error) throw error;
-    return data;
+    return data as Expense;
   }
 
   static async updateExpense(id: string, updates: ExpenseUpdate): Promise<Expense> {
@@ -331,7 +331,7 @@ export class ApiClient {
       .single();
     
     if (error) throw error;
-    return data;
+    return data as Expense;
   }
 
   static async deleteExpense(id: string): Promise<void> {
@@ -352,7 +352,7 @@ export class ApiClient {
       .order('date', { ascending: false });
     
     if (error) throw error;
-    return data || [];
+    return (data as Receipt[]) || [];
   }
 
   static async createReceipt(receipt: ReceiptInsert): Promise<Receipt> {
@@ -363,7 +363,7 @@ export class ApiClient {
       .single();
     
     if (error) throw error;
-    return data;
+    return data as Receipt;
   }
 
   static async updateReceipt(id: string, updates: ReceiptUpdate): Promise<Receipt> {
@@ -375,7 +375,7 @@ export class ApiClient {
       .single();
     
     if (error) throw error;
-    return data;
+    return data as Receipt;
   }
 
   static async deleteReceipt(id: string): Promise<void> {
@@ -396,7 +396,7 @@ export class ApiClient {
       .order('updated_at', { ascending: false });
     
     if (error) throw error;
-    return data || [];
+    return (data as ScratchpadNote[]) || [];
   }
 
   static async getScratchpadNote(id: string): Promise<ScratchpadNote | null> {
@@ -407,7 +407,7 @@ export class ApiClient {
       .single();
     
     if (error) throw error;
-    return data;
+    return data as ScratchpadNote | null;
   }
 
   static async createScratchpadNote(note: ScratchpadNoteInsert): Promise<ScratchpadNote> {
@@ -418,7 +418,7 @@ export class ApiClient {
       .single();
     
     if (error) throw error;
-    return data;
+    return data as ScratchpadNote;
   }
 
   static async updateScratchpadNote(id: string, updates: ScratchpadNoteUpdate): Promise<ScratchpadNote> {
@@ -430,7 +430,7 @@ export class ApiClient {
       .single();
     
     if (error) throw error;
-    return data;
+    return data as ScratchpadNote;
   }
 
   static async deleteScratchpadNote(id: string): Promise<void> {
@@ -451,7 +451,7 @@ export class ApiClient {
       .single();
     
     if (error) throw error;
-    return data;
+    return data as Profile | null;
   }
 
   static async updateProfile(userId: string, updates: ProfileUpdate): Promise<Profile> {
@@ -463,6 +463,6 @@ export class ApiClient {
       .single();
     
     if (error) throw error;
-    return data;
+    return data as Profile;
   }
 }
