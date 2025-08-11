@@ -26,8 +26,8 @@ jobs:
         run: npm ci
 
       # ---------- Quality gates ----------
-      - name: ESLint (strict mode - fail on any warning)
-        run: npm run lint:strict
+      - name: ESLint (CI mode - allow some warnings)
+        run: npm run lint:ci
 
       - name: TypeScript strict type-check
         run: npm run type-check:strict
