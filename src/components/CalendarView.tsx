@@ -18,7 +18,7 @@
  * - Target date computed from pointer position over calendar cells
  */
 
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useRef } from 'react';
 import { useUser } from '@/context/UserContext';
 import Calendar from "@/components/client/CalendarClient";
 import 'react-calendar/dist/Calendar.css';
@@ -32,9 +32,8 @@ import Button from '@/components/shared/Button';
 import { useCalendarDragAndDrop } from '@/lib/hooks/useCalendarDragAndDrop';
 import { useApiError } from '@/lib/hooks/useApiError';
 import { useToast } from '@/components/client/Toast';
-import { MdOutlineCalendarToday } from 'react-icons/md';
+import { MdOutlineCalendarToday, MdRestaurant, MdFitnessCenter, MdEvent, MdAdd, MdDragIndicator, MdFlashOn } from 'react-icons/md';
 import { supabase } from '@/lib/supabaseClient';
-import { MdRestaurant, MdFitnessCenter, MdEvent, MdAdd, MdDragIndicator, MdFlashOn } from 'react-icons/md';
 import { toYMD } from '@/lib/date';
 import dynamic from 'next/dynamic';
 import { 
@@ -226,8 +225,15 @@ const CalendarView: React.FC = () => {
   const [selectedMealId, setSelectedMealId] = useState<string | null>(null);
   const [showPlannedMealDetailsModal, setShowPlannedMealDetailsModal] = useState<boolean>(false);
   const [selectedPlannedMealId, setSelectedPlannedMealId] = useState<string | null>(null);
+  const [selectedPlannedMealEvent, setSelectedPlannedMealEvent] = useState<CalendarEvent | null>(null);
   const [showCookingSessionModal, setShowCookingSessionModal] = useState<boolean>(false);
   const [cookingMealId, setCookingMealId] = useState<string | null>(null);
+  const plannedMealRefreshFnRef = useRef<(() => void) | null>(null);
+  const [plannedMealRefreshKey, setPlannedMealRefreshKey] = useState<number>(0);
+  
+  const setPlannedMealRefreshFn = useCallback((refreshFn: () => void) => {
+    plannedMealRefreshFnRef.current = refreshFn;
+  }, []);
   
 
 
@@ -261,6 +267,7 @@ const CalendarView: React.FC = () => {
     originalStart: string;
     originalEnd?: string;
   }) => {
+    console.log('🎯 handleEventDrop called with:', { id, newStartISO, originalStart, originalEnd });
     if (!user) return;
 
     // Find the event to update
@@ -285,6 +292,12 @@ const CalendarView: React.FC = () => {
     queryClient.setQueryData(["events", (user as any)?.id], updatedEvents);
 
     try {
+      console.log('🌐 Making API call to update event:', {
+        id,
+        userId: (user as any).id,
+        newStart: newStartISO,
+        updateLinkedEntity: true
+      });
       const response = await fetch("/api/calendar/update", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -315,6 +328,27 @@ const CalendarView: React.FC = () => {
         queryClient.invalidateQueries({ queryKey: ["events", (user as any)?.id] });
       });
 
+      // Refresh planned meal modal if this is a planned meal event
+      console.log('🔍 Checking refresh conditions:', {
+        hasRefreshFn: !!plannedMealRefreshFnRef.current,
+        eventSource: event.source,
+        expectedSource: CALENDAR_SOURCES.PLANNED_MEAL,
+        modalOpen: showPlannedMealDetailsModal,
+        selectedPlannedMealId
+      });
+      
+      if (event.source === CALENDAR_SOURCES.PLANNED_MEAL) {
+        // Always increment the refresh key to force modal refresh when it opens
+        setPlannedMealRefreshKey(prev => prev + 1);
+        console.log('🔄 Incremented planned meal refresh key');
+        
+        // If modal is open, also call the refresh function
+        if (plannedMealRefreshFnRef.current) {
+          console.log('🔄 Calling refresh function for planned meal event:', event.id);
+          plannedMealRefreshFnRef.current();
+        }
+      }
+
     } catch (error) {
       // Rollback on error
       queryClient.setQueryData(["events", (user as any)?.id], events);
@@ -324,9 +358,26 @@ const CalendarView: React.FC = () => {
     }
   }, [events, user, queryClient, handleError, showSuccess]);
 
-  const { draggingId, startDrag } = useCalendarDragAndDrop({
+  const { draggingId, startDrag, moveDrag, endDrag } = useCalendarDragAndDrop({
     onDrop: handleEventDrop
   });
+
+  // Compute target date function for drag and drop
+  const computeTargetDate = useCallback((evt: PointerEvent) => {
+    const target = evt.target as HTMLElement;
+    const dayCell = target.closest('[data-date]') as HTMLElement;
+    if (!dayCell) return null;
+    
+    const dateStr = dayCell.getAttribute('data-date');
+    if (!dateStr) return null;
+    
+    // Fix timezone issue: create date in local timezone
+    const parts = dateStr.split('-').map(Number);
+    if (parts.length !== 3) return null;
+    const [year, month, day] = parts as [number, number, number];
+    const localDate = new Date(year, month - 1, day, 12, 0, 0); // Use noon to avoid timezone issues
+    return localDate.toISOString();
+  }, []);
 
 
 
@@ -509,6 +560,7 @@ const CalendarView: React.FC = () => {
       // Set the selected planned meal and open the planned meal details modal
       // The modal will handle its own data fetching and error handling
       setSelectedPlannedMealId(event.source_id);
+      setSelectedPlannedMealEvent(event);
       setShowPlannedMealDetailsModal(true);
     } catch (error) {
       console.error('Error handling planned meal click:', error);
@@ -586,7 +638,11 @@ const CalendarView: React.FC = () => {
   }
 
   return (
-    <div className="w-full max-w-6xl mx-auto p-4">
+    <div 
+      className="w-full max-w-6xl mx-auto p-4"
+      onPointerMove={moveDrag}
+      onPointerUp={(e) => endDrag(e, { computeTargetDate })}
+    >
       {/* Quick Actions */}
       <div className="mb-4">
         <h3 className="text-lg font-semibold mb-2 text-gray-300 flex items-center">
@@ -775,14 +831,19 @@ const CalendarView: React.FC = () => {
         />
       )}
 
-      {showPlannedMealDetailsModal && selectedPlannedMealId && (
+      {showPlannedMealDetailsModal && selectedPlannedMealId && selectedPlannedMealEvent && (
         <PlannedMealDetailsModal
           isOpen={showPlannedMealDetailsModal}
           plannedMealId={selectedPlannedMealId}
+          calendarEvent={selectedPlannedMealEvent}
+          refreshKey={plannedMealRefreshKey}
           onClose={() => {
             setShowPlannedMealDetailsModal(false);
             setSelectedPlannedMealId(null);
+            setSelectedPlannedMealEvent(null);
+            plannedMealRefreshFnRef.current = null;
           }}
+          onRefresh={setPlannedMealRefreshFn}
         />
       )}
 

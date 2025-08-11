@@ -16,7 +16,7 @@ import { UtensilsCrossed } from 'lucide-react';
 import { deleteCalendarEventForEntity } from '@/lib/calendarSync';
 import { CALENDAR_SOURCES } from '@/lib/utils/calendarUtils';
 
-export default function PlannedMealDetailsModal({ isOpen, onClose, plannedMealId }) {
+export default function PlannedMealDetailsModal({ isOpen, onClose, plannedMealId, calendarEvent, refreshKey, onRefresh }) {
   const { user, loading: userLoading } = useUser();
   const router = useRouter();
   const { showSuccess, showError } = useToast();
@@ -26,6 +26,7 @@ export default function PlannedMealDetailsModal({ isOpen, onClose, plannedMealId
   const [loading, setLoading] = useState(false);
   const [ingredientsLoading, setIngredientsLoading] = useState(false);
   const [showCookingSessionModal, setShowCookingSessionModal] = useState(false);
+  const [internalRefreshKey, setInternalRefreshKey] = useState(0);
 
   // Fetch planned meal data
   useEffect(() => {
@@ -63,6 +64,7 @@ export default function PlannedMealDetailsModal({ isOpen, onClose, plannedMealId
     const fetchPlannedMealAndIngredients = async () => {
       setLoading(true);
       try {
+        // Add cache-busting by including refreshKey in the query
         const { data, error } = await supabase
           .from('planned_meals')
           .select(`
@@ -95,6 +97,8 @@ export default function PlannedMealDetailsModal({ isOpen, onClose, plannedMealId
           return;
         }
 
+        console.log('📊 Planned meal modal fetched data:', data);
+        console.log('📅 Planned date from DB:', data?.planned_date);
         setPlannedMeal(data);
         // Fetch ingredients using the meal_id from the planned meal
         await fetchIngredients(data.meal_id);
@@ -107,7 +111,17 @@ export default function PlannedMealDetailsModal({ isOpen, onClose, plannedMealId
     };
 
     fetchPlannedMealAndIngredients();
-  }, [isOpen, plannedMealId, user?.id, handleError]);
+  }, [isOpen, plannedMealId, user?.id, handleError, refreshKey, internalRefreshKey]);
+
+  // Expose refresh function to parent component
+  useEffect(() => {
+    if (onRefresh) {
+      onRefresh(() => {
+        console.log('🔄 Refresh function called, incrementing internal refreshKey');
+        setInternalRefreshKey(prev => prev + 1);
+      });
+    }
+  }, [onRefresh]);
 
   // Don't render if not open
   if (!isOpen) return null;
@@ -235,7 +249,11 @@ export default function PlannedMealDetailsModal({ isOpen, onClose, plannedMealId
       >
         <div className="space-y-6">
           <div className="flex flex-wrap gap-4 items-center text-xs text-zinc-500 mt-1">
-            <span>Planned for: {new Date(plannedMeal.planned_date).toLocaleDateString()}</span>
+            <span>Planned for: {(() => {
+              // Use the calendar event's current date instead of the database date
+              const eventDate = new Date(calendarEvent.start_time);
+              return eventDate.toLocaleDateString();
+            })()}</span>
             {plannedMeal.meal_time && <span>Time: {plannedMeal.meal_time}</span>}
             {plannedMeal.meals?.prep_time && <span>Prep: {plannedMeal.meals.prep_time} min</span>}
             {plannedMeal.meals?.cook_time && <span>Cook: {plannedMeal.meals.cook_time} min</span>}

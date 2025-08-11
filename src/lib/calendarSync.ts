@@ -52,7 +52,19 @@ export const createCalendarEventForEntity = async (
           mealTimeDisplay = firstChar.toUpperCase() + rest;
         }
         title = `${mealTimeDisplay}: ${entity.meal_name || entity.name || ''}`;
-        start_time = entity.planned_date ? new Date(entity.planned_date).toISOString() : new Date().toISOString();
+        // Fix timezone issue: create date in local timezone
+        if (entity.planned_date) {
+          const parts = entity.planned_date.split('-').map(Number);
+          if (parts.length === 3) {
+            const [year, month, day] = parts as [number, number, number];
+            const localDate = new Date(year, month - 1, day, 12, 0, 0); // Use noon to avoid timezone issues
+            start_time = localDate.toISOString();
+          } else {
+            start_time = new Date().toISOString();
+          }
+        } else {
+          start_time = new Date().toISOString();
+        }
         description = entity.description || '';
         break;
       case CALENDAR_SOURCES.WORKOUT:
@@ -140,12 +152,17 @@ export const updateLinkedEntityOnCalendarChange = async (event: CalendarEvent): 
         
       case CALENDAR_SOURCES.PLANNED_MEAL:
         // Update planned meal date
+        console.log('🔄 Updating planned meal in DB:', event.source_id, 'to date:', newDateStr);
         const { error: plannedMealError } = await supabase
           .from('planned_meals')
           .update({ planned_date: newDateStr })
           .eq('id', event.source_id)
           .eq('user_id', event.user_id);
-        if (plannedMealError) return plannedMealError;
+        if (plannedMealError) {
+          console.error('❌ Error updating planned meal:', plannedMealError);
+          return plannedMealError;
+        }
+        console.log('✅ Successfully updated planned meal in DB');
         break;
         
       case CALENDAR_SOURCES.WORKOUT:
