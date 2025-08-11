@@ -12,6 +12,7 @@ import MealsModal from '@/components/modals/MealsModal';
 import AddReceiptModal from '@/components/modals/AddReceiptModal';
 import MealDetailsModal from '@/components/modals/MealDetailsModal';
 import PlannedMealDetailsModal from '@/components/modals/PlannedMealDetailsModal';
+import AIMealSuggestionsModal from '@/components/forms/AIMealSuggestionsModal';
 
 import dynamic from "next/dynamic";
 import { supabase } from '@/lib/supabaseClient';
@@ -52,6 +53,7 @@ export default function FoodHome() {
   const [selectedMealId, setSelectedMealId] = useState(null);
   const [showPlannedMealDetailsModal, setShowPlannedMealDetailsModal] = useState(false);
   const [selectedPlannedMealId, setSelectedPlannedMealId] = useState(null);
+  const [showAIModal, setShowAIModal] = useState(false);
 
 
   useEffect(() => {
@@ -423,7 +425,7 @@ export default function FoodHome() {
                 Need help planning this week&apos;s dinners?
               </p>
               <button
-                onClick={() => console.log('AI suggestion clicked')}
+                onClick={() => setShowAIModal(true)}
                 className="w-full bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium py-2 px-4 rounded-lg transition-colors"
               >
                 Ask AI
@@ -523,6 +525,47 @@ export default function FoodHome() {
         onRefresh={() => {
           // Refresh the upcoming meals when the modal is closed
           fetchUpcomingMeals(false);
+        }}
+      />
+
+      {/* AI Meal Suggestions Modal */}
+      <AIMealSuggestionsModal
+        isOpen={showAIModal}
+        onClose={() => setShowAIModal(false)}
+        onMealAdded={() => {
+          // Refresh the recently cooked meals when a new AI meal is added
+          const fetchRecentlyCooked = async () => {
+            if (!user) return;
+            
+            setLoadingCooked(true);
+            try {
+              const { data, error } = await supabase
+                .from('cooked_meals')
+                .select(`
+                  *,
+                  meals (
+                    id,
+                    name
+                  )
+                `)
+                .eq('user_id', user.id)
+                .order('last_cooked_at', { ascending: false })
+                .limit(2);
+
+              if (error) {
+                console.error('Error fetching cooked meals:', error);
+                setRecentlyCooked([]);
+              } else {
+                setRecentlyCooked(data || []);
+              }
+            } catch (err) {
+              console.error('Error fetching cooked meals:', err);
+              setRecentlyCooked([]);
+            } finally {
+              setLoadingCooked(false);
+            }
+          };
+          fetchRecentlyCooked();
         }}
       />
 

@@ -11,7 +11,7 @@ import { CALENDAR_SOURCES } from '@/lib/utils/calendarUtils';
 import { MdRestaurant, MdAdd, MdClose, MdLightbulb } from 'react-icons/md';
 import BaseModal from '../shared/BaseModal';
 
-export default function AIMealSuggestionsModal({ onClose, onMealAdded }) {
+export default function AIMealSuggestionsModal({ isOpen, onClose, onMealAdded }) {
   const { user } = useUser();
   const { showSuccess, showError } = useToast();
   const queryClient = useQueryClient();
@@ -204,7 +204,7 @@ export default function AIMealSuggestionsModal({ onClose, onMealAdded }) {
 
   return (
     <BaseModal
-      isOpen={true}
+      isOpen={isOpen}
       onClose={onClose}
       title="AI Meal Suggestions"
       subtitle="Get personalized meal suggestions based on your pantry"
